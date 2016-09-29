@@ -24,9 +24,11 @@ build/
 tmp/
 temp/
 hooks/
-www/
+/www/
 $RECYCLE.BIN/
 
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
+platforms/android/assets/www/
+platforms/android/platform_www/
