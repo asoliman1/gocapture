@@ -1,6 +1,6 @@
 {
-  "name": "ionic2-app-base",
-  "app_id": "",
+  "name": "mobilitEASE",
+  "app_id": "com.leadliaison.mobilitease",
   "typescript": true,
   "v2": true
 }
