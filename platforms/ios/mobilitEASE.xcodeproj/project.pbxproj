@@ -1,0 +1,808 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01258B4CB70A4D7AAB9665E7 /* libGTM_GTMURLBuilder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5710023B676547029595A0CC /* libGTM_GTMURLBuilder.a */; };
+		0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Images.xcassets */; };
+		10135DF5689B437987A368F2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4012DAD5971A45B580F3044E /* libz.tbd */; };
+		151F0CE8DC0B4358968C74F5 /* libGTM_NSStringHTML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD1C51503FD04F05AFD717FF /* libGTM_NSStringHTML.a */; };
+		16E164F326E34EC9A8602FF1 /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 3326A05D963F4EABA488AD04 /* tessdata */; };
+		18366843DFEB42AE922C8E2F /* CDVGlobalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B9739358EF7485C83F112A4 /* CDVGlobalization.m */; };
+		1C1DC4CF6F90497D913C99D0 /* claseAuxiliar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2AC64D5E98884459B49A6E56 /* claseAuxiliar.mm */; };
+		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
+		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		1DFE61B276244C7F81A882CA /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B6BA83B372428687CD2997 /* CDVReachability.m */; };
+		2179478A23254FB78AA03530 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6DEFD8E58A44BBB840C5698 /* CoreTelephony.framework */; };
+		244935B40B7648A78EDD55BD /* libGTM_KVO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B83DA1CF32426693FB9067 /* libGTM_KVO.a */; };
+		29B9BE0633D74DE2B8E43BFF /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E3E4E5C4ABF426E86306B50 /* SQLitePlugin.m */; };
+		2D2EA826C86448AD82E331A2 /* libGGLCloudMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AEB67F80237349498B1E9C2F /* libGGLCloudMessaging.a */; };
+		2E53418F483A43FC812DAB15 /* UIImage+CropScaleOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = DABB87EE4BCF4755BD469C49 /* UIImage+CropScaleOrientation.m */; };
+		301BF552109A68D80062928A /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF535109A57CC0062928A /* libCordova.a */; };
+		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
+		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
+		34413742BDF4476AB6115661 /* libGTM_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A05C7588043C450BA8326813 /* libGTM_core.a */; };
+		35A56CFD5F614C4993C84213 /* libGTM_NSData+zlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA84B12C6834EFA9214ED14 /* libGTM_NSData+zlib.a */; };
+		4B0B750D8F39482486689EFA /* libGcmLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA60DE0ED6046A7BF488218 /* libGcmLib.a */; };
+		4F0C505F874946A193B77A18 /* libGTM_NSDictionary+URLArguments.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0A99F7008E4290918F963B /* libGTM_NSDictionary+URLArguments.a */; };
+		57934E73827C44429FD58E36 /* libGGLInstanceIDLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F55537FE3641258F7C66AF /* libGGLInstanceIDLib.a */; };
+		595C0FF1DC56439496E24171 /* libGTM_iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31690167EEE4FCE85688445 /* libGTM_iPhone.a */; };
+		5DCCDF9B50134C6485F1E21F /* libGTM_Regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EA57F0E14CD41C7BAE852F4 /* libGTM_Regex.a */; };
+		5E0DCB20274B4EF7A8C39AE5 /* libGTM_AddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2214B7D94441415BA65EC83F /* libGTM_AddressBook.a */; };
+		634558B5401A489A888FFEF2 /* libGTMSessionFetcher_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EF2D48EB1324795B5B69C53 /* libGTMSessionFetcher_core.a */; };
+		67905F7EA38F4F0AA154EA7E /* libProtocolBuffers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B58DABF55F4F84849567AD /* libProtocolBuffers.a */; };
+		67B840A2DB1A4C36B6068E3E /* libGTM_RoundedRectPath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0857D2B1CF419580DF9EAC /* libGTM_RoundedRectPath.a */; };
+		74C849E969AA4B59B22A9F6D /* libGIP_Reachability.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A27ED68E5DC04034B6A7BAB7 /* libGIP_Reachability.a */; };
+		7F429ED8E9714DF4A1B57D18 /* libGTM_NSStringXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A869B107CED4A8FA94E0D49 /* libGTM_NSStringXML.a */; };
+		8000CC68C5A14892ABF39222 /* libGTM_NSScannerJSON.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF2DF743AF93497DBC51C606 /* libGTM_NSScannerJSON.a */; };
+		870DC5597F7D4F618D66743B /* libGTM_UIFont+LineHeight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 204FA53EF2634A45BEE565FF /* libGTM_UIFont+LineHeight.a */; };
+		8B470466E2B84476A850FC9E /* PushPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1747FE7E4F4010995BFEDF /* PushPlugin.m */; };
+		973C1ABB9B9A46418F876A7E /* AppDelegate+notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 7039F8958ED24D31B93E16CF /* AppDelegate+notification.m */; };
+		9C38DB7EC99349A580BB5DFE /* libGTM_StringEncoding.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AEA1CF66F0A9484B830EAF2C /* libGTM_StringEncoding.a */; };
+		9F3ABB6959394B5AAEAE9DE1 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E318B04E6784ED3914B2C6B /* CDVJpegHeaderWriter.m */; };
+		A2F0349DA8B544834453FF6D /* libPods-mobilitEASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18EC63A956283B668AE0AAAA /* libPods-mobilitEASE.a */; };
+		A525C37CB304452BB15C7B88 /* TesseractPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 02016637242D403495D82947 /* TesseractPlugin.m */; };
+		A8330541130E4488B37F9E6F /* libGGLCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6E9632016224BFDAB72F580 /* libGGLCore.a */; };
+		B05AA5F6EB9E43C280FBCD72 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B06519BECC54A4DA0D4D1DF /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B0A2EB9194664FAFA51D3FE4 /* libGSDK_Overload.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 42EB8BB3FB2843F09561A556 /* libGSDK_Overload.a */; };
+		B867FEC482E547A69C69B832 /* CDVLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A0F6D1DCED8431FA328E488 /* CDVLocation.m */; };
+		B9BF70BFC0154AB1824F1BCA /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A7C63771281416A8E09546A /* ImageIO.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BE95A715B8A7477983C6C3C5 /* libGTM_DebugUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A70A7CCE094145D5B9445C41 /* libGTM_DebugUtils.a */; };
+		C7C94D428B364A7F800A1872 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FBF0C28E77B4600B3EB1144 /* AVFoundation.framework */; };
+		D0B4F53CD8A843488DB0D935 /* libGTM_SystemVersion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8D90055AE2A45F2AFE25B49 /* libGTM_SystemVersion.a */; };
+		D3CC6591D1D74352BCFEFA55 /* CDVViewController+SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = C81685B88285420EAAACE61E /* CDVViewController+SplashScreen.m */; };
+		D99A17BB3F734CBAA90173A2 /* CDVCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F286593A74872A1062C8C /* CDVCamera.m */; };
+		E13AE223267F4AFEBE5E728F /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4478D732F543DD8CAFC385 /* libsqlite3.tbd */; };
+		F14CEC3FF4C74C30A15DCCA7 /* libGTMStackTrace.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E19229944D2849EEB6ADECC4 /* libGTMStackTrace.a */; };
+		F598E07942754C7E97040370 /* CDVSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 80E129C40AA0434E88D2E11B /* CDVSplashScreen.m */; };
+		F6F43D0680154C86A63A6CCC /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B5A22F1237440496AA3048 /* CDVConnection.m */; };
+		F96F20862CCC486DBEA6808E /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4B70469921E444CA3D4F3D5 /* CoreLocation.framework */; };
+		F983420B7E174E248AE36091 /* libGTMSessionFetcher_full.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A927919FED4140B03024B6 /* libGTMSessionFetcher_full.a */; };
+		FA3F00A106534A65B40B511D /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22AF617AFC1D476D9A2D766D /* AddressBook.framework */; };
+		FB0F98476430410E82E7A302 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 8EC7A7A4F8194235A7BF6722 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-DSQLITE_TEMP_STORE=2 -DSQLITE_THREADSAFE=2 -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_ENABLE_RTREE -DSQLITE_LOCKING_STYLE=1 -DSQLITE_OMIT_BUILTIN_TEST -DSQLITE_OMIT_LOAD_EXTENSION"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		301BF534109A57CC0062928A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC07E0554694100DB518D;
+			remoteInfo = CordovaLib;
+		};
+		301BF550109A68C00062928A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = CordovaLib;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02016637242D403495D82947 /* TesseractPlugin.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = TesseractPlugin.m; path = "cordova-plugin-tesseract/TesseractPlugin.m"; sourceTree = "<group>"; };
+		0207DA571B56EA530066E2B4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mobilitEASE/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		043FA04DCC29455DBB3D0F0F /* claseAuxiliar.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = claseAuxiliar.h; path = "cordova-plugin-tesseract/claseAuxiliar.h"; sourceTree = "<group>"; };
+		05A845FBD2DC4D878BD6521D /* PushPlugin.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = PushPlugin.h; path = "phonegap-plugin-push/PushPlugin.h"; sourceTree = "<group>"; };
+		083BDD54421D4F38ADCBFC86 /* GGLInstanceIDHeaders.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLInstanceIDHeaders.h; path = "phonegap-plugin-push/GCM/Headers/GGLInstanceIDHeaders.h"; sourceTree = "<group>"; };
+		0B9739358EF7485C83F112A4 /* CDVGlobalization.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVGlobalization.m; path = "cordova-plugin-globalization/CDVGlobalization.m"; sourceTree = "<group>"; };
+		0C896189559A48C59E881CC5 /* GGLErrorCode.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLErrorCode.h; path = "phonegap-plugin-push/GCM/Headers/GGLErrorCode.h"; sourceTree = "<group>"; };
+		0EF2D48EB1324795B5B69C53 /* libGTMSessionFetcher_core.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTMSessionFetcher_core.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTMSessionFetcher_core.a"; sourceTree = "<group>"; };
+		107AE9644D114D37A3E527CF /* Core.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = Core.h; path = "phonegap-plugin-push/GCM/Headers/Core.h"; sourceTree = "<group>"; };
+		142447DEDF204373B20F1DCC /* CDVCamera.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVCamera.h; path = "cordova-plugin-camera/CDVCamera.h"; sourceTree = "<group>"; };
+		18EC63A956283B668AE0AAAA /* libPods-mobilitEASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobilitEASE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A5FE08D1D6441C5BA8E7DAE /* SQLitePlugin.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = SQLitePlugin.h; path = "cordova-sqlite-storage/SQLitePlugin.h"; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1D6058910D05DD3D006BFB54 /* mobilitEASE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mobilitEASE.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FBF0C28E77B4600B3EB1144 /* AVFoundation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		204FA53EF2634A45BEE565FF /* libGTM_UIFont+LineHeight.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = "libGTM_UIFont+LineHeight.a"; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_UIFont+LineHeight.a"; sourceTree = "<group>"; };
+		216B694D9FE040A7B77BFC9E /* GGLInstanceIDDelegate.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLInstanceIDDelegate.h; path = "phonegap-plugin-push/GCM/Headers/GGLInstanceIDDelegate.h"; sourceTree = "<group>"; };
+		2214B7D94441415BA65EC83F /* libGTM_AddressBook.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_AddressBook.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_AddressBook.a"; sourceTree = "<group>"; };
+		22AF617AFC1D476D9A2D766D /* AddressBook.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		23D9FAA762DA4E9E9C3EDD2D /* GGLContext+CloudMessaging.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "GGLContext+CloudMessaging.h"; path = "phonegap-plugin-push/GCM/Headers/GGLContext+CloudMessaging.h"; sourceTree = "<group>"; };
+		287F286593A74872A1062C8C /* CDVCamera.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVCamera.m; path = "cordova-plugin-camera/CDVCamera.m"; sourceTree = "<group>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2AC64D5E98884459B49A6E56 /* claseAuxiliar.mm */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = claseAuxiliar.mm; path = "cordova-plugin-tesseract/claseAuxiliar.mm"; sourceTree = "<group>"; };
+		2B06519BECC54A4DA0D4D1DF /* SystemConfiguration.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
+		301BF56E109A69640062928A /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = SOURCE_ROOT; };
+		302D95EE14D2391D003F00A1 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		302D95EF14D2391D003F00A1 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		302D95F014D2391D003F00A1 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		3047A50F1AB8059700498E2A /* build-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-debug.xcconfig"; path = "cordova/build-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		3047A5101AB8059700498E2A /* build-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-release.xcconfig"; path = "cordova/build-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		3047A5111AB8059700498E2A /* build.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = build.xcconfig; path = cordova/build.xcconfig; sourceTree = SOURCE_ROOT; };
+		308537B7FF724272B4906CF6 /* GGLContext.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLContext.h; path = "phonegap-plugin-push/GCM/Headers/GGLContext.h"; sourceTree = "<group>"; };
+		30B33A872C0C4933B39AAC09 /* GGLConfiguration.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLConfiguration.h; path = "phonegap-plugin-push/GCM/Headers/GGLConfiguration.h"; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* mobilitEASE-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "mobilitEASE-Prefix.pch"; sourceTree = "<group>"; };
+		3326A05D963F4EABA488AD04 /* tessdata */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = tessdata; sourceTree = "<group>"; };
+		36FDB5C1DEA34B9EA396C08F /* UIImage+CropScaleOrientation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "UIImage+CropScaleOrientation.h"; path = "cordova-plugin-camera/UIImage+CropScaleOrientation.h"; sourceTree = "<group>"; };
+		3A1747FE7E4F4010995BFEDF /* PushPlugin.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = "phonegap-plugin-push/PushPlugin.m"; sourceTree = "<group>"; };
+		3A7C63771281416A8E09546A /* ImageIO.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		3CA84B12C6834EFA9214ED14 /* libGTM_NSData+zlib.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = "libGTM_NSData+zlib.a"; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_NSData+zlib.a"; sourceTree = "<group>"; };
+		3E318B04E6784ED3914B2C6B /* CDVJpegHeaderWriter.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVJpegHeaderWriter.m; path = "cordova-plugin-camera/CDVJpegHeaderWriter.m"; sourceTree = "<group>"; };
+		4012DAD5971A45B580F3044E /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		42EB8BB3FB2843F09561A556 /* libGSDK_Overload.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGSDK_Overload.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGSDK_Overload.a"; sourceTree = "<group>"; };
+		4C4478D732F543DD8CAFC385 /* libsqlite3.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		4F36533C403643D8B508CEA4 /* TesseractPlugin.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = TesseractPlugin.h; path = "cordova-plugin-tesseract/TesseractPlugin.h"; sourceTree = "<group>"; };
+		55F55537FE3641258F7C66AF /* libGGLInstanceIDLib.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGGLInstanceIDLib.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGGLInstanceIDLib.a"; sourceTree = "<group>"; };
+		5710023B676547029595A0CC /* libGTM_GTMURLBuilder.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_GTMURLBuilder.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_GTMURLBuilder.a"; sourceTree = "<group>"; };
+		5DC1174EEB1E47FE9C3BB275 /* GoogleCloudMessaging.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GoogleCloudMessaging.h; path = "phonegap-plugin-push/GCM/Headers/GoogleCloudMessaging.h"; sourceTree = "<group>"; };
+		67650504029D4D279E1C6E86 /* CloudMessaging.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CloudMessaging.h; path = "phonegap-plugin-push/GCM/Headers/CloudMessaging.h"; sourceTree = "<group>"; };
+		67A7B3B7D73C47558044E67D /* GCMPubSub.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMPubSub.h; path = "phonegap-plugin-push/GCM/Headers/GCMPubSub.h"; sourceTree = "<group>"; };
+		67B58DABF55F4F84849567AD /* libProtocolBuffers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libProtocolBuffers.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libProtocolBuffers.a"; sourceTree = "<group>"; };
+		690181E322454027A35FA7E8 /* GGLInstanceIDConfig.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLInstanceIDConfig.h; path = "phonegap-plugin-push/GCM/Headers/GGLInstanceIDConfig.h"; sourceTree = "<group>"; };
+		6A869B107CED4A8FA94E0D49 /* libGTM_NSStringXML.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_NSStringXML.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_NSStringXML.a"; sourceTree = "<group>"; };
+		6B0D8D89EDFA48B5A6E9AA45 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
+		6C641972758D4AB9AA14803C /* sqlite3.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = "cordova-sqlite-storage/sqlite3.h"; sourceTree = "<group>"; };
+		6D3CAF60EDDB42428DFCE4C3 /* GCMService.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMService.h; path = "phonegap-plugin-push/GCM/Headers/GCMService.h"; sourceTree = "<group>"; };
+		6E0A99F7008E4290918F963B /* libGTM_NSDictionary+URLArguments.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = "libGTM_NSDictionary+URLArguments.a"; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_NSDictionary+URLArguments.a"; sourceTree = "<group>"; };
+		6E879679426248689CFD525F /* CDVExif.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVExif.h; path = "cordova-plugin-camera/CDVExif.h"; sourceTree = "<group>"; };
+		7039F8958ED24D31B93E16CF /* AppDelegate+notification.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "phonegap-plugin-push/AppDelegate+notification.m"; sourceTree = "<group>"; };
+		77CC53E25CD54B14A0CD0C35 /* GCMReceiverDelegate.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMReceiverDelegate.h; path = "phonegap-plugin-push/GCM/Headers/GCMReceiverDelegate.h"; sourceTree = "<group>"; };
+		7A0857D2B1CF419580DF9EAC /* libGTM_RoundedRectPath.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_RoundedRectPath.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_RoundedRectPath.a"; sourceTree = "<group>"; };
+		7A0F6D1DCED8431FA328E488 /* CDVLocation.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVLocation.m; path = "cordova-plugin-geolocation/CDVLocation.m"; sourceTree = "<group>"; };
+		7C93E391CCCC4C56AE4A24FF /* GCMConfig.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMConfig.h; path = "phonegap-plugin-push/GCM/Headers/GCMConfig.h"; sourceTree = "<group>"; };
+		80E129C40AA0434E88D2E11B /* CDVSplashScreen.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVSplashScreen.m; path = "cordova-plugin-splashscreen/CDVSplashScreen.m"; sourceTree = "<group>"; };
+		818CD5F82E7F44B4A3B2A402 /* CDVGlobalization.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVGlobalization.h; path = "cordova-plugin-globalization/CDVGlobalization.h"; sourceTree = "<group>"; };
+		87DAB33563FD425FAC3C86F2 /* CDVReachability.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVReachability.h; path = "cordova-plugin-network-information/CDVReachability.h"; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* mobilitEASE-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "mobilitEASE-Info.plist"; path = "mobilitEASE/mobilitEASE-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = SOURCE_ROOT; };
+		8EA57F0E14CD41C7BAE852F4 /* libGTM_Regex.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_Regex.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_Regex.a"; sourceTree = "<group>"; };
+		8EC7A7A4F8194235A7BF6722 /* sqlite3.c */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = sqlite3.c; path = "cordova-sqlite-storage/sqlite3.c"; sourceTree = "<group>"; };
+		9392727C1E034A47BD34865A /* AppDelegate+notification.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+notification.h"; path = "phonegap-plugin-push/AppDelegate+notification.h"; sourceTree = "<group>"; };
+		93B6BA83B372428687CD2997 /* CDVReachability.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVReachability.m; path = "cordova-plugin-network-information/CDVReachability.m"; sourceTree = "<group>"; };
+		9E3E4E5C4ABF426E86306B50 /* SQLitePlugin.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = SQLitePlugin.m; path = "cordova-sqlite-storage/SQLitePlugin.m"; sourceTree = "<group>"; };
+		A05C7588043C450BA8326813 /* libGTM_core.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_core.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_core.a"; sourceTree = "<group>"; };
+		A27ED68E5DC04034B6A7BAB7 /* libGIP_Reachability.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGIP_Reachability.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGIP_Reachability.a"; sourceTree = "<group>"; };
+		A70A7CCE094145D5B9445C41 /* libGTM_DebugUtils.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_DebugUtils.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_DebugUtils.a"; sourceTree = "<group>"; };
+		AEA1CF66F0A9484B830EAF2C /* libGTM_StringEncoding.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_StringEncoding.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_StringEncoding.a"; sourceTree = "<group>"; };
+		AEB67F80237349498B1E9C2F /* libGGLCloudMessaging.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGGLCloudMessaging.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGGLCloudMessaging.a"; sourceTree = "<group>"; };
+		B0B5A22F1237440496AA3048 /* CDVConnection.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVConnection.m; path = "cordova-plugin-network-information/CDVConnection.m"; sourceTree = "<group>"; };
+		B120460487BF4E9582FAFFC7 /* CDVViewController+SplashScreen.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "CDVViewController+SplashScreen.h"; path = "cordova-plugin-splashscreen/CDVViewController+SplashScreen.h"; sourceTree = "<group>"; };
+		B4B70469921E444CA3D4F3D5 /* CoreLocation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		B5A927919FED4140B03024B6 /* libGTMSessionFetcher_full.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTMSessionFetcher_full.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTMSessionFetcher_full.a"; sourceTree = "<group>"; };
+		B831298C60EA4E68ACEC506A /* CDVJpegHeaderWriter.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVJpegHeaderWriter.h; path = "cordova-plugin-camera/CDVJpegHeaderWriter.h"; sourceTree = "<group>"; };
+		C81685B88285420EAAACE61E /* CDVViewController+SplashScreen.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = "CDVViewController+SplashScreen.m"; path = "cordova-plugin-splashscreen/CDVViewController+SplashScreen.m"; sourceTree = "<group>"; };
+		C8D90055AE2A45F2AFE25B49 /* libGTM_SystemVersion.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_SystemVersion.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_SystemVersion.a"; sourceTree = "<group>"; };
+		C9B83DA1CF32426693FB9067 /* libGTM_KVO.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_KVO.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_KVO.a"; sourceTree = "<group>"; };
+		CEA60DE0ED6046A7BF488218 /* libGcmLib.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGcmLib.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGcmLib.a"; sourceTree = "<group>"; };
+		D31690167EEE4FCE85688445 /* libGTM_iPhone.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_iPhone.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_iPhone.a"; sourceTree = "<group>"; };
+		DABB87EE4BCF4755BD469C49 /* UIImage+CropScaleOrientation.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = "UIImage+CropScaleOrientation.m"; path = "cordova-plugin-camera/UIImage+CropScaleOrientation.m"; sourceTree = "<group>"; };
+		DF2DF743AF93497DBC51C606 /* libGTM_NSScannerJSON.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_NSScannerJSON.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_NSScannerJSON.a"; sourceTree = "<group>"; };
+		E19229944D2849EEB6ADECC4 /* libGTMStackTrace.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTMStackTrace.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTMStackTrace.a"; sourceTree = "<group>"; };
+		E48477291ECC4B008412CD57 /* GGLInstanceID.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLInstanceID.h; path = "phonegap-plugin-push/GCM/Headers/GGLInstanceID.h"; sourceTree = "<group>"; };
+		E6DEFD8E58A44BBB840C5698 /* CoreTelephony.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
+		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
+		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		F54310FD890D41498B0CB21E /* CDVConnection.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVConnection.h; path = "cordova-plugin-network-information/CDVConnection.h"; sourceTree = "<group>"; };
+		F57B0795F15D4F38874780EE /* CDVSplashScreen.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVSplashScreen.h; path = "cordova-plugin-splashscreen/CDVSplashScreen.h"; sourceTree = "<group>"; };
+		F6E9632016224BFDAB72F580 /* libGGLCore.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGGLCore.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGGLCore.a"; sourceTree = "<group>"; };
+		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = mobilitEASE/config.xml; sourceTree = "<group>"; };
+		FD1C51503FD04F05AFD717FF /* libGTM_NSStringHTML.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGTM_NSStringHTML.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGTM_NSStringHTML.a"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
+				B9BF70BFC0154AB1824F1BCA /* ImageIO.framework in Frameworks */,
+				F96F20862CCC486DBEA6808E /* CoreLocation.framework in Frameworks */,
+				C7C94D428B364A7F800A1872 /* AVFoundation.framework in Frameworks */,
+				B05AA5F6EB9E43C280FBCD72 /* SystemConfiguration.framework in Frameworks */,
+				2179478A23254FB78AA03530 /* CoreTelephony.framework in Frameworks */,
+				FA3F00A106534A65B40B511D /* AddressBook.framework in Frameworks */,
+				E13AE223267F4AFEBE5E728F /* libsqlite3.tbd in Frameworks */,
+				10135DF5689B437987A368F2 /* libz.tbd in Frameworks */,
+				2D2EA826C86448AD82E331A2 /* libGGLCloudMessaging.a in Frameworks */,
+				A8330541130E4488B37F9E6F /* libGGLCore.a in Frameworks */,
+				57934E73827C44429FD58E36 /* libGGLInstanceIDLib.a in Frameworks */,
+				74C849E969AA4B59B22A9F6D /* libGIP_Reachability.a in Frameworks */,
+				B0A2EB9194664FAFA51D3FE4 /* libGSDK_Overload.a in Frameworks */,
+				634558B5401A489A888FFEF2 /* libGTMSessionFetcher_core.a in Frameworks */,
+				F983420B7E174E248AE36091 /* libGTMSessionFetcher_full.a in Frameworks */,
+				F14CEC3FF4C74C30A15DCCA7 /* libGTMStackTrace.a in Frameworks */,
+				5E0DCB20274B4EF7A8C39AE5 /* libGTM_AddressBook.a in Frameworks */,
+				BE95A715B8A7477983C6C3C5 /* libGTM_DebugUtils.a in Frameworks */,
+				01258B4CB70A4D7AAB9665E7 /* libGTM_GTMURLBuilder.a in Frameworks */,
+				244935B40B7648A78EDD55BD /* libGTM_KVO.a in Frameworks */,
+				35A56CFD5F614C4993C84213 /* libGTM_NSData+zlib.a in Frameworks */,
+				4F0C505F874946A193B77A18 /* libGTM_NSDictionary+URLArguments.a in Frameworks */,
+				8000CC68C5A14892ABF39222 /* libGTM_NSScannerJSON.a in Frameworks */,
+				151F0CE8DC0B4358968C74F5 /* libGTM_NSStringHTML.a in Frameworks */,
+				7F429ED8E9714DF4A1B57D18 /* libGTM_NSStringXML.a in Frameworks */,
+				5DCCDF9B50134C6485F1E21F /* libGTM_Regex.a in Frameworks */,
+				67B840A2DB1A4C36B6068E3E /* libGTM_RoundedRectPath.a in Frameworks */,
+				9C38DB7EC99349A580BB5DFE /* libGTM_StringEncoding.a in Frameworks */,
+				D0B4F53CD8A843488DB0D935 /* libGTM_SystemVersion.a in Frameworks */,
+				870DC5597F7D4F618D66743B /* libGTM_UIFont+LineHeight.a in Frameworks */,
+				34413742BDF4476AB6115661 /* libGTM_core.a in Frameworks */,
+				595C0FF1DC56439496E24171 /* libGTM_iPhone.a in Frameworks */,
+				4B0B750D8F39482486689EFA /* libGcmLib.a in Frameworks */,
+				67905F7EA38F4F0AA154EA7E /* libProtocolBuffers.a in Frameworks */,
+				A2F0349DA8B544834453FF6D /* libPods-mobilitEASE.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				302D95EE14D2391D003F00A1 /* MainViewController.h */,
+				302D95EF14D2391D003F00A1 /* MainViewController.m */,
+				302D95F014D2391D003F00A1 /* MainViewController.xib */,
+				1D3623240D0F684500981E51 /* AppDelegate.h */,
+				1D3623250D0F684500981E51 /* AppDelegate.m */,
+			);
+			name = Classes;
+			path = mobilitEASE/Classes;
+			sourceTree = SOURCE_ROOT;
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* mobilitEASE.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		22AAC3AA13C47D33B9A01864 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				EB87FDF41871DAF40020F90C /* config.xml */,
+				EB87FDF31871DA8E0020F90C /* www */,
+				EB87FDF11871DA420020F90C /* Staging */,
+				301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */,
+				080E96DDFE201D6D7F000001 /* Classes */,
+				307C750510C5A3420062BCA9 /* Plugins */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+				22AAC3AA13C47D33B9A01864 /* Pods */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32CA4F630368D1EE00C91783 /* mobilitEASE-Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */,
+			);
+			name = "Other Sources";
+			path = mobilitEASE;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0207DA571B56EA530066E2B4 /* Images.xcassets */,
+				3047A50E1AB8057F00498E2A /* config */,
+				8D1107310486CEB800E47090 /* mobilitEASE-Info.plist */,
+				3326A05D963F4EABA488AD04 /* tessdata */,
+			);
+			name = Resources;
+			path = mobilitEASE/Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3A7C63771281416A8E09546A /* ImageIO.framework */,
+				B4B70469921E444CA3D4F3D5 /* CoreLocation.framework */,
+				1FBF0C28E77B4600B3EB1144 /* AVFoundation.framework */,
+				2B06519BECC54A4DA0D4D1DF /* SystemConfiguration.framework */,
+				E6DEFD8E58A44BBB840C5698 /* CoreTelephony.framework */,
+				22AF617AFC1D476D9A2D766D /* AddressBook.framework */,
+				4C4478D732F543DD8CAFC385 /* libsqlite3.tbd */,
+				4012DAD5971A45B580F3044E /* libz.tbd */,
+				AEB67F80237349498B1E9C2F /* libGGLCloudMessaging.a */,
+				F6E9632016224BFDAB72F580 /* libGGLCore.a */,
+				55F55537FE3641258F7C66AF /* libGGLInstanceIDLib.a */,
+				A27ED68E5DC04034B6A7BAB7 /* libGIP_Reachability.a */,
+				42EB8BB3FB2843F09561A556 /* libGSDK_Overload.a */,
+				0EF2D48EB1324795B5B69C53 /* libGTMSessionFetcher_core.a */,
+				B5A927919FED4140B03024B6 /* libGTMSessionFetcher_full.a */,
+				E19229944D2849EEB6ADECC4 /* libGTMStackTrace.a */,
+				2214B7D94441415BA65EC83F /* libGTM_AddressBook.a */,
+				A70A7CCE094145D5B9445C41 /* libGTM_DebugUtils.a */,
+				5710023B676547029595A0CC /* libGTM_GTMURLBuilder.a */,
+				C9B83DA1CF32426693FB9067 /* libGTM_KVO.a */,
+				3CA84B12C6834EFA9214ED14 /* libGTM_NSData+zlib.a */,
+				6E0A99F7008E4290918F963B /* libGTM_NSDictionary+URLArguments.a */,
+				DF2DF743AF93497DBC51C606 /* libGTM_NSScannerJSON.a */,
+				FD1C51503FD04F05AFD717FF /* libGTM_NSStringHTML.a */,
+				6A869B107CED4A8FA94E0D49 /* libGTM_NSStringXML.a */,
+				8EA57F0E14CD41C7BAE852F4 /* libGTM_Regex.a */,
+				7A0857D2B1CF419580DF9EAC /* libGTM_RoundedRectPath.a */,
+				AEA1CF66F0A9484B830EAF2C /* libGTM_StringEncoding.a */,
+				C8D90055AE2A45F2AFE25B49 /* libGTM_SystemVersion.a */,
+				204FA53EF2634A45BEE565FF /* libGTM_UIFont+LineHeight.a */,
+				A05C7588043C450BA8326813 /* libGTM_core.a */,
+				D31690167EEE4FCE85688445 /* libGTM_iPhone.a */,
+				CEA60DE0ED6046A7BF488218 /* libGcmLib.a */,
+				67B58DABF55F4F84849567AD /* libProtocolBuffers.a */,
+				18EC63A956283B668AE0AAAA /* libPods-mobilitEASE.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		301BF52E109A57CC0062928A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				301BF535109A57CC0062928A /* libCordova.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3047A50E1AB8057F00498E2A /* config */ = {
+			isa = PBXGroup;
+			children = (
+				3047A50F1AB8059700498E2A /* build-debug.xcconfig */,
+				3047A5101AB8059700498E2A /* build-release.xcconfig */,
+				3047A5111AB8059700498E2A /* build.xcconfig */,
+			);
+			name = config;
+			sourceTree = "<group>";
+		};
+		307C750510C5A3420062BCA9 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				DABB87EE4BCF4755BD469C49 /* UIImage+CropScaleOrientation.m */,
+				287F286593A74872A1062C8C /* CDVCamera.m */,
+				3E318B04E6784ED3914B2C6B /* CDVJpegHeaderWriter.m */,
+				36FDB5C1DEA34B9EA396C08F /* UIImage+CropScaleOrientation.h */,
+				142447DEDF204373B20F1DCC /* CDVCamera.h */,
+				B831298C60EA4E68ACEC506A /* CDVJpegHeaderWriter.h */,
+				6E879679426248689CFD525F /* CDVExif.h */,
+				7A0F6D1DCED8431FA328E488 /* CDVLocation.m */,
+				6B0D8D89EDFA48B5A6E9AA45 /* CDVLocation.h */,
+				0B9739358EF7485C83F112A4 /* CDVGlobalization.m */,
+				818CD5F82E7F44B4A3B2A402 /* CDVGlobalization.h */,
+				B0B5A22F1237440496AA3048 /* CDVConnection.m */,
+				93B6BA83B372428687CD2997 /* CDVReachability.m */,
+				F54310FD890D41498B0CB21E /* CDVConnection.h */,
+				87DAB33563FD425FAC3C86F2 /* CDVReachability.h */,
+				80E129C40AA0434E88D2E11B /* CDVSplashScreen.m */,
+				C81685B88285420EAAACE61E /* CDVViewController+SplashScreen.m */,
+				F57B0795F15D4F38874780EE /* CDVSplashScreen.h */,
+				B120460487BF4E9582FAFFC7 /* CDVViewController+SplashScreen.h */,
+				2AC64D5E98884459B49A6E56 /* claseAuxiliar.mm */,
+				02016637242D403495D82947 /* TesseractPlugin.m */,
+				043FA04DCC29455DBB3D0F0F /* claseAuxiliar.h */,
+				4F36533C403643D8B508CEA4 /* TesseractPlugin.h */,
+				9E3E4E5C4ABF426E86306B50 /* SQLitePlugin.m */,
+				8EC7A7A4F8194235A7BF6722 /* sqlite3.c */,
+				1A5FE08D1D6441C5BA8E7DAE /* SQLitePlugin.h */,
+				6C641972758D4AB9AA14803C /* sqlite3.h */,
+				7039F8958ED24D31B93E16CF /* AppDelegate+notification.m */,
+				3A1747FE7E4F4010995BFEDF /* PushPlugin.m */,
+				9392727C1E034A47BD34865A /* AppDelegate+notification.h */,
+				05A845FBD2DC4D878BD6521D /* PushPlugin.h */,
+				E48477291ECC4B008412CD57 /* GGLInstanceID.h */,
+				690181E322454027A35FA7E8 /* GGLInstanceIDConfig.h */,
+				216B694D9FE040A7B77BFC9E /* GGLInstanceIDDelegate.h */,
+				083BDD54421D4F38ADCBFC86 /* GGLInstanceIDHeaders.h */,
+				67650504029D4D279E1C6E86 /* CloudMessaging.h */,
+				23D9FAA762DA4E9E9C3EDD2D /* GGLContext+CloudMessaging.h */,
+				107AE9644D114D37A3E527CF /* Core.h */,
+				30B33A872C0C4933B39AAC09 /* GGLConfiguration.h */,
+				308537B7FF724272B4906CF6 /* GGLContext.h */,
+				0C896189559A48C59E881CC5 /* GGLErrorCode.h */,
+				7C93E391CCCC4C56AE4A24FF /* GCMConfig.h */,
+				67A7B3B7D73C47558044E67D /* GCMPubSub.h */,
+				77CC53E25CD54B14A0CD0C35 /* GCMReceiverDelegate.h */,
+				6D3CAF60EDDB42428DFCE4C3 /* GCMService.h */,
+				5DC1174EEB1E47FE9C3BB275 /* GoogleCloudMessaging.h */,
+			);
+			name = Plugins;
+			path = mobilitEASE/Plugins;
+			sourceTree = SOURCE_ROOT;
+		};
+		EB87FDF11871DA420020F90C /* Staging */ = {
+			isa = PBXGroup;
+			children = (
+				F840E1F0165FE0F500CFE078 /* config.xml */,
+				301BF56E109A69640062928A /* www */,
+			);
+			name = Staging;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* mobilitEASE */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "mobilitEASE" */;
+			buildPhases = (
+				7180863A4F527C804E2F62A0 /* [CP] Check Pods Manifest.lock */,
+				304B58A110DAC018002A0835 /* Copy www directory */,
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+				5CB0B31B540ED5459F316740 /* [CP] Embed Pods Frameworks */,
+				7382132F6B13A8AFD5EDBB6F /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				301BF551109A68C00062928A /* PBXTargetDependency */,
+			);
+			name = mobilitEASE;
+			productName = mobilitEASE;
+			productReference = 1D6058910D05DD3D006BFB54 /* mobilitEASE.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				TargetAttributes = {
+					1D6058900D05DD3D006BFB54 = {
+						DevelopmentTeam = K69VAF6CNF;
+					};
+				};
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "mobilitEASE" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			productRefGroup = 19C28FACFE9D520D11CA2CBB /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 301BF52E109A57CC0062928A /* Products */;
+					ProjectRef = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* mobilitEASE */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		301BF535109A57CC0062928A /* libCordova.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCordova.a;
+			remoteRef = 301BF534109A57CC0062928A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */,
+				0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */,
+				16E164F326E34EC9A8602FF1 /* tessdata in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		304B58A110DAC018002A0835 /* Copy www directory */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy www directory";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "NODEJS_PATH=/usr/local/bin; NVM_NODE_PATH=~/.nvm/versions/node/`nvm version 2>/dev/null`/bin; N_NODE_PATH=`find /usr/local/n/versions/node/* -maxdepth 0 -type d 2>/dev/null | tail -1`/bin; XCODE_NODE_PATH=`xcode-select --print-path`/usr/share/xcs/Node/bin; PATH=$NODEJS_PATH:$NVM_NODE_PATH:$N_NODE_PATH:$XCODE_NODE_PATH:$PATH && node cordova/lib/copy-www-build-step.js";
+			showEnvVarsInLog = 0;
+		};
+		5CB0B31B540ED5459F316740 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobilitEASE/Pods-mobilitEASE-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7180863A4F527C804E2F62A0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7382132F6B13A8AFD5EDBB6F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobilitEASE/Pods-mobilitEASE-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
+				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
+				2E53418F483A43FC812DAB15 /* UIImage+CropScaleOrientation.m in Sources */,
+				D99A17BB3F734CBAA90173A2 /* CDVCamera.m in Sources */,
+				9F3ABB6959394B5AAEAE9DE1 /* CDVJpegHeaderWriter.m in Sources */,
+				B867FEC482E547A69C69B832 /* CDVLocation.m in Sources */,
+				18366843DFEB42AE922C8E2F /* CDVGlobalization.m in Sources */,
+				F6F43D0680154C86A63A6CCC /* CDVConnection.m in Sources */,
+				1DFE61B276244C7F81A882CA /* CDVReachability.m in Sources */,
+				F598E07942754C7E97040370 /* CDVSplashScreen.m in Sources */,
+				D3CC6591D1D74352BCFEFA55 /* CDVViewController+SplashScreen.m in Sources */,
+				1C1DC4CF6F90497D913C99D0 /* claseAuxiliar.mm in Sources */,
+				A525C37CB304452BB15C7B88 /* TesseractPlugin.m in Sources */,
+				29B9BE0633D74DE2B8E43BFF /* SQLitePlugin.m in Sources */,
+				FB0F98476430410E82E7A302 /* sqlite3.c in Sources */,
+				973C1ABB9B9A46418F876A7E /* AppDelegate+notification.m in Sources */,
+				8B470466E2B84476A850FC9E /* PushPlugin.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		301BF551109A68C00062928A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CordovaLib;
+			targetProxy = 301BF550109A68C00062928A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A50F1AB8059700498E2A /* build-debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = K69VAF6CNF;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				INFOPLIST_FILE = "mobilitEASE/mobilitEASE-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.leadliaison.mobilitease;
+				PRODUCT_NAME = mobilitEASE;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5101AB8059700498E2A /* build-release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = K69VAF6CNF;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				INFOPLIST_FILE = "mobilitEASE/mobilitEASE-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.leadliaison.mobilitease;
+				PRODUCT_NAME = mobilitEASE;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5111AB8059700498E2A /* build.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5111AB8059700498E2A /* build.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "mobilitEASE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug */,
+				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "mobilitEASE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

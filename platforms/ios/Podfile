@@ -1,0 +1,8 @@
+source 'https://github.com/CocoaPods/Specs.git'
+xcodeproj 'mobilitease.xcodeproj/'
+
+target 'mobilitEASE' do
+
+pod 'TesseractOCRiOS', '4.0.0'
+
+end
