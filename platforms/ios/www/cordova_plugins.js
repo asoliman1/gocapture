@@ -133,6 +133,7 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
+    "cordova-plugin-compat": "1.0.0",
     "cordova-plugin-camera": "2.3.0",
     "cordova-plugin-crosswalk-webview": "2.1.0",
     "cordova-plugin-geolocation": "2.3.0",
@@ -141,8 +142,7 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "4.0.0",
     "cordova-plugin-tesseract": "0.0.1",
     "cordova-sqlite-storage": "1.4.7",
-    "phonegap-plugin-push": "1.8.2",
-    "cordova-plugin-compat": "1.0.0"
+    "phonegap-plugin-push": "1.8.2"
 };
 // BOTTOM OF METADATA
 });
