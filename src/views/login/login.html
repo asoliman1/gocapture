@@ -1,0 +1,31 @@
+<ion-content scroll="false" class="login">
+  <div class="top-content row">
+    <div class="col col-center">
+      <img>
+    </div>
+  </div>
+  <div class="bottom-content row">
+    <div class="col col-center">
+      <form>
+      <ion-list radio-group padding>
+        <ion-item>
+          <ion-label>Production</ion-label>
+          <ion-radio checked value="production"></ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-label>Demo</ion-label>
+          <ion-radio value="demo"></ion-radio>
+        </ion-item>
+      <ion-item>
+        <ion-input type="text" required placeholder="Authentication Code"></ion-input>
+      </ion-item>
+      <ion-item>
+        <button ion-button full medium color="secondary" (click)="onClick()">
+          Request Authentication
+        </button>
+      </ion-item>
+      </ion-list>
+      </form>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,44 @@
+.sidemenu{
+	background-color: color($colors, dark, base);
+	.profile{
+		padding-top: 5rem;
+		padding-bottom: 3rem;
+		ion-item{
+			background-color: color($colors, dark, base);
+			color: color($colors, light, base);
+			.item-inner{
+				border: none !important;
+			}
+			ion-avatar{
+				padding: 1rem;
+				border: 1px solid #888;
+				border-radius: 6rem;
+				img {
+					max-width: 10rem;
+					max-height: 10rem;
+					border-radius: 5rem;
+				}
+			}
+			
+		}
+	}
+	ion-list{
+		button{
+			background-color: color($colors, dark, base);
+			color: color($colors, light, base);
+			border-color: #555 !important;
+			.item-inner{
+				border-color: #555 !important;
+			}
+			ion-icon{
+				background: #555;
+				border-radius: 100%;
+				width: 4rem;
+				height: 4rem;
+				text-align: center;
+				vertical-align: middle;
+    			line-height: 4rem;
+			}
+		}
+	}
+}

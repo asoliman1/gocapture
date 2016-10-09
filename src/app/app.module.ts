@@ -1,24 +1,33 @@
 import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
-import { Page1 } from '../pages/page1/page1';
-import { Page2 } from '../pages/page2/page2';
+import { Login } from "../views/login";
+import { Main } from "../views/main";
+import { Dashboard } from "../views/dashboard";
+import { Forms } from "../views/forms";
+import { Dispatches } from "../views/dispatches";
+import { Settings } from "../views/settings";
+import { RESTClient, DBClient } from "../services";
+
+let components = [
+    MyApp,
+    Login,
+    Main,
+    Dashboard,
+    Forms,
+    Dispatches,
+    Settings
+];
 
 @NgModule({
-  declarations: [
-    MyApp,
-    Page1,
-    Page2
-  ],
+  declarations: [].concat(components),
   imports: [
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    Page1,
-    Page2
-  ],
-  providers: []
+  entryComponents: [].concat(components),
+  providers: [
+    DBClient,
+    RESTClient]
 })
 export class AppModule {}
