@@ -8,7 +8,13 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class Forms {
 
+  searchMode = false;
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
 
+  }
+
+  toggleSearch(){
+    this.searchMode = !this.searchMode;
   }
 }

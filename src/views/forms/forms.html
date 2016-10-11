@@ -4,10 +4,16 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Forms</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="toggleSearch()" [class.search]="searchMode">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
   <h3>Ionic Menu Starter</h3>
 
   <p>

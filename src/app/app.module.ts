@@ -8,6 +8,7 @@ import { Forms } from "../views/forms";
 import { Dispatches } from "../views/dispatches";
 import { Settings } from "../views/settings";
 import { RESTClient, DBClient } from "../services";
+import { ComponentOutlet, provideComponentOutletModule} from "../components/dynamic-comp"
 
 let components = [
     MyApp,
