@@ -1,4 +1,4 @@
-import {Response} from "./response";
-export class DataResponse<T> extends Response{
+import {BaseResponse} from "./response";
+export class DataResponse<T> extends BaseResponse{
 	data: T;
 }

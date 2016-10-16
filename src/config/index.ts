@@ -1,5 +1,7 @@
 export const Config: {
-	serverUrl: string
+	serverUrl: string,
+	androidGcmId: string
 } = {
-	serverUrl: ""
+	serverUrl: "",
+	androidGcmId: ""
 };

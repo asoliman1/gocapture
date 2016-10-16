@@ -7,28 +7,39 @@ import { Dashboard } from "../views/dashboard";
 import { Forms } from "../views/forms";
 import { Dispatches } from "../views/dispatches";
 import { Settings } from "../views/settings";
-import { RESTClient, DBClient } from "../services";
-import { ComponentOutlet, provideComponentOutletModule} from "../components/dynamic-comp"
+import { RESTClient, DBClient, PushClient, SyncClient } from "../services";
+import { IonPullUpComponent } from '../components/ion-pullup';
 
-let components = [
+@NgModule({
+  declarations: [
     MyApp,
     Login,
     Main,
     Dashboard,
     Forms,
     Dispatches,
-    Settings
-];
-
-@NgModule({
-  declarations: [].concat(components),
+    Settings,
+    IonPullUpComponent
+  ],
   imports: [
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
-  entryComponents: [].concat(components),
+  entryComponents: [
+    MyApp,
+    Login,
+    Main,
+    Dashboard,
+    Forms,
+    Dispatches,
+    Settings,
+    IonPullUpComponent
+  ],
   providers: [
     DBClient,
-    RESTClient]
+    RESTClient,
+    PushClient,
+    SyncClient
+  ]
 })
-export class AppModule {}
+export class AppModule { }

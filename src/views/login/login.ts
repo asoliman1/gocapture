@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { RESTClient } from "../../services";
+import { AuthenticationRequest } from "../../model/protocol";
 import { Main } from "../main";
 
 @Component({
@@ -9,11 +10,14 @@ import { Main } from "../main";
 })
 export class Login {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private client: RESTClient) {
+  constructor(private navCtrl: NavController, private navParams: NavParams, private client: RESTClient) {
 
   }
 
   onClick(){
-    this.navCtrl.setRoot(Main);
+    let req = new AuthenticationRequest();
+    this.client.authenticate(req).subscribe(reply => {
+      this.navCtrl.setRoot(Main);
+    })
   }
 }

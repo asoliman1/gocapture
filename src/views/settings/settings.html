@@ -1,18 +1,46 @@
 <ion-header>
-  <ion-navbar color="orange">
-    <button ion-button menuToggle>
+	<ion-navbar color="orange">
+		<button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Settings</ion-title>
-  </ion-navbar>
+		<ion-title>Settings</ion-title>
+	</ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h3>Ionic Menu Starter</h3>
-
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
-
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+<ion-content>
+	<ion-list>
+		<ion-list-header>
+			Organization
+		</ion-list-header>
+		<ion-item>
+			<ion-label>Name</ion-label>	
+      <ion-label>Operator</ion-label>
+		</ion-item>
+		<ion-item>
+			<ion-label>Key</ion-label>	
+      <ion-label>Operator</ion-label>
+		</ion-item>
+		<ion-item>
+			<ion-label>Operator</ion-label>	
+      <ion-label>Operator</ion-label>
+		</ion-item>
+		<ion-list-header>
+			Operations
+		</ion-list-header>
+		<ion-item>
+			<ion-label>Automatic Upload</ion-label>
+			<ion-toggle checked="false"></ion-toggle>
+		</ion-item>
+		<ion-list-header>
+			Diagnostics
+		</ion-list-header>
+		<ion-item>
+			<ion-label>App version</ion-label>	
+      <ion-label>Operator</ion-label>
+		</ion-item>
+		<ion-item>
+			<ion-label>Enable logging</ion-label>
+			<ion-toggle checked="false"></ion-toggle>
+		</ion-item>
+	</ion-list>
 </ion-content>

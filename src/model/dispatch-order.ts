@@ -1,5 +1,3 @@
-import { Form } from "./form";
-
 export class DispatchOrder{
 	id : number;
 	name : string;

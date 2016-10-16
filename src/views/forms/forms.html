@@ -1,24 +1,46 @@
 <ion-header>
-  <ion-navbar color="orange">
-    <button ion-button menuToggle>
+	<ion-navbar color="orange">
+		<button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Forms</ion-title>
-    <ion-buttons end>
-      <button ion-button (click)="toggleSearch()" [class.search]="searchMode">
+		<ion-title>Forms</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">
         <ion-icon name="search"></ion-icon>
       </button>
-    </ion-buttons>
-  </ion-navbar>
+		</ion-buttons>
+	</ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-  <h3>Ionic Menu Starter</h3>
-
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
-
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+<ion-content class="forms">
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
+  <ion-list [virtualScroll]="forms" approxItemHeight="50px">
+		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">
+			<h2>{{form.name}}</h2>
+      <h3>{{form.total_submissions}} submissions</h3>
+		</ion-item>
+	</ion-list>
+	<ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pull-max="200"></ion-refresher-content>
+  </ion-refresher>
+	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+		<ion-infinite-scroll-content></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>
+
+
+<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == 'visible'" (onCollapse)="footerCollapsed()">
+		<ion-toolbar #toolbar>
+    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>
+			<div class="element">{{currentSyncForm}}</div>
+  </ion-toolbar>
+  <ion-content>
+    <ion-list class="sync-list">
+      <ion-item *ngFor="let status of statuses" icon-left>
+        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>
+				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>
+        <h2 item-right>{{status.formName}}</h2>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-pullup>

@@ -1,18 +1,29 @@
 <ion-header>
-  <ion-navbar color="orange">
-    <button ion-button menuToggle>
+	<ion-navbar color="orange">
+		<button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Dispatches</ion-title>
-  </ion-navbar>
+		<ion-title>Dispatch Forms</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">
+        <ion-icon name="search"></ion-icon>
+      </button>
+		</ion-buttons>
+	</ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h3>Ionic Menu Starter</h3>
-
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
-
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+<ion-content class="dispatches">
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
+  <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">
+		<ion-item *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">
+			<h2>{{dispatch.name}}</h2>
+      <h3>{{dispatch.total_submissions}} submissions</h3>
+		</ion-item>
+	</ion-list>
+	<ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pull-max="200"></ion-refresher-content>
+  </ion-refresher>
+	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+		<ion-infinite-scroll-content></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>

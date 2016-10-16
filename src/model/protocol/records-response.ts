@@ -1,5 +1,5 @@
-import {Response} from "./response";
-export class RecordsResponse<T> extends Response{
+import {BaseResponse} from "./response";
+export class RecordsResponse<T> extends BaseResponse{
 	count: number;
 	total_count: number;
 	records: T[];

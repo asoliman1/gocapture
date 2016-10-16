@@ -1,3 +1,40 @@
 .search ion-icon{
 	color: grey;
 }
+
+.action{
+	line-height: 30px;
+    display: inline-block;
+    position: relative;
+    top: 0;
+    vertical-align: bottom;
+	margin-left: 10px;
+}
+
+.element{
+	line-height: 30px;
+    display: inline-block;
+    position: relative;
+    top: 0;
+    vertical-align: bottom;
+	float: right;
+}
+
+.forms.content-md .scroll-content{
+	padding-top:56px !important;
+    border-top: none;
+}
+
+.forms.content-ios .scroll-content{    
+	padding-top:44px !important;
+    border-top: none;
+}
+
+ion-refresher{
+    top: 55px;
+}
+
+.sync-list h3{
+    display: inline-block;
+    vertical-align: bottom;
+}

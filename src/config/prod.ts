@@ -1,10 +1,12 @@
 import {Config} from "./";
-const CONFIG = {
-	serverUrl: "https://prod.leadliaison.com"
+const CFG = {
+	serverUrl: "https://prod.leadliaison.com",
+	androidGcmId: "668502260026"
 };
 
 export function setupConfig(){
-	for(let field in CONFIG){
-		Config[field] = CONFIG[field];
+	for(var field in CFG){
+		var val = CFG[field];
+		Config[field] = val;
 	}
 }
