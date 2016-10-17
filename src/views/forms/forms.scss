@@ -20,21 +20,27 @@
 	float: right;
 }
 
-.forms.content-md .scroll-content{
-	padding-top:56px !important;
-    border-top: none;
-}
-
-.forms.content-ios .scroll-content{    
-	padding-top:44px !important;
-    border-top: none;
-}
-
 ion-refresher{
-    top: 55px;
+
 }
 
 .sync-list h3{
     display: inline-block;
     vertical-align: bottom;
+}
+
+.forms.content-md .fixed-content{
+	margin-top: 56px !important;
+}
+
+.forms.content-md .scroll-content{
+	margin-top: 56px !important;
+}
+
+.forms.content-ios .fixed-content{
+	margin-top: 44px !important;
+}
+
+.forms.content-ios .scroll-content{
+	margin-top: 44px !important;
 }

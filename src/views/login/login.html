@@ -1,31 +1,38 @@
 <ion-content scroll="false" class="login">
-  <div class="top-content row">
-    <div class="col col-center">
-      <img>
-    </div>
-  </div>
-  <div class="bottom-content row">
-    <div class="col col-center">
-      <form>
-      <ion-list radio-group padding>
-        <ion-item>
-          <ion-label>Production</ion-label>
-          <ion-radio checked value="production"></ion-radio>
-        </ion-item>
-        <ion-item>
-          <ion-label>Demo</ion-label>
-          <ion-radio value="demo"></ion-radio>
-        </ion-item>
-      <ion-item>
-        <ion-input type="text" required placeholder="Authentication Code"></ion-input>
-      </ion-item>
-      <ion-item>
-        <button ion-button full large color="primary" (click)="onClick()">
-          Request Authentication
-        </button>
-      </ion-item>
+	<div class="top-content row" *ngIf="!doAuth">
+		<div class="col padding col-center">
+			<img [src]="user.customer_logo">
+		</div>
+	</div>
+	<div class="bottom-content row">
+		<div class="col col-center">
+			<form *ngIf="doAuth">
+				<ion-list radio-group padding>
+					<ion-item>
+						<ion-label>Production</ion-label>
+						<ion-radio checked value="production"></ion-radio>
+					</ion-item>
+					<ion-item>
+						<ion-label>Demo</ion-label>
+						<ion-radio value="demo"></ion-radio>
+					</ion-item>
+					<ion-item>
+						<ion-input type="text" name="authCode" required placeholder="Authentication Code" [(ngModel)]="authCode"></ion-input>
+					</ion-item>
+					<ion-item>
+						<button ion-button full large color="primary" (click)="onClick()">
+              Request Authentication
+            </button>
+					</ion-item>
+				</ion-list>
+			</form>
+      <ion-list padding *ngIf="!doAuth">
+					<ion-item>
+						<button ion-button full large color="secondary" (click)="onClick()">
+              Continue
+            </button>
+					</ion-item>
       </ion-list>
-      </form>
-    </div>
-  </div>
+		</div>
+	</div>
 </ion-content>

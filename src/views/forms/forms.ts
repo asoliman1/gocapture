@@ -10,9 +10,13 @@ import {
 import { Subscription } from "rxjs";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController } from 'ionic-angular';
-import { RESTClient, SyncClient } from "../../services";
+import { BussinessClient, SyncClient } from "../../services";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Form, SyncStatus } from "../../model";
+import { FormCapture} from "../form-capture";
+import { FormSummary} from "../form-summary";
+import { FormReview} from "../form-review";
+
 
 @Component({
   selector: 'forms',
@@ -64,16 +68,16 @@ export class Forms {
 
   constructor(private navCtrl: NavController, 
               private navParams: NavParams, 
-              private client: RESTClient, 
+              private client: BussinessClient,
               private zone: NgZone,
               private actionCtrl: ActionSheetController,
               private syncClient: SyncClient) {
-    this.doInfinite();
+    this.doRefresh();
   }
 
-  doRefresh(refresher){
+  doRefresh(refresher?){
     this.client.getForms().subscribe(forms => {
-      this.forms = forms.records;
+      this.forms = forms;
       if(refresher){
         refresher.complete();
       }
@@ -87,7 +91,7 @@ export class Forms {
 
   doInfinite(infiniteScroll?: InfiniteScroll) {
     this.client.getForms().subscribe(forms => {
-      this.forms = this.forms.concat(forms.records);
+      this.forms = this.forms.concat(forms);
       if(infiniteScroll){
         infiniteScroll.complete();
       }
@@ -103,12 +107,14 @@ export class Forms {
           icon: "magnet",
           handler: () => {
             console.log('capture clicked');
+            this.navCtrl.push(FormCapture, {form: form});
           }
         },{
           text: 'Review Submissions',
           icon: "eye",
           handler: () => {
             console.log('review clicked');
+            this.navCtrl.push(FormReview, {form: form});
           }
         },{
           text: 'Share',
@@ -121,6 +127,7 @@ export class Forms {
           icon: "megaphone",
           handler: () => {
             console.log('summary clicked');
+            this.navCtrl.push(FormSummary, {form: form});
           }
         },{
           text: 'Cancel',

@@ -36,11 +36,29 @@
         "phonegap-plugin-push": {
             "SENDER_ID": "716813832888",
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "$(PRODUCT_BUNDLE_IDENTIFIER)"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-app-version": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "$(PRODUCT_BUNDLE_IDENTIFIER)"
         }
     }
 }

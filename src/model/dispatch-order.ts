@@ -1,8 +1,6 @@
-export class DispatchOrder{
-	id : number;
-	name : string;
-	description : string;
-	form_id : number;
+import {BaseForm} from "./base-form";
+
+export class DispatchOrder extends BaseForm{
 	device_id : number;
 	prospect_id : number;
 	fields_values : {[key: string]: string};

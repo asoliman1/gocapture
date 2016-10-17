@@ -1,5 +1,5 @@
 export class AuthenticationRequest{
-	auth_type: string = "device";
+	auth_type: string = "device_form";
 	invitation_code: string;
 	device_name: string;
 	device_model: string;
@@ -7,5 +7,5 @@ export class AuthenticationRequest{
 	device_uuid: string;
 	device_os_version: string;
 	device_manufacture: string;
-	cordova: string;
+	cordova: number = 1;
 }

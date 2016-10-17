@@ -10,3 +10,17 @@
 // automatically applied to the <body> element in the app.
 //
 // App Shared Sass variables belong in app.variables.scss.
+
+.no-scroll {
+    scroll-content {
+        overflow-y: hidden;
+    }
+}
+
+.col-center{
+    text-align: center !important;
+}
+
+.padding{
+    padding: 1em !important;
+}

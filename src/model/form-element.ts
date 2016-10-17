@@ -15,5 +15,12 @@ export class FormElement{
 	default_value : string;
 	total_child : number;
 	options : any[];
-	mapping : any[];
+	mapping : ElementMapping[];
+}
+
+export class ElementMapping{
+	ll_field_id: string;
+	ll_field_unique_identifier: string;
+	ll_field_type: string;
+	ll_field_data_type: string;
 }

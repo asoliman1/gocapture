@@ -1,0 +1,8 @@
+<ion-row [formGroup]="group">
+	<ion-col *ngFor="let map of mapping">
+		<ion-item>
+			<ion-label stacked>{{map.label}}</ion-label>
+			<ion-input type="text" [attr.name]="map.id" [formControlName]="map.identifier"></ion-input>
+		</ion-item>
+	</ion-col>
+</ion-row>

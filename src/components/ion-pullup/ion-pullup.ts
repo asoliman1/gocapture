@@ -97,7 +97,7 @@ export class IonPullUpComponent  {
     this.maxHeight = this.maxHeight || 0;
   }
 
-  gOnChanges(changes: {[propertyName: string]: SimpleChange}) {
+  ngOnChanges(changes: {[propertyName: string]: SimpleChange}) {
     if (changes['pop']) { // fire your event
       
     }

@@ -17,13 +17,14 @@
   <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">
 		<ion-item *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">
 			<h2>{{dispatch.name}}</h2>
-      <h3>{{dispatch.total_submissions}} submissions</h3>
+     		<h2>{{dispatch.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="dispatch.total_hold > 0">{{dispatch.total_hold}} on Hold</span></h2>
+		
 		</ion-item>
 	</ion-list>
 	<ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content pull-max="200"></ion-refresher-content>
   </ion-refresher>
-	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">
 		<ion-infinite-scroll-content></ion-infinite-scroll-content>
-	</ion-infinite-scroll>
+	</ion-infinite-scroll-->
 </ion-content>

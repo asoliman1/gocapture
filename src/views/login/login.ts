@@ -1,23 +1,67 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-import { RESTClient } from "../../services";
-import { AuthenticationRequest } from "../../model/protocol";
+import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { BussinessClient } from "../../services";
+import { User } from "../../model";
 import { Main } from "../main";
 
 @Component({
-  selector: 'login',
-  templateUrl: 'login.html'
+	selector: 'login',
+	templateUrl: 'login.html'
 })
 export class Login {
 
-  constructor(private navCtrl: NavController, private navParams: NavParams, private client: RESTClient) {
+	doAuth: boolean = false;
+	authCode: string;
+	user: User = <any>{};
 
-  }
+	constructor(private navCtrl: NavController,
+		private navParams: NavParams,
+		private client: BussinessClient,
+		private loading: LoadingController,
+		private toast: ToastController) {
 
-  onClick(){
-    let req = new AuthenticationRequest();
-    this.client.authenticate(req).subscribe(reply => {
-      this.navCtrl.setRoot(Main);
-    })
-  }
+	}
+
+	ngOnInit() {
+		this.client.getRegistration()
+			.subscribe((user) => {
+				if (!user) {
+					this.doAuth = true;
+				} else {
+					this.user = user;
+				}
+			});
+	}
+
+	onClick() {
+		if (this.doAuth) {
+			if (!this.authCode) {
+				return;
+			}
+			let loader = this.loading.create({
+				content: "Authenticating..."
+			});
+			loader.present();
+			this.client.authenticate(this.authCode).subscribe(
+				data => {
+					loader.setContent(data.message);
+				},
+				err => {
+					loader.dismiss();
+					let toaster = this.toast.create({
+						message: err,
+						duration: 5000,
+						position: "top",
+						cssClass: "error"
+					});
+					toaster.present();
+				},
+				() => {
+					loader.dismiss();
+					this.navCtrl.setRoot(Main);
+				});
+		} else {
+			this.navCtrl.setRoot(Main);
+		}
+	}
 }
