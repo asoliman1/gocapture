@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.0.1</string>
+	<string>116</string>
 	<key>GCM_SENDER_ID</key>
 	<string>668502260026</string>
 	<key>IS_GCM_ENABLED</key>
@@ -52,6 +52,8 @@
 		<string>remote-notification</string>
 	</array>
 	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
