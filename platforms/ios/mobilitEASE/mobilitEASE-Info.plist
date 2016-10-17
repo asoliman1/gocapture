@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>116</string>
+	<string>117</string>
 	<key>GCM_SENDER_ID</key>
 	<string>668502260026</string>
 	<key>IS_GCM_ENABLED</key>
@@ -38,15 +38,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>MobiliTEASE would like to use the camera to capture business cards</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>MobiliTEASE would like to know your location when submitting completed forms for an event</string>
 	<key>NSMainNibFile</key>
 	<string></string>
 	<key>NSMainNibFile~ipad</key>
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>MobiliTEASE would like to store photos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
