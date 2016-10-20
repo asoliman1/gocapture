@@ -7,6 +7,9 @@ import { Dashboard } from "../views/dashboard";
 import { Forms } from "../views/forms";
 import { Dispatches } from "../views/dispatches";
 import { Settings } from "../views/settings";
+import { FormSummary } from "../views/form-summary";
+import { FormReview } from "../views/form-review";
+import { FormCapture } from "../views/form-capture";
 import { RESTClient, DBClient, PushClient, SyncClient } from "../services";
 import { IonPullUpComponent } from '../components/ion-pullup';
 
@@ -19,7 +22,10 @@ import { IonPullUpComponent } from '../components/ion-pullup';
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent
+    IonPullUpComponent,
+    FormSummary,
+    FormReview,
+    FormCapture
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -33,7 +39,10 @@ import { IonPullUpComponent } from '../components/ion-pullup';
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent
+    IonPullUpComponent,
+    FormSummary,
+    FormReview,
+    FormCapture
   ],
   providers: [
     DBClient,

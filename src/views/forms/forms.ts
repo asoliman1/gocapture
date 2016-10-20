@@ -13,6 +13,10 @@ import { NavController, NavParams, InfiniteScroll, ActionSheetController } from 
 import { RESTClient, SyncClient } from "../../services";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Form, SyncStatus } from "../../model";
+import { FormCapture} from "../form-capture";
+import { FormSummary} from "../form-summary";
+import { FormReview} from "../form-review";
+
 
 @Component({
   selector: 'forms',
@@ -103,12 +107,14 @@ export class Forms {
           icon: "magnet",
           handler: () => {
             console.log('capture clicked');
+            this.navCtrl.push(FormCapture, {form: form});
           }
         },{
           text: 'Review Submissions',
           icon: "eye",
           handler: () => {
             console.log('review clicked');
+            this.navCtrl.push(FormReview, {form: form});
           }
         },{
           text: 'Share',
@@ -121,6 +127,7 @@ export class Forms {
           icon: "megaphone",
           handler: () => {
             console.log('summary clicked');
+            this.navCtrl.push(FormSummary, {form: form});
           }
         },{
           text: 'Cancel',
