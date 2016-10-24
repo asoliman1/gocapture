@@ -4,6 +4,7 @@ import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse } from "../model/protocol";
+import { Device } from "ionic-native";
 
 @Injectable()
 export class RESTClientGood {
@@ -25,8 +26,13 @@ export class RESTClientGood {
 	 * 
 	 * @returns Observable
 	 */
-	public authenticate(request: AuthenticationRequest): Observable<User> {
-		return this.call<DataResponse<User>>("POST", "/authenticate.json", request)
+	public authenticate(req: AuthenticationRequest): Observable<User> {
+		req.device_platform = <any>Device.device.platform;
+		req.device_model = Device.device.model;
+		req.device_manufacture = Device.device.manufacturer;
+		req.device_os_version = Device.device.version;
+		req.device_uuid = Device.device.uuid;
+		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 		.map(resp => {
 			if (resp.status != "200") {
 				this.errorSource.error(resp);

@@ -21,11 +21,23 @@ export class RESTClient {
 	 * 
 	 * @returns Observable
 	 */
-	public authenticate(request: AuthenticationRequest): Observable<User> {
+	public authenticate(req: AuthenticationRequest): Observable<User> {
 		return new Observable<User>((responseObserver: Observer<User>) => {
 			setTimeout(()=>{
-				var response = new User();
-				responseObserver.next(response);
+				var user = new User();
+				user.access_token = "223412394816239874619287364819725348";
+				user.customer_account_name = "customer";
+				user.user_profile_picture = "http://a5.mzstatic.com/us/r30/Purple5/v4/5a/2e/e9/5a2ee9b3-8f0e-4f8b-4043-dd3e3ea29766/icon128-2x.png";
+				user.customer_logo = "https://3.bp.blogspot.com/-JhISDA9aj1Q/UTECr1GzirI/AAAAAAAAC2o/5qmvWZiCMRQ/s1600/Twitter.png";
+				user.user_name = "username";
+				user.customer_name = "customer 132";
+				user.email = "me@me.com";
+				user.first_name = "John";
+				user.id = 123;
+				user.is_active = 1;
+				user.last_name = "Mckenzie";
+				user.title = "Mr";
+				responseObserver.next(user);
 				responseObserver.complete();
 			}, 100);
 		});

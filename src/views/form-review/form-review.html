@@ -7,16 +7,47 @@
 		</ion-buttons>
 		<ion-title>{{form.name}}</ion-title>
 	</ion-navbar>
+	<ion-grid>
+		<ion-row>
+			<ion-col width-50>
+				<h4>Touch an entry to edit. Check red to skip upload</h4>
+			</ion-col>
+			<ion-col width-50><img src="http://placehold.it/200x100" /></ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">
+					<ion-segment-button value="" >
+						All
+					</ion-segment-button>
+					<ion-segment-button value="1" >
+						Submitted
+					</ion-segment-button>
+					<ion-segment-button value="2" >
+						On Hold
+					</ion-segment-button>
+					<ion-segment-button value="3" >
+						Blocked
+					</ion-segment-button>
+				</ion-segment>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 </ion-header>
 
 <ion-content class="form-summary">
-	<ion-grid>
-		<ion-row>
-			<ion-col width-50><h4>Touch an entry to edit. Check red to skip upload</h4></ion-col>
-			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>
-		</ion-row>
-		<ion-row>
-			
-		</ion-row>
-	</ion-grid>
+	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">
+		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
+			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
+			<h3>{{submission.first_name }}</h3>
+			<h3>{{submission.email}}</h3>
+			<h3>{{submission.email}}</h3>
+			<button ion-button item-right icon-only clear>
+				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
+			</button>
+		</ion-item>
+	</ion-list>
+	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+		<ion-infinite-scroll-content></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>

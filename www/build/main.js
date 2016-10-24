@@ -95765,9 +95765,14 @@ var RESTClientGood = (function () {
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.authenticate = function (request) {
+    RESTClientGood.prototype.authenticate = function (req) {
         var _this = this;
-        return this.call("POST", "/authenticate.json", request)
+        req.device_platform = Device.device.platform;
+        req.device_model = Device.device.model;
+        req.device_manufacture = Device.device.manufacturer;
+        req.device_os_version = Device.device.version;
+        req.device_uuid = Device.device.uuid;
+        return this.call("POST", "/authenticate.json", req)
             .map(function (resp) {
             if (resp.status != "200") {
                 _this.errorSource.error(resp);
@@ -95944,6 +95949,15 @@ var Form$1 = (function () {
     return Form;
 }());
 
+var SubmissionStatus;
+(function (SubmissionStatus) {
+    SubmissionStatus[SubmissionStatus["Submitted"] = 1] = "Submitted";
+    SubmissionStatus[SubmissionStatus["OnHold"] = 2] = "OnHold";
+    SubmissionStatus[SubmissionStatus["Blocked"] = 3] = "Blocked";
+    SubmissionStatus[SubmissionStatus["ToSubmit"] = 4] = "ToSubmit";
+    SubmissionStatus[SubmissionStatus["Submitting"] = 5] = "Submitting";
+})(SubmissionStatus || (SubmissionStatus = {}));
+
 var BaseResponse = (function () {
     function BaseResponse() {
     }
@@ -95979,6 +95993,7 @@ var RecordsResponse = (function (_super) {
 var AuthenticationRequest = (function () {
     function AuthenticationRequest() {
         this.auth_type = "device";
+        this.cordova = 1;
     }
     return AuthenticationRequest;
 }());
@@ -96001,11 +96016,23 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.authenticate = function (request) {
+    RESTClient.prototype.authenticate = function (req) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
-                var response = new User();
-                responseObserver.next(response);
+                var user = new User();
+                user.access_token = "223412394816239874619287364819725348";
+                user.customer_account_name = "customer";
+                user.user_profile_picture = "http://a5.mzstatic.com/us/r30/Purple5/v4/5a/2e/e9/5a2ee9b3-8f0e-4f8b-4043-dd3e3ea29766/icon128-2x.png";
+                user.customer_logo = "https://3.bp.blogspot.com/-JhISDA9aj1Q/UTECr1GzirI/AAAAAAAAC2o/5qmvWZiCMRQ/s1600/Twitter.png";
+                user.user_name = "username";
+                user.customer_name = "customer 132";
+                user.email = "me@me.com";
+                user.first_name = "John";
+                user.id = 123;
+                user.is_active = 1;
+                user.last_name = "Mckenzie";
+                user.title = "Mr";
+                responseObserver.next(user);
                 responseObserver.complete();
             }, 100);
         });
@@ -96146,11 +96173,15 @@ var __metadata$5 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var DBClient = (function () {
-    function DBClient() {
-        var _this = this;
+    /**
+     *
+     */
+    function DBClient(platform) {
+        this.platform = platform;
         this.tables = [
             {
                 name: 'forms',
+                master: false,
                 columns: [
                     { name: 'id', type: 'integer primary key' },
                     { name: 'name', type: 'text' },
@@ -96175,6 +96206,7 @@ var DBClient = (function () {
             },
             {
                 name: 'submissions',
+                master: false,
                 columns: [
                     { name: 'id', type: 'integer primary key' },
                     { name: 'title', type: 'text' },
@@ -96193,6 +96225,7 @@ var DBClient = (function () {
             },
             {
                 name: 'notifications',
+                master: false,
                 columns: [
                     { name: 'id', type: 'integer primary key' },
                     { name: 'data', type: 'text' },
@@ -96206,6 +96239,7 @@ var DBClient = (function () {
             },
             {
                 name: 'contacts',
+                master: false,
                 columns: [
                     { name: 'id', type: 'integer primary key' },
                     { name: 'data', type: 'text' },
@@ -96220,13 +96254,20 @@ var DBClient = (function () {
             },
             {
                 name: 'configuration',
+                master: true,
                 columns: [
                     { name: 'key', type: 'text primary key' },
                     { name: 'value', type: 'text' }
-                ]
+                ],
+                queries: {
+                    "select": "SELECT * FROM configuration where key =(?)",
+                    "update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
+                    "delete": "DELETE FROM configuration WHERE key = (?)"
+                }
             },
             {
                 name: "org_master",
+                master: true,
                 columns: [
                     { name: 'id', type: 'integer primary key' },
                     { name: 'name', type: 'text' },
@@ -96245,33 +96286,262 @@ var DBClient = (function () {
                     { name: 'operatorLastName', type: 'text' }
                 ],
                 queries: {
-                    "create": "",
-                    "update": "",
-                    "delete": ""
+                    "select": "SELECT * from org_master WHERE active = 1;",
+                    "update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName) values  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "delete": "DELETE from org_master where id = ?;"
                 }
             }
         ];
-        this.db = new SQLite();
-        this.tables.forEach(function (element) {
-            //do something
+        this.masterDb = this.initializeDb(platform, "tradeshow.db", true);
+    }
+    /**
+     *
+     */
+    DBClient.prototype.setupWorkDb = function (dbName) {
+        this.workDb = this.initializeDb(this.platform, dbName + ".db", false);
+    };
+    /**
+     *
+     */
+    DBClient.prototype.getConfig = function (key) {
+        return this.getSingle(this.masterDb, "configuration", [key])
+            .map(function (data) {
+            return data.value;
         });
-        this.db.openDatabase({
-            name: 'tradeshow.db',
+    };
+    /**
+     *
+     */
+    DBClient.prototype.saveConfig = function (key, value) {
+        return this.save(this.masterDb, "configuration", [key, value]);
+    };
+    /**
+     *
+     */
+    DBClient.prototype.deleteConfig = function (key) {
+        return this.remove(this.masterDb, "configuration", [key]);
+    };
+    /**
+     *
+     */
+    DBClient.prototype.getRegistration = function () {
+        return this.getSingle(this.masterDb, "org_master", null)
+            .map(function (data) {
+            if (data) {
+                var user = new User();
+                user.access_token = data.token;
+                user.customer_account_name = data.custAccName;
+                user.user_profile_picture = data.avatar;
+                user.customer_logo = data.logo;
+                user.user_name = data.username;
+                user.customer_name = data.name;
+                user.db = data.db;
+                user.email = data.email;
+                user.first_name = data.operatorFirstName;
+                user.id = data.id;
+                user.is_active = data.active;
+                user.last_name = data.operatorLastName;
+                user.title = data.title;
+                return user;
+            }
+            return null;
+        });
+    };
+    /**
+     *
+     */
+    DBClient.prototype.saveRegistration = function (user) {
+        user.db = user.customer_name.replace(/\s*/g, '');
+        return this.save(this.masterDb, "org_master", [
+            user.id,
+            user.customer_name,
+            user.first_name + ' ' + user.last_name,
+            1,
+            user.db,
+            1,
+            user.access_token,
+            user.user_profile_picture,
+            user.customer_logo,
+            user.customer_account_name,
+            user.user_name,
+            user.email,
+            user.title,
+            user.first_name,
+            user.last_name
+        ]);
+    };
+    /**
+     *
+     */
+    DBClient.prototype.deleteRegistration = function (authId) {
+        return this.remove(this.masterDb, "org_master", [authId]);
+    };
+    DBClient.prototype.remove = function (db, table, parameters) {
+        var _this = this;
+        return new Observable$1(function (responseObserver) {
+            db.executeSql(_this.getQuery(table, "delete"), parameters)
+                .then(function (data) {
+                if (data.rowsAffected == 1) {
+                    responseObserver.next(true);
+                    responseObserver.complete();
+                }
+                else {
+                    responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+                }
+            }, function (err) {
+                responseObserver.error("An error occured: " + err);
+            });
+        });
+    };
+    DBClient.prototype.save = function (db, table, parameters) {
+        var _this = this;
+        return new Observable$1(function (responseObserver) {
+            db.executeSql(_this.getQuery(table, "update"), parameters)
+                .then(function (data) {
+                if (data.rowsAffected == 1) {
+                    responseObserver.next(true);
+                    responseObserver.complete();
+                }
+                else {
+                    responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+                }
+            }, function (err) {
+                responseObserver.error("An error occured: " + err);
+            });
+        });
+    };
+    DBClient.prototype.getSingle = function (db, table, parameters) {
+        var _this = this;
+        return new Observable$1(function (responseObserver) {
+            db.executeSql(_this.getQuery(table, "select"), parameters)
+                .then(function (data) {
+                if (data.rows.length == 1) {
+                    responseObserver.next(data.rows.item(0));
+                    responseObserver.complete();
+                }
+                else if (data.rows.length == 0) {
+                    responseObserver.next(null);
+                    responseObserver.complete();
+                }
+                else {
+                    responseObserver.error("More than one entry found");
+                }
+            }, function (err) {
+                responseObserver.error("An error occured: " + err);
+            });
+        });
+    };
+    DBClient.prototype.getMultiple = function (db, table, parameters) {
+        var _this = this;
+        return new Observable$1(function (responseObserver) {
+            db.executeSql(_this.getQuery(table, "select"), parameters)
+                .then(function (data) {
+                var resp = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    resp.push(data.rows.item(i));
+                }
+                responseObserver.next(resp);
+                responseObserver.complete();
+            }, function (err) {
+                responseObserver.error("An error occured: " + err);
+            });
+        });
+    };
+    DBClient.prototype.initializeDb = function (platform, name, master) {
+        var _this = this;
+        var db = this.getDb(platform);
+        db.openDatabase({
+            name: name,
             location: 'default' // the location field is required
         }).then(function () {
-            _this.db.executeSql('create table danceMoves(name VARCHAR(32))', {}).then(function () {
-            }, function (err) {
-                console.error('Unable to execute sql: ', err);
-            });
+            _this.setup(db, master);
         }, function (err) {
             console.error('Unable to open database: ', err);
         });
-    }
+        return db;
+    };
+    DBClient.prototype.getDb = function (platform) {
+        if (platform.is("cordova")) {
+            return new SQLite();
+        }
+        return new LocalSql();
+    };
+    DBClient.prototype.setup = function (db, master) {
+        var _this = this;
+        var index = 0;
+        var handler = function () {
+            if (index >= _this.tables.length) {
+                return;
+            }
+            while (_this.tables[index].master != master) {
+                index++;
+                if (index >= _this.tables.length) {
+                    return;
+                }
+            }
+            var query = _this.makeCreateTableQuery(_this.tables[index]);
+            index++;
+            db.executeSql(query).then(handler, function (err) {
+                console.error('Unable to execute sql: ', err);
+            });
+        };
+        handler();
+    };
+    DBClient.prototype.makeCreateTableQuery = function (table) {
+        var columns = [];
+        table.columns.forEach(function (col) {
+            columns.push(col.name + ' ' + col.type);
+        });
+        var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
+        return query;
+    };
+    DBClient.prototype.getQuery = function (table, type) {
+        for (var i = 0; i < this.tables.length; i++) {
+            if (this.tables[i].name == table) {
+                return this.tables[i].queries[type];
+            }
+        }
+        return "";
+    };
     DBClient = __decorate$112([
         Injectable(), 
-        __metadata$5('design:paramtypes', [])
+        __metadata$5('design:paramtypes', [Platform])
     ], DBClient);
     return DBClient;
+}());
+var LocalSql = (function () {
+    function LocalSql() {
+    }
+    LocalSql.prototype.openDatabase = function (opts) {
+        var _this = this;
+        var name = opts.name;
+        var description = opts.name;
+        var size = 2 * 1024 * 1024;
+        var version = "1.0";
+        return new Promise(function (resolve, reject) {
+            _this.db = window["openDatabase"](name, version, description, size, function (db) {
+                resolve(null);
+            });
+            setTimeout(function () {
+                resolve(null);
+            }, 1);
+        });
+    };
+    LocalSql.prototype.executeSql = function (query, args) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this.db.transaction(function (t) {
+                t.executeSql(query, args, function (t, r) {
+                    resolve(r);
+                }, function (tx, err) {
+                    console.log(err);
+                    reject(err);
+                });
+            });
+        });
+    };
+    
+    return LocalSql;
 }());
 
 /**
@@ -96885,7 +97155,7 @@ var FormSummary = (function () {
     };
     FormSummary = __decorate$120([
         Component({
-            selector: 'form-summary',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><h1>Summary</h1></ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<p>{{form.summary}}</p>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/
+            selector: 'form-summary',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><h1>Summary</h1></ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n	<ion-scroll scrollY="true">\n\n		<p>{{form.summary}}</p>\n\n	</ion-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/
         }), 
         __metadata$13('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormSummary);
@@ -96908,15 +97178,73 @@ var FormReview = (function () {
         this.client = client;
         this.zone = zone;
         this.form = new Form$1();
+        this.filter = "";
+        this.submissions = [
+            {
+                first_name: "sdfasdf",
+                last_name: "bfgbdfgdf",
+                email: "me@me.com",
+                status: 1
+            },
+            {
+                first_name: "hfghnc",
+                last_name: "dhjmghj",
+                email: "me@me.com",
+                status: 2
+            }, {
+                first_name: "eertherth",
+                last_name: "fertherth",
+                email: "me@me.com",
+                status: 3
+            }, {
+                first_name: "dfghdfghg",
+                last_name: "hdghghj",
+                email: "me@me.com",
+                status: 4
+            }, {
+                first_name: "fhji",
+                last_name: "jfghjjers",
+                email: "me@me.com",
+                status: 2
+            }, {
+                first_name: "ksdfgeht",
+                last_name: "lthrshsghsh",
+                email: "me@me.com",
+                status: 4
+            },
+        ];
     }
     FormReview.prototype.ionViewWillEnter = function () {
         this.form = this.navParams.get("form");
     };
+    FormReview.prototype.getColor = function (submission) {
+        var result = "";
+        switch (submission.status) {
+            case SubmissionStatus.OnHold:
+                result = "yellow";
+                break;
+            case SubmissionStatus.Blocked:
+                result = "danger";
+                break;
+            case SubmissionStatus.ToSubmit:
+                result = "secondary";
+                break;
+            case SubmissionStatus.Submitted:
+                result = "light";
+                break;
+        }
+        return result;
+    };
+    FormReview.prototype.goToEntry = function (submission) {
+        this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+    };
     FormReview.prototype.doRefresh = function (refresher) {
+    };
+    FormReview.prototype.doInfinite = function (refresher) {
     };
     FormReview = __decorate$121([
         Component({
-            selector: 'form-review',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><h4>Touch an entry to edit. Check red to skip upload</h4></ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/
+            selector: 'form-review',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50>\n\n				<h4>Touch an entry to edit. Check red to skip upload</h4>\n\n			</ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100" /></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<ion-col>\n\n				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">\n\n					<ion-segment-button value="" >\n\n						All\n\n					</ion-segment-button>\n\n					<ion-segment-button value="1" >\n\n						Submitted\n\n					</ion-segment-button>\n\n					<ion-segment-button value="2" >\n\n						On Hold\n\n					</ion-segment-button>\n\n					<ion-segment-button value="3" >\n\n						Blocked\n\n					</ion-segment-button>\n\n				</ion-segment>\n\n			</ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">\n\n		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">\n\n			<h1>{{submission.first_name + " " + submission.last_name}}</h1>\n\n			<h3>{{submission.first_name }}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<button ion-button item-right icon-only clear>\n\n				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>\n\n			</button>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/
         }), 
         __metadata$14('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormReview);
@@ -97091,7 +97419,7 @@ var Forms = (function () {
     ], Forms.prototype, "pullup", void 0);
     Forms = __decorate$117([
         Component({
-            selector: 'forms',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="forms">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="forms" approxItemHeight="50px">\n\n		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">\n\n			<h2>{{form.name}}</h2>\n\n      <h3>{{form.total_submissions}} submissions</h3>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>\n\n\n\n\n\n<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == \'visible\'" (onCollapse)="footerCollapsed()">\n\n		<ion-toolbar #toolbar>\n\n    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>\n\n			<div class="element">{{currentSyncForm}}</div>\n\n  </ion-toolbar>\n\n  <ion-content>\n\n    <ion-list class="sync-list">\n\n      <ion-item *ngFor="let status of statuses" icon-left>\n\n        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>\n\n				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>\n\n        <h2 item-right>{{status.formName}}</h2>\n\n      </ion-item>\n\n    </ion-list>\n\n  </ion-content>\n\n</ion-pullup>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/,
+            selector: 'forms',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="forms">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="forms" approxItemHeight="75px">\n\n		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">\n\n			<h1>{{form.name}}</h1>\n\n      <h2>{{form.total_submissions}} submissions</h2>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>\n\n\n\n\n\n<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == \'visible\'" (onCollapse)="footerCollapsed()">\n\n		<ion-toolbar #toolbar>\n\n    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>\n\n			<div class="element">{{currentSyncForm}}</div>\n\n  </ion-toolbar>\n\n  <ion-content>\n\n    <ion-list class="sync-list">\n\n      <ion-item *ngFor="let status of statuses" icon-left>\n\n        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>\n\n				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>\n\n        <h2 item-right>{{status.formName}}</h2>\n\n      </ion-item>\n\n    </ion-list>\n\n  </ion-content>\n\n</ion-pullup>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/,
             animations: [
                 // Define an animation that adjusts the opactiy when a new item is created
                 //  in the DOM. We use the 'visible' string as the hard-coded value in the 
@@ -97261,23 +97589,50 @@ var __metadata$2 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Login = (function () {
-    function Login(navCtrl, navParams, client) {
+    function Login(navCtrl, navParams, client, db) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.client = client;
+        this.db = db;
+        this.doAuth = false;
+        this.user = {};
     }
+    Login.prototype.ngOnInit = function () {
+        var _this = this;
+        this.db.getRegistration()
+            .subscribe(function (user) {
+            if (!user) {
+                _this.doAuth = true;
+            }
+            else {
+                _this.user = user;
+            }
+        });
+    };
     Login.prototype.onClick = function () {
         var _this = this;
-        var req = new AuthenticationRequest();
-        this.client.authenticate(req).subscribe(function (reply) {
-            _this.navCtrl.setRoot(Main);
-        });
+        if (this.doAuth) {
+            if (!this.authCode) {
+                return;
+            }
+            var req = new AuthenticationRequest();
+            req.invitation_code = this.authCode;
+            req.device_name = this.authCode;
+            this.client.authenticate(req).subscribe(function (reply) {
+                _this.db.saveRegistration(reply).subscribe(function (done) {
+                    _this.navCtrl.setRoot(Main);
+                });
+            });
+        }
+        else {
+            this.navCtrl.setRoot(Main);
+        }
     };
     Login = __decorate$109([
         Component({
-            selector: 'login',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/'<ion-content scroll="false" class="login">\n\n  <div class="top-content row">\n\n    <div class="col col-center">\n\n      <img>\n\n    </div>\n\n  </div>\n\n  <div class="bottom-content row">\n\n    <div class="col col-center">\n\n      <form>\n\n      <ion-list radio-group padding>\n\n        <ion-item>\n\n          <ion-label>Production</ion-label>\n\n          <ion-radio checked value="production"></ion-radio>\n\n        </ion-item>\n\n        <ion-item>\n\n          <ion-label>Demo</ion-label>\n\n          <ion-radio value="demo"></ion-radio>\n\n        </ion-item>\n\n      <ion-item>\n\n        <ion-input type="text" required placeholder="Authentication Code"></ion-input>\n\n      </ion-item>\n\n      <ion-item>\n\n        <button ion-button full large color="primary" (click)="onClick()">\n\n          Request Authentication\n\n        </button>\n\n      </ion-item>\n\n      </ion-list>\n\n      </form>\n\n    </div>\n\n  </div>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/
+            selector: 'login',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/'<ion-content scroll="false" class="login">\n\n	<div class="top-content row">\n\n		<div class="col padding col-center" *ngIf="!doAuth">\n\n			<img [src]="user.customer_logo">\n\n		</div>\n\n	</div>\n\n	<div class="bottom-content row">\n\n		<div class="col col-center">\n\n			<form *ngIf="doAuth">\n\n				<ion-list radio-group padding>\n\n					<ion-item>\n\n						<ion-label>Production</ion-label>\n\n						<ion-radio checked value="production"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Demo</ion-label>\n\n						<ion-radio value="demo"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-input type="text" name="authCode" required placeholder="Authentication Code" [(ngModel)]="authCode"></ion-input>\n\n					</ion-item>\n\n					<ion-item>\n\n						<button ion-button full large color="primary" (click)="onClick()">\n\n              Request Authentication\n\n            </button>\n\n					</ion-item>\n\n				</ion-list>\n\n			</form>\n\n      <ion-list padding *ngIf="!doAuth">\n\n					<ion-item>\n\n						<button ion-button full large color="secondary" (click)="onClick()">\n\n              Continue\n\n            </button>\n\n					</ion-item>\n\n      </ion-list>\n\n		</div>\n\n	</div>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/
         }), 
-        __metadata$2('design:paramtypes', [NavController, NavParams, RESTClient])
+        __metadata$2('design:paramtypes', [NavController, NavParams, RESTClient, DBClient])
     ], Login);
     return Login;
 }());
@@ -97292,8 +97647,9 @@ var __metadata$1 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var MyApp = (function () {
-    function MyApp(platform) {
+    function MyApp(platform, db) {
         this.platform = platform;
+        this.db = db;
         this.initializeApp();
         this.rootPage = Login;
     }
@@ -97308,9 +97664,41 @@ var MyApp = (function () {
         Component({
             template: '<ion-nav [root]="rootPage"></ion-nav>'
         }), 
-        __metadata$1('design:paramtypes', [Platform])
+        __metadata$1('design:paramtypes', [Platform, DBClient])
     ], MyApp);
     return MyApp;
+}());
+
+var __decorate$124 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$17 = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var ArrayFilterPipe = (function () {
+    function ArrayFilterPipe() {
+    }
+    ArrayFilterPipe.prototype.transform = function (items, conditions) {
+        return items.filter(function (item) {
+            for (var field in conditions) {
+                if (conditions[field] && item[field] + "" !== conditions[field] + "") {
+                    return false;
+                }
+            }
+            return true;
+        });
+    };
+    ArrayFilterPipe = __decorate$124([
+        Pipe({
+            name: "filter",
+            pure: false
+        }), 
+        __metadata$17('design:paramtypes', [])
+    ], ArrayFilterPipe);
+    return ArrayFilterPipe;
 }());
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -97338,7 +97726,8 @@ var AppModule = (function () {
                 IonPullUpComponent,
                 FormSummary,
                 FormReview,
-                FormCapture
+                FormCapture,
+                ArrayFilterPipe
             ],
             imports: [
                 IonicModule.forRoot(MyApp)

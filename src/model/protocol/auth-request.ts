@@ -7,5 +7,5 @@ export class AuthenticationRequest{
 	device_uuid: string;
 	device_os_version: string;
 	device_manufacture: string;
-	cordova: string;
+	cordova: number = 1;
 }

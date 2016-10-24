@@ -12,6 +12,7 @@ import { FormReview } from "../views/form-review";
 import { FormCapture } from "../views/form-capture";
 import { RESTClient, DBClient, PushClient, SyncClient } from "../services";
 import { IonPullUpComponent } from '../components/ion-pullup';
+import { ArrayFilterPipe } from '../pipes/filter-pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { IonPullUpComponent } from '../components/ion-pullup';
     IonPullUpComponent,
     FormSummary,
     FormReview,
-    FormCapture
+    FormCapture,
+    ArrayFilterPipe
   ],
   imports: [
     IonicModule.forRoot(MyApp)
