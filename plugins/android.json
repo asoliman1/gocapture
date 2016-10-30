@@ -45,6 +45,9 @@
         },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-app-version": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {

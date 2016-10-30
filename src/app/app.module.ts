@@ -10,7 +10,7 @@ import { Settings } from "../views/settings";
 import { FormSummary } from "../views/form-summary";
 import { FormReview } from "../views/form-review";
 import { FormCapture } from "../views/form-capture";
-import { RESTClient, DBClient, PushClient, SyncClient } from "../services";
+import { RESTClient, DBClient, PushClient, SyncClient, BussinessClient } from "../services";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 
@@ -50,7 +50,8 @@ import { ArrayFilterPipe } from '../pipes/filter-pipe';
     DBClient,
     RESTClient,
     PushClient,
-    SyncClient
+    SyncClient,
+	BussinessClient
   ]
 })
 export class AppModule { }

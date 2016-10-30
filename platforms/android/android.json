@@ -83,6 +83,10 @@
                         {
                             "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"AppVersion\"><param name=\"android-package\" value=\"uk.co.whiteoctober.cordova.AppVersion\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -225,6 +229,9 @@
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-app-version": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
@@ -537,6 +544,14 @@
             "clobbers": [
                 "device"
             ]
+        },
+        {
+            "id": "cordova-plugin-app-version.AppVersionPlugin",
+            "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
+            "pluginId": "cordova-plugin-app-version",
+            "clobbers": [
+                "cordova.getAppVersion"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -552,6 +567,7 @@
         "phonegap-plugin-push": "1.8.2",
         "cordova-plugin-file": "4.3.0",
         "cordova-plugin-file-transfer": "1.6.0",
-        "cordova-plugin-device": "1.1.3"
+        "cordova-plugin-device": "1.1.3",
+        "cordova-plugin-app-version": "0.1.9"
     }
 }

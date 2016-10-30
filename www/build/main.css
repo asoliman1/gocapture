@@ -28267,17 +28267,13 @@ ion-pullup ion-footer ion-toolbar .toolbar-background {
   float: right;
 }
 
-.forms.content-md .scroll-content {
-  border-top: none;
-}
-
-.forms.content-ios .scroll-content {
-  border-top: none;
-}
-
 .sync-list h3 {
   display: inline-block;
   vertical-align: bottom;
+}
+
+.login {
+  background-color: #f4f4f4;
 }
 
 .top-content {

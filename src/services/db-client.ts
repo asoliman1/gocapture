@@ -145,6 +145,20 @@ export class DBClient {
 			return data.value;
 		});
 	}
+
+	/**
+	 * 
+	 */
+	public getAllConfig() : Observable<Object>{
+		return this.getAll<any[]>(this.masterDb, "configuration")
+		.map((data)=>{
+			let resp = {};
+			data.forEach((entry : any)=>{
+				resp[entry.key] = entry.value;
+			});
+			return resp;
+		});
+	}
 	/**
 	 * 
 	 */
@@ -267,6 +281,22 @@ export class DBClient {
 	public getMultiple<T>(db: SQLite, table: string, parameters: any[]) : Observable<T[]>{
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
 			db.executeSql(this.getQuery(table, "select"), parameters)
+			.then((data)=>{
+				var resp = [];
+				for(let i = 0; i < data.rows.length; i++){
+					resp.push(data.rows.item(i));
+				}
+				responseObserver.next(resp);
+				responseObserver.complete();
+			}, (err) => {
+				responseObserver.error("An error occured: " + err);
+			});
+		});
+	}
+
+	public getAll<T>(db: SQLite, table: string) : Observable<T[]>{
+		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
+			db.executeSql("select * from " + table, null)
 			.then((data)=>{
 				var resp = [];
 				for(let i = 0; i < data.rows.length; i++){

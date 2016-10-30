@@ -96312,6 +96312,19 @@ var DBClient = (function () {
     /**
      *
      */
+    DBClient.prototype.getAllConfig = function () {
+        return this.getAll(this.masterDb, "configuration")
+            .map(function (data) {
+            var resp = {};
+            data.forEach(function (entry) {
+                resp[entry.key] = entry.value;
+            });
+            return resp;
+        });
+    };
+    /**
+     *
+     */
     DBClient.prototype.saveConfig = function (key, value) {
         return this.save(this.masterDb, "configuration", [key, value]);
     };
@@ -96435,6 +96448,21 @@ var DBClient = (function () {
         var _this = this;
         return new Observable$1(function (responseObserver) {
             db.executeSql(_this.getQuery(table, "select"), parameters)
+                .then(function (data) {
+                var resp = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    resp.push(data.rows.item(i));
+                }
+                responseObserver.next(resp);
+                responseObserver.complete();
+            }, function (err) {
+                responseObserver.error("An error occured: " + err);
+            });
+        });
+    };
+    DBClient.prototype.getAll = function (db, table) {
+        return new Observable$1(function (responseObserver) {
+            db.executeSql("select * from " + table, null)
                 .then(function (data) {
                 var resp = [];
                 for (var i = 0; i < data.rows.length; i++) {
@@ -96800,13 +96828,81 @@ var SyncClient$$1 = (function () {
     return SyncClient$$1;
 }());
 
-var __decorate$116 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$115 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$9 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$8 = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var BussinessClient$$1 = (function () {
+    function BussinessClient$$1(db, rest) {
+        this.db = db;
+        this.rest = rest;
+    }
+    BussinessClient$$1.prototype.getRegistration = function () {
+        var _this = this;
+        return new Observable$1(function (obs) {
+            _this.db.getRegistration()
+                .subscribe(function (user) {
+                if (user) {
+                    _this.db.setupWorkDb(user.db);
+                }
+                obs.next(user);
+                obs.complete();
+            });
+        });
+    };
+    BussinessClient$$1.prototype.authenticate = function (authCode) {
+        var _this = this;
+        return new Observable$1(function (obs) {
+            var req = new AuthenticationRequest();
+            req.invitation_code = authCode;
+            req.device_name = authCode;
+            _this.rest.authenticate(req).subscribe(function (reply) {
+                var fileTransfer = new Transfer();
+                var ext = reply.user_profile_picture.split('.').pop();
+                var target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
+                fileTransfer.download(reply.user_profile_picture, target, true, {})
+                    .then(function (result) {
+                    reply.user_profile_picture = result.nativeURL;
+                    ext = reply.customer_logo.split('.').pop();
+                    target = cordova.file.dataDirectory + 'leadliaison/profile/logo.' + ext;
+                    fileTransfer.download(reply.user_profile_picture, target, true, {})
+                        .then(function (result) {
+                        reply.customer_logo = result.nativeURL;
+                        _this.db.saveRegistration(reply).subscribe(function (done) {
+                            _this.db.setupWorkDb(reply.db);
+                            obs.next(reply);
+                            obs.complete();
+                        });
+                    })
+                        .catch(function (err) {
+                        obs.error("There was an error retrieving the profile picture");
+                    })
+                        .catch(function (err) {
+                        obs.error("There was an error retrieving the logo picture");
+                    });
+                });
+            });
+        });
+    };
+    BussinessClient$$1 = __decorate$115([
+        Injectable(), 
+        __metadata$8('design:paramtypes', [DBClient, RESTClient])
+    ], BussinessClient$$1);
+    return BussinessClient$$1;
+}());
+
+var __decorate$117 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$10 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Dashboard = (function () {
@@ -96814,11 +96910,11 @@ var Dashboard = (function () {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
     }
-    Dashboard = __decorate$116([
+    Dashboard = __decorate$117([
         Component({
             selector: 'dashboard',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dashboard\dashboard.html"*/'<ion-header>\n\n  <ion-navbar color="orange">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>Home</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content padding>\n\n  <h3>Good things will happen here</h3>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dashboard\dashboard.html"*/
         }), 
-        __metadata$9('design:paramtypes', [NavController, NavParams])
+        __metadata$10('design:paramtypes', [NavController, NavParams])
     ], Dashboard);
     return Dashboard;
 }());
@@ -96837,13 +96933,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-var __decorate$118 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$119 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$11 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$12 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var IonPullUpFooterState;
@@ -97043,70 +97139,70 @@ var IonPullUpComponent = (function () {
             });
         }
     };
-    __decorate$118([
+    __decorate$119([
         Input(), 
-        __metadata$11('design:type', Number)
+        __metadata$12('design:type', Number)
     ], IonPullUpComponent.prototype, "state", void 0);
-    __decorate$118([
+    __decorate$119([
         Output(), 
-        __metadata$11('design:type', EventEmitter)
+        __metadata$12('design:type', EventEmitter)
     ], IonPullUpComponent.prototype, "stateChange", void 0);
-    __decorate$118([
+    __decorate$119([
         Input(), 
-        __metadata$11('design:type', Number)
+        __metadata$12('design:type', Number)
     ], IonPullUpComponent.prototype, "initialState", void 0);
-    __decorate$118([
+    __decorate$119([
         // TODO implemment
         Input(), 
-        __metadata$11('design:type', Number)
+        __metadata$12('design:type', Number)
     ], IonPullUpComponent.prototype, "defaultBehavior", void 0);
-    __decorate$118([
+    __decorate$119([
         // TODO implemment
         Input(), 
-        __metadata$11('design:type', Number)
+        __metadata$12('design:type', Number)
     ], IonPullUpComponent.prototype, "maxHeight", void 0);
-    __decorate$118([
+    __decorate$119([
         Output(), 
-        __metadata$11('design:type', Object)
+        __metadata$12('design:type', Object)
     ], IonPullUpComponent.prototype, "onExpand", void 0);
-    __decorate$118([
+    __decorate$119([
         Output(), 
-        __metadata$11('design:type', Object)
+        __metadata$12('design:type', Object)
     ], IonPullUpComponent.prototype, "onCollapse", void 0);
-    __decorate$118([
+    __decorate$119([
         Output(), 
-        __metadata$11('design:type', Object)
+        __metadata$12('design:type', Object)
     ], IonPullUpComponent.prototype, "onMinimize", void 0);
-    __decorate$118([
+    __decorate$119([
         ContentChild('toolbar'), 
-        __metadata$11('design:type', Object)
+        __metadata$12('design:type', Object)
     ], IonPullUpComponent.prototype, "childToolbar", void 0);
-    __decorate$118([
+    __decorate$119([
         ViewChild('footer'), 
-        __metadata$11('design:type', Object)
+        __metadata$12('design:type', Object)
     ], IonPullUpComponent.prototype, "childFooter", void 0);
-    __decorate$118([
+    __decorate$119([
         Input(), 
-        __metadata$11('design:type', Boolean)
+        __metadata$12('design:type', Boolean)
     ], IonPullUpComponent.prototype, "pop", void 0);
-    IonPullUpComponent = __decorate$118([
+    IonPullUpComponent = __decorate$119([
         Component({
             selector: 'ion-pullup',
             changeDetection: ChangeDetectionStrategy.OnPush,
             template: "\n    <ion-footer #footer>\n      <ng-content></ng-content>\n    </ion-footer>\n    "
         }), 
-        __metadata$11('design:paramtypes', [Platform, ElementRef, Renderer])
+        __metadata$12('design:paramtypes', [Platform, ElementRef, Renderer])
     ], IonPullUpComponent);
     return IonPullUpComponent;
 }());
 
-var __decorate$119 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$120 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$12 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$13 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var FormCapture = (function () {
@@ -97122,22 +97218,22 @@ var FormCapture = (function () {
     };
     FormCapture.prototype.doRefresh = function (refresher) {
     };
-    FormCapture = __decorate$119([
+    FormCapture = __decorate$120([
         Component({
             selector: 'form-capture',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n			<ion-col width-50></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/
         }), 
-        __metadata$12('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
+        __metadata$13('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormCapture);
     return FormCapture;
 }());
 
-var __decorate$120 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$121 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$13 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$14 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var FormSummary = (function () {
@@ -97153,22 +97249,22 @@ var FormSummary = (function () {
     };
     FormSummary.prototype.doRefresh = function (refresher) {
     };
-    FormSummary = __decorate$120([
+    FormSummary = __decorate$121([
         Component({
             selector: 'form-summary',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><h1>Summary</h1></ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n	<ion-scroll scrollY="true">\n\n		<p>{{form.summary}}</p>\n\n	</ion-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/
         }), 
-        __metadata$13('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
+        __metadata$14('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormSummary);
     return FormSummary;
 }());
 
-var __decorate$121 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$122 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$14 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$15 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var FormReview = (function () {
@@ -97242,22 +97338,22 @@ var FormReview = (function () {
     };
     FormReview.prototype.doInfinite = function (refresher) {
     };
-    FormReview = __decorate$121([
+    FormReview = __decorate$122([
         Component({
             selector: 'form-review',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50>\n\n				<h4>Touch an entry to edit. Check red to skip upload</h4>\n\n			</ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100" /></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<ion-col>\n\n				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">\n\n					<ion-segment-button value="" >\n\n						All\n\n					</ion-segment-button>\n\n					<ion-segment-button value="1" >\n\n						Submitted\n\n					</ion-segment-button>\n\n					<ion-segment-button value="2" >\n\n						On Hold\n\n					</ion-segment-button>\n\n					<ion-segment-button value="3" >\n\n						Blocked\n\n					</ion-segment-button>\n\n				</ion-segment>\n\n			</ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">\n\n		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">\n\n			<h1>{{submission.first_name + " " + submission.last_name}}</h1>\n\n			<h3>{{submission.first_name }}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<button ion-button item-right icon-only clear>\n\n				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>\n\n			</button>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/
         }), 
-        __metadata$14('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
+        __metadata$15('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormReview);
     return FormReview;
 }());
 
-var __decorate$117 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$118 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$10 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$11 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Forms = (function () {
@@ -97409,15 +97505,15 @@ var Forms = (function () {
         }
         return "Pending";
     };
-    __decorate$117([
+    __decorate$118([
         ViewChild("search"), 
-        __metadata$10('design:type', Object)
+        __metadata$11('design:type', Object)
     ], Forms.prototype, "searchbar", void 0);
-    __decorate$117([
+    __decorate$118([
         ViewChild('pullup'), 
-        __metadata$10('design:type', IonPullUpComponent)
+        __metadata$11('design:type', IonPullUpComponent)
     ], Forms.prototype, "pullup", void 0);
-    Forms = __decorate$117([
+    Forms = __decorate$118([
         Component({
             selector: 'forms',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="forms">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="forms" approxItemHeight="75px">\n\n		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">\n\n			<h1>{{form.name}}</h1>\n\n      <h2>{{form.total_submissions}} submissions</h2>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>\n\n\n\n\n\n<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == \'visible\'" (onCollapse)="footerCollapsed()">\n\n		<ion-toolbar #toolbar>\n\n    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>\n\n			<div class="element">{{currentSyncForm}}</div>\n\n  </ion-toolbar>\n\n  <ion-content>\n\n    <ion-list class="sync-list">\n\n      <ion-item *ngFor="let status of statuses" icon-left>\n\n        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>\n\n				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>\n\n        <h2 item-right>{{status.formName}}</h2>\n\n      </ion-item>\n\n    </ion-list>\n\n  </ion-content>\n\n</ion-pullup>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/,
             animations: [
@@ -97443,18 +97539,18 @@ var Forms = (function () {
                 ])
             ]
         }), 
-        __metadata$10('design:paramtypes', [NavController, NavParams, RESTClient, NgZone, ActionSheetController, SyncClient$$1])
+        __metadata$11('design:paramtypes', [NavController, NavParams, RESTClient, NgZone, ActionSheetController, SyncClient$$1])
     ], Forms);
     return Forms;
 }());
 
-var __decorate$122 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$123 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$15 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$16 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Dispatches = (function () {
@@ -97490,11 +97586,11 @@ var Dispatches = (function () {
             }
         });
     };
-    __decorate$122([
+    __decorate$123([
         ViewChild("search"), 
-        __metadata$15('design:type', Object)
+        __metadata$16('design:type', Object)
     ], Dispatches.prototype, "searchbar", void 0);
-    Dispatches = __decorate$122([
+    Dispatches = __decorate$123([
         Component({
             selector: 'dispatches',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Dispatch Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="dispatches">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">\n\n		<ion-item *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">\n\n			<h2>{{dispatch.name}}</h2>\n\n      <h3>{{dispatch.total_submissions}} submissions</h3>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/,
             animations: [
@@ -97514,41 +97610,97 @@ var Dispatches = (function () {
                 ])
             ]
         }), 
-        __metadata$15('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
+        __metadata$16('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], Dispatches);
     return Dispatches;
 }());
 
-var __decorate$123 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$124 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$16 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$17 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Settings = (function () {
-    function Settings(navCtrl, navParams) {
+    function Settings(navCtrl, navParams, db, alertCtrl) {
+        var _this = this;
         this.navCtrl = navCtrl;
         this.navParams = navParams;
+        this.db = db;
+        this.alertCtrl = alertCtrl;
+        this.settings = {};
+        this.user = {};
+        this.shouldSave = false;
+        AppVersion.getVersionNumber().then(function (version) {
+            _this.version = version;
+        });
     }
-    Settings = __decorate$123([
+    Settings.prototype.ionViewWillEnter = function () {
+        var _this = this;
+        this.db.getAllConfig().subscribe(function (settings) {
+            _this.settings = settings;
+            _this.db.getRegistration().subscribe(function (user) {
+                _this.user = user;
+                _this.shouldSave = false;
+            });
+        });
+    };
+    Settings.prototype.onChange = function () {
+        this.shouldSave = true;
+    };
+    Settings.prototype.saveSettings = function () {
+        var _this = this;
+        this.db.saveConfig("autoUpload", this.settings.autoUpload).subscribe(function () {
+            _this.db.saveConfig("enableLogging", _this.settings.enableLogging).subscribe(function () {
+                _this.shouldSave = false;
+            });
+        });
+    };
+    Settings.prototype.unauthenticate = function () {
+        var _this = this;
+        var confirm = this.alertCtrl.create({
+            title: 'Unauthenticate?',
+            message: 'Are you sure you want to unauthenticate this device?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    handler: function () {
+                    }
+                },
+                {
+                    text: 'Unauthenticate',
+                    handler: function () {
+                        _this.db.deleteRegistration(_this.user.id + "").subscribe(function () {
+                            _this.user = {};
+                            setTimeout(function () {
+                                _this.navCtrl.setRoot(Login);
+                            }, 300);
+                        });
+                    }
+                }
+            ]
+        });
+        confirm.present();
+    };
+    Settings = __decorate$124([
         Component({
-            selector: 'settings',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\settings\settings.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Settings</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n	<ion-list>\n\n		<ion-list-header>\n\n			Organization\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>Name</ion-label>	\n\n      <ion-label>Operator</ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Key</ion-label>	\n\n      <ion-label>Operator</ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Operator</ion-label>	\n\n      <ion-label>Operator</ion-label>\n\n		</ion-item>\n\n		<ion-list-header>\n\n			Operations\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>Automatic Upload</ion-label>\n\n			<ion-toggle checked="false"></ion-toggle>\n\n		</ion-item>\n\n		<ion-list-header>\n\n			Diagnostics\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>App version</ion-label>	\n\n      <ion-label>Operator</ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Enable logging</ion-label>\n\n			<ion-toggle checked="false"></ion-toggle>\n\n		</ion-item>\n\n	</ion-list>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\settings\settings.html"*/
+            selector: 'settings',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\settings\settings.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      		<ion-icon name="menu"></ion-icon>\n\n    	</button>\n\n		<ion-title>Settings</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button [disabled]="!shouldSave" (click)="saveSettings()">\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n	<ion-list>\n\n		<ion-list-header>\n\n			Organization\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>Name</ion-label>\n\n			<ion-label>{{user.customer_name}}</ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Key</ion-label>\n\n			<ion-label></ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Operator</ion-label>\n\n			<ion-label>{{user.first_name + " " + user.last_name}}</ion-label>\n\n		</ion-item>\n\n		<ion-list-header>\n\n			Operations\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>Automatic Upload</ion-label>\n\n			<ion-toggle [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>\n\n		</ion-item>\n\n		<ion-list-header>\n\n			Diagnostics\n\n		</ion-list-header>\n\n		<ion-item>\n\n			<ion-label>App version</ion-label>\n\n			<ion-label>{{version}}</ion-label>\n\n		</ion-item>\n\n		<ion-item>\n\n			<ion-label>Enable logging</ion-label>\n\n			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChange()" checked="false"></ion-toggle>\n\n		</ion-item>\n\n		<ion-item>\n\n			<button ion-button  full large color="danger" (click)="unauthenticate()">Unauthenticate device</button>\n\n		</ion-item>\n\n	</ion-list>\n\n\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\settings\settings.html"*/
         }), 
-        __metadata$16('design:paramtypes', [NavController, NavParams])
+        __metadata$17('design:paramtypes', [NavController, NavParams, DBClient, AlertController])
     ], Settings);
     return Settings;
 }());
 
-var __decorate$115 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$116 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$8 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$9 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Main = (function () {
@@ -97566,15 +97718,15 @@ var Main = (function () {
     Main.prototype.openPage = function (page) {
         this.nav.setRoot(page.component);
     };
-    __decorate$115([
+    __decorate$116([
         ViewChild(Nav), 
-        __metadata$8('design:type', Nav)
+        __metadata$9('design:type', Nav)
     ], Main.prototype, "nav", void 0);
-    Main = __decorate$115([
+    Main = __decorate$116([
         Component({
             selector: 'main',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\main\main.html"*/'<ion-menu [content]="content">\n\n  <ion-content class="sidemenu">\n\n    <div class="profile">\n\n      <ion-item>\n\n      <ion-avatar item-left>\n\n        <img src="https://randomuser.me/api/portraits/men/37.jpg"/>\n\n      </ion-avatar>\n\n      </ion-item>\n\n    </div>\n\n    <ion-list color="dark">\n\n      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n\n        <ion-icon  item-left [name]="p.icon"></ion-icon>\n\n        {{p.title}}\n\n      </button>\n\n    </ion-list>\n\n  </ion-content>\n\n\n\n</ion-menu>\n\n\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\main\main.html"*/
         }), 
-        __metadata$8('design:paramtypes', [NavController, NavParams])
+        __metadata$9('design:paramtypes', [NavController, NavParams])
     ], Main);
     return Main;
 }());
@@ -97589,17 +97741,18 @@ var __metadata$2 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Login = (function () {
-    function Login(navCtrl, navParams, client, db) {
+    function Login(navCtrl, navParams, client, loading, toast) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.client = client;
-        this.db = db;
+        this.loading = loading;
+        this.toast = toast;
         this.doAuth = false;
         this.user = {};
     }
     Login.prototype.ngOnInit = function () {
         var _this = this;
-        this.db.getRegistration()
+        this.client.getRegistration()
             .subscribe(function (user) {
             if (!user) {
                 _this.doAuth = true;
@@ -97615,13 +97768,22 @@ var Login = (function () {
             if (!this.authCode) {
                 return;
             }
-            var req = new AuthenticationRequest();
-            req.invitation_code = this.authCode;
-            req.device_name = this.authCode;
-            this.client.authenticate(req).subscribe(function (reply) {
-                _this.db.saveRegistration(reply).subscribe(function (done) {
-                    _this.navCtrl.setRoot(Main);
+            var loader_1 = this.loading.create({
+                content: "Authenticating..."
+            });
+            loader_1.present();
+            this.client.authenticate(this.authCode).subscribe(function (user) {
+                loader_1.dismiss();
+                _this.navCtrl.setRoot(Main);
+            }, function (err) {
+                loader_1.dismiss();
+                var toaster = _this.toast.create({
+                    message: err,
+                    duration: 5000,
+                    position: "top",
+                    cssClass: "error"
                 });
+                toaster.present();
             });
         }
         else {
@@ -97630,9 +97792,9 @@ var Login = (function () {
     };
     Login = __decorate$109([
         Component({
-            selector: 'login',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/'<ion-content scroll="false" class="login">\n\n	<div class="top-content row">\n\n		<div class="col padding col-center" *ngIf="!doAuth">\n\n			<img [src]="user.customer_logo">\n\n		</div>\n\n	</div>\n\n	<div class="bottom-content row">\n\n		<div class="col col-center">\n\n			<form *ngIf="doAuth">\n\n				<ion-list radio-group padding>\n\n					<ion-item>\n\n						<ion-label>Production</ion-label>\n\n						<ion-radio checked value="production"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Demo</ion-label>\n\n						<ion-radio value="demo"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-input type="text" name="authCode" required placeholder="Authentication Code" [(ngModel)]="authCode"></ion-input>\n\n					</ion-item>\n\n					<ion-item>\n\n						<button ion-button full large color="primary" (click)="onClick()">\n\n              Request Authentication\n\n            </button>\n\n					</ion-item>\n\n				</ion-list>\n\n			</form>\n\n      <ion-list padding *ngIf="!doAuth">\n\n					<ion-item>\n\n						<button ion-button full large color="secondary" (click)="onClick()">\n\n              Continue\n\n            </button>\n\n					</ion-item>\n\n      </ion-list>\n\n		</div>\n\n	</div>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/
+            selector: 'login',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/'<ion-content scroll="false" class="login">\n\n	<div class="top-content row" *ngIf="!doAuth">\n\n		<div class="col padding col-center">\n\n			<img [src]="user.customer_logo">\n\n		</div>\n\n	</div>\n\n	<div class="bottom-content row">\n\n		<div class="col col-center">\n\n			<form *ngIf="doAuth">\n\n				<ion-list radio-group padding>\n\n					<ion-item>\n\n						<ion-label>Production</ion-label>\n\n						<ion-radio checked value="production"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Demo</ion-label>\n\n						<ion-radio value="demo"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-input type="text" name="authCode" required placeholder="Authentication Code" [(ngModel)]="authCode"></ion-input>\n\n					</ion-item>\n\n					<ion-item>\n\n						<button ion-button full large color="primary" (click)="onClick()">\n\n              Request Authentication\n\n            </button>\n\n					</ion-item>\n\n				</ion-list>\n\n			</form>\n\n      <ion-list padding *ngIf="!doAuth">\n\n					<ion-item>\n\n						<button ion-button full large color="secondary" (click)="onClick()">\n\n              Continue\n\n            </button>\n\n					</ion-item>\n\n      </ion-list>\n\n		</div>\n\n	</div>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\login\login.html"*/
         }), 
-        __metadata$2('design:paramtypes', [NavController, NavParams, RESTClient, DBClient])
+        __metadata$2('design:paramtypes', [NavController, NavParams, BussinessClient$$1, LoadingController, ToastController])
     ], Login);
     return Login;
 }());
@@ -97669,13 +97831,13 @@ var MyApp = (function () {
     return MyApp;
 }());
 
-var __decorate$124 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$125 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata$17 = (undefined && undefined.__metadata) || function (k, v) {
+var __metadata$18 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ArrayFilterPipe = (function () {
@@ -97691,12 +97853,12 @@ var ArrayFilterPipe = (function () {
             return true;
         });
     };
-    ArrayFilterPipe = __decorate$124([
+    ArrayFilterPipe = __decorate$125([
         Pipe({
             name: "filter",
             pure: false
         }), 
-        __metadata$17('design:paramtypes', [])
+        __metadata$18('design:paramtypes', [])
     ], ArrayFilterPipe);
     return ArrayFilterPipe;
 }());
@@ -97750,7 +97912,8 @@ var AppModule = (function () {
                 DBClient,
                 RESTClient,
                 PushClient,
-                SyncClient$$1
+                SyncClient$$1,
+                BussinessClient$$1
             ]
         }), 
         __metadata('design:paramtypes', [])
@@ -97768,6 +97931,31 @@ function setupConfig$1() {
         Config$1[field] = val;
     }
 }
+var FileTransfer$1 = (function () {
+    function FileTransfer() {
+    }
+    FileTransfer.prototype.download = function (source, target, successCallback, errorCallback, trustAllHosts, options) {
+        setTimeout(function () {
+            successCallback && successCallback({
+                isFile: true,
+                isDirectory: false,
+                name: source.substr(source.lastIndexOf("/") + 1),
+                fullPath: source,
+                fileSystem: {},
+                nativeURL: source
+            });
+        }, 500);
+    };
+    return FileTransfer;
+}());
+window["FileTransfer"] = FileTransfer$1;
+setTimeout(function () {
+    window["cordova"] = {
+        file: {
+            dataDirectory: "D:/"
+        }
+    };
+}, 6000);
 
 setupConfig$1();
 platformBrowserDynamic().bootstrapModule(AppModule);
