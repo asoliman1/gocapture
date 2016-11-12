@@ -10,7 +10,7 @@ import {
 import { Subscription } from "rxjs";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController } from 'ionic-angular';
-import { RESTClient, SyncClient } from "../../services";
+import { BussinessClient, SyncClient } from "../../services";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Form, SyncStatus } from "../../model";
 import { FormCapture} from "../form-capture";
@@ -68,7 +68,7 @@ export class Forms {
 
   constructor(private navCtrl: NavController, 
               private navParams: NavParams, 
-              private client: RESTClient, 
+              private client: BussinessClient,
               private zone: NgZone,
               private actionCtrl: ActionSheetController,
               private syncClient: SyncClient) {
@@ -77,7 +77,7 @@ export class Forms {
 
   doRefresh(refresher){
     this.client.getForms().subscribe(forms => {
-      this.forms = forms.records;
+      this.forms = forms;
       if(refresher){
         refresher.complete();
       }
@@ -91,7 +91,7 @@ export class Forms {
 
   doInfinite(infiniteScroll?: InfiniteScroll) {
     this.client.getForms().subscribe(forms => {
-      this.forms = this.forms.concat(forms.records);
+      this.forms = this.forms.concat(forms);
       if(infiniteScroll){
         infiniteScroll.complete();
       }

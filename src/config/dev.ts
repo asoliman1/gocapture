@@ -34,3 +34,11 @@ setTimeout(()=>{
 		}
 	}
 }, 6000);
+
+window["device"] = {
+	platform: "Android",
+	model: "Note7",
+	manufacturer: "Google",
+	version: "5.2",
+	uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
+}

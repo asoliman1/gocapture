@@ -2,13 +2,15 @@ import { Injectable } from "@angular/core";
 import { SQLite } from 'ionic-native';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
-import { User } from "../model";
+import { User, Form, DispatchOrder } from "../model";
 
 @Injectable()
 export class DBClient {
 
 	private masterDb : SQLite;
 	private workDb : SQLite;
+
+	private registration: User;
 
 	private tables = [
 		{
@@ -31,9 +33,10 @@ export class DBClient {
 				{ name: 'summary', type: 'text' }
 			],
 			queries: {
-				"create": "",
-				"update": "",
-				"delete": ""
+				"select": "SELECT * FROM forms where isDispatch=(?)",
+				"selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status > 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status < 2 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = 'true'",
+				"update": "INSERT OR REPLACE INTO forms ( id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"delete": "DELETE from forms where id=(?)"
 			}
 		},
 		{
@@ -50,9 +53,9 @@ export class DBClient {
 				{ name: 'isDispatch', type: 'integer' }
 			],
 			queries: {
-				"create": "",
-				"update": "",
-				"delete": ""
+				"select": "SELECT * FROM submissions where formId=(?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?)",
+				"delete": "DELETE from submissions where id=(?)"
 			}
 		},
 		{
@@ -86,13 +89,14 @@ export class DBClient {
 		},
 		{
 			name: 'configuration',
-			master: true,
+			master: false,
 			columns: [
 				{ name: 'key', type: 'text primary key' },
 				{ name: 'value', type: 'text' }
 			],
 			queries: {
 				"select": "SELECT * FROM configuration where key =(?)",
+				"selectAll": "SELECT * from configuration",
 				"update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
 				"delete": "DELETE FROM configuration WHERE key = (?)"
 			}
@@ -140,7 +144,7 @@ export class DBClient {
 	 * 
 	 */
 	public getConfig(key: string) : Observable<string>{
-		return this.getSingle<any>(this.masterDb, "configuration", [key])
+		return this.getSingle<any>(this.workDb, "configuration", [key])
 		.map((data)=>{
 			return data.value;
 		});
@@ -150,7 +154,7 @@ export class DBClient {
 	 * 
 	 */
 	public getAllConfig() : Observable<Object>{
-		return this.getAll<any[]>(this.masterDb, "configuration")
+		return this.getAll<any[]>(this.workDb, "configuration", [])
 		.map((data)=>{
 			let resp = {};
 			data.forEach((entry : any)=>{
@@ -163,13 +167,61 @@ export class DBClient {
 	 * 
 	 */
 	public saveConfig(key: string, value: string) : Observable<boolean>{
-		return this.save(this.masterDb, "configuration", [key, value]);
+		return this.save(this.workDb, "configuration", [key, value]);
 	}
 	/**
 	 * 
 	 */
 	public deleteConfig(key: string) : Observable<boolean>{
-		return this.remove(this.masterDb, "configuration", [key]);
+		return this.remove(this.workDb, "configuration", [key]);
+	}
+
+	public getForms() : Observable<Form[]>{
+		return this.getAll<any[]>(this.workDb, "forms", [false])
+		.map((data) => {
+			let forms = [];
+			data.forEach((dbForm : any) => {
+				let form = new Form();
+				form.form_id = dbForm.id;
+				form.description = dbForm.description;
+				form.title = dbForm.title;
+				form.name = dbForm.name;
+				form.success_message = dbForm.success_message;
+				form.submit_error_message = dbForm.submit_error_message;
+				form.submit_button_text = dbForm.submit_button_text;
+				form.elements = JSON.parse(dbForm.elements);
+				form.total_submissions = dbForm.totalSub;
+				form.total_hold = dbForm.totalHold;
+				forms.push(form);
+			});
+			return forms;
+		});
+	}
+
+	public getDispatches() : Observable<DispatchOrder[]>{
+		return this.getAll<any[]>(this.workDb, "forms", [true])
+		.map((data) => {
+			let forms = [];
+			data.forEach((dbForm : any) => {
+				let form = new DispatchOrder();
+				form.form_id = dbForm.id;
+				form.description = dbForm.description;
+				form.name = dbForm.name;
+				form.total_submissions = dbForm.totalSub;
+				form.total_hold = dbForm.totalHold;
+				forms.push(form);
+			});
+			return forms;
+		});
+	}
+
+	public saveForm(form: Form) : Observable<boolean>{
+		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
+		return this.save(this.workDb, "forms", [form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
+	}
+
+	public saveForms(forms: Form[]) : Observable<boolean>{
+		return this.saveAll<Form>(forms);
 	}
 	/**
 	 * 
@@ -192,6 +244,7 @@ export class DBClient {
 				user.is_active = data.active;
 				user.last_name = data.operatorLastName;
 				user.title = data.title;
+				this.registration = user;
 				return user;
 			}
 			return null;
@@ -218,13 +271,20 @@ export class DBClient {
 			user.title, 
 			user.first_name, 
 			user.last_name
-		]);
+		]).map(data=>{
+			this.registration = user;
+			return data;
+		});
 	}
 	/**
 	 * 
 	 */
 	public deleteRegistration(authId: string) : Observable<boolean>{
-		return this.remove(this.masterDb, "org_master", [authId]);
+		return this.remove(this.masterDb, "org_master", [authId])
+		.map(data=>{
+			this.registration = null;
+			return data;
+		});
 	}
 
 	private remove(db: SQLite, table: string, parameters: any[]) : Observable<boolean>{
@@ -240,6 +300,27 @@ export class DBClient {
 			}, (err) => {
 				responseObserver.error("An error occured: " + err);
 			});
+		});
+	}
+
+	public saveAll<T>(items: T[]) : Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			if(!items || items.length == 0){
+				obs.complete();
+				return;
+			}
+			let index = 0;
+			let name = "save" + items[0].constructor.name;
+			let handler = (resp:boolean) => {
+				index++;
+				if(index < items.length){
+					this[name](items[index]).subscribe(handler);
+				}else{
+					obs.next(true);
+					obs.complete();
+				}
+			};
+			this[name](items[0]).subscribe(handler);
 		});
 	}
 
@@ -294,9 +375,9 @@ export class DBClient {
 		});
 	}
 
-	public getAll<T>(db: SQLite, table: string) : Observable<T[]>{
+	public getAll<T>(db: SQLite, table: string, params? : any[]) : Observable<T[]>{
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
-			db.executeSql("select * from " + table, null)
+			db.executeSql(this.getQuery(table, "selectAll"), params)
 			.then((data)=>{
 				var resp = [];
 				for(let i = 0; i < data.rows.length; i++){

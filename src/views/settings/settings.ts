@@ -11,10 +11,10 @@ import { Login } from "../login";
 })
 export class Settings {
 
-	private settings: any = {};
-	private user: User = <any>{};
-	private shouldSave: boolean = false;
-	private version: string;
+	settings: any = {};
+	user: User = <any>{};
+	shouldSave: boolean = false;
+	version: string;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,

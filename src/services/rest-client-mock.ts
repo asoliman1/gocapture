@@ -4,7 +4,7 @@ import { User, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../m
 import { AuthenticationRequest, RecordsResponse } from "../model/protocol";
 
 @Injectable()
-export class RESTClient {
+export class RESTClientMock {
 
 	private errorSource: BehaviorSubject<any>;
     /**

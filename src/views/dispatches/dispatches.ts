@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 
 import { NavController, NavParams, InfiniteScroll } from 'ionic-angular';
-import { RESTClient } from "../../services";
+import { BussinessClient } from "../../services";
 import { Form } from "../../model";
 
 @Component({
@@ -39,18 +39,18 @@ export class Dispatches {
 
   @ViewChild("search") searchbar;
 
-  dispatches: Form[] = [];
+  dispatches: any[] = [];
 
   constructor(private navCtrl: NavController, 
               private navParams: NavParams, 
-              private client: RESTClient, 
+              private client: BussinessClient, 
               private zone: NgZone) {
     this.doInfinite();
   }
 
   doRefresh(refresher){
-    this.client.getForms().subscribe(forms => {
-      this.dispatches = forms.records;
+    this.client.getDispatches().subscribe(forms => {
+      this.dispatches = forms;
       if(refresher){
         refresher.complete();
       }
@@ -63,8 +63,8 @@ export class Dispatches {
   }
 
   doInfinite(infiniteScroll?: InfiniteScroll) {
-    this.client.getForms().subscribe(forms => {
-      this.dispatches = this.dispatches.concat(forms.records);
+    this.client.getDispatches().subscribe(forms => {
+      this.dispatches = this.dispatches.concat(forms);
       if(infiniteScroll){
         infiniteScroll.complete();
       }

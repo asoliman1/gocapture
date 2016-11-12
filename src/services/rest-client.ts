@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Headers, Response, Http } from "@angular/http";
+import { Headers, Response, Http, URLSearchParams } from "@angular/http";
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
@@ -7,7 +7,7 @@ import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse } fr
 import { Device } from "ionic-native";
 
 @Injectable()
-export class RESTClientGood {
+export class RESTClient {
 
 	protected errorSource: BehaviorSubject<any>;
     /**
@@ -15,11 +15,17 @@ export class RESTClientGood {
      */
 	error: Observable<any>;
 
-	private token: string;
+	token: string;
+
+	private online = true;
 
 	constructor(private http: Http) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
+	}
+
+	public setOnline(val : boolean){
+		this.online = val;
 	}
 
 	/**
@@ -45,9 +51,8 @@ export class RESTClientGood {
 	 * 
 	 * @returns Observable
 	 */
-	public getForms(name?: string, updatedAt?: Date, createdAt?: Date): Observable<RecordsResponse<Form>> {
+	public getForms(offset: number = 0, name?: string, updatedAt?: Date, createdAt?: Date): Observable<RecordsResponse<Form>> {
 		var opts: any = {
-			access_token: this.token,
 			form_type: "device"
 		};
 		if (name) {
@@ -59,6 +64,9 @@ export class RESTClientGood {
 		if (createdAt) {
 			opts.created_at = updatedAt.toISOString();
 		}
+		if(offset > 0){
+			opts.offset = offset;
+		}
 		return this.call<RecordsResponse<Form>>("GET", "/forms.json", opts).map(resp => {
 			if (resp.status != "200") {
 				this.errorSource.error(resp);
@@ -66,17 +74,29 @@ export class RESTClientGood {
 			return resp;
 		});
 	}
+
+	public getAllForms(lastSyncDate: Date) : Observable<Form[]>{
+		let opts: any = {
+			form_type: "device"
+		};
+		if(lastSyncDate){
+			opts.last_sync_date = lastSyncDate.toISOString();
+		}
+		return this.getAll<Form>("/forms.json", opts);
+	}
 	/**
 	 * 
 	 * @returns Observable
 	 */
-	public getDispatches(lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
+	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
 		var opts: any = {
-			access_token: this.token
 		};
 
 		if (lastSync) {
 			opts.last_sync_date = lastSync.toISOString();
+		}
+		if(offset > 0){
+			opts.offset = offset;
 		}
 		return this.call<RecordsResponse<Dispatch>>("GET", "/dispatches.json", opts)
 			.map(resp => {
@@ -85,6 +105,14 @@ export class RESTClientGood {
 				}
 				return resp;
 			});
+	}
+
+	public getAllDispatches(lastSyncDate: Date) : Observable<Dispatch[]>{
+		let opts: any = {};
+		if(lastSyncDate){
+			opts.last_sync_date = lastSyncDate.toISOString();
+		}
+		return this.getAll<Dispatch>("/dispatches.json", opts);
 	}
 	/**
 	 * 
@@ -137,23 +165,55 @@ export class RESTClientGood {
 			});
 	}
 
+	private getAll<T>(relativeUrl: string, content: any) : Observable<T[]>{
+		let response = new Observable<T[]>((obs: Observer<T[]>) => {
+			var offset = 0;
+			var result: T[] = [];
+			let handler = (data: RecordsResponse<T>)=>{
+				if(data.count + offset < data.total_count){
+					offset += data.count;
+					doTheCall();
+				}else{
+					obs.next(result);
+				}
+			};
+			let doTheCall = ()=>{
+				let params = Object.assign({}, content);
+				if(offset > 0){
+					params.offset = offset;
+				}
+				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
+			}
+			doTheCall();
+			
+		});
+		return response;
+	}
+
 	private call<T>(method: String, relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((responseObserver: Observer<T>) => {
 			var sub: Observable<Response> = null;
 			let url = Config.serverUrl + relativeUrl;
+			let params = new URLSearchParams();
+			params.set("access_token", this.token);
 			var opts = {
-				headers: this.getHeaders()
+				headers: this.getHeaders(),
+				search: params
 			};
 			switch (method) {
 				case "GET":
-					opts = Object.assign(opts, content);
+					for(let field in content){
+						opts.search.set(field, content[field]);
+					}
 					sub = this.http.get(url, opts);
 					break;
 				case "POST":
 					sub = this.http.post(url, JSON.stringify(content), opts);
 					break;
-				case "DELETE":
-					opts = Object.assign(opts, content);
+				case "DELETE":					
+					for(let field in content){
+						opts.search.set(field, content[field]);
+					}
 					sub = this.http.delete(url, opts);
 					break;
 				case "PATCH":

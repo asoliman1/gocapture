@@ -90,4 +90,8 @@ export class FormReview {
   doInfinite(refresher) {
 
   }
+
+  onFilterChanged(){
+	  
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { Observable, BehaviorSubject } from "rxjs/Rx";
+import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { RESTClient, DBClient} from './';
-import { SyncStatus } from "../model";
+import { SyncStatus, Form, Dispatch } from "../model";
 
 @Injectable()
 export class SyncClient {
@@ -28,7 +28,6 @@ export class SyncClient {
 		this.syncSource = new BehaviorSubject<any>(null);
 		this.onSync = this.syncSource.asObservable();
 
-		this.sync();
 	}
 
 	public isSyncing() : boolean{
@@ -37,6 +36,22 @@ export class SyncClient {
 
 	public getLastSync(): SyncStatus[]{
 		return this.lastSyncStatus; 
+	}
+
+	public download(lastSyncDate: Date) : Observable<DownloadData>{
+		return new Observable<DownloadData>((obs: Observer<DownloadData>)=>{
+			let result = new DownloadData();
+			this.rest.getAllForms(lastSyncDate).subscribe(forms =>{
+				result.forms = forms;
+				this.db.saveForms(forms).subscribe(reply => {
+					this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
+						result.dispatches = dispatches;
+						obs.next(result);
+						obs.complete();
+					});
+				});				
+			})
+		});
 	}
 
 	public sync(){
@@ -82,4 +97,9 @@ export class SyncClient {
 			this.syncSource.next(this.lastSyncStatus);
 		}, 15000);
 	}
+}
+
+export class DownloadData{
+	forms: Form[];
+	dispatches: Dispatch[];
 }

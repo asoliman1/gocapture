@@ -95755,17 +95755,21 @@ var __decorate$110 = (undefined && undefined.__decorate) || function (decorators
 var __metadata$3 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var RESTClientGood = (function () {
-    function RESTClientGood(http) {
+var RESTClient = (function () {
+    function RESTClient(http) {
         this.http = http;
+        this.online = true;
         this.errorSource = new BehaviorSubject(null);
         this.error = this.errorSource.asObservable();
     }
+    RESTClient.prototype.setOnline = function (val) {
+        this.online = val;
+    };
     /**
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.authenticate = function (req) {
+    RESTClient.prototype.authenticate = function (req) {
         var _this = this;
         req.device_platform = Device.device.platform;
         req.device_model = Device.device.model;
@@ -95785,10 +95789,10 @@ var RESTClientGood = (function () {
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.getForms = function (name, updatedAt, createdAt) {
+    RESTClient.prototype.getForms = function (offset, name, updatedAt, createdAt) {
         var _this = this;
+        if (offset === void 0) { offset = 0; }
         var opts = {
-            access_token: this.token,
             form_type: "device"
         };
         if (name) {
@@ -95800,6 +95804,9 @@ var RESTClientGood = (function () {
         if (createdAt) {
             opts.created_at = updatedAt.toISOString();
         }
+        if (offset > 0) {
+            opts.offset = offset;
+        }
         return this.call("GET", "/forms.json", opts).map(function (resp) {
             if (resp.status != "200") {
                 _this.errorSource.error(resp);
@@ -95807,17 +95814,28 @@ var RESTClientGood = (function () {
             return resp;
         });
     };
+    RESTClient.prototype.getAllForms = function (lastSyncDate) {
+        var opts = {
+            form_type: "device"
+        };
+        if (lastSyncDate) {
+            opts.last_sync_date = lastSyncDate.toISOString();
+        }
+        return this.getAll("/forms.json", opts);
+    };
     /**
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.getDispatches = function (lastSync) {
+    RESTClient.prototype.getDispatches = function (offset, lastSync) {
         var _this = this;
-        var opts = {
-            access_token: this.token
-        };
+        if (offset === void 0) { offset = 0; }
+        var opts = {};
         if (lastSync) {
             opts.last_sync_date = lastSync.toISOString();
+        }
+        if (offset > 0) {
+            opts.offset = offset;
         }
         return this.call("GET", "/dispatches.json", opts)
             .map(function (resp) {
@@ -95827,11 +95845,18 @@ var RESTClientGood = (function () {
             return resp;
         });
     };
+    RESTClient.prototype.getAllDispatches = function (lastSyncDate) {
+        var opts = {};
+        if (lastSyncDate) {
+            opts.last_sync_date = lastSyncDate.toISOString();
+        }
+        return this.getAll("/dispatches.json", opts);
+    };
     /**
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.registerDeviceToPush = function (device_token, receiveNotifications) {
+    RESTClient.prototype.registerDeviceToPush = function (device_token, receiveNotifications) {
         var _this = this;
         if (receiveNotifications === void 0) { receiveNotifications = true; }
         return this.call("POST", '/devices/register_to_notifications.json?access_token=' + this.token, {
@@ -95850,7 +95875,7 @@ var RESTClientGood = (function () {
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.getDeviceFormMemberships = function (form_id, lastSync) {
+    RESTClient.prototype.getDeviceFormMemberships = function (form_id, lastSync) {
         var _this = this;
         var opts = {
             access_token: this.token,
@@ -95870,7 +95895,7 @@ var RESTClientGood = (function () {
      *
      * @returns Observable
      */
-    RESTClientGood.prototype.submitForm = function (data) {
+    RESTClient.prototype.submitForm = function (data) {
         var _this = this;
         return this.call("POST", "/forms/submit.json?access_token=" + this.token, data)
             .map(function (resp) {
@@ -95881,24 +95906,56 @@ var RESTClientGood = (function () {
             return false;
         });
     };
-    RESTClientGood.prototype.call = function (method, relativeUrl, content) {
+    RESTClient.prototype.getAll = function (relativeUrl, content) {
+        var _this = this;
+        var response = new Observable$1(function (obs) {
+            var offset = 0;
+            var result = [];
+            var handler = function (data) {
+                if (data.count + offset < data.total_count) {
+                    offset += data.count;
+                    doTheCall();
+                }
+                else {
+                    obs.next(result);
+                }
+            };
+            var doTheCall = function () {
+                var params = Object.assign({}, content);
+                if (offset > 0) {
+                    params.offset = offset;
+                }
+                _this.call("GET", relativeUrl, params).subscribe(handler);
+            };
+            doTheCall();
+        });
+        return response;
+    };
+    RESTClient.prototype.call = function (method, relativeUrl, content) {
         var _this = this;
         var response = new Observable$1(function (responseObserver) {
             var sub = null;
             var url = Config$1.serverUrl + relativeUrl;
+            var params = new URLSearchParams();
+            params.set("access_token", _this.token);
             var opts = {
-                headers: _this.getHeaders()
+                headers: _this.getHeaders(),
+                search: params
             };
             switch (method) {
                 case "GET":
-                    opts = Object.assign(opts, content);
+                    for (var field in content) {
+                        opts.search.set(field, content[field]);
+                    }
                     sub = _this.http.get(url, opts);
                     break;
                 case "POST":
                     sub = _this.http.post(url, JSON.stringify(content), opts);
                     break;
                 case "DELETE":
-                    opts = Object.assign(opts, content);
+                    for (var field in content) {
+                        opts.search.set(field, content[field]);
+                    }
                     sub = _this.http.delete(url, opts);
                     break;
                 case "PATCH":
@@ -95925,16 +95982,16 @@ var RESTClientGood = (function () {
         });
         return response;
     };
-    RESTClientGood.prototype.getHeaders = function () {
+    RESTClient.prototype.getHeaders = function () {
         var headers = new Headers();
         headers.append('Content-Type', 'application/json');
         return headers;
     };
-    RESTClientGood = __decorate$110([
+    RESTClient = __decorate$110([
         Injectable(), 
         __metadata$3('design:paramtypes', [Http])
-    ], RESTClientGood);
-    return RESTClientGood;
+    ], RESTClient);
+    return RESTClient;
 }());
 
 var User = (function () {
@@ -95943,11 +96000,24 @@ var User = (function () {
     return User;
 }());
 
-var Form$1 = (function () {
+var BaseForm = (function () {
+    function BaseForm() {
+    }
+    return BaseForm;
+}());
+
+var __extends$264 = (undefined && undefined.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Form$1 = (function (_super) {
+    __extends$264(Form, _super);
     function Form() {
+        _super.apply(this, arguments);
     }
     return Form;
-}());
+}(BaseForm));
 
 var SubmissionStatus;
 (function (SubmissionStatus) {
@@ -95958,32 +96028,45 @@ var SubmissionStatus;
     SubmissionStatus[SubmissionStatus["Submitting"] = 5] = "Submitting";
 })(SubmissionStatus || (SubmissionStatus = {}));
 
+var __extends$265 = (undefined && undefined.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var DispatchOrder = (function (_super) {
+    __extends$265(DispatchOrder, _super);
+    function DispatchOrder() {
+        _super.apply(this, arguments);
+    }
+    return DispatchOrder;
+}(BaseForm));
+
 var BaseResponse = (function () {
     function BaseResponse() {
     }
     return BaseResponse;
 }());
 
-var __extends$264 = (undefined && undefined.__extends) || function (d, b) {
+var __extends$266 = (undefined && undefined.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var DataResponse = (function (_super) {
-    __extends$264(DataResponse, _super);
+    __extends$266(DataResponse, _super);
     function DataResponse() {
         _super.apply(this, arguments);
     }
     return DataResponse;
 }(BaseResponse));
 
-var __extends$265 = (undefined && undefined.__extends) || function (d, b) {
+var __extends$267 = (undefined && undefined.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var RecordsResponse = (function (_super) {
-    __extends$265(RecordsResponse, _super);
+    __extends$267(RecordsResponse, _super);
     function RecordsResponse() {
         _super.apply(this, arguments);
     }
@@ -96007,8 +96090,8 @@ var __decorate$111 = (undefined && undefined.__decorate) || function (decorators
 var __metadata$4 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var RESTClient = (function () {
-    function RESTClient() {
+var RESTClientMock = (function () {
+    function RESTClientMock() {
         this["errorSource"] = new BehaviorSubject(null);
         this["error"] = this["errorSource"].asObservable();
     }
@@ -96016,7 +96099,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.authenticate = function (req) {
+    RESTClientMock.prototype.authenticate = function (req) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
                 var user = new User();
@@ -96041,7 +96124,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.getForms = function (name, updatedAt, createdAt) {
+    RESTClientMock.prototype.getForms = function (name, updatedAt, createdAt) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
                 var response = new RecordsResponse();
@@ -96077,7 +96160,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.getDispatches = function (lastSync) {
+    RESTClientMock.prototype.getDispatches = function (lastSync) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
                 var response = new RecordsResponse();
@@ -96113,7 +96196,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.registerDeviceToPush = function (device_token, receiveNotifications) {
+    RESTClientMock.prototype.registerDeviceToPush = function (device_token, receiveNotifications) {
         if (receiveNotifications === void 0) { receiveNotifications = true; }
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
@@ -96126,7 +96209,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.getDeviceFormMemberships = function (form_id, lastSync) {
+    RESTClientMock.prototype.getDeviceFormMemberships = function (form_id, lastSync) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
                 var response = new RecordsResponse();
@@ -96148,7 +96231,7 @@ var RESTClient = (function () {
      *
      * @returns Observable
      */
-    RESTClient.prototype.submitForm = function (data) {
+    RESTClientMock.prototype.submitForm = function (data) {
         return new Observable$1(function (responseObserver) {
             setTimeout(function () {
                 responseObserver.next(true);
@@ -96156,11 +96239,11 @@ var RESTClient = (function () {
             }, 100);
         });
     };
-    RESTClient = __decorate$111([
+    RESTClientMock = __decorate$111([
         Injectable(), 
         __metadata$4('design:paramtypes', [])
-    ], RESTClient);
-    return RESTClient;
+    ], RESTClientMock);
+    return RESTClientMock;
 }());
 
 var __decorate$112 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -96199,9 +96282,10 @@ var DBClient = (function () {
                     { name: 'summary', type: 'text' }
                 ],
                 queries: {
-                    "create": "",
-                    "update": "",
-                    "delete": ""
+                    "select": "SELECT * FROM forms where isDispatch=(?)",
+                    "selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status > 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status < 2 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = 'true'",
+                    "update": "INSERT OR REPLACE INTO forms ( id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "delete": "DELETE from forms where id=(?)"
                 }
             },
             {
@@ -96218,9 +96302,9 @@ var DBClient = (function () {
                     { name: 'isDispatch', type: 'integer' }
                 ],
                 queries: {
-                    "create": "",
-                    "update": "",
-                    "delete": ""
+                    "select": "SELECT * FROM submissions where formId=(?)",
+                    "update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?)",
+                    "delete": "DELETE from submissions where id=(?)"
                 }
             },
             {
@@ -96254,13 +96338,14 @@ var DBClient = (function () {
             },
             {
                 name: 'configuration',
-                master: true,
+                master: false,
                 columns: [
                     { name: 'key', type: 'text primary key' },
                     { name: 'value', type: 'text' }
                 ],
                 queries: {
                     "select": "SELECT * FROM configuration where key =(?)",
+                    "selectAll": "SELECT * from configuration",
                     "update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
                     "delete": "DELETE FROM configuration WHERE key = (?)"
                 }
@@ -96304,7 +96389,7 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.getConfig = function (key) {
-        return this.getSingle(this.masterDb, "configuration", [key])
+        return this.getSingle(this.workDb, "configuration", [key])
             .map(function (data) {
             return data.value;
         });
@@ -96313,7 +96398,7 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.getAllConfig = function () {
-        return this.getAll(this.masterDb, "configuration")
+        return this.getAll(this.workDb, "configuration", [])
             .map(function (data) {
             var resp = {};
             data.forEach(function (entry) {
@@ -96326,18 +96411,59 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.saveConfig = function (key, value) {
-        return this.save(this.masterDb, "configuration", [key, value]);
+        return this.save(this.workDb, "configuration", [key, value]);
     };
     /**
      *
      */
     DBClient.prototype.deleteConfig = function (key) {
-        return this.remove(this.masterDb, "configuration", [key]);
+        return this.remove(this.workDb, "configuration", [key]);
+    };
+    DBClient.prototype.getForms = function () {
+        return this.getAll(this.workDb, "forms", [false])
+            .map(function (data) {
+            var forms = [];
+            data.forEach(function (dbForm) {
+                var form = new Form$1();
+                form.form_id = dbForm.id;
+                form.description = dbForm.description;
+                form.title = dbForm.title;
+                form.name = dbForm.name;
+                form.success_message = dbForm.success_message;
+                form.submit_error_message = dbForm.submit_error_message;
+                form.submit_button_text = dbForm.submit_button_text;
+                form.elements = JSON.parse(dbForm.elements);
+                forms.push(form);
+            });
+            return forms;
+        });
+    };
+    DBClient.prototype.getDispatches = function () {
+        return this.getAll(this.workDb, "forms", [true])
+            .map(function (data) {
+            var forms = [];
+            data.forEach(function (dbForm) {
+                var form = new DispatchOrder();
+                form.form_id = dbForm.id;
+                form.description = dbForm.description;
+                form.name = dbForm.name;
+                forms.push(form);
+            });
+            return forms;
+        });
+    };
+    DBClient.prototype.saveForm = function (form) {
+        //id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
+        return this.save(this.workDb, "forms", [form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
+    };
+    DBClient.prototype.saveForms = function (forms) {
+        return this.saveAll(forms);
     };
     /**
      *
      */
     DBClient.prototype.getRegistration = function () {
+        var _this = this;
         return this.getSingle(this.masterDb, "org_master", null)
             .map(function (data) {
             if (data) {
@@ -96355,6 +96481,7 @@ var DBClient = (function () {
                 user.is_active = data.active;
                 user.last_name = data.operatorLastName;
                 user.title = data.title;
+                _this.registration = user;
                 return user;
             }
             return null;
@@ -96364,6 +96491,7 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.saveRegistration = function (user) {
+        var _this = this;
         user.db = user.customer_name.replace(/\s*/g, '');
         return this.save(this.masterDb, "org_master", [
             user.id,
@@ -96381,13 +96509,21 @@ var DBClient = (function () {
             user.title,
             user.first_name,
             user.last_name
-        ]);
+        ]).map(function (data) {
+            _this.registration = user;
+            return data;
+        });
     };
     /**
      *
      */
     DBClient.prototype.deleteRegistration = function (authId) {
-        return this.remove(this.masterDb, "org_master", [authId]);
+        var _this = this;
+        return this.remove(this.masterDb, "org_master", [authId])
+            .map(function (data) {
+            _this.registration = null;
+            return data;
+        });
     };
     DBClient.prototype.remove = function (db, table, parameters) {
         var _this = this;
@@ -96404,6 +96540,28 @@ var DBClient = (function () {
             }, function (err) {
                 responseObserver.error("An error occured: " + err);
             });
+        });
+    };
+    DBClient.prototype.saveAll = function (items) {
+        var _this = this;
+        return new Observable$1(function (obs) {
+            if (!items || items.length == 0) {
+                obs.complete();
+                return;
+            }
+            var index = 0;
+            var name = "save" + items[0].constructor.name;
+            var handler = function (resp) {
+                index++;
+                if (index < items.length) {
+                    _this[name](items[index]).subscribe(handler);
+                }
+                else {
+                    obs.next(true);
+                    obs.complete();
+                }
+            };
+            _this[name](items[0]).subscribe(handler);
         });
     };
     DBClient.prototype.save = function (db, table, parameters) {
@@ -96460,9 +96618,10 @@ var DBClient = (function () {
             });
         });
     };
-    DBClient.prototype.getAll = function (db, table) {
+    DBClient.prototype.getAll = function (db, table, params) {
+        var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql("select * from " + table, null)
+            db.executeSql(_this.getQuery(table, "selectAll"), params)
                 .then(function (data) {
                 var resp = [];
                 for (var i = 0; i < data.rows.length; i++) {
@@ -96769,13 +96928,28 @@ var SyncClient$$1 = (function () {
         this.error = this.errorSource.asObservable();
         this.syncSource = new BehaviorSubject(null);
         this.onSync = this.syncSource.asObservable();
-        this.sync();
     }
     SyncClient$$1.prototype.isSyncing = function () {
         return this._isSyncing;
     };
     SyncClient$$1.prototype.getLastSync = function () {
         return this.lastSyncStatus;
+    };
+    SyncClient$$1.prototype.download = function (lastSyncDate) {
+        var _this = this;
+        return new Observable$1(function (obs) {
+            var result = new DownloadData$$1();
+            _this.rest.getAllForms(lastSyncDate).subscribe(function (forms) {
+                result.forms = forms;
+                _this.db.saveForms(forms).subscribe(function (reply) {
+                    _this.rest.getAllDispatches(lastSyncDate).subscribe(function (dispatches) {
+                        result.dispatches = dispatches;
+                        obs.next(result);
+                        obs.complete();
+                    });
+                });
+            });
+        });
     };
     SyncClient$$1.prototype.sync = function () {
         var _this = this;
@@ -96827,6 +97001,11 @@ var SyncClient$$1 = (function () {
     ], SyncClient$$1);
     return SyncClient$$1;
 }());
+var DownloadData$$1 = (function () {
+    function DownloadData$$1() {
+    }
+    return DownloadData$$1;
+}());
 
 var __decorate$115 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -96838,10 +97017,28 @@ var __metadata$8 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var BussinessClient$$1 = (function () {
-    function BussinessClient$$1(db, rest) {
+    function BussinessClient$$1(db, rest, sync) {
+        var _this = this;
         this.db = db;
         this.rest = rest;
+        this.sync = sync;
+        this.online = true;
+        this.networkSource = new BehaviorSubject(null);
+        this.network = this.networkSource.asObservable();
+        this.networkOff = Network.onDisconnect().subscribe(function () {
+            console.log("network was disconnected :-(");
+            _this.setOnline(false);
+        });
+        this.networkOn = Network.onConnect().subscribe(function () {
+            console.log("network was connected");
+            _this.setOnline(true);
+        });
     }
+    BussinessClient$$1.prototype.setOnline = function (val) {
+        this.online = val;
+        this.networkSource.next(val ? "ON" : "OFF");
+        this.rest.setOnline(val);
+    };
     BussinessClient$$1.prototype.getRegistration = function () {
         var _this = this;
         return new Observable$1(function (obs) {
@@ -96849,6 +97046,7 @@ var BussinessClient$$1 = (function () {
                 .subscribe(function (user) {
                 if (user) {
                     _this.db.setupWorkDb(user.db);
+                    _this.rest.token = user.access_token;
                 }
                 obs.next(user);
                 obs.complete();
@@ -96862,6 +97060,7 @@ var BussinessClient$$1 = (function () {
             req.invitation_code = authCode;
             req.device_name = authCode;
             _this.rest.authenticate(req).subscribe(function (reply) {
+                obs.next({ user: reply, message: "Authenticated. Setting things up..." });
                 var fileTransfer = new Transfer();
                 var ext = reply.user_profile_picture.split('.').pop();
                 var target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
@@ -96875,8 +97074,13 @@ var BussinessClient$$1 = (function () {
                         reply.customer_logo = result.nativeURL;
                         _this.db.saveRegistration(reply).subscribe(function (done) {
                             _this.db.setupWorkDb(reply.db);
-                            obs.next(reply);
-                            obs.complete();
+                            obs.next({ user: reply, message: "Syncing..." });
+                            _this.sync.download(null).subscribe(function (downloadData) {
+                                _this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(function () {
+                                    obs.next({ user: reply, message: "Done" });
+                                    obs.complete();
+                                });
+                            });
                         });
                     })
                         .catch(function (err) {
@@ -96889,9 +97093,15 @@ var BussinessClient$$1 = (function () {
             });
         });
     };
+    BussinessClient$$1.prototype.getForms = function () {
+        return this.db.getForms();
+    };
+    BussinessClient$$1.prototype.getDispatches = function () {
+        return this.db.getDispatches();
+    };
     BussinessClient$$1 = __decorate$115([
         Injectable(), 
-        __metadata$8('design:paramtypes', [DBClient, RESTClient])
+        __metadata$8('design:paramtypes', [DBClient, RESTClient, SyncClient$$1])
     ], BussinessClient$$1);
     return BussinessClient$$1;
 }());
@@ -96975,7 +97185,7 @@ var IonPullUpComponent = (function () {
         this.defaultBehavior = this.defaultBehavior || IonPullUpFooterBehavior.Expand;
         this.maxHeight = this.maxHeight || 0;
     }
-    IonPullUpComponent.prototype.gOnChanges = function (changes) {
+    IonPullUpComponent.prototype.ngOnChanges = function (changes) {
         if (changes['pop']) {
         }
     };
@@ -97220,7 +97430,7 @@ var FormCapture = (function () {
     };
     FormCapture = __decorate$120([
         Component({
-            selector: 'form-capture',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n			<ion-col width-50></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/
+            selector: 'form-capture',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button>\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button>\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50></ion-col>\n\n			<ion-col width-50></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/
         }), 
         __metadata$13('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormCapture);
@@ -97251,7 +97461,7 @@ var FormSummary = (function () {
     };
     FormSummary = __decorate$121([
         Component({
-            selector: 'form-summary',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50><h1>Summary</h1></ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100"/></ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n	<ion-scroll scrollY="true">\n\n		<p>{{form.summary}}</p>\n\n	</ion-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/
+            selector: 'form-summary',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button>\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col><h1>Summary</h1></ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n	<ion-scroll scrollY="true" class="adaptable-height">\n\n		<p>{{form.description}}</p>\n\n	</ion-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-summary\form-summary.html"*/
         }), 
         __metadata$14('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormSummary);
@@ -97338,9 +97548,11 @@ var FormReview = (function () {
     };
     FormReview.prototype.doInfinite = function (refresher) {
     };
+    FormReview.prototype.onFilterChanged = function () {
+    };
     FormReview = __decorate$122([
         Component({
-            selector: 'form-review',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="toggleSearch()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50>\n\n				<h4>Touch an entry to edit. Check red to skip upload</h4>\n\n			</ion-col>\n\n			<ion-col width-50><img src="http://placehold.it/200x100" /></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<ion-col>\n\n				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">\n\n					<ion-segment-button value="" >\n\n						All\n\n					</ion-segment-button>\n\n					<ion-segment-button value="1" >\n\n						Submitted\n\n					</ion-segment-button>\n\n					<ion-segment-button value="2" >\n\n						On Hold\n\n					</ion-segment-button>\n\n					<ion-segment-button value="3" >\n\n						Blocked\n\n					</ion-segment-button>\n\n				</ion-segment>\n\n			</ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">\n\n		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">\n\n			<h1>{{submission.first_name + " " + submission.last_name}}</h1>\n\n			<h3>{{submission.first_name }}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<button ion-button item-right icon-only clear>\n\n				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>\n\n			</button>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/
+            selector: 'form-review',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button>\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n	</ion-navbar>\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col>\n\n				<h4>Touch an entry to edit. Check red to skip upload</h4>\n\n			</ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<ion-col>\n\n				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">\n\n					<ion-segment-button value="" >\n\n						All\n\n					</ion-segment-button>\n\n					<ion-segment-button value="1" >\n\n						Submitted\n\n					</ion-segment-button>\n\n					<ion-segment-button value="2" >\n\n						On Hold\n\n					</ion-segment-button>\n\n					<ion-segment-button value="3" >\n\n						Blocked\n\n					</ion-segment-button>\n\n				</ion-segment>\n\n			</ion-col>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">\n\n		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">\n\n			<h1>{{submission.first_name + " " + submission.last_name}}</h1>\n\n			<h3>{{submission.first_name }}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<h3>{{submission.email}}</h3>\n\n			<button ion-button item-right icon-only clear>\n\n				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>\n\n			</button>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-review\form-review.html"*/
         }), 
         __metadata$15('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormReview);
@@ -97357,10 +97569,11 @@ var __metadata$11 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Forms = (function () {
-    function Forms(navCtrl, navParams, client, zone, actionCtrl, syncClient) {
+    function Forms(navCtrl, navParams, client, sync, zone, actionCtrl, syncClient) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.client = client;
+        this.sync = sync;
         this.zone = zone;
         this.actionCtrl = actionCtrl;
         this.syncClient = syncClient;
@@ -97539,7 +97752,7 @@ var Forms = (function () {
                 ])
             ]
         }), 
-        __metadata$11('design:paramtypes', [NavController, NavParams, RESTClient, NgZone, ActionSheetController, SyncClient$$1])
+        __metadata$11('design:paramtypes', [NavController, NavParams, RESTClient, SyncClient$$1, NgZone, ActionSheetController, SyncClient$$1])
     ], Forms);
     return Forms;
 }());
@@ -97566,7 +97779,7 @@ var Dispatches = (function () {
     }
     Dispatches.prototype.doRefresh = function (refresher) {
         var _this = this;
-        this.client.getForms().subscribe(function (forms) {
+        this.client.getDispatches().subscribe(function (forms) {
             _this.dispatches = forms.records;
             if (refresher) {
                 refresher.complete();
@@ -97579,7 +97792,7 @@ var Dispatches = (function () {
     };
     Dispatches.prototype.doInfinite = function (infiniteScroll) {
         var _this = this;
-        this.client.getForms().subscribe(function (forms) {
+        this.client.getDispatches().subscribe(function (forms) {
             _this.dispatches = _this.dispatches.concat(forms.records);
             if (infiniteScroll) {
                 infiniteScroll.complete();
@@ -97772,9 +97985,8 @@ var Login = (function () {
                 content: "Authenticating..."
             });
             loader_1.present();
-            this.client.authenticate(this.authCode).subscribe(function (user) {
-                loader_1.dismiss();
-                _this.navCtrl.setRoot(Main);
+            this.client.authenticate(this.authCode).subscribe(function (data) {
+                loader_1.setContent(data.message);
             }, function (err) {
                 loader_1.dismiss();
                 var toaster = _this.toast.create({
@@ -97784,6 +97996,9 @@ var Login = (function () {
                     cssClass: "error"
                 });
                 toaster.present();
+            }, function () {
+                loader_1.dismiss();
+                _this.navCtrl.setRoot(Main);
             });
         }
         else {

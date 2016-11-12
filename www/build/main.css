@@ -28245,6 +28245,10 @@ ion-pullup ion-footer ion-toolbar .toolbar-background {
   padding: 16px !important;
 }
 
+.form-summary .adaptable-height {
+  height: calc(100% - 110px);
+}
+
 .search ion-icon {
   color: grey;
 }

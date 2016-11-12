@@ -43,9 +43,8 @@ export class Login {
 			});
 			loader.present();
 			this.client.authenticate(this.authCode).subscribe(
-				user => {
-					loader.dismiss();
-					this.navCtrl.setRoot(Main);
+				data => {
+					loader.setContent(data.message);
 				},
 				err => {
 					loader.dismiss();
@@ -56,6 +55,10 @@ export class Login {
 						cssClass: "error"
 					});
 					toaster.present();
+				},
+				() => {
+					loader.dismiss();
+					this.navCtrl.setRoot(Main);
 				});
 		} else {
 			this.navCtrl.setRoot(Main);
