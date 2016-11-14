@@ -72,10 +72,10 @@ export class Forms {
               private zone: NgZone,
               private actionCtrl: ActionSheetController,
               private syncClient: SyncClient) {
-    this.doInfinite();
+    this.doRefresh();
   }
 
-  doRefresh(refresher){
+  doRefresh(refresher?){
     this.client.getForms().subscribe(forms => {
       this.forms = forms;
       if(refresher){

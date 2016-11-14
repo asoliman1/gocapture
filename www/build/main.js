@@ -95912,12 +95912,14 @@ var RESTClient = (function () {
             var offset = 0;
             var result = [];
             var handler = function (data) {
+                result.push.apply(result, data.records);
                 if (data.count + offset < data.total_count) {
                     offset += data.count;
                     doTheCall();
                 }
                 else {
                     obs.next(result);
+                    obs.complete();
                 }
             };
             var doTheCall = function () {
@@ -96018,6 +96020,12 @@ var Form$1 = (function (_super) {
     }
     return Form;
 }(BaseForm));
+
+var FormElement = (function () {
+    function FormElement() {
+    }
+    return FormElement;
+}());
 
 var SubmissionStatus;
 (function (SubmissionStatus) {
@@ -96255,12 +96263,15 @@ var __decorate$112 = (undefined && undefined.__decorate) || function (decorators
 var __metadata$5 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var MASTER = "master";
+var WORK = "work";
 var DBClient = (function () {
     /**
      *
      */
     function DBClient(platform) {
         this.platform = platform;
+        this.map = {};
         this.tables = [
             {
                 name: 'forms',
@@ -96283,7 +96294,7 @@ var DBClient = (function () {
                 ],
                 queries: {
                     "select": "SELECT * FROM forms where isDispatch=(?)",
-                    "selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status > 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status < 2 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = 'true'",
+                    "selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status > 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status < 2 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = (?)",
                     "update": "INSERT OR REPLACE INTO forms ( id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     "delete": "DELETE from forms where id=(?)"
                 }
@@ -96389,7 +96400,7 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.getConfig = function (key) {
-        return this.getSingle(this.workDb, "configuration", [key])
+        return this.getSingle(WORK, "configuration", [key])
             .map(function (data) {
             return data.value;
         });
@@ -96398,7 +96409,7 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.getAllConfig = function () {
-        return this.getAll(this.workDb, "configuration", [])
+        return this.getAll(WORK, "configuration", [])
             .map(function (data) {
             var resp = {};
             data.forEach(function (entry) {
@@ -96411,16 +96422,16 @@ var DBClient = (function () {
      *
      */
     DBClient.prototype.saveConfig = function (key, value) {
-        return this.save(this.workDb, "configuration", [key, value]);
+        return this.save(WORK, "configuration", [key, value]);
     };
     /**
      *
      */
     DBClient.prototype.deleteConfig = function (key) {
-        return this.remove(this.workDb, "configuration", [key]);
+        return this.remove(WORK, "configuration", [key]);
     };
     DBClient.prototype.getForms = function () {
-        return this.getAll(this.workDb, "forms", [false])
+        return this.getAll(WORK, "forms", [false, false, false])
             .map(function (data) {
             var forms = [];
             data.forEach(function (dbForm) {
@@ -96433,13 +96444,39 @@ var DBClient = (function () {
                 form.submit_error_message = dbForm.submit_error_message;
                 form.submit_button_text = dbForm.submit_button_text;
                 form.elements = JSON.parse(dbForm.elements);
+                if (form.elements && form.elements.length > 0) {
+                    form.elements.sort(function (e1, e2) {
+                        if (e1.position < e2.position) {
+                            return -1;
+                        }
+                        if (e1.position > e2.position) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    form.elements.forEach(function (e) {
+                        if (e.options && e.options.length > 0) {
+                            e.options.sort(function (o1, o2) {
+                                if (o1.position < o2.position) {
+                                    return -1;
+                                }
+                                if (o1.position > o2.position) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
+                    });
+                }
+                form.total_submissions = dbForm.totalSub;
+                form.total_hold = dbForm.totalHold;
                 forms.push(form);
             });
             return forms;
         });
     };
     DBClient.prototype.getDispatches = function () {
-        return this.getAll(this.workDb, "forms", [true])
+        return this.getAll(WORK, "forms", [true, true, true])
             .map(function (data) {
             var forms = [];
             data.forEach(function (dbForm) {
@@ -96447,6 +96484,8 @@ var DBClient = (function () {
                 form.form_id = dbForm.id;
                 form.description = dbForm.description;
                 form.name = dbForm.name;
+                form.total_submissions = dbForm.totalSub;
+                form.total_hold = dbForm.totalHold;
                 forms.push(form);
             });
             return forms;
@@ -96454,17 +96493,17 @@ var DBClient = (function () {
     };
     DBClient.prototype.saveForm = function (form) {
         //id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
-        return this.save(this.workDb, "forms", [form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
+        return this.save(WORK, "forms", [form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
     };
     DBClient.prototype.saveForms = function (forms) {
-        return this.saveAll(forms);
+        return this.saveAll(forms, "Form");
     };
     /**
      *
      */
     DBClient.prototype.getRegistration = function () {
         var _this = this;
-        return this.getSingle(this.masterDb, "org_master", null)
+        return this.getSingle(MASTER, "org_master", null)
             .map(function (data) {
             if (data) {
                 var user = new User();
@@ -96493,7 +96532,7 @@ var DBClient = (function () {
     DBClient.prototype.saveRegistration = function (user) {
         var _this = this;
         user.db = user.customer_name.replace(/\s*/g, '');
-        return this.save(this.masterDb, "org_master", [
+        return this.save(MASTER, "org_master", [
             user.id,
             user.customer_name,
             user.first_name + ' ' + user.last_name,
@@ -96519,30 +96558,32 @@ var DBClient = (function () {
      */
     DBClient.prototype.deleteRegistration = function (authId) {
         var _this = this;
-        return this.remove(this.masterDb, "org_master", [authId])
+        return this.remove(MASTER, "org_master", [authId])
             .map(function (data) {
             _this.registration = null;
             return data;
         });
     };
-    DBClient.prototype.remove = function (db, table, parameters) {
+    DBClient.prototype.remove = function (type, table, parameters) {
         var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql(_this.getQuery(table, "delete"), parameters)
-                .then(function (data) {
-                if (data.rowsAffected == 1) {
-                    responseObserver.next(true);
-                    responseObserver.complete();
-                }
-                else {
-                    responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-                }
-            }, function (err) {
-                responseObserver.error("An error occured: " + err);
+            _this.db(type).subscribe(function (db) {
+                db.executeSql(_this.getQuery(table, "delete"), parameters)
+                    .then(function (data) {
+                    if (data.rowsAffected == 1) {
+                        responseObserver.next(true);
+                        responseObserver.complete();
+                    }
+                    else {
+                        responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+                    }
+                }, function (err) {
+                    responseObserver.error("An error occured: " + err);
+                });
             });
         });
     };
-    DBClient.prototype.saveAll = function (items) {
+    DBClient.prototype.saveAll = function (items, type) {
         var _this = this;
         return new Observable$1(function (obs) {
             if (!items || items.length == 0) {
@@ -96550,7 +96591,7 @@ var DBClient = (function () {
                 return;
             }
             var index = 0;
-            var name = "save" + items[0].constructor.name;
+            var name = "save" + type;
             var handler = function (resp) {
                 index++;
                 if (index < items.length) {
@@ -96564,94 +96605,137 @@ var DBClient = (function () {
             _this[name](items[0]).subscribe(handler);
         });
     };
-    DBClient.prototype.save = function (db, table, parameters) {
+    DBClient.prototype.save = function (type, table, parameters) {
         var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql(_this.getQuery(table, "update"), parameters)
-                .then(function (data) {
-                if (data.rowsAffected == 1) {
-                    responseObserver.next(true);
-                    responseObserver.complete();
-                }
-                else {
-                    responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-                }
-            }, function (err) {
-                responseObserver.error("An error occured: " + err);
+            _this.db(type).subscribe(function (db) {
+                db.executeSql(_this.getQuery(table, "update"), parameters)
+                    .then(function (data) {
+                    if (data.rowsAffected == 1) {
+                        responseObserver.next(true);
+                        responseObserver.complete();
+                    }
+                    else {
+                        responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+                    }
+                }, function (err) {
+                    responseObserver.error("An error occured: " + err);
+                });
             });
         });
     };
-    DBClient.prototype.getSingle = function (db, table, parameters) {
+    DBClient.prototype.getSingle = function (type, table, parameters) {
         var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql(_this.getQuery(table, "select"), parameters)
-                .then(function (data) {
-                if (data.rows.length == 1) {
-                    responseObserver.next(data.rows.item(0));
-                    responseObserver.complete();
-                }
-                else if (data.rows.length == 0) {
-                    responseObserver.next(null);
-                    responseObserver.complete();
-                }
-                else {
-                    responseObserver.error("More than one entry found");
-                }
-            }, function (err) {
-                responseObserver.error("An error occured: " + err);
+            _this.db(type).subscribe(function (db) {
+                db.executeSql(_this.getQuery(table, "select"), parameters)
+                    .then(function (data) {
+                    if (data.rows.length == 1) {
+                        responseObserver.next(data.rows.item(0));
+                        responseObserver.complete();
+                    }
+                    else if (data.rows.length == 0) {
+                        responseObserver.next(null);
+                        responseObserver.complete();
+                    }
+                    else {
+                        responseObserver.error("More than one entry found");
+                    }
+                }, function (err) {
+                    responseObserver.error("An error occured: " + err);
+                });
             });
         });
     };
-    DBClient.prototype.getMultiple = function (db, table, parameters) {
+    DBClient.prototype.getMultiple = function (type, table, parameters) {
         var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql(_this.getQuery(table, "select"), parameters)
-                .then(function (data) {
-                var resp = [];
-                for (var i = 0; i < data.rows.length; i++) {
-                    resp.push(data.rows.item(i));
-                }
-                responseObserver.next(resp);
-                responseObserver.complete();
-            }, function (err) {
-                responseObserver.error("An error occured: " + err);
+            _this.db(type).subscribe(function (db) {
+                db.executeSql(_this.getQuery(table, "select"), parameters)
+                    .then(function (data) {
+                    var resp = [];
+                    for (var i = 0; i < data.rows.length; i++) {
+                        resp.push(data.rows.item(i));
+                    }
+                    responseObserver.next(resp);
+                    responseObserver.complete();
+                }, function (err) {
+                    responseObserver.error("An error occured: " + err);
+                });
             });
         });
     };
-    DBClient.prototype.getAll = function (db, table, params) {
+    DBClient.prototype.getAll = function (type, table, params) {
         var _this = this;
         return new Observable$1(function (responseObserver) {
-            db.executeSql(_this.getQuery(table, "selectAll"), params)
-                .then(function (data) {
-                var resp = [];
-                for (var i = 0; i < data.rows.length; i++) {
-                    resp.push(data.rows.item(i));
-                }
-                responseObserver.next(resp);
-                responseObserver.complete();
-            }, function (err) {
-                responseObserver.error("An error occured: " + err);
+            _this.db(type).subscribe(function (db) {
+                db.executeSql(_this.getQuery(table, "selectAll"), params)
+                    .then(function (data) {
+                    var resp = [];
+                    for (var i = 0; i < data.rows.length; i++) {
+                        resp.push(data.rows.item(i));
+                    }
+                    responseObserver.next(resp);
+                    responseObserver.complete();
+                }, function (err) {
+                    responseObserver.error("An error occured: " + err);
+                });
             });
+        });
+    };
+    DBClient.prototype.db = function (type) {
+        var _this = this;
+        return new Observable$1(function (obs) {
+            if (_this.map[type]) {
+                setTimeout(function () {
+                    obs.next(_this.map[type]);
+                    obs.complete();
+                });
+            }
+            else {
+                var o = null;
+                switch (type) {
+                    case MASTER:
+                        o = _this.masterDb;
+                        break;
+                    case WORK:
+                        o = _this.workDb;
+                        break;
+                    default:
+                        return;
+                }
+                o.subscribe(function (db) {
+                    _this.map[type] = db;
+                    obs.next(_this.map[type]);
+                    obs.complete();
+                });
+            }
         });
     };
     DBClient.prototype.initializeDb = function (platform, name, master) {
         var _this = this;
-        var db = this.getDb(platform);
-        db.openDatabase({
-            name: name,
-            location: 'default' // the location field is required
-        }).then(function () {
-            _this.setup(db, master);
-        }, function (err) {
-            console.error('Unable to open database: ', err);
+        return new Observable$1(function (obs) {
+            platform.ready().then(function () {
+                var db = null;
+                if (platform.is("cordova")) {
+                    db = new SQLite();
+                }
+                else {
+                    db = new LocalSql();
+                }
+                db.openDatabase({
+                    name: name,
+                    location: 'default' // the location field is required
+                }).then(function () {
+                    _this.setup(db, master);
+                    obs.next(db);
+                    obs.complete();
+                }, function (err) {
+                    console.error('Unable to open database: ', err);
+                    obs.error(err);
+                });
+            });
         });
-        return db;
-    };
-    DBClient.prototype.getDb = function (platform) {
-        if (platform.is("cordova")) {
-            return new SQLite();
-        }
-        return new LocalSql();
     };
     DBClient.prototype.setup = function (db, master) {
         var _this = this;
@@ -97421,16 +97505,21 @@ var FormCapture = (function () {
         this.navParams = navParams;
         this.client = client;
         this.zone = zone;
-        this.form = new Form$1();
     }
     FormCapture.prototype.ionViewWillEnter = function () {
         this.form = this.navParams.get("form");
     };
     FormCapture.prototype.doRefresh = function (refresher) {
     };
+    FormCapture.prototype.doBack = function () {
+        this.navCtrl.pop();
+    };
+    FormCapture.prototype.ionViewWillUnload = function () {
+        console.log("Destroying FormCapture");
+    };
     FormCapture = __decorate$120([
         Component({
-            selector: 'form-capture',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button>\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form.name}}</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button>\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50></ion-col>\n\n			<ion-col width-50></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/
+            selector: 'form-capture',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<ion-buttons start>\n\n			<button ion-button (click)="doBack()">\n\n				<ion-icon name="back"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n		<ion-title>{{form ? form.name : \'\'}}</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button>\n\n				<ion-icon name="checkmark"></ion-icon>\n\n			</button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="form-summary">\n\n	<ion-grid>\n\n		<ion-row>\n\n			<ion-col width-50></ion-col>\n\n			<ion-col width-50></ion-col>\n\n		</ion-row>\n\n		<ion-row>\n\n			<form-view [form]="form"></form-view>\n\n		</ion-row>\n\n	</ion-grid>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\form-capture\form-capture.html"*/
         }), 
         __metadata$13('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
     ], FormCapture);
@@ -97569,11 +97658,10 @@ var __metadata$11 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var Forms = (function () {
-    function Forms(navCtrl, navParams, client, sync, zone, actionCtrl, syncClient) {
+    function Forms(navCtrl, navParams, client, zone, actionCtrl, syncClient) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.client = client;
-        this.sync = sync;
         this.zone = zone;
         this.actionCtrl = actionCtrl;
         this.syncClient = syncClient;
@@ -97583,12 +97671,12 @@ var Forms = (function () {
         this.statuses = [];
         this.forms = [];
         this.uploading = false;
-        this.doInfinite();
+        this.doRefresh();
     }
     Forms.prototype.doRefresh = function (refresher) {
         var _this = this;
         this.client.getForms().subscribe(function (forms) {
-            _this.forms = forms.records;
+            _this.forms = forms;
             if (refresher) {
                 refresher.complete();
             }
@@ -97601,7 +97689,7 @@ var Forms = (function () {
     Forms.prototype.doInfinite = function (infiniteScroll) {
         var _this = this;
         this.client.getForms().subscribe(function (forms) {
-            _this.forms = _this.forms.concat(forms.records);
+            _this.forms = _this.forms.concat(forms);
             if (infiniteScroll) {
                 infiniteScroll.complete();
             }
@@ -97728,7 +97816,7 @@ var Forms = (function () {
     ], Forms.prototype, "pullup", void 0);
     Forms = __decorate$118([
         Component({
-            selector: 'forms',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="forms">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="forms" approxItemHeight="75px">\n\n		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">\n\n			<h1>{{form.name}}</h1>\n\n      <h2>{{form.total_submissions}} submissions</h2>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>\n\n\n\n\n\n<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == \'visible\'" (onCollapse)="footerCollapsed()">\n\n		<ion-toolbar #toolbar>\n\n    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>\n\n			<div class="element">{{currentSyncForm}}</div>\n\n  </ion-toolbar>\n\n  <ion-content>\n\n    <ion-list class="sync-list">\n\n      <ion-item *ngFor="let status of statuses" icon-left>\n\n        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>\n\n				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>\n\n        <h2 item-right>{{status.formName}}</h2>\n\n      </ion-item>\n\n    </ion-list>\n\n  </ion-content>\n\n</ion-pullup>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/,
+            selector: 'forms',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="forms">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="forms" approxItemHeight="75px">\n\n		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">\n\n			<h1>{{form.name}}</h1>\n\n      		<h2>{{form.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_hold > 0">{{form.total_hold}} on Hold</span></h2>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll-->\n\n</ion-content>\n\n\n\n\n\n<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == \'visible\'" (onCollapse)="footerCollapsed()">\n\n		<ion-toolbar #toolbar>\n\n    	<ion-spinner></ion-spinner><div class="action">Uploading...</div>\n\n			<div class="element">{{currentSyncForm}}</div>\n\n  </ion-toolbar>\n\n  <ion-content>\n\n    <ion-list class="sync-list">\n\n      <ion-item *ngFor="let status of statuses" icon-left>\n\n        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>\n\n				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>\n\n        <h2 item-right>{{status.formName}}</h2>\n\n      </ion-item>\n\n    </ion-list>\n\n  </ion-content>\n\n</ion-pullup>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\forms\forms.html"*/,
             animations: [
                 // Define an animation that adjusts the opactiy when a new item is created
                 //  in the DOM. We use the 'visible' string as the hard-coded value in the 
@@ -97752,7 +97840,7 @@ var Forms = (function () {
                 ])
             ]
         }), 
-        __metadata$11('design:paramtypes', [NavController, NavParams, RESTClient, SyncClient$$1, NgZone, ActionSheetController, SyncClient$$1])
+        __metadata$11('design:paramtypes', [NavController, NavParams, BussinessClient$$1, NgZone, ActionSheetController, SyncClient$$1])
     ], Forms);
     return Forms;
 }());
@@ -97780,7 +97868,7 @@ var Dispatches = (function () {
     Dispatches.prototype.doRefresh = function (refresher) {
         var _this = this;
         this.client.getDispatches().subscribe(function (forms) {
-            _this.dispatches = forms.records;
+            _this.dispatches = forms;
             if (refresher) {
                 refresher.complete();
             }
@@ -97793,7 +97881,7 @@ var Dispatches = (function () {
     Dispatches.prototype.doInfinite = function (infiniteScroll) {
         var _this = this;
         this.client.getDispatches().subscribe(function (forms) {
-            _this.dispatches = _this.dispatches.concat(forms.records);
+            _this.dispatches = _this.dispatches.concat(forms);
             if (infiniteScroll) {
                 infiniteScroll.complete();
             }
@@ -97805,7 +97893,7 @@ var Dispatches = (function () {
     ], Dispatches.prototype, "searchbar", void 0);
     Dispatches = __decorate$123([
         Component({
-            selector: 'dispatches',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Dispatch Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="dispatches">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">\n\n		<ion-item *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">\n\n			<h2>{{dispatch.name}}</h2>\n\n      <h3>{{dispatch.total_submissions}} submissions</h3>\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll>\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/,
+            selector: 'dispatches',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/'<ion-header>\n\n	<ion-navbar color="orange">\n\n		<button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n		<ion-title>Dispatch Forms</ion-title>\n\n		<ion-buttons end>\n\n			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">\n\n        <ion-icon name="search"></ion-icon>\n\n      </button>\n\n		</ion-buttons>\n\n	</ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content class="dispatches">\n\n	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>\n\n  <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">\n\n		<ion-item *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">\n\n			<h2>{{dispatch.name}}</h2>\n\n     		<h2>{{dispatch.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="dispatch.total_hold > 0">{{dispatch.total_hold}} on Hold</span></h2>\n\n		\n\n		</ion-item>\n\n	</ion-list>\n\n	<ion-refresher (ionRefresh)="doRefresh($event)">\n\n    <ion-refresher-content pull-max="200"></ion-refresher-content>\n\n  </ion-refresher>\n\n	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">\n\n		<ion-infinite-scroll-content></ion-infinite-scroll-content>\n\n	</ion-infinite-scroll-->\n\n</ion-content>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\views\dispatches\dispatches.html"*/,
             animations: [
                 // Define an animation that adjusts the opactiy when a new item is created
                 //  in the DOM. We use the 'visible' string as the hard-coded value in the 
@@ -97823,7 +97911,7 @@ var Dispatches = (function () {
                 ])
             ]
         }), 
-        __metadata$16('design:paramtypes', [NavController, NavParams, RESTClient, NgZone])
+        __metadata$16('design:paramtypes', [NavController, NavParams, BussinessClient$$1, NgZone])
     ], Dispatches);
     return Dispatches;
 }());
@@ -98046,6 +98134,253 @@ var MyApp = (function () {
     return MyApp;
 }());
 
+function isPresent$8(obj) {
+    return obj !== undefined && obj !== null;
+}
+var CustomValidators = (function () {
+    function CustomValidators() {
+    }
+    /**
+     * Validator that requires controls to have a value of a range length.
+     */
+    CustomValidators.rangeLength = function (rangeLength) {
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            return v.length >= rangeLength[0] && v.length <= rangeLength[1] ? null : { 'rangeLength': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value of a min value.
+     */
+    CustomValidators.min = function (min) {
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            return v >= min ? null : { 'min': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value of a max value.
+     */
+    CustomValidators.max = function (max) {
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            return v <= max ? null : { 'max': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value of a range value.
+     */
+    CustomValidators.range = function (range) {
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            return v >= range[0] && v <= range[1] ? null : { 'range': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value of digits.
+     */
+    CustomValidators.digits = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^\d+$/.test(v) ? null : { 'digits': true };
+    };
+    /**
+     * Validator that requires controls to have a value of number.
+     */
+    CustomValidators.number = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^(?:-?\d+|-?\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(v) ? null : { 'number': true };
+    };
+    /**
+     * Validator that requires controls to have a value of url.
+     */
+    CustomValidators.url = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(v) ? null : { 'url': true };
+    };
+    /**
+     * Validator that requires controls to have a value of email.
+     */
+    CustomValidators.email = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(v) ? null : { 'email': true };
+    };
+    /**
+     * Validator that requires controls to have a value of date.
+     */
+    CustomValidators.date = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return !/Invalid|NaN/.test(new Date(v).toString()) ? null : { 'date': true };
+    };
+    /**
+     * Validator that requires controls to have a value of dateISO.
+     */
+    CustomValidators.dateISO = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/.test(v) ? null : { 'dateISO': true };
+    };
+    /**
+     * Validator that requires controls to have a value of creditCard.
+     */
+    CustomValidators.creditCard = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        var sanitized = v.replace(/[^0-9]+/g, '');
+        // problem with chrome
+        if (!(/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/.test(sanitized))) {
+            return { 'creditCard': true };
+        }
+        var sum = 0;
+        var digit;
+        var tmpNum;
+        var shouldDouble;
+        for (var i = sanitized.length - 1; i >= 0; i--) {
+            digit = sanitized.substring(i, (i + 1));
+            tmpNum = parseInt(digit, 10);
+            if (shouldDouble) {
+                tmpNum *= 2;
+                if (tmpNum >= 10) {
+                    sum += ((tmpNum % 10) + 1);
+                }
+                else {
+                    sum += tmpNum;
+                }
+            }
+            else {
+                sum += tmpNum;
+            }
+            shouldDouble = !shouldDouble;
+        }
+        if (Boolean((sum % 10) === 0 ? sanitized : false)) {
+            return null;
+        }
+        return { 'creditCard': true };
+    };
+    /**
+     * Validator that requires controls to have a value of JSON.
+     */
+    CustomValidators.json = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        try {
+            var obj = JSON.parse(v);
+            if (Boolean(obj) && typeof obj === 'object') {
+                return null;
+            }
+        }
+        catch (e) {
+        }
+        return { 'json': true };
+    };
+    /**
+     * Validator that requires controls to have a value of base64.
+     */
+    CustomValidators.base64 = function (control) {
+        if (isPresent$8(Validators.required(control)))
+            return null;
+        var v = control.value;
+        return /^(?:[A-Z0-9+\/]{4})*(?:[A-Z0-9+\/]{2}==|[A-Z0-9+\/]{3}=|[A-Z0-9+\/]{4})$/i.test(v) ? null : { 'base64': true };
+    };
+    /**
+     * Validator that requires controls to have a value of phone.
+     */
+    CustomValidators.phone = function (locale) {
+        var phones = {
+            'zh-CN': /^(\+?0?86\-?)?((13\d|14[57]|15[^4,\D]|17[678]|18\d)\d{8}|170[059]\d{7})$/,
+            'zh-TW': /^(\+?886\-?|0)?9\d{8}$/,
+            'en-ZA': /^(\+?27|0)\d{9}$/,
+            'en-AU': /^(\+?61|0)4\d{8}$/,
+            'en-HK': /^(\+?852\-?)?[569]\d{3}\-?\d{4}$/,
+            'fr-FR': /^(\+?33|0)[67]\d{8}$/,
+            'de-DE': /^(\+?49|0)[1-9]\d{10}$/,
+            'pt-PT': /^(\+351)?9[1236]\d{7}$/,
+            'el-GR': /^(\+?30)?(69\d{8})$/,
+            'en-GB': /^(\+?44|0)7\d{9}$/,
+            'en-US': /^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$/,
+            'en-ZM': /^(\+26)?09[567]\d{7}$/,
+            'ru-RU': /^(\+?7|8)?9\d{9}$/,
+            'nb-NO': /^(\+?47)?[49]\d{7}$/,
+            'nn-NO': /^(\+?47)?[49]\d{7}$/,
+            'vi-VN': /^(0|\+?84)?((1(2([0-9])|6([2-9])|88|99))|(9((?!5)[0-9])))([0-9]{7})$/,
+            'en-NZ': /^(\+?64|0)2\d{7,9}$/
+        };
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            var pattern = phones[locale] || phones['en-US'];
+            return (new RegExp(pattern)).test(v) ? null : { 'phone': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value of uuid.
+     */
+    CustomValidators.uuid = function (version) {
+        var uuid = {
+            '3': /^[0-9A-F]{8}-[0-9A-F]{4}-3[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i,
+            '4': /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+            '5': /^[0-9A-F]{8}-[0-9A-F]{4}-5[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+            'all': /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
+        };
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            var pattern = uuid[version] || uuid.all;
+            return (new RegExp(pattern)).test(v) ? null : { 'uuid': true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value to equal another value.
+     */
+    CustomValidators.equal = function (val) {
+        return function (control) {
+            if (isPresent$8(Validators.required(control)))
+                return null;
+            var v = control.value;
+            return val === v ? null : { equal: true };
+        };
+    };
+    /**
+     * Validator that requires controls to have a value to equal another control.
+     */
+    CustomValidators.equalTo = function (group) {
+        var keys = Object.keys(group.controls);
+        var len = keys.length;
+        if (!len)
+            return null;
+        var firstKey = keys[0];
+        for (var i = 1; i < len; i++) {
+            if (group.controls[firstKey].value !== group.controls[keys[i]].value) {
+                return { equalTo: true };
+            }
+        }
+        return null;
+    };
+    return CustomValidators;
+}());
+
 var __decorate$125 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -98053,6 +98388,165 @@ var __decorate$125 = (undefined && undefined.__decorate) || function (decorators
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var __metadata$18 = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var FormView = (function () {
+    function FormView(fb, zone) {
+        this.fb = fb;
+        this.zone = zone;
+        this.onChange = new EventEmitter();
+        this.theForm = new FormGroup({});
+        this.displayForm = {};
+    }
+    FormView.prototype.ngOnChanges = function (changes) {
+        if (changes['form']) {
+            if (this.form) {
+                this.setupFormGroup();
+            }
+            else {
+                this.theForm = new FormGroup({});
+                this.displayForm = {};
+            }
+        }
+    };
+    FormView.prototype.setupFormGroup = function () {
+        var _this = this;
+        var theForm = this.fb.group({});
+        this.form.elements.forEach(function (element) {
+            var identifier = "element_" + element.id;
+            element["identifier"] = identifier;
+            var control = null;
+            if (element.mapping.length > 1) {
+                var opts = {};
+                element.mapping.forEach(function (entry) {
+                    entry["identifier"] = identifier + "_" + entry.ll_field_id;
+                    opts[entry["identifier"]] = new FormControl(element.default_value, _this.makeValidators(element));
+                });
+                control = _this.fb.group(opts);
+            }
+            else {
+                control = _this.fb.control({ value: element.default_value, disabled: element.is_readonly });
+                control.setValidators(_this.makeValidators(element));
+            }
+            theForm.addControl(identifier, control);
+            /*switch(element.type){
+                case "simple_name":
+                    break;
+                case "email":
+                    break;
+                case "url":
+                    break;
+                case "text":
+                    break;
+                case "select":
+                    break;
+                case "radio":
+                    break;
+            }*/
+        });
+        this.theForm = theForm;
+        setTimeout(function () {
+            _this.zone.run(function () {
+                _this.displayForm = _this.form;
+            });
+        }, 150);
+    };
+    FormView.prototype.makeValidators = function (element) {
+        var validators = [];
+        if (element.is_required) {
+            validators.push(Validators.required);
+        }
+        switch (element.type) {
+            case "email":
+                validators.push(CustomValidators.email);
+                break;
+            case "url":
+                validators.push(CustomValidators.url);
+                break;
+        }
+        return validators;
+    };
+    FormView.prototype.onInputChange = function () {
+    };
+    __decorate$125([
+        Input(), 
+        __metadata$18('design:type', Form$1)
+    ], FormView.prototype, "form", void 0);
+    __decorate$125([
+        Output(), 
+        __metadata$18('design:type', Object)
+    ], FormView.prototype, "onChange", void 0);
+    FormView = __decorate$125([
+        Component({
+            selector: 'form-view',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\components\form-view\form-view.html"*/'<div class="form-view">\n\n	<form [formGroup]="theForm" style="width:100%;">\n\n		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">\n\n			<ion-item *ngSwitchCase="\'email\'">\n\n				<ion-label stacked>{{element.title}}</ion-label>\n\n				<ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>\n\n			</ion-item>\n\n			<ion-item *ngSwitchCase="\'url\'">\n\n				<ion-label stacked>{{element.title}}</ion-label>\n\n				<ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>\n\n			</ion-item>\n\n			<ion-item *ngSwitchCase="\'text\'">\n\n				<ion-label stacked>{{element.title}}</ion-label>\n\n				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>\n\n			</ion-item>\n\n			<simple-name *ngSwitchCase="\'simple_name\'" [element]="element" [rootGroup]="theForm"></simple-name>\n\n			<ion-item *ngSwitchDefault>\n\n				<ion-label>Coming soon! A component for {{element.type}}</ion-label>\n\n			</ion-item>\n\n		</div>\n\n	</form>\n\n</div>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\components\form-view\form-view.html"*/
+        }), 
+        __metadata$18('design:paramtypes', [FormBuilder, NgZone])
+    ], FormView);
+    return FormView;
+}());
+
+var __decorate$126 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$19 = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var SimpleName = (function () {
+    function SimpleName() {
+        this.onChange = new EventEmitter();
+        this.mapping = [];
+        this.group = new FormGroup({});
+    }
+    SimpleName.prototype.ngOnChanges = function (changes) {
+        if (changes['element'] || changes['rootGroup']) {
+            this.config();
+        }
+    };
+    SimpleName.prototype.config = function () {
+        var _this = this;
+        if (this.element && this.element.mapping && this.rootGroup) {
+            var elemIdentifier_1 = "element_" + this.element.id;
+            this.group = this.rootGroup.get(elemIdentifier_1);
+            this.element.mapping.forEach(function (map) {
+                _this.mapping.push({
+                    id: map.ll_field_id,
+                    identifier: elemIdentifier_1 + "_" + map.ll_field_id,
+                    label: map.ll_field_unique_identifier
+                });
+            });
+        }
+    };
+    __decorate$126([
+        Input(), 
+        __metadata$19('design:type', FormElement)
+    ], SimpleName.prototype, "element", void 0);
+    __decorate$126([
+        Input(), 
+        __metadata$19('design:type', FormGroup)
+    ], SimpleName.prototype, "rootGroup", void 0);
+    __decorate$126([
+        Output(), 
+        __metadata$19('design:type', Object)
+    ], SimpleName.prototype, "onChange", void 0);
+    SimpleName = __decorate$126([
+        Component({
+            selector: 'simple-name',template:/*ion-inline-start:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\components\simple-name\simple-name.html"*/'<ion-row [formGroup]="group">\n\n	<ion-col *ngFor="let map of mapping">\n\n		<ion-item>\n\n			<ion-label stacked>{{map.label}}</ion-label>\n\n			<ion-input type="text" [attr.name]="map.id" [formControlName]="map.identifier"></ion-input>\n\n		</ion-item>\n\n	</ion-col>\n\n</ion-row>'/*ion-inline-end:"D:\Business\upwork\RyanSchefke\mobilitEASE\src\components\simple-name\simple-name.html"*/
+        }), 
+        __metadata$19('design:paramtypes', [])
+    ], SimpleName);
+    return SimpleName;
+}());
+
+var __decorate$127 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata$20 = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ArrayFilterPipe = (function () {
@@ -98068,12 +98562,12 @@ var ArrayFilterPipe = (function () {
             return true;
         });
     };
-    ArrayFilterPipe = __decorate$125([
+    ArrayFilterPipe = __decorate$127([
         Pipe({
             name: "filter",
             pure: false
         }), 
-        __metadata$18('design:paramtypes', [])
+        __metadata$20('design:paramtypes', [])
     ], ArrayFilterPipe);
     return ArrayFilterPipe;
 }());
@@ -98087,6 +98581,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+//import { CustomFormsModule } from 'ng2-validation';
 var AppModule = (function () {
     function AppModule() {
     }
@@ -98104,7 +98599,9 @@ var AppModule = (function () {
                 FormSummary,
                 FormReview,
                 FormCapture,
-                ArrayFilterPipe
+                ArrayFilterPipe,
+                FormView,
+                SimpleName
             ],
             imports: [
                 IonicModule.forRoot(MyApp)
@@ -98121,7 +98618,9 @@ var AppModule = (function () {
                 IonPullUpComponent,
                 FormSummary,
                 FormReview,
-                FormCapture
+                FormCapture,
+                FormView,
+                SimpleName
             ],
             providers: [
                 DBClient,
@@ -98171,6 +98670,13 @@ setTimeout(function () {
         }
     };
 }, 6000);
+window["device"] = {
+    platform: "Android",
+    model: "Note7",
+    manufacturer: "Google",
+    version: "5.2",
+    uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
+};
 
 setupConfig$1();
 platformBrowserDynamic().bootstrapModule(AppModule);

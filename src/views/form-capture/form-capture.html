@@ -1,11 +1,11 @@
 <ion-header>
 	<ion-navbar color="orange">
 		<ion-buttons start>
-			<button ion-button>
+			<button ion-button (click)="doBack()">
 				<ion-icon name="back"></ion-icon>
 			</button>
 		</ion-buttons>
-		<ion-title>{{form.name}}</ion-title>
+		<ion-title>{{form ? form.name : ''}}</ion-title>
 		<ion-buttons end>
 			<button ion-button>
 				<ion-icon name="checkmark"></ion-icon>
@@ -21,7 +21,7 @@
 			<ion-col width-50></ion-col>
 		</ion-row>
 		<ion-row>
-
+			<form-view [form]="form"></form-view>
 		</ion-row>
 	</ion-grid>
 </ion-content>

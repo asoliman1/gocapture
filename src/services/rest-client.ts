@@ -170,11 +170,13 @@ export class RESTClient {
 			var offset = 0;
 			var result: T[] = [];
 			let handler = (data: RecordsResponse<T>)=>{
+				result.push.apply(result, data.records);
 				if(data.count + offset < data.total_count){
 					offset += data.count;
 					doTheCall();
 				}else{
 					obs.next(result);
+					obs.complete();
 				}
 			};
 			let doTheCall = ()=>{

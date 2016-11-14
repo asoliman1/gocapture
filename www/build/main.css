@@ -24472,6 +24472,10 @@ sub {
   }
 }
 
+form-view {
+  width: 100%;
+}
+
 ion-pullup {
   background: #387ef5;
 }

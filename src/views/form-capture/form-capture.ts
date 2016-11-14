@@ -9,7 +9,7 @@ import { Form } from "../../model";
 })
 export class FormCapture {
 
-  form: Form = new Form();
+  form: Form;
 
   constructor(private navCtrl: NavController, 
               private navParams: NavParams, 
@@ -24,5 +24,13 @@ export class FormCapture {
 
   doRefresh(refresher){
     
+  }
+
+  doBack(){
+	  this.navCtrl.pop();
+  }
+
+  ionViewWillUnload(){
+	  console.log("Destroying FormCapture");
   }
 }

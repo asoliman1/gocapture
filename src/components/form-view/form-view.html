@@ -1,0 +1,22 @@
+<div class="form-view">
+	<form [formGroup]="theForm" style="width:100%;">
+		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
+			<ion-item *ngSwitchCase="'email'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'url'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'text'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
+			<ion-item *ngSwitchDefault>
+				<ion-label>Coming soon! A component for {{element.type}}</ion-label>
+			</ion-item>
+		</div>
+	</form>
+</div>

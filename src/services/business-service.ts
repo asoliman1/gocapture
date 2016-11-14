@@ -7,6 +7,13 @@ import { Transfer, File, Network } from 'ionic-native';
 declare var cordova: any;
 
 @Injectable()
+/**
+ * The client to rule them all. The BussinessClient connects all the separate cients and creates
+ * usable action flows. For example, authentication is a complex flow consisting of the actual auth
+ * profile photos download, saving the registration response to the local database and starting up 
+ * the initial sync. 
+ * 
+ */
 export class BussinessClient {
 
 	protected networkSource: BehaviorSubject<"ON"|"OFF">;

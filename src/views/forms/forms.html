@@ -17,7 +17,7 @@
   <ion-list [virtualScroll]="forms" approxItemHeight="75px">
 		<ion-item *virtualItem="let form" (click)="presentActionSheet(form)">
 			<h1>{{form.name}}</h1>
-      <h2>{{form.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_hold > 0">{{form.total_hold}} on Hold</span</h2>
+      		<h2>{{form.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_hold > 0">{{form.total_hold}} on Hold</span></h2>
 		</ion-item>
 	</ion-list>
 	<ion-refresher (ionRefresh)="doRefresh($event)">
