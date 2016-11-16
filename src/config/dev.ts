@@ -26,11 +26,14 @@ class FileTransfer {
 	}
 }
 
+/*
 window["FileTransfer"] = FileTransfer;
 setTimeout(()=>{
-	window["cordova"] = <any>{
-		file: {
-			dataDirectory: "D:/"
+	if(!window["cordova"]){
+		window["cordova"] = <any>{
+			file: {
+				dataDirectory: "D:/"
+			}
 		}
 	}
 }, 6000);
@@ -41,4 +44,4 @@ window["device"] = {
 	manufacturer: "Google",
 	version: "5.2",
 	uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
-}
+}*/

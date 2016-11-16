@@ -1,5 +1,5 @@
 export class AuthenticationRequest{
-	auth_type: string = "device";
+	auth_type: string = "device_form";
 	invitation_code: string;
 	device_name: string;
 	device_model: string;

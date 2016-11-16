@@ -482,10 +482,10 @@ export class DBClient {
 		});		
 	}
 
-	private setup(db, master) {
+	private setup(db : SQLite, master) {
 		let index = 0;
 
-		let handler = () => {
+		let handler = (data) => {
 			if(index >= this.tables.length){
 				return;
 			}
@@ -497,12 +497,16 @@ export class DBClient {
 			}
 			let query = this.makeCreateTableQuery(this.tables[index]);
 			index++;
-			db.executeSql(query).then(handler, (err) => {
+			db.executeSql(query, {}).then(handler, (err) => {
+				if(err.hasOwnProperty("rows")){
+					handler(err);
+					return;
+				}
 				console.error('Unable to execute sql: ', err);
 			});
 		};
 
-		handler();
+		handler(null);
 	}
 
 	private makeCreateTableQuery(table){
