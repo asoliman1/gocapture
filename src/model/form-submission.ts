@@ -1,10 +1,11 @@
 export class FormSubmission{
+	id: number;
 	form_id: number;
 	status: SubmissionStatus;
 	prospect_id: number;
-	email: string;
-	first_name: string;
-	last_name: string;
+	email: string = "";
+	first_name: string = "";
+	last_name: string = "";
 	fields : {[key: string]: string};
 }
 

@@ -10,11 +10,16 @@ import { Settings } from "../views/settings";
 import { FormSummary } from "../views/form-summary";
 import { FormReview } from "../views/form-review";
 import { FormCapture } from "../views/form-capture";
-import { RESTClient, DBClient, PushClient, SyncClient, BussinessClient } from "../services";
+import { RESTClient} from "../services/rest-client";
+import { DBClient } from "../services/db-client";
+import { PushClient } from "../services/push-client";
+import { SyncClient } from "../services/sync-client";
+import { BussinessClient } from "../services/business-service";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { FormView } from '../components/form-view';
 import { SimpleName } from '../components/simple-name';
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
+import {ProspectSearch} from "../views/prospect-search";
 //import { CustomFormsModule } from 'ng2-validation';
 
 @NgModule({
@@ -32,7 +37,8 @@ import { ArrayFilterPipe } from '../pipes/filter-pipe';
     FormCapture,
     ArrayFilterPipe,
 	FormView,
-	SimpleName
+	SimpleName,
+	ProspectSearch
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -51,7 +57,8 @@ import { ArrayFilterPipe } from '../pipes/filter-pipe';
     FormReview,
     FormCapture,
 	FormView,
-	SimpleName
+	SimpleName,
+	ProspectSearch
   ],
   providers: [
     DBClient,

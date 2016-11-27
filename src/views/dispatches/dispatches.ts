@@ -8,8 +8,7 @@ import {
 } from '@angular/core';
 
 import { NavController, NavParams, InfiniteScroll } from 'ionic-angular';
-import { BussinessClient } from "../../services";
-import { Form } from "../../model";
+import { BussinessClient } from "../../services/business-service";
 
 @Component({
   selector: 'dispatches',

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { SQLite } from 'ionic-native';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
-import { User, Form, DispatchOrder, FormElement } from "../model";
+import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership } from "../model";
 
 let MASTER = "master";
 let WORK= "work";
@@ -38,10 +38,11 @@ export class DBClient {
 				{ name: 'summary', type: 'text' }
 			],
 			queries: {
-				"select": "SELECT * FROM forms where isDispatch=(?)",
-				"selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status > 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status < 2 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = (?)",
+				"select": "SELECT * FROM forms where isDispatch=?",
+				"selectByIds": "SELECT * FROM forms where id in (?)",
+				"selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = (?)",
 				"update": "INSERT OR REPLACE INTO forms ( id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from forms where id=(?)"
+				"delete": "DELETE from forms where id=?"
 			}
 		},
 		{
@@ -54,13 +55,18 @@ export class DBClient {
 				{ name: 'formId', type: 'integer' },
 				{ name: 'data', type: 'text' },
 				{ name: 'status', type: 'integer' },
+				{ name: 'firstName', type: 'text' },
+				{ name: 'lastName', type: 'text' },
+				{ name: 'email', type: 'text' },
 				{ name: 'dispatchId', type: 'integer' },
 				{ name: 'isDispatch', type: 'integer' }
 			],
 			queries: {
-				"select": "SELECT * FROM submissions where formId=(?)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?)",
-				"delete": "DELETE from submissions where id=(?)"
+				"select": "SELECT * FROM submissions where formId=?",
+				"selectAll": "SELECT * FROM submissions where formId=?",
+				"toSend": "SELECT * FROM submissions where status=4", 
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?,?,?,?)",
+				"delete": "DELETE from submissions where id=?"
 			}
 		},
 		{
@@ -84,12 +90,16 @@ export class DBClient {
 				{ name: 'id', type: 'integer primary key' },
 				{ name: 'data', type: 'text' },
 				{ name: 'formId', type: 'integer' },
+				{ name: 'membershipId', type: 'integer' },
+				{ name: 'prospectId', type: 'integer' },
+				{ name: 'added', type: 'string' },
 				{ name: 'searchTerm', type: 'text' },
 			],
 			queries: {
-				"create": "",
-				"update": "",
-				"delete": ""
+				"selectAll": "select * from contacts where formId=?",
+				"select": "select * from contacts where formId=? and prospectId=?",
+				"update": "INSERT OR REPLACE INTO contacts (id, data, formId, membershipId, prospectId, added, searchTerm) VALUES (?, ?, ?, ?, ?, ?, ?)",
+				"delete": "delete from contacts where id=?"
 			}
 		},
 		{
@@ -100,7 +110,7 @@ export class DBClient {
 				{ name: 'value', type: 'text' }
 			],
 			queries: {
-				"select": "SELECT * FROM configuration where key =(?)",
+				"select": "SELECT * FROM configuration where key =?",
 				"selectAll": "SELECT * from configuration",
 				"update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
 				"delete": "DELETE FROM configuration WHERE key = (?)"
@@ -227,20 +237,30 @@ export class DBClient {
 		});
 	}
 
-	public getDispatches() : Observable<DispatchOrder[]>{
-		return this.getAll<any[]>(WORK, "forms", [true, true, true])
-		.map((data) => {
-			let forms = [];
-			data.forEach((dbForm : any) => {
-				let form = new DispatchOrder();
-				form.form_id = dbForm.id;
-				form.description = dbForm.description;
-				form.name = dbForm.name;
-				form.total_submissions = dbForm.totalSub;
-				form.total_hold = dbForm.totalHold;
-				forms.push(form);
+	public getFormsByIds(ids: number[]) : Observable<Form[]>{
+		return new Observable<Form[]>((responseObserver: Observer<Form[]>) => {
+			this.db(WORK).subscribe((db)=>{
+				db.executeSql(this.getQuery("forms", "selectByIds"), [ids])
+				.then((data)=>{
+					var resp = [];
+					for(let i = 0; i < data.rows.length; i++){
+						let dbForm = data.rows.item(i);
+						let form = new Form();
+						form.form_id = dbForm.id;
+						form.description = dbForm.description;
+						form.title = dbForm.title;
+						form.name = dbForm.name;
+						form.success_message = dbForm.success_message;
+						form.submit_error_message = dbForm.submit_error_message;
+						form.submit_button_text = dbForm.submit_button_text;
+						resp.push(form);
+					}
+					responseObserver.next(resp);
+					responseObserver.complete();
+				}, (err) => {
+					responseObserver.error("An error occured: " + err);
+				});
 			});
-			return forms;
 		});
 	}
 
@@ -279,6 +299,132 @@ export class DBClient {
 			return null;
 		});
 	}
+
+	public getDispatches() : Observable<DispatchOrder[]>{
+		return this.getAll<any[]>(WORK, "forms", [true, true, true])
+		.map((data) => {
+			let forms = [];
+			data.forEach((dbForm : any) => {
+				let form = new DispatchOrder();
+				form.form_id = dbForm.id;
+				form.description = dbForm.description;
+				form.name = dbForm.name;
+				form.total_submissions = dbForm.totalSub;
+				form.total_hold = dbForm.totalHold;
+				forms.push(form);
+			});
+			return forms;
+		});
+	}
+
+	public saveDispatchOrder(form: DispatchOrder) : Observable<boolean>{
+		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
+		return this.save(WORK, "forms", [form.form_id, form.name, "", form.description, "", "", "", form.date_created, form.date_last_modified, JSON.stringify([]), true, JSON.stringify(form.fields_values), null, null]);
+	}
+
+	public saveDispatches(forms: DispatchOrder[]) : Observable<boolean>{
+		return this.saveAll<DispatchOrder>(forms, "DispatchOrder");
+	}
+
+	public getMemberships(form_id: number) : Observable<DeviceFormMembership[]>{
+		return this.getAll<any[]>(WORK, "contacts", [form_id])
+		.map((data) => {
+			let forms = [];
+			data.forEach((dbForm : any) => {
+				let form = new DeviceFormMembership();
+				form.form_id = dbForm.formId;
+				form.id = dbForm.id;
+				form.added_date = dbForm.added;
+				form.membership_id = dbForm.membershipId;
+				form.prospect_id = dbForm.prospectId;
+				form.fields = JSON.parse(dbForm.data);
+				form["search"] = form.fields["Email"] + " " + form.fields["FirstName"] + " " + form.fields["LastName"];
+				forms.push(form);
+			});
+			return forms;
+		});
+	}
+
+	public getMembership(form_id: number, prospect_id: number) : Observable<DeviceFormMembership>{
+		return this.getSingle<any>(WORK, "contacts", [form_id, prospect_id])
+		.map((dbForm) => {
+			let form = new DeviceFormMembership();
+			form.form_id = dbForm.formId;
+			form.id = dbForm.id;
+			form.added_date = dbForm.added;
+			form.membership_id = dbForm.membershipId;
+			form.prospect_id = dbForm.prospectId;
+			form.fields = JSON.parse(dbForm.data);
+			form["search"] = form.fields["Email"] + " " + form.fields["FirstName"] + " " + form.fields["LastName"];
+				
+			return form;
+		});
+	}
+
+	public saveMembership(form: DeviceFormMembership) : Observable<boolean>{
+		return this.save(WORK, "contacts", [form.membership_id, JSON.stringify(form.fields), form.form_id, form.membership_id, form.prospect_id, form.added_date, ""]);
+	}
+
+	public saveMemberships(forms: DeviceFormMembership[]) : Observable<boolean>{
+		return this.saveAll<DeviceFormMembership>(forms, "Membership");
+	}
+
+	public getSubmissions(formId: number) : Observable<FormSubmission[]>{
+		return this.getAll<any[]>(WORK, "submissions", [formId])
+		.map((data) => {
+			let forms = [];
+			data.forEach((dbForm : any) => {
+				let form = new FormSubmission();
+				form.id = dbForm.id;
+				form.form_id = dbForm.formId;
+				form.fields = JSON.parse(dbForm.data);
+				form.status = dbForm.status;
+				form.first_name = dbForm.firstName;
+				form.last_name = dbForm.lastName;
+				form.email = dbForm.email;
+				forms.push(form);
+			});
+			return forms;
+		});
+	}
+
+	public getSubmissionsToSend() : Observable<FormSubmission[]>{
+		return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
+			this.db(WORK).subscribe((db)=>{
+				db.executeSql(this.getQuery("submissions", "toSend"), {})
+				.then((data)=>{
+					var resp = [];
+					for(let i = 0; i < data.rows.length; i++){
+						let dbForm = data.rows.item(i);
+						let form = new FormSubmission();
+						form.id = dbForm.id;
+						form.form_id = dbForm.formId;
+						form.fields = JSON.parse(dbForm.data);
+						form.status = dbForm.status;
+						form.first_name = dbForm.firstName;
+						form.last_name = dbForm.lastName;
+						form.email = dbForm.email;
+						resp.push(form);
+					}
+					responseObserver.next(resp);
+					responseObserver.complete();
+				}, (err) => {
+					responseObserver.error("An error occured: " + err);
+				});
+			});
+		});
+	}
+
+	public saveSubmission(form: FormSubmission) : Observable<boolean>{
+		//id, formId, data, sub_date, status, isDispatch, dispatchId
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null]);
+	}
+
+	public saveSubmisisons(forms: FormSubmission[]) : Observable<boolean>{
+		return this.saveAll<FormSubmission>(forms, "Submission");
+	}
+
+
 	/**
 	 * 
 	 */
@@ -305,9 +451,7 @@ export class DBClient {
 			return data;
 		});
 	}
-	/**
-	 * 
-	 */
+	
 	public deleteRegistration(authId: string) : Observable<boolean>{
 		return this.remove(MASTER, "org_master", [authId])
 		.map(data=>{
@@ -334,7 +478,7 @@ export class DBClient {
 		});
 	}
 
-	public saveAll<T>(items: T[], type: string) : Observable<boolean>{
+	private saveAll<T>(items: T[], type: string) : Observable<boolean>{
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			if(!items || items.length == 0){
 				obs.complete();
@@ -373,7 +517,7 @@ export class DBClient {
 		});
 	}
 
-	public getSingle<T>(type: string, table: string, parameters: any[]) : Observable<T>{
+	private getSingle<T>(type: string, table: string, parameters: any[]) : Observable<T>{
 		return new Observable<T>((responseObserver: Observer<T>) => {
 			this.db(type).subscribe((db)=>{
 				db.executeSql(this.getQuery(table, "select"), parameters)
@@ -394,7 +538,7 @@ export class DBClient {
 		});
 	}
 
-	public getMultiple<T>(type: string, table: string, parameters: any[]) : Observable<T[]>{
+	private getMultiple<T>(type: string, table: string, parameters: any[]) : Observable<T[]>{
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
 			this.db(type).subscribe((db)=>{
 				db.executeSql(this.getQuery(table, "select"), parameters)
@@ -412,7 +556,7 @@ export class DBClient {
 		});
 	}
 
-	public getAll<T>(type: string, table: string, params? : any[]) : Observable<T[]>{
+	private getAll<T>(type: string, table: string, params? : any[]) : Observable<T[]>{
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
 			this.db(type).subscribe((db)=>{
 				db.executeSql(this.getQuery(table, "selectAll"), params)
@@ -549,7 +693,11 @@ class LocalSql {
 	executeSql(query, args): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.db.transaction(function (t) {
-				t.executeSql(query, args,
+				let params = args || {};
+				if(Object.keys(params).length == 0){
+					params = [];
+				}
+				t.executeSql(query, params,
 					(t, r) => {
 						resolve(r);
 					},

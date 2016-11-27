@@ -1,6 +1,6 @@
-import { Component, ViewChild, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { Form, FormElement } from "../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Component, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { FormElement } from "../../model";
+import { AbstractControl, FormGroup } from "@angular/forms";
 
 @Component({
 	selector: 'simple-name',

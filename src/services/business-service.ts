@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Observable, Observer, BehaviorSubject, Subscription } from "rxjs/Rx";
 import { AuthenticationRequest } from "../model/protocol";
-import { User, Form, DispatchOrder } from "../model";
-import { DBClient, RESTClient, SyncClient } from "./";
+import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
+import { DBClient } from "./db-client";
+import { RESTClient } from "./rest-client";
+import { SyncClient } from "./sync-client";
 import { Transfer, File, Network } from 'ionic-native';
 declare var cordova: any;
 
@@ -47,6 +49,13 @@ export class BussinessClient {
 		this.online = val;
 		this.networkSource.next(val ? "ON" : "OFF");
 		this.rest.setOnline(val);
+		if(val){
+			this.db.getConfig("autoUpload").subscribe((val) => {
+				if(val == "true"){
+					this.doSync();
+				}
+			});
+		}
 	}
 
 	public getRegistration(): Observable<User> {
@@ -109,5 +118,63 @@ export class BussinessClient {
 
 	public getDispatches() : Observable<DispatchOrder[]>{
 		return this.db.getDispatches();
+	}
+
+	public getContacts(form: Form): Observable<DeviceFormMembership[]>{
+		return this.db.getMemberships(form.form_id);
+	}
+
+	public getContact(form: Form, prospectId: number): Observable<DeviceFormMembership>{
+		return this.db.getMembership(form.form_id, prospectId);
+	}
+
+	public getSubmissions(form: Form): Observable<FormSubmission[]>{
+		return this.db.getSubmissions(form.form_id);
+	}
+
+	public saveSubmission(sub: FormSubmission) : Observable<boolean>{
+		return this.db.saveSubmission(sub);
+	}
+
+	public doSync(formId?: number){
+		if(!this.online){
+			return;
+		}
+		this.db.getSubmissionsToSend().subscribe((submissions) => {
+			if(submissions.length == 0){
+				//that's it
+				return;
+			}
+			let formIds = [];
+			
+			if(formId > 0){
+				formIds.push(formId);
+				var tmp = [];
+				submissions.forEach(sub => {
+					if(sub.form_id == formId){
+						tmp.push(sub);
+					}
+				});
+				submissions = tmp;
+			}else{
+				submissions.forEach(sub => {
+					if(formIds.indexOf(sub.form_id) == -1){
+						formIds.push(sub.form_id);
+					}
+				});
+			}
+			this.db.getFormsByIds(formIds).subscribe(forms => {
+				this.sync.sync(submissions, forms).subscribe(submitted => {
+					if(submitted && submitted.length > 0){
+						submissions.forEach(sub => {
+							sub.status = SubmissionStatus.Submitted;
+						})
+						this.db.saveSubmisisons(submitted).subscribe((done) => {
+
+						});
+					}
+				});
+			});
+		});
 	}
 }

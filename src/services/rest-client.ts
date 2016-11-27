@@ -150,6 +150,34 @@ export class RESTClient {
 			return resp;
 		});
 	}
+
+	public getAllDeviceFormMemberships(forms: Form[], lastSync?: Date) : Observable<DeviceFormMembership[]>{
+		return new Observable<DeviceFormMembership[]>((obs: Observer<DeviceFormMembership[]>) => {
+			var result: DeviceFormMembership[] = [];
+			var index = 0;
+			let handler = (data: DeviceFormMembership[])=>{
+				data.forEach(item => {
+					item.form_id = forms[index].form_id;
+				});
+				result.push.apply(result, data);
+				index++;
+				if(index < forms.length){
+					doTheCall();
+				}else{
+					obs.next(result);
+					obs.complete();
+				}
+			};
+			let doTheCall = ()=>{
+				let params = {
+					access_token: this.token,
+					form_id: forms[index].form_id
+				}
+				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
+			}
+			doTheCall();
+		});
+	}
 	/**
 	 * 
 	 * @returns Observable
@@ -163,6 +191,31 @@ export class RESTClient {
 				this.errorSource.error(resp);
 				return false;
 			});
+	}
+
+	public submitForms(data: FormSubmission[]) : Observable<FormSubmission[]> {
+		return new Observable<FormSubmission[]>( (obs : Observer<FormSubmission[]>) => {
+			var index = 0;
+			let result = [];
+			if(!data || data.length == 0){
+				obs.next(null);
+				obs.complete();
+				return;
+			}
+			let handler = (success : boolean) =>{
+				if(success == true){
+					result.push(data[index]);
+				}
+				index++;
+				if(index >= data.length){
+					obs.next(data);
+					obs.complete();
+					return;
+				}
+				this.submitForm(data[index]).subscribe(handler, handler);
+			}
+			this.submitForm(data[index]).subscribe(handler, handler);
+		});
 	}
 
 	private getAll<T>(relativeUrl: string, content: any) : Observable<T[]>{

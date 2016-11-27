@@ -13,6 +13,25 @@
 				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
+			<ion-item *ngSwitchCase="'select'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-select [attr.name]="element.id" [formControlName]="element.identifier">
+					<ion-option *ngFor="let option of element.options" [value]="option.option" [attr.checked]="option.is_default == 1">{{option.option}}</ion-option>
+				</ion-select>
+			</ion-item>
+			<div class="item" *ngSwitchCase="'radio'">
+				<ion-label stacked style="padding-left: 16px; color: #7f7f7f;">{{element.title}}</ion-label>
+				<ion-grid responsive-sm radio-group>
+					<ion-row responsive-sm>
+						<ion-col *ngFor="let option of element.options">
+							<ion-item>
+								<ion-label>{{option.option}}</ion-label>
+								<ion-radio [value]="option.option" [attr.checked]="option.is_default == 1"></ion-radio>
+							</ion-item>
+						</ion-col>
+					</ion-row>
+				</ion-grid>
+			</div>
 			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
 			<ion-item *ngSwitchDefault>
 				<ion-label>Coming soon! A component for {{element.type}}</ion-label>

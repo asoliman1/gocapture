@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
-import { BussinessClient } from "../../services";
+import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
 

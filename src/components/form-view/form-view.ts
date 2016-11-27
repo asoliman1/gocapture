@@ -1,7 +1,8 @@
-import { Component, ViewChild, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { Form, FormElement } from "../../model";
+import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Form, FormElement, DeviceFormMembership } from "../../model";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
+import { Subscription } from "rxjs";
 
 @Component({
 	selector: 'form-view',
@@ -10,17 +11,37 @@ import { CustomValidators } from '../../util/validator';
 export class FormView {
 
 	@Input() form: Form;
+	@Input() prospect: DeviceFormMembership;
 	@Output() onChange = new EventEmitter<any>();
+	@Output() onValidationChange = new EventEmitter<any>();
 
 	theForm : FormGroup = new FormGroup({});
 
 	displayForm: Form = <any>{};
 
+	private sub: Subscription;
+
 	constructor(private fb: FormBuilder, private zone: NgZone) {
 
 	}
 
-	ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
+	public getValues(): {[key: string]: string}{
+		var data = {};
+		let parse = (form: FormGroup, data: any) => {
+			for(let id in form.controls){
+				let control = form.controls[id];
+				if(control instanceof FormGroup){
+					parse(control, data);
+				}else{
+					data[id] = control.value;
+				}
+			}
+		};
+		parse(this.theForm, data);
+		return data;
+	}
+
+	private ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
 		if (changes['form']){
 			if(this.form) {
 				this.setupFormGroup();
@@ -31,7 +52,10 @@ export class FormView {
 		}
 	}
 
-	setupFormGroup(){
+	private setupFormGroup(){
+		if(this.sub){
+			this.sub.unsubscribe();
+		}
 		let theForm = this.fb.group({});
 		this.form.elements.forEach((element)=>{
 			var identifier = "element_" + element.id;
@@ -65,6 +89,9 @@ export class FormView {
 			}*/
 		});
 		this.theForm = theForm;
+		this.sub = this.theForm.statusChanges.subscribe(()=>{
+			this.onValidationChange.emit(this.theForm.valid);
+		});
 		setTimeout(()=>{
 			this.zone.run(()=>{
 				this.displayForm = this.form;

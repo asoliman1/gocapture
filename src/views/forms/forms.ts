@@ -10,7 +10,8 @@ import {
 import { Subscription } from "rxjs";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController } from 'ionic-angular';
-import { BussinessClient, SyncClient } from "../../services";
+import { SyncClient } from "../../services/sync-client";
+import { BussinessClient } from "../../services/business-service";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Form, SyncStatus } from "../../model";
 import { FormCapture} from "../form-capture";
@@ -72,7 +73,6 @@ export class Forms {
               private zone: NgZone,
               private actionCtrl: ActionSheetController,
               private syncClient: SyncClient) {
-    this.doRefresh();
   }
 
   doRefresh(refresher?){
@@ -150,6 +150,7 @@ export class Forms {
   }
 
   ionViewDidEnter(){
+	this.doRefresh();
     if(this.syncClient.isSyncing){
       this.pullup.collapse();
       this.statuses = this.syncClient.getLastSync();
@@ -172,7 +173,7 @@ export class Forms {
       //complete
       this.pullup.minimize();
     });
-    this.syncClient.sync();
+    //this.syncClient.sync();
   }
 
   ionViewDidLeave(){

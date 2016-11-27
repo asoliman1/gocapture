@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from "../../model";
 import { NavController, NavParams, AlertController } from 'ionic-angular';
-import { DBClient } from "../../services";
+import { DBClient } from "../../services/db-client";
 import { AppVersion } from 'ionic-native';
 import { Login } from "../login";
 

@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
-import { RESTClient, DBClient} from './';
-import { SyncStatus, Form, Dispatch } from "../model";
+import { DBClient } from './db-client';
+import { RESTClient } from './rest-client';
+import { SyncStatus, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
 
 @Injectable()
 export class SyncClient {
@@ -12,94 +13,113 @@ export class SyncClient {
      */
 	error: Observable<any>;
 
-	private syncSource: BehaviorSubject<any>;
+	private syncSource: BehaviorSubject<SyncStatus[]>;
     /**
      * Sync update event
      */
-	onSync: Observable<any>;
+	onSync: Observable<SyncStatus[]>;
 
-	private _isSyncing : boolean = false;
+	private _isSyncing: boolean = false;
 
 	private lastSyncStatus: SyncStatus[];
 
-	constructor(private rest : RESTClient, private db: DBClient) {
+	constructor(private rest: RESTClient, private db: DBClient) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
-		this.syncSource = new BehaviorSubject<any>(null);
+		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
 		this.onSync = this.syncSource.asObservable();
 
 	}
 
-	public isSyncing() : boolean{
+	public isSyncing(): boolean {
 		return this._isSyncing;
 	}
 
-	public getLastSync(): SyncStatus[]{
-		return this.lastSyncStatus; 
+	public getLastSync(): SyncStatus[] {
+		return this.lastSyncStatus;
 	}
 
-	public download(lastSyncDate: Date) : Observable<DownloadData>{
-		return new Observable<DownloadData>((obs: Observer<DownloadData>)=>{
+	public download(lastSyncDate: Date): Observable<DownloadData> {
+		return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
 			let result = new DownloadData();
-			this.rest.getAllForms(lastSyncDate).subscribe(forms =>{
+			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 				result.forms = forms;
 				this.db.saveForms(forms).subscribe(reply => {
-					this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
-						result.dispatches = dispatches;
-						obs.next(result);
-						obs.complete();
+					this.rest.getAllDeviceFormMemberships(forms).subscribe((contacts) => {
+						result.memberships = contacts;
+						this.db.saveMemberships(contacts).subscribe(res => {
+							this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
+								result.dispatches = dispatches;
+								obs.next(result);
+								obs.complete();
+							}, err => {
+								obs.error(err);
+							});
+						}, err => {
+							obs.error(err);
+						});
+					}, err => {
+						obs.error(err);
 					});
-				});				
-			})
+				}, err => {
+					obs.error(err);
+				});
+			}, err => {
+				obs.error(err);
+			});
 		});
 	}
 
-	public sync(){
-		setTimeout(()=>{
-			this.lastSyncStatus = [
-				{
-					loading: false,
-					complete: true,
-					formId: 7,
-					formName: "Tradeshow#7"
-				},
-				{
-					loading: true,
-					formId: 8,
-					formName: "Tradeshow#8"
-				},
-				{
-					loading: false,
-					formId: 4,
-					formName: "Tradeshow#2"
-				},
-				{
-					loading: false,
-					formId: 6,
-					formName: "Tradeshow#3"
-				},
-				{
-					loading: false,
-					formId:2,
-					formName: "Tradeshow#4"
-				},
-				{
-					loading: false,
-					formId: 9,
-					formName: "Tradeshow#5"
-				},
-				{
-					loading: false,
-					formId: 10,
-					formName: "Tradeshow#6"
+	public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {
+		return new Observable<FormSubmission[]>( obs =>{
+			this._isSyncing = true;
+			var result = [];
+			var map: {
+				[key: number]: {
+					form: Form, 
+					status: SyncStatus,
+					submissions: FormSubmission[]
 				}
-			];
+			} = {};
+			this.lastSyncStatus = [];
+			forms.forEach(form => {
+				map[form.form_id] = {
+					form: form,
+					submissions: [],
+					status: new SyncStatus(false, false, form.form_id, form.name)
+				};
+				this.lastSyncStatus.push(map[form.form_id].status);
+			});
+			submissions.forEach(sub => {
+				map[sub.form_id].submissions.push(sub);
+			});
+			
+			let formIds = Object.keys(map);
+			let index = 0;
+			map[formIds[index]].status.loading = true;
 			this.syncSource.next(this.lastSyncStatus);
-		}, 15000);
+			let handler = (submitted : FormSubmission[]) => {
+				result.push.apply(result, submitted);
+				map[formIds[index]].status.complete = true;
+				map[formIds[index]].status.loading = false;
+				this.syncSource.next(this.lastSyncStatus);
+				index++;
+				if(index >= formIds.length){
+					this._isSyncing = false;
+					obs.next(result);
+					obs.complete();
+					this.syncSource.complete();
+					return;
+				}
+				this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+			};
+			this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+		});
 	}
 }
 
-export class DownloadData{
+export class DownloadData {
 	forms: Form[];
 	dispatches: Dispatch[];
+	memberships: DeviceFormMembership[];
 }

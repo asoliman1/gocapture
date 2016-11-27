@@ -1,6 +1,6 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
-import { NavController, NavParams, InfiniteScroll } from 'ionic-angular';
-import { RESTClient } from "../../services";
+import { Component, NgZone } from '@angular/core';
+import { NavController, NavParams } from 'ionic-angular';
+import { RESTClient } from "../../services/rest-client";
 import { Form } from "../../model";
 
 @Component({

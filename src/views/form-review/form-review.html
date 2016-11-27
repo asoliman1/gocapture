@@ -6,6 +6,11 @@
 			</button>
 		</ion-buttons>
 		<ion-title>{{form.name}}</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="sync()" [disabled]="syncing">
+				<ion-icon name="cloud-upload"></ion-icon>
+			</button>
+		</ion-buttons>
 	</ion-navbar>
 	<ion-grid>
 		<ion-row>
@@ -15,7 +20,7 @@
 		</ion-row>
 		<ion-row>
 			<ion-col>
-				<ion-segment [(ngModel)]="filter"  (change)="onFilterChanged()" color="dark">
+				<ion-segment [(ngModel)]="filter"  (ionChange)="onFilterChanged()" color="dark">
 					<ion-segment-button value="" >
 						All
 					</ion-segment-button>
@@ -35,18 +40,18 @@
 </ion-header>
 
 <ion-content class="form-summary">
-	<ion-list [virtualScroll]="submissions | filter: {status: filter}" approxItemHeight="110px">
+	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px" *ngIf="filteredSubmissions.length > 0">
 		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
 			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
 			<h3>{{submission.first_name }}</h3>
 			<h3>{{submission.email}}</h3>
 			<h3>{{submission.email}}</h3>
-			<button ion-button item-right icon-only clear>
+			<button ion-button item-right icon-only clear (click)="statusClick($event)" [disabled]="syncing">
 				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
 			</button>
 		</ion-item>
 	</ion-list>
-	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">
 		<ion-infinite-scroll-content></ion-infinite-scroll-content>
-	</ion-infinite-scroll>
+	</ion-infinite-scroll-->
 </ion-content>

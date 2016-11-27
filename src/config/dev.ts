@@ -26,7 +26,7 @@ class FileTransfer {
 	}
 }
 
-/*
+
 window["FileTransfer"] = FileTransfer;
 setTimeout(()=>{
 	if(!window["cordova"]){
@@ -44,4 +44,4 @@ window["device"] = {
 	manufacturer: "Google",
 	version: "5.2",
 	uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
-}*/
+};
