@@ -2,26 +2,26 @@
 	<ion-navbar>
 		<ion-buttons start>
 			<button ion-button (click)="cancel()">
-				<ion-icon name="close"></ion-icon>
+				<ion-icon name="close" class="capture"></ion-icon>
 			</button>
 		</ion-buttons>
 		<ion-title>Select prospect</ion-title>
 		<ion-buttons end>
 			<button ion-button [disabled]="!selectedContact" (click)="done()">
-				<ion-icon name="checkmark"></ion-icon>
+				<ion-icon name="checkmark" class="capture"></ion-icon>
 			</button>
 		</ion-buttons>
 	</ion-navbar>
 	<ion-toolbar>
-		<ion-searchbar [(ngModel)]="searchFilter">
+		<ion-searchbar [(ngModel)]="searchFilter" (ionInput)="onInput($event)">
 		</ion-searchbar>
 	</ion-toolbar>
 </ion-header>
 <ion-content>
-	<ion-list [virtualScroll]="contacts |filter: {search: searchFilter}">
-		<ion-item *virtualItem="let contact" [class.activated]="contact == selectedContact" (click)="selectedContact = contact">
+	<ion-list [virtualScroll]="filteredContacts" *ngIf="filteredContacts.length > 0">
+		<a ion-item detail-none *virtualItem="let contact" approxItemHeight="75" [class.selected]="contact == selectedContact" (click)="selectedContact = contact">
 			<h1>{{contact.fields.FirstName + " " + contact.fields.LastName}}</h1>
 			<h2>{{contact.fields.Email}}</h2>
-		</ion-item>
+		</a>
 	</ion-list>
 </ion-content>

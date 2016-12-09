@@ -1,6 +1,3 @@
-.search ion-icon{
-	color: grey;
-}
 
 .action{
 	line-height: 30px;
@@ -22,6 +19,11 @@
 
 ion-refresher{
 
+}
+
+ion-item, *[ion-item]{
+	padding-bottom: 2px !important;
+	background-color: white;
 }
 
 .sync-list h3{

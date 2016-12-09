@@ -51,7 +51,7 @@ export class FormCapture {
   }
 
   doSave(){
-	  if(!this.valid || !this.submission.prospect_id){
+	  if(!this.valid ){
 		  return;
 	  }
 	  this.submission.fields = this.formView.getValues();

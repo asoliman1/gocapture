@@ -1,5 +1,5 @@
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership } from "../../model";
+import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../model";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs";
@@ -11,6 +11,7 @@ import { Subscription } from "rxjs";
 export class FormView {
 
 	@Input() form: Form;
+	@Input() submission: FormSubmission;
 	@Input() prospect: DeviceFormMembership;
 	@Output() onChange = new EventEmitter<any>();
 	@Output() onValidationChange = new EventEmitter<any>();
@@ -37,17 +38,30 @@ export class FormView {
 				}
 			}
 		};
-		parse(this.theForm, data);
+		this.theForm && parse(this.theForm, data);
 		return data;
 	}
 
-	private ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
+	ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
 		if (changes['form']){
 			if(this.form) {
 				this.setupFormGroup();
 			}else{
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
+			}
+		}else if (changes['prospect']){
+			var foundEmail, foundName;
+			for(let i = 0; i < this.form.elements.length; i++){
+				if(this.form.elements[i].type == "email" && !foundEmail){
+					this.theForm.get("element_" + this.form.elements[i].id).setValue(this.prospect.fields["Email"]);
+					foundEmail = true;
+				}else if(this.form.elements[i].type == "simple_name" && !foundName){
+					var id = "element_" + this.form.elements[i].id;
+					this.theForm.get(id).get(id + "_1").setValue(this.prospect.fields["FirstName"]);
+					this.theForm.get(id).get(id + "_2").setValue(this.prospect.fields["LastName"]);
+					foundName = true;
+				}
 			}
 		}
 	}
@@ -56,6 +70,10 @@ export class FormView {
 		if(this.sub){
 			this.sub.unsubscribe();
 		}
+		let data = this.getValues();
+		if(this.submission && this.submission.fields){
+			data = Object.assign(Object.assign({}, this.submission.fields), data);
+		}
 		let theForm = this.fb.group({});
 		this.form.elements.forEach((element)=>{
 			var identifier = "element_" + element.id;
@@ -63,9 +81,9 @@ export class FormView {
 			var control : AbstractControl = null;
 			if(element.mapping.length > 1){
 				var opts = {};
-				element.mapping.forEach(entry =>{
-					entry["identifier"] = identifier + "_" + entry.ll_field_id;
-					opts[entry["identifier"]] = new FormControl(element.default_value, this.makeValidators(element));
+				element.mapping.forEach((entry, index) =>{
+					entry["identifier"] = identifier + "_" + (index+1);
+					opts[entry["identifier"]] = new FormControl(data[entry["identifier"]] ? data[entry["identifier"]] : element.default_value, this.makeValidators(element));
 				})
 				control = this.fb.group(opts);
 			}else{

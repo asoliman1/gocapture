@@ -32,10 +32,10 @@ export class SimpleName {
 		if(this.element && this.element.mapping && this.rootGroup){
 			let elemIdentifier = "element_" + this.element.id;
 			this.group = this.rootGroup.get(elemIdentifier);
-			this.element.mapping.forEach((map)=>{
+			this.element.mapping.forEach((map, index)=>{
 				this.mapping.push({
-					id: map.ll_field_id,
-					identifier: elemIdentifier + "_" + map.ll_field_id,
+					id: index+1,
+					identifier: elemIdentifier + "_" + (index+1),
 					label: map.ll_field_unique_identifier
 				})
 			});

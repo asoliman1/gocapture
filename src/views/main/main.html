@@ -3,8 +3,11 @@
     <div class="profile">
       <ion-item>
       <ion-avatar item-left>
-        <img src="https://randomuser.me/api/portraits/men/37.jpg"/>
+        <img src="https://randomuser.me/api/portraits/men/37.jpg" *ngIf="!user.user_profile_picture"/>
+		<img [src]="user.user_profile_picture" *ngIf="user.user_profile_picture"/>
       </ion-avatar>
+	  <h1>Hi, {{user.first_name}}</h1>
+	  <h3>Welcome back</h3>
       </ion-item>
     </div>
     <ion-list color="dark">

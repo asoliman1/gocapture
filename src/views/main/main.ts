@@ -4,6 +4,8 @@ import { Dashboard } from "../dashboard";
 import { Forms } from "../forms";
 import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
+import { BussinessClient } from "../../services/business-service";
+import { User } from "../../model";
 
 @Component({
   selector: 'main',
@@ -15,9 +17,13 @@ export class Main {
 
   rootPage: any = Dashboard;
 
+  user: User = new User();
+
   pages: Array<{title: string, component: any, icon: string}>;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(private navCtrl: NavController, 
+  			  private navParams: NavParams,
+			  private client: BussinessClient ) {
     this.pages = [
       { title: 'Home', component: Dashboard, icon: "home" },
       { title: 'Forms', component: Forms, icon: "document" },
@@ -28,5 +34,11 @@ export class Main {
 
   openPage(page) {
     this.nav.setRoot(page.component);
+  }
+
+  ngOnInit(){
+	  this.client.getRegistration().subscribe(user => {
+		  this.user = user;
+	  })
   }
 }

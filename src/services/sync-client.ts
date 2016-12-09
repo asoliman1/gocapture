@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
-import { SyncStatus, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
+import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission } from "../model";
 
 @Injectable()
 export class SyncClient {
@@ -45,13 +45,30 @@ export class SyncClient {
 			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 				result.forms = forms;
 				this.db.saveForms(forms).subscribe(reply => {
-					this.rest.getAllDeviceFormMemberships(forms).subscribe((contacts) => {
+					this.rest.getAllDeviceFormMemberships(forms, lastSyncDate).subscribe((contacts) => {
 						result.memberships = contacts;
 						this.db.saveMemberships(contacts).subscribe(res => {
 							this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
+								console.log(dispatches)
 								result.dispatches = dispatches;
-								obs.next(result);
-								obs.complete();
+								let orders: DispatchOrder[] = [];
+								let forms: Form[] = [];
+								dispatches.forEach(dispatch => {
+									orders.push.apply(orders, dispatch.orders);
+									dispatch.forms.forEach(f => {
+										if(forms.filter((form)=>{return form.form_id == f.form_id}).length == 0){
+											forms.push(f);
+										}
+									});
+								});
+								orders.forEach(order => {
+									order.form = forms.filter(f => {return f.form_id == order.form_id})[0];
+								});
+								console.log(orders);
+								this.db.saveDispatches(orders).subscribe(reply => {
+									obs.next(result);
+									obs.complete();
+								});
 							}, err => {
 								obs.error(err);
 							});

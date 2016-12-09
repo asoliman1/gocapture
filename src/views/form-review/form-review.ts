@@ -24,7 +24,11 @@ export class FormReview {
 
 	private sub: Subscription;
 
+	private isDispatch;
+
 	filteredSubmissions: FormSubmission[] = [];
+
+	hasSubmissionsToSend: boolean = false;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -36,6 +40,7 @@ export class FormReview {
 
 	ionViewWillEnter() {
 		this.form = this.navParams.get("form");
+		this.isDispatch = this.navParams.get("isDispatch");
 		this.loading = true;
 		this.doRefresh();
 		this.syncing = this.syncClient.isSyncing();
@@ -80,10 +85,11 @@ export class FormReview {
 	}
 
 	doRefresh() {
-		this.client.getSubmissions(this.form).subscribe(submissions => {
+		this.client.getSubmissions(this.form, this.isDispatch).subscribe(submissions => {
 			this.submissions = submissions;
 			this.loading = false;
 			this.onFilterChanged();
+			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
 		});
 	}
 

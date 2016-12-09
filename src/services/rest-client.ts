@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Headers, Response, Http, URLSearchParams } from "@angular/http";
+import { Headers, Response, Http, URLSearchParams, QueryEncoder } from "@angular/http";
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
@@ -59,10 +59,10 @@ export class RESTClient {
 			opts.name = name;
 		}
 		if (updatedAt) {
-			opts.updated_at = updatedAt.toISOString();
+			opts.updated_at = updatedAt.toISOString().split(".")[0] + "+00:00";
 		}
 		if (createdAt) {
-			opts.created_at = updatedAt.toISOString();
+			opts.created_at = updatedAt.toISOString().split(".")[0] + "+00:00";
 		}
 		if(offset > 0){
 			opts.offset = offset;
@@ -80,7 +80,7 @@ export class RESTClient {
 			form_type: "device"
 		};
 		if(lastSyncDate){
-			opts.last_sync_date = lastSyncDate.toISOString();
+			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
 		return this.getAll<Form>("/forms.json", opts);
 	}
@@ -93,7 +93,7 @@ export class RESTClient {
 		};
 
 		if (lastSync) {
-			opts.last_sync_date = lastSync.toISOString();
+			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
 		}
 		if(offset > 0){
 			opts.offset = offset;
@@ -110,9 +110,23 @@ export class RESTClient {
 	public getAllDispatches(lastSyncDate: Date) : Observable<Dispatch[]>{
 		let opts: any = {};
 		if(lastSyncDate){
-			opts.last_sync_date = lastSyncDate.toISOString();
+			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
 		}
-		return this.getAll<Dispatch>("/dispatches.json", opts);
+		return this.getAll<Dispatch>("/dispatches.json", opts)
+				.map(resp => {
+					resp.forEach((dispatch) => {
+						dispatch.orders.forEach((order)=>{
+							let form: Form = null;
+							dispatch.forms.forEach((f)=>{
+								if(f.form_id == order.form_id){
+									order.form = f;
+								}
+							});
+							order.form = form;
+						});
+					});
+					return resp;
+				});
 	}
 	/**
 	 * 
@@ -141,7 +155,7 @@ export class RESTClient {
 			form_id: form_id
 		};
 		if (lastSync) {
-			opts.last_sync_date = lastSync.toISOString();
+			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
 		}
 		return this.call<RecordsResponse<DeviceFormMembership>>("GET", "/forms/memberships.json", opts).map(resp => {
 			if (resp.status != "200") {
@@ -154,6 +168,13 @@ export class RESTClient {
 	public getAllDeviceFormMemberships(forms: Form[], lastSync?: Date) : Observable<DeviceFormMembership[]>{
 		return new Observable<DeviceFormMembership[]>((obs: Observer<DeviceFormMembership[]>) => {
 			var result: DeviceFormMembership[] = [];
+			if(!forms || forms.length == 0){
+				setTimeout(()=>{
+					obs.next(result);
+					obs.complete();
+				});
+				return;
+			}
 			var index = 0;
 			let handler = (data: DeviceFormMembership[])=>{
 				data.forEach(item => {
@@ -169,9 +190,12 @@ export class RESTClient {
 				}
 			};
 			let doTheCall = ()=>{
-				let params = {
+				let params = <any>{
 					access_token: this.token,
 					form_id: forms[index].form_id
+				}
+				if(lastSync){
+					params.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";
 				}
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			}
@@ -223,7 +247,15 @@ export class RESTClient {
 			var offset = 0;
 			var result: T[] = [];
 			let handler = (data: RecordsResponse<T>)=>{
-				result.push.apply(result, data.records);
+				var records = [];
+				if(!data.records){
+					
+				}else if(Array.isArray(data.records)){
+					records = data.records;
+				}else{
+					records = [data.records];
+				}
+				result.push.apply(result, records);
 				if(data.count + offset < data.total_count){
 					offset += data.count;
 					doTheCall();
@@ -255,12 +287,17 @@ export class RESTClient {
 				headers: this.getHeaders(),
 				search: params
 			};
+			var search = "?access_token=" + encodeURIComponent(this.token);
+			for(let field in content){
+				search += "&" + encodeURIComponent(field) + "=" + encodeURIComponent(content[field]);
+			}
 			switch (method) {
 				case "GET":
 					for(let field in content){
 						opts.search.set(field, content[field]);
 					}
-					sub = this.http.get(url, opts);
+					delete opts.search;
+					sub = this.http.get(url + search, opts);
 					break;
 				case "POST":
 					sub = this.http.post(url, JSON.stringify(content), opts);
@@ -269,7 +306,8 @@ export class RESTClient {
 					for(let field in content){
 						opts.search.set(field, content[field]);
 					}
-					sub = this.http.delete(url, opts);
+					delete opts.search;
+					sub = this.http.delete(url + search, opts);
 					break;
 				case "PATCH":
 					sub = this.http.patch(url, content, opts);

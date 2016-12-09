@@ -18,7 +18,9 @@ export class ProspectSearch {
 
 	searchFilter: string = "";
 
-	contacts: DeviceFormMembership[];
+	contacts: DeviceFormMembership[] = [];
+
+	filteredContacts: DeviceFormMembership[] = [];
 
 	constructor(private navCtrl: NavController,
 		private viewCtrl: ViewController,
@@ -44,7 +46,16 @@ export class ProspectSearch {
 			this.loading = false;
 			this.contacts = contacts;
 			ProspectSearch.list = contacts;
-			ProspectSearch.formId = this.form.id;
+			ProspectSearch.formId = this.form.form_id+"";
+			this.onInput({target: {val: ""}})
+		});
+	}
+
+	onInput(event){
+		let val = event.target.value;
+		let regexp = new RegExp(val, "i");
+		this.filteredContacts = this.contacts.filter(contact => {			
+			return !val || regexp.test(contact["search"]);
 		});
 	}
 }

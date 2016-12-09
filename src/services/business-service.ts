@@ -78,7 +78,7 @@ export class BussinessClient {
 			req.invitation_code = authCode;
 			req.device_name = authCode;
 			this.rest.authenticate(req).subscribe(reply => {
-				obs.next({user:reply, message: "Authenticated. Setting things up..."});
+				//obs.next({user:reply, message: "Authenticated. Setting things up..."});
 				let fileTransfer = new Transfer();
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
@@ -112,6 +112,23 @@ export class BussinessClient {
 		});
 	}
 
+	public getUpdates(): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.db.getConfig("lastSyncDate").subscribe(time =>{ 
+				let d = new Date();
+				if(time){
+					d.setTime(parseInt(time));
+				}
+				this.sync.download(time ? d : null).subscribe(downloadData => {
+					this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
+						obs.next(true);
+						obs.complete();
+					})
+				});
+			});
+		});
+	} 
+
 	public getForms() : Observable<Form[]>{
 		return this.db.getForms();
 	}
@@ -128,8 +145,8 @@ export class BussinessClient {
 		return this.db.getMembership(form.form_id, prospectId);
 	}
 
-	public getSubmissions(form: Form): Observable<FormSubmission[]>{
-		return this.db.getSubmissions(form.form_id);
+	public getSubmissions(form: Form, isDispatch): Observable<FormSubmission[]>{
+		return this.db.getSubmissions(form.form_id, isDispatch);
 	}
 
 	public saveSubmission(sub: FormSubmission) : Observable<boolean>{

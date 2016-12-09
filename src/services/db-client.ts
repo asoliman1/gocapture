@@ -22,7 +22,8 @@ export class DBClient {
 			name: 'forms',
 			master: false,
 			columns: [
-				{ name: 'id', type: 'integer primary key' },
+				{ name: 'id', type: 'integer not null' },
+				{ name: 'formId', type: 'integer'},
 				{ name: 'name', type: 'text' },
 				{ name: 'title', type: 'text' },
 				{ name: 'description', type: 'text' },
@@ -32,16 +33,17 @@ export class DBClient {
 				{ name: 'created_at', type: 'text' },
 				{ name: 'updated_at', type: 'text' },
 				{ name: 'elements', type: 'text' },
-				{ name: 'isDispatch', type: 'integer' },
+				{ name: 'isDispatch', type: 'integer not null' },
 				{ name: 'dispatchData', type: 'text' },
 				{ name: 'prospectData', type: 'text' },
-				{ name: 'summary', type: 'text' }
+				{ name: 'summary', type: 'text' },
+				{ name: "primary key", type: "(id, isDispatch)"}
 			],
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
 				"delete": "DELETE from forms where id=?"
 			}
 		},
@@ -62,8 +64,8 @@ export class DBClient {
 				{ name: 'isDispatch', type: 'integer' }
 			],
 			queries: {
-				"select": "SELECT * FROM submissions where formId=?",
-				"selectAll": "SELECT * FROM submissions where formId=?",
+				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
+				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"toSend": "SELECT * FROM submissions where status=4", 
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?"
@@ -160,8 +162,8 @@ export class DBClient {
 	 */
 	public getConfig(key: string) : Observable<string>{
 		return this.getSingle<any>(WORK, "configuration", [key])
-		.map((data)=>{
-			return data.value;
+		.map((entry)=>{
+			return entry ? entry.value : "";
 		});
 	}
 
@@ -173,7 +175,7 @@ export class DBClient {
 		.map((data)=>{
 			let resp = {};
 			data.forEach((entry : any)=>{
-				resp[entry.key] = entry.value;
+				resp[entry.key] = entry ? entry.value : "";
 			});
 			return resp;
 		});
@@ -197,7 +199,8 @@ export class DBClient {
 			let forms = [];
 			data.forEach((dbForm : any) => {
 				let form = new Form();
-				form.form_id = dbForm.id;
+				form.id = dbForm.id;
+				form.form_id = dbForm.formId;
 				form.description = dbForm.description;
 				form.title = dbForm.title;
 				form.name = dbForm.name;
@@ -266,7 +269,7 @@ export class DBClient {
 
 	public saveForm(form: Form) : Observable<boolean>{
 		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
-		return this.save(WORK, "forms", [form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
+		return this.save(WORK, "forms", [form.form_id, form.form_id, form.name, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null]);
 	}
 
 	public saveForms(forms: Form[]) : Observable<boolean>{
@@ -317,9 +320,10 @@ export class DBClient {
 		});
 	}
 
-	public saveDispatchOrder(form: DispatchOrder) : Observable<boolean>{
+	public saveDispatchOrder(order: DispatchOrder) : Observable<boolean>{
+		console.log("saving");
 		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
-		return this.save(WORK, "forms", [form.form_id, form.name, "", form.description, "", "", "", form.date_created, form.date_last_modified, JSON.stringify([]), true, JSON.stringify(form.fields_values), null, null]);
+		return this.save(WORK, "forms", [order.form_id, order.form_id, order.name, order.form.title, order.description || order.form.description, order.form.success_message, order.form.submit_error_message, order.form.submit_button_text, order.date_created, order.date_last_modified, JSON.stringify(order.form.elements), true, JSON.stringify(order), null, null]);
 	}
 
 	public saveDispatches(forms: DispatchOrder[]) : Observable<boolean>{
@@ -369,8 +373,8 @@ export class DBClient {
 		return this.saveAll<DeviceFormMembership>(forms, "Membership");
 	}
 
-	public getSubmissions(formId: number) : Observable<FormSubmission[]>{
-		return this.getAll<any[]>(WORK, "submissions", [formId])
+	public getSubmissions(formId: number, isDispatch) : Observable<FormSubmission[]>{
+		return this.getAll<any[]>(WORK, "submissions", [formId, isDispatch])
 		.map((data) => {
 			let forms = [];
 			data.forEach((dbForm : any) => {
@@ -481,7 +485,10 @@ export class DBClient {
 	private saveAll<T>(items: T[], type: string) : Observable<boolean>{
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			if(!items || items.length == 0){
-				obs.complete();
+				setTimeout(()=>{
+					obs.next(true);
+					obs.complete();
+				});
 				return;
 			}
 			let index = 0;
@@ -616,8 +623,10 @@ export class DBClient {
 					location: 'default' // the location field is required
 				}).then(() => {
 					this.setup(db, master);
-					obs.next(db);
-					obs.complete();
+					setTimeout(() => {
+						obs.next(db);
+						obs.complete();
+					}, 250);
 				}, (err) => {
 					console.error('Unable to open database: ', err);
 					obs.error(err);

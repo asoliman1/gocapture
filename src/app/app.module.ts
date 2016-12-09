@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { IonicApp, IonicModule } from 'ionic-angular';
+import { IonicApp, IonicModule, ClickBlock } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { Login } from "../views/login";
 import { Main } from "../views/main";
