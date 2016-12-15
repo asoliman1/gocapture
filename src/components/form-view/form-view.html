@@ -19,8 +19,8 @@
 					<ion-option *ngFor="let option of element.options" [value]="option.option" [attr.checked]="option.is_default == 1">{{option.option}}</ion-option>
 				</ion-select>
 			</ion-item>
-			<div class="item" *ngSwitchCase="'radio'">
-				<ion-label stacked style="padding-left: 16px; color: #7f7f7f;">{{element.title}}</ion-label>
+			<ion-item *ngSwitchCase="'radio'">
+				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-grid responsive-sm radio-group>
 					<ion-row responsive-sm>
 						<ion-col *ngFor="let option of element.options">
@@ -31,8 +31,50 @@
 						</ion-col>
 					</ion-row>
 				</ion-grid>
-			</div>
+			</ion-item>
 			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
+			<ion-item *ngSwitchCase="'textarea'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-textarea [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
+			</ion-item>
+			<ion-item *ngSwitchCase="'time'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-datetime displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+			</ion-item>
+			<ion-item *ngSwitchCase="'address'">
+				<ion-label stacked>{{element.title}}</ion-label>
+			</ion-item>
+			<ion-item *ngSwitchCase="'money'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'number'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'date'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-datetime displayFormat="DDD, DD MM YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+			</ion-item>
+			<ion-item *ngSwitchCase="'phone'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'checkbox'">
+				<ion-label stacked>{{element.title}}</ion-label>
+  				<ion-checkbox [attr.name]="element.id" [formControlName]="element.identifier"></ion-checkbox>
+			</ion-item>
+			<ion-item *ngSwitchCase="'image'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<image item-content></image>
+			</ion-item>
+			<ion-item *ngSwitchCase="'business_card'">
+				<ion-label stacked>{{element.title}}</ion-label>
+				<business-card item-content></business-card>
+			</ion-item>
+			<ion-item *ngSwitchCase="'signature'">
+				<ion-label stacked>{{element.title}}</ion-label>
+			</ion-item>
 			<ion-item *ngSwitchDefault>
 				<ion-label>Coming soon! A component for {{element.type}}</ion-label>
 			</ion-item>

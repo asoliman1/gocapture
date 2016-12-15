@@ -17,6 +17,10 @@ export class DBClient {
 
 	private registration: User;
 
+	private saveAllEnabled = false;
+	private saveAllPageSize = 50;
+	private saveAllData: {query: string, type: string, parameters: any[]}[] = [];
+
 	private tables = [
 		{
 			name: 'forms',
@@ -139,9 +143,9 @@ export class DBClient {
 				{ name: 'operatorLastName', type: 'text' }
 			],
 			queries: {
-				"select": "SELECT * from org_master WHERE active = 1;",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName) values  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from org_master where id = ?;"
+				"select": "SELECT * from org_master WHERE active = 1",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"delete": "DELETE from org_master where id = ?"
 			}
 		}
 	];
@@ -491,15 +495,48 @@ export class DBClient {
 				});
 				return;
 			}
+			this.saveAllEnabled = true;
 			let index = 0;
+			console.log(new Date().getTime());
 			let name = "save" + type;
-			let handler = (resp:boolean) => {
+			let exec = (done: boolean) => {
+				let query = this.saveAllData[0].query;
+				let params = [].concat(this.saveAllData[0].parameters);
+				for(var i = 1; i < this.saveAllData.length; i++){
+					query += ", " + this.saveAllData[0].query.split("VALUES")[1];
+					params.push.apply(params, this.saveAllData[i].parameters);
+				}
+				let isDone = done;
+				this.db(this.saveAllData[0].type).subscribe((db)=>{
+					db.executeSql(query, params)
+					.then((data)=>{
+						this.saveAllData = [];
+						if(data.rowsAffected > 0){
+							if(isDone){
+								this.saveAllEnabled = false;
+								obs.next(true);
+								obs.complete();
+								console.log(new Date().getTime());
+							}else{
+								handler(true);
+							}
+						}else{
+							this.saveAllEnabled = false;
+							obs.error("Wrong number of affected rows: " + data.rowsAffected);
+						}
+					}, (err) => {
+						this.saveAllEnabled = false;
+						this.saveAllData = [];
+						obs.error(err);
+					});
+				});
+			};
+			let handler = (resp:boolean, stopExec?: boolean) => {
 				index++;
-				if(index < items.length){
+				if(index%this.saveAllPageSize == 0 || index == items.length){
+					exec(index == items.length);
+				}else if(index < items.length){
 					this[name](items[index]).subscribe(handler);
-				}else{
-					obs.next(true);
-					obs.complete();
 				}
 			};
 			this[name](items[0]).subscribe(handler);
@@ -508,6 +545,14 @@ export class DBClient {
 
 	private save(type: string, table: string, parameters: any[]) : Observable<boolean>{
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
+			if(this.saveAllEnabled){
+				this.saveAllData.push({query: this.getQuery(table, "update"), type: type, parameters: parameters});
+				setTimeout(()=>{						
+					responseObserver.next(true);
+					responseObserver.complete();
+				});
+				return;
+			}
 			this.db(type).subscribe((db)=>{
 				db.executeSql(this.getQuery(table, "update"), parameters)
 				.then((data)=>{

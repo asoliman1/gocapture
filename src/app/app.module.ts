@@ -17,9 +17,11 @@ import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { FormView } from '../components/form-view';
-import { SimpleName } from '../components/simple-name';
+import { BusinessCard, Image, SimpleName, Signature, Gps } from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import {ProspectSearch} from "../views/prospect-search";
+import { TextMaskModule } from 'angular2-text-mask';
+import { SignaturePadModule } from 'angular2-signaturepad';
 //import { CustomFormsModule } from 'ng2-validation';
 
 @NgModule({
@@ -38,10 +40,16 @@ import {ProspectSearch} from "../views/prospect-search";
     ArrayFilterPipe,
 	FormView,
 	SimpleName,
+	Image,
+	Signature,
+	Gps,
+	BusinessCard,
 	ProspectSearch
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+	TextMaskModule,
+	SignaturePadModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -58,6 +66,10 @@ import {ProspectSearch} from "../views/prospect-search";
     FormCapture,
 	FormView,
 	SimpleName,
+	Image,
+	Signature,
+	Gps,
+	BusinessCard,
 	ProspectSearch
   ],
   providers: [

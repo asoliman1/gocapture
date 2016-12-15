@@ -42,17 +42,47 @@ export class SyncClient {
 	public download(lastSyncDate: Date): Observable<DownloadData> {
 		return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
 			let result = new DownloadData();
+			var map: {[key: string] : SyncStatus} = {
+				forms: new SyncStatus(true, false, 0, "Forms", 10),
+				memberships: new SyncStatus(false, false, 0, "Contacts", 0),
+				dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
+			}
+			this._isSyncing = true;
+			this.lastSyncStatus = [
+				map["forms"],
+				map["contacts"],
+				map["dispatches"]
+			];
+			this.syncSource.next(this.lastSyncStatus);
 			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 				result.forms = forms;
+				map["forms"].percent = 50;
+				this.syncSource.next(this.lastSyncStatus);
 				this.db.saveForms(forms).subscribe(reply => {
+					map["forms"].complete = true;
+					map["forms"].loading = false;
+					map["forms"].percent = 100;
+					map["contacts"].loading = true;
+					map["contacts"].percent = 10;
+					this.syncSource.next(this.lastSyncStatus);
 					this.rest.getAllDeviceFormMemberships(forms, lastSyncDate).subscribe((contacts) => {
-						result.memberships = contacts;
+						result.memberships.push.apply(result.memberships, contacts);
+						map["contacts"].percent = 50;
+						this.syncSource.next(this.lastSyncStatus);
 						this.db.saveMemberships(contacts).subscribe(res => {
+							map["contacts"].complete = true;
+							map["contacts"].loading = false;
+							map["contacts"].percent = 100;
+							map["dispatches"].loading = true;
+							map["dispatches"].percent = 10;
+							this.syncSource.next(this.lastSyncStatus);
 							this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
-								console.log(dispatches)
+								map["dispatches"].percent = 50;
+								this.syncSource.next(this.lastSyncStatus);
 								result.dispatches = dispatches;
 								let orders: DispatchOrder[] = [];
 								let forms: Form[] = [];
+								this.syncSource.next(this.lastSyncStatus);
 								dispatches.forEach(dispatch => {
 									orders.push.apply(orders, dispatch.orders);
 									dispatch.forms.forEach(f => {
@@ -64,10 +94,17 @@ export class SyncClient {
 								orders.forEach(order => {
 									order.form = forms.filter(f => {return f.form_id == order.form_id})[0];
 								});
-								console.log(orders);
+								map["dispatches"].percent = 100;
+								this.syncSource.next(this.lastSyncStatus);
 								this.db.saveDispatches(orders).subscribe(reply => {
+									map["dispatches"].complete = true;
+									map["dispatches"].loading = false;
+									map["dispatches"].percent = 100;
+									this.syncSource.next(this.lastSyncStatus);
+									this._isSyncing = false;
 									obs.next(result);
-									obs.complete();
+									obs.complete();									
+									this.syncSource.complete();
 								});
 							}, err => {
 								obs.error(err);
@@ -136,7 +173,7 @@ export class SyncClient {
 }
 
 export class DownloadData {
-	forms: Form[];
-	dispatches: Dispatch[];
-	memberships: DeviceFormMembership[];
+	forms: Form[] = [];
+	dispatches: Dispatch[] = [];
+	memberships: DeviceFormMembership[] = [];
 }

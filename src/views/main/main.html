@@ -22,3 +22,21 @@
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+
+
+<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == 'visible'" (onCollapse)="footerCollapsed()">
+	<ion-toolbar #toolbar>
+		<ion-spinner></ion-spinner>
+		<div class="action">Uploading...</div>
+		<div class="element">{{currentSyncForm}}</div>
+	</ion-toolbar>
+	<ion-content>
+		<ion-list class="sync-list">
+			<ion-item *ngFor="let status of statuses" icon-left>
+				<ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>
+				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>
+				<h2 item-right>{{status.formName}}</h2>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+</ion-pullup>

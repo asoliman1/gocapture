@@ -12,7 +12,6 @@ import { Subscription } from "rxjs";
 import { NavController, NavParams, InfiniteScroll, ActionSheetController, Searchbar } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Form, SyncStatus } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
@@ -53,20 +52,10 @@ export class Forms {
 
 	loadingTrigger = "hidden";
 
-	statuses: SyncStatus[] = [];
-
 	@ViewChild("search") searchbar: Searchbar;
-
-	@ViewChild('pullup') pullup: IonPullUpComponent;
 
 	forms: Form[] = [];
 	filteredForms: Form[] = [];
-
-	uploading: boolean = false;
-
-	sub: Subscription;
-
-	currentSyncForm: string;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -153,84 +142,10 @@ export class Forms {
 		actionSheet.present();
 	}
 
-	footerExpanded() {
-
-	}
-
-	footerCollapsed() {
-
-	}
-
 	ionViewDidEnter() {
 		this.doRefresh();
-		if (this.syncClient.isSyncing) {
-			this.pullup.collapse();
-			this.statuses = this.syncClient.getLastSync();
-			this.currentSyncForm = this.getCurrentUploadingForm();
-		}
-		this.sub = this.syncClient.onSync.subscribe(stats => {
-			if (stats == null) {
-				return;
-			}
-			this.statuses = stats;
-			this.currentSyncForm = this.getCurrentUploadingForm();
-			if (this.pullup.state == IonPullUpFooterState.Minimized) {
-				this.pullup.collapse();
-			}
-		},
-			(err) => {
-
-			},
-			() => {
-				//complete
-				this.pullup.minimize();
-			});
-		//this.syncClient.sync();
 	}
 
 	ionViewDidLeave() {
-		this.sub.unsubscribe();
-		this.sub = null;
-	}
-
-	getCurrentUploadingForm() {
-		if (this.statuses) {
-			for (let i = 0; i < this.statuses.length; i++) {
-				if (this.statuses[i].loading) {
-					return this.statuses[i].formName;
-				}
-			}
-		}
-		return "";
-	}
-
-	getIcon(loading, complete): string {
-		if (loading) {
-			return "refresh";
-		}
-		if (complete) {
-			return "checkmark";
-		}
-		return "flag";
-	}
-
-	getColor(loading, complete): string {
-		if (loading) {
-			return "primary";
-		}
-		if (complete) {
-			return "secondary";
-		}
-		return "light";
-	}
-
-	getStateLabel(loading, complete): string {
-		if (loading) {
-			return "Uploading";
-		}
-		if (complete) {
-			return "Sync-ed";
-		}
-		return "Pending";
 	}
 }
