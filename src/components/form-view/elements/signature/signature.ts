@@ -1,25 +1,34 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, forwardRef } from '@angular/core';
 import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
+import { SignatureModal} from "./signature.modal";
+import { ModalController} from "ionic-angular"
+import { BaseElement } from "../base-element";
+import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
 	selector: 'signature',
-	templateUrl: 'signature.html'
+	templateUrl: 'signature.html',
+	providers: [
+		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Signature), multi: true }
+	]
 })
-export class Signature {
+export class Signature extends BaseElement{
 
-	@Input() form: Form;
-	@Input() submission: FormSubmission;
-	@Input() prospect: DeviceFormMembership;
-	@Output() onChange = new EventEmitter<any>();
-	@Output() onValidationChange = new EventEmitter<any>();
+	@Input() element: FormElement;
+	@Input() formGroup: FormGroup;
 
-	theForm : FormGroup = new FormGroup({});
+	constructor(private modalCtrl: ModalController) {
+		super();
+	}
 
-	displayForm: Form = <any>{};
-
-	constructor(private fb: FormBuilder, private zone: NgZone) {
-
+	show(){
+		let modal = this.modalCtrl.create(SignatureModal);
+		modal.onDidDismiss((sigStr) => {
+			if(sigStr){
+				this.onChange(sigStr);
+			}
+		});
+		modal.present();
 	}
 }

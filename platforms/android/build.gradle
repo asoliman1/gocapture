@@ -88,8 +88,10 @@ ext {
 }
 
 // PLUGIN GRADLE EXTENSIONS START
-apply from: "cordova-plugin-crosswalk-webview/starter-xwalk.gradle"
-apply from: "phonegap-plugin-push/starter-push.gradle"
+apply from: "com.synconset.imagepicker/mobilitease-ignorelinterrors.gradle"
+apply from: "com.synconset.imagepicker/mobilitease-androidtarget.gradle"
+apply from: "cordova-plugin-crosswalk-webview/mobilitease-xwalk.gradle"
+apply from: "phonegap-plugin-push/mobilitease-push.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras = file('build-extras.gradle').exists()
@@ -253,6 +255,7 @@ dependencies {
     releaseCompile project(path: "CordovaLib", configuration: "release")
     debugCompile project(path: "tess-two", configuration: "debug")
     releaseCompile project(path: "tess-two", configuration: "release")
+    compile "com.android.support:appcompat-v7:23+"
     compile "com.android.support:support-v13:23+"
     compile "com.google.android.gms:play-services-gcm:9.0.2+"
     compile "me.leolin:ShortcutBadger:1.1.4@aar"

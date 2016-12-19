@@ -1,25 +1,38 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
-import { Subscription } from "rxjs";
+import { Component, Input, forwardRef } from '@angular/core';
+import { BaseElement } from "../base-element";
+import { FormElement } from "../../../../model";
+import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Camera } from "ionic-native";
 
 @Component({
 	selector: 'business-card',
-	templateUrl: 'business-card.html'
+	templateUrl: 'business-card.html',
+	providers: [
+		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BusinessCard), multi: true }
+	]
 })
-export class BusinessCard {
+export class BusinessCard extends BaseElement {
 
-	@Input() form: Form;
-	@Input() submission: FormSubmission;
-	@Input() prospect: DeviceFormMembership;
-	@Output() onChange = new EventEmitter<any>();
-	@Output() onValidationChange = new EventEmitter<any>();
+	@Input() element: FormElement;
+	@Input() formGroup: FormGroup;
 
-	theForm : FormGroup = new FormGroup({});
+	front: string;
+	back: string;
 
-	displayForm: Form = <any>{};
+	FRONT: number = 0;
+	BACK: number = 1;
 
-	constructor(private fb: FormBuilder, private zone: NgZone) {
+	constructor() {
+		super();
+	}
+	captureImage(type: number){
+		Camera.getPicture({
+			sourceType: 1,
+			destinationType: 0
+		}).then(imageData => {
 
+		}).catch(err => {
+
+		});
 	}
 }

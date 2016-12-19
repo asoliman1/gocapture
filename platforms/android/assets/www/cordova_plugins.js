@@ -1,6 +1,22 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
+        "id": "com.synconset.imagepicker.ImagePicker",
+        "file": "plugins/com.synconset.imagepicker/www/imagepicker.js",
+        "pluginId": "com.synconset.imagepicker",
+        "clobbers": [
+            "plugins.imagePicker"
+        ]
+    },
+    {
+        "id": "cordova-plugin-app-version.AppVersionPlugin",
+        "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
+        "pluginId": "cordova-plugin-app-version",
+        "clobbers": [
+            "cordova.getAppVersion"
+        ]
+    },
+    {
         "id": "cordova-plugin-camera.Camera",
         "file": "plugins/cordova-plugin-camera/www/CameraConstants.js",
         "pluginId": "cordova-plugin-camera",
@@ -33,82 +49,11 @@ module.exports = [
         ]
     },
     {
-        "id": "cordova-plugin-geolocation.geolocation",
-        "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
-        "pluginId": "cordova-plugin-geolocation",
+        "id": "cordova-plugin-device.device",
+        "file": "plugins/cordova-plugin-device/www/device.js",
+        "pluginId": "cordova-plugin-device",
         "clobbers": [
-            "navigator.geolocation"
-        ]
-    },
-    {
-        "id": "cordova-plugin-geolocation.PositionError",
-        "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
-        "pluginId": "cordova-plugin-geolocation",
-        "runs": true
-    },
-    {
-        "id": "cordova-plugin-globalization.GlobalizationError",
-        "file": "plugins/cordova-plugin-globalization/www/GlobalizationError.js",
-        "pluginId": "cordova-plugin-globalization",
-        "clobbers": [
-            "window.GlobalizationError"
-        ]
-    },
-    {
-        "id": "cordova-plugin-globalization.globalization",
-        "file": "plugins/cordova-plugin-globalization/www/globalization.js",
-        "pluginId": "cordova-plugin-globalization",
-        "clobbers": [
-            "navigator.globalization"
-        ]
-    },
-    {
-        "id": "cordova-plugin-network-information.network",
-        "file": "plugins/cordova-plugin-network-information/www/network.js",
-        "pluginId": "cordova-plugin-network-information",
-        "clobbers": [
-            "navigator.connection",
-            "navigator.network.connection"
-        ]
-    },
-    {
-        "id": "cordova-plugin-network-information.Connection",
-        "file": "plugins/cordova-plugin-network-information/www/Connection.js",
-        "pluginId": "cordova-plugin-network-information",
-        "clobbers": [
-            "Connection"
-        ]
-    },
-    {
-        "id": "cordova-plugin-splashscreen.SplashScreen",
-        "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
-        "pluginId": "cordova-plugin-splashscreen",
-        "clobbers": [
-            "navigator.splashscreen"
-        ]
-    },
-    {
-        "id": "cordova-plugin-tesseract.TesseractPlugin",
-        "file": "plugins/cordova-plugin-tesseract/www/tesseractPlugin.js",
-        "pluginId": "cordova-plugin-tesseract",
-        "clobbers": [
-            "TesseractPlugin"
-        ]
-    },
-    {
-        "id": "cordova-sqlite-storage.SQLitePlugin",
-        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
-        "pluginId": "cordova-sqlite-storage",
-        "clobbers": [
-            "SQLitePlugin"
-        ]
-    },
-    {
-        "id": "phonegap-plugin-push.PushNotification",
-        "file": "plugins/phonegap-plugin-push/www/push.js",
-        "pluginId": "phonegap-plugin-push",
-        "clobbers": [
-            "PushNotification"
+            "device"
         ]
     },
     {
@@ -301,19 +246,58 @@ module.exports = [
         ]
     },
     {
-        "id": "cordova-plugin-device.device",
-        "file": "plugins/cordova-plugin-device/www/device.js",
-        "pluginId": "cordova-plugin-device",
+        "id": "cordova-plugin-geolocation.geolocation",
+        "file": "plugins/cordova-plugin-geolocation/www/android/geolocation.js",
+        "pluginId": "cordova-plugin-geolocation",
         "clobbers": [
-            "device"
+            "navigator.geolocation"
         ]
     },
     {
-        "id": "cordova-plugin-app-version.AppVersionPlugin",
-        "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
-        "pluginId": "cordova-plugin-app-version",
+        "id": "cordova-plugin-geolocation.PositionError",
+        "file": "plugins/cordova-plugin-geolocation/www/PositionError.js",
+        "pluginId": "cordova-plugin-geolocation",
+        "runs": true
+    },
+    {
+        "id": "cordova-plugin-globalization.GlobalizationError",
+        "file": "plugins/cordova-plugin-globalization/www/GlobalizationError.js",
+        "pluginId": "cordova-plugin-globalization",
         "clobbers": [
-            "cordova.getAppVersion"
+            "window.GlobalizationError"
+        ]
+    },
+    {
+        "id": "cordova-plugin-globalization.globalization",
+        "file": "plugins/cordova-plugin-globalization/www/globalization.js",
+        "pluginId": "cordova-plugin-globalization",
+        "clobbers": [
+            "navigator.globalization"
+        ]
+    },
+    {
+        "id": "cordova-plugin-network-information.network",
+        "file": "plugins/cordova-plugin-network-information/www/network.js",
+        "pluginId": "cordova-plugin-network-information",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "id": "cordova-plugin-network-information.Connection",
+        "file": "plugins/cordova-plugin-network-information/www/Connection.js",
+        "pluginId": "cordova-plugin-network-information",
+        "clobbers": [
+            "Connection"
+        ]
+    },
+    {
+        "id": "cordova-plugin-splashscreen.SplashScreen",
+        "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+        "pluginId": "cordova-plugin-splashscreen",
+        "clobbers": [
+            "navigator.splashscreen"
         ]
     },
     {
@@ -323,27 +307,52 @@ module.exports = [
         "clobbers": [
             "window.StatusBar"
         ]
+    },
+    {
+        "id": "cordova-plugin-tesseract.TesseractPlugin",
+        "file": "plugins/cordova-plugin-tesseract/www/tesseractPlugin.js",
+        "pluginId": "cordova-plugin-tesseract",
+        "clobbers": [
+            "TesseractPlugin"
+        ]
+    },
+    {
+        "id": "cordova-sqlite-storage.SQLitePlugin",
+        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+        "pluginId": "cordova-sqlite-storage",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
+    },
+    {
+        "id": "phonegap-plugin-push.PushNotification",
+        "file": "plugins/phonegap-plugin-push/www/push.js",
+        "pluginId": "phonegap-plugin-push",
+        "clobbers": [
+            "PushNotification"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
+    "com.synconset.imagepicker": "2.1.5",
+    "cordova-plugin-app-version": "0.1.9",
     "cordova-plugin-compat": "1.0.0",
     "cordova-plugin-camera": "2.3.0",
     "cordova-plugin-crosswalk-webview": "2.1.0",
+    "cordova-plugin-device": "1.1.3",
+    "cordova-plugin-file": "4.3.0",
+    "cordova-plugin-file-transfer": "1.6.0",
     "cordova-plugin-geolocation": "2.3.0",
     "cordova-plugin-globalization": "1.0.4",
     "cordova-plugin-network-information": "1.3.0",
     "cordova-plugin-splashscreen": "4.0.0",
+    "cordova-plugin-statusbar": "2.2.0",
     "cordova-plugin-tesseract": "0.0.1",
-    "cordova-sqlite-storage": "1.4.7",
-    "phonegap-plugin-push": "1.8.2",
-    "cordova-plugin-file": "4.3.0",
-    "cordova-plugin-file-transfer": "1.6.0",
-    "cordova-plugin-device": "1.1.3",
-    "cordova-plugin-app-version": "0.1.9",
     "cordova-plugin-whitelist": "1.3.0",
-    "cordova-plugin-statusbar": "2.2.0"
+    "cordova-sqlite-storage": "1.4.7",
+    "phonegap-plugin-push": "1.8.2"
 };
 // BOTTOM OF METADATA
 });

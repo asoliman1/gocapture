@@ -51,6 +51,9 @@
         },
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "com.synconset.imagepicker": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {

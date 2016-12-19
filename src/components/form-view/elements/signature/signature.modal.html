@@ -1,0 +1,26 @@
+<ion-header>
+	<ion-navbar>
+		<ion-buttons start>
+			<button ion-button (click)="cancel()">
+				<ion-icon name="close" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+		<ion-title>Signature</ion-title>
+		<ion-buttons end>
+			<button ion-button [disabled]="!hasSignature" (click)="done()">
+				<ion-icon name="checkmark" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+<ion-content>
+	<signature-pad [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar class="text-center">
+    <button ion-button icon-only clear>
+		<ion-icon name="trash" color="primary" (click)="clear()"></ion-icon>
+    </button>
+  </ion-toolbar>
+</ion-footer>

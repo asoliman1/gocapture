@@ -50,8 +50,6 @@ export class Forms {
 
 	searchTrigger = "hidden";
 
-	loadingTrigger = "hidden";
-
 	@ViewChild("search") searchbar: Searchbar;
 
 	forms: Form[] = [];

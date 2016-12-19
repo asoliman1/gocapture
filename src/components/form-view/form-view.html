@@ -21,16 +21,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'radio'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-grid responsive-sm radio-group>
-					<ion-row responsive-sm>
-						<ion-col *ngFor="let option of element.options">
-							<ion-item>
-								<ion-label>{{option.option}}</ion-label>
-								<ion-radio [value]="option.option" [attr.checked]="option.is_default == 1"></ion-radio>
-							</ion-item>
-						</ion-col>
-					</ion-row>
-				</ion-grid>
+				<radios item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
 			</ion-item>
 			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
 			<ion-item *ngSwitchCase="'textarea'">
@@ -41,9 +32,7 @@
 				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-datetime displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
-			<ion-item *ngSwitchCase="'address'">
-				<ion-label stacked>{{element.title}}</ion-label>
-			</ion-item>
+			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
 			<ion-item *ngSwitchCase="'money'">
 				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
@@ -58,22 +47,23 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'phone'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<ion-input type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
 			<ion-item *ngSwitchCase="'checkbox'">
 				<ion-label stacked>{{element.title}}</ion-label>
-  				<ion-checkbox [attr.name]="element.id" [formControlName]="element.identifier"></ion-checkbox>
-			</ion-item>
+				<checkboxes item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
+  			</ion-item>
 			<ion-item *ngSwitchCase="'image'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<image item-content></image>
+				<image item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
 			</ion-item>
 			<ion-item *ngSwitchCase="'business_card'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<business-card item-content></business-card>
+				<business-card item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></business-card>
 			</ion-item>
 			<ion-item *ngSwitchCase="'signature'">
 				<ion-label stacked>{{element.title}}</ion-label>
+				<signature item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
 			</ion-item>
 			<ion-item *ngSwitchDefault>
 				<ion-label>Coming soon! A component for {{element.type}}</ion-label>

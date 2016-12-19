@@ -9,6 +9,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light" />
         <activity android:exported="true" android:name="com.adobe.phonegap.push.PushHandlerActivity" />
         <receiver android:name="com.adobe.phonegap.push.BackgroundActionButtonHandler" />
         <receiver android:exported="true" android:name="com.google.android.gms.gcm.GcmReceiver" android:permission="com.google.android.c2dm.permission.SEND">

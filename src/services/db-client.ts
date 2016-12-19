@@ -161,6 +161,10 @@ export class DBClient {
 	public setupWorkDb(dbName){
 		this.workDb = this.initializeDb(this.platform, dbName + ".db", false);
 	} 
+
+	public isWorkDbInited() : boolean{
+		return this.workDb != null && this.map[WORK] != null;
+	}
 	/**
 	 * 
 	 */
@@ -356,16 +360,19 @@ export class DBClient {
 	public getMembership(form_id: number, prospect_id: number) : Observable<DeviceFormMembership>{
 		return this.getSingle<any>(WORK, "contacts", [form_id, prospect_id])
 		.map((dbForm) => {
-			let form = new DeviceFormMembership();
-			form.form_id = dbForm.formId;
-			form.id = dbForm.id;
-			form.added_date = dbForm.added;
-			form.membership_id = dbForm.membershipId;
-			form.prospect_id = dbForm.prospectId;
-			form.fields = JSON.parse(dbForm.data);
-			form["search"] = form.fields["Email"] + " " + form.fields["FirstName"] + " " + form.fields["LastName"];
-				
-			return form;
+			if(dbForm){
+				let form = new DeviceFormMembership();
+				form.form_id = dbForm.formId;
+				form.id = dbForm.id;
+				form.added_date = dbForm.added;
+				form.membership_id = dbForm.membershipId;
+				form.prospect_id = dbForm.prospectId;
+				form.fields = JSON.parse(dbForm.data);
+				form["search"] = form.fields["Email"] + " " + form.fields["FirstName"] + " " + form.fields["LastName"];
+					
+				return form;
+			}
+			return null;
 		});
 	}
 
@@ -635,21 +642,31 @@ export class DBClient {
 				})
 			}else{
 				let o: Observable<SQLite> = null;
-				switch (type) {
-					case MASTER:
-						o = this.masterDb;
-						break;				    
-					case WORK:
-						o = this.workDb;
-						break;
-					default:
-						return;
-				}
-				o.subscribe((db)=>{
-					this.map[type] = db;
-					obs.next(this.map[type]);
-					obs.complete();	
-				});
+
+				let iterate = () => {
+					switch (type) {
+						case MASTER:
+							o = this.masterDb;
+							break;				    
+						case WORK:
+							o = this.workDb;
+							break;
+						default:
+							o = null;
+					}
+					if(!o){
+						console.log("waiting for " + type);
+						setTimeout(iterate, 100);
+					}else{
+						o.subscribe((db)=>{
+							this.map[type] = db;
+							obs.next(this.map[type]);
+							obs.complete();	
+						});
+					}
+				};
+
+				iterate();
 			}
 		});
 	}

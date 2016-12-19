@@ -44,7 +44,7 @@ export class SyncClient {
 			let result = new DownloadData();
 			var map: {[key: string] : SyncStatus} = {
 				forms: new SyncStatus(true, false, 0, "Forms", 10),
-				memberships: new SyncStatus(false, false, 0, "Contacts", 0),
+				contacts: new SyncStatus(false, false, 0, "Contacts", 0),
 				dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
 			}
 			this._isSyncing = true;

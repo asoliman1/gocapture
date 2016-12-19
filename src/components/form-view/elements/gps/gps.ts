@@ -2,10 +2,11 @@ import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@a
 import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
+import { Geolocation } from "ionic-native";
 
 @Component({
 	selector: 'gps',
-	templateUrl: 'gps'
+	templateUrl: 'gps.html'
 })
 export class Gps {
 
@@ -18,8 +19,28 @@ export class Gps {
 	theForm : FormGroup = new FormGroup({});
 
 	displayForm: Form = <any>{};
+	loading: boolean = true;
+	latitude: string;
+	longitude: string;
 
 	constructor(private fb: FormBuilder, private zone: NgZone) {
 
 	}
+
+	ngOnInit(){
+		this.refresh();
+	}
+
+	refresh(){
+		this.loading = true;
+		Geolocation.getCurrentPosition()
+		.then(pos => {
+			this.latitude = pos.coords.latitude + "";
+			this.longitude = pos.coords.longitude + "";
+			this.loading = false;
+		}).catch( err => {
+			this.loading = false;
+		})
+	}
+
 }

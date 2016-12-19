@@ -1,0 +1,13 @@
+.address{
+	ion-item{
+		padding-left:0 !important;
+		&.item-select .item-inner{
+			border-bottom: none;
+		}
+	}
+	
+}
+
+address, .address{
+	width: 100%;
+}

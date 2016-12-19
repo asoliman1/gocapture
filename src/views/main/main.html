@@ -24,10 +24,10 @@
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
 
 
-<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" pop="loadingTrigger == 'visible'" (onCollapse)="footerCollapsed()">
+<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()">
 	<ion-toolbar #toolbar>
 		<ion-spinner></ion-spinner>
-		<div class="action">Uploading...</div>
+		<div class="action">Syncing...</div>
 		<div class="element">{{currentSyncForm}}</div>
 	</ion-toolbar>
 	<ion-content>

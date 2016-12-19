@@ -22,7 +22,9 @@ export class Main {
 
 	user: User = new User();	
 
-	uploading: boolean = false;
+	uploading: boolean = true;	
+
+	loadingTrigger = false;
 
 	sub: Subscription;
 
@@ -84,10 +86,10 @@ export class Main {
 
 			},
 			() => {
-				//complete
-				this.pullup.minimize();
+				setTimeout(()=>{
+					this.pullup.minimize();
+				}, 1000);
 			});
-		//this.syncClient.sync();
 	}
 
 	ionViewDidLeave() {
@@ -128,10 +130,10 @@ export class Main {
 
 	getStateLabel(loading, complete): string {
 		if (loading) {
-			return "Uploading";
+			return "Syncing";
 		}
 		if (complete) {
-			return "Sync-ed";
+			return "Complete";
 		}
 		return "Pending";
 	}

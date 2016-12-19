@@ -341,6 +341,14 @@ module.exports = [
         "clobbers": [
             "window.StatusBar"
         ]
+    },
+    {
+        "file": "plugins/com.synconset.imagepicker/www/imagepicker.js",
+        "id": "com.synconset.imagepicker.ImagePicker",
+        "pluginId": "com.synconset.imagepicker",
+        "clobbers": [
+            "plugins.imagePicker"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -361,7 +369,8 @@ module.exports.metadata =
     "cordova-plugin-device": "1.1.3",
     "cordova-plugin-app-version": "0.1.9",
     "cordova-plugin-whitelist": "1.3.0",
-    "cordova-plugin-statusbar": "2.2.0"
+    "cordova-plugin-statusbar": "2.2.0",
+    "com.synconset.imagepicker": "2.1.5"
 }
 // BOTTOM OF METADATA
 });

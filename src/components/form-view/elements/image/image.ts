@@ -1,25 +1,64 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, forwardRef } from '@angular/core';
 import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, AbstractControl, FormControl, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { Subscription } from "rxjs";
+import { BaseElement } from "../base-element";
+import { ActionSheetController } from "ionic-angular";
+import { Camera, ImagePicker } from 'ionic-native';
 
 @Component({
 	selector: 'image',
-	templateUrl: 'image.html'
+	templateUrl: 'image.html',
+	providers: [
+		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Image), multi: true }
+	]
 })
-export class Image {
+export class Image extends BaseElement {
+	@Input() element: FormElement;
+	@Input() formGroup: FormGroup;
 
-	@Input() form: Form;
-	@Input() submission: FormSubmission;
-	@Input() prospect: DeviceFormMembership;
-	@Output() onChange = new EventEmitter<any>();
-	@Output() onValidationChange = new EventEmitter<any>();
+	constructor(private fb: FormBuilder,
+				private zone: NgZone,
+				private actionCtrl: ActionSheetController) {
+		super();
+	}
 
-	theForm : FormGroup = new FormGroup({});
+	chooseType() {
+		let sheet = this.actionCtrl.create({
+			title: "",
+			buttons: [
+				{
+					text: 'Use Camera',
+					handler: () => {
+						Camera.getPicture({
+							sourceType: 1,
+							destinationType: 0
+						}).then(imageData => {
 
-	displayForm: Form = <any>{};
+						}).catch(err => {
 
-	constructor(private fb: FormBuilder, private zone: NgZone) {
+						});
+					}
+				},
+				{
+					text: 'Choose from Album',
+					handler: () => {
+						Camera.getPicture({
+							sourceType: 0,
+							destinationType: 0
+						}).then(imageData => {
 
+						}).catch(err => {
+
+						});
+					}
+				},
+				{
+					text: 'Cancel',
+					role: 'cancel'
+				}
+			]
+		});
+		sheet.present();
 	}
 }

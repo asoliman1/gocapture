@@ -16,7 +16,7 @@ export class FormView {
 	@Output() onChange = new EventEmitter<any>();
 	@Output() onValidationChange = new EventEmitter<any>();
 
-	theForm : FormGroup = new FormGroup({});
+	theForm : FormGroup = null;
 
 	displayForm: Form = <any>{};
 
@@ -50,7 +50,7 @@ export class FormView {
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
 			}
-		}else if (changes['prospect']){
+		}else if (changes['prospect']&& this.prospect){
 			var foundEmail, foundName;
 			for(let i = 0; i < this.form.elements.length; i++){
 				if(this.form.elements[i].type == "email" && !foundEmail){
@@ -87,7 +87,7 @@ export class FormView {
 				})
 				control = this.fb.group(opts);
 			}else{
-				control = this.fb.control({value : element.default_value, disabled: element.is_readonly});
+				control = this.fb.control({value : data[identifier] || element.default_value, disabled: element.is_readonly});
 				control.setValidators(this.makeValidators(element));
 			}
 			theForm.addControl(identifier, control);

@@ -49,7 +49,7 @@ export class BussinessClient {
 		this.online = val;
 		this.networkSource.next(val ? "ON" : "OFF");
 		this.rest.setOnline(val);
-		if(val){
+		if(val && this.db.isWorkDbInited()){
 			this.db.getConfig("autoUpload").subscribe((val) => {
 				if(val == "true"){
 					this.doSync();
@@ -78,7 +78,6 @@ export class BussinessClient {
 			req.invitation_code = authCode;
 			req.device_name = authCode;
 			this.rest.authenticate(req).subscribe(reply => {
-				//obs.next({user:reply, message: "Authenticated. Setting things up..."});
 				let fileTransfer = new Transfer();
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
@@ -92,11 +91,11 @@ export class BussinessClient {
 								reply.customer_logo = result.nativeURL;
 								this.db.saveRegistration(reply).subscribe((done) => {
 									this.db.setupWorkDb(reply.db);
-									obs.next({user:reply, message: "Syncing..."});
+									obs.next({user:reply, message: "Done"});
+									obs.complete();
 									this.sync.download(null).subscribe(downloadData => {
 										this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
 											obs.next({user:reply, message: "Done"});
-											obs.complete();
 										})
 									});
 								});

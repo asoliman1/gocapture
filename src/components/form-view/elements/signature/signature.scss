@@ -1,0 +1,21 @@
+signature, .signature{
+ width: 100%;
+ position: relative;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.signature button{
+	font-size: 2.5em;
+}
+
+.signature img{
+	height: 100%;
+	width: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0
+}

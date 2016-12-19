@@ -71,11 +71,17 @@
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="android-minSdkVersion" value="16"/>
   <preference name="BackupWebStorage" value="none"/>
-  <preference name="SplashScreenDelay" value="0"/>
+  <preference name="ShowSplashScreen" value="true"/>
+<preference name="SplashScreen" value="screen"/>
+<preference name="SplashScreenDelay" value="30000"/>
+<preference name="AutoHideSplashScreen" value="false"/>
+<preference name="SplashShowOnlyFirstTime" value="false"/>
+	<feature name="SplashScreen">
+		<param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen"/>
+	</feature>
   <preference name="FadeSplashScreen" value="false"/>
   <preference name="FadeSplashScreenDuration" value="0"/>
   <preference name="SplashScreenBackgroundColor" value="0xFFFFFFFF"/>
-  <preference name="SplashScreen" value="screen"/>
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar"/>
   </feature>
@@ -91,4 +97,5 @@
     <variable name="SENDER_ID" value="716813832888"/>
   </plugin>
   <icon src="resources\android\icon\drawable-xhdpi-icon.png"/>
+  <allow-navigation href="http://192.168.152.2:8000"/>
 </widget>

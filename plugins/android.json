@@ -7,6 +7,12 @@
         "files": {}
     },
     "installed_plugins": {
+        "com.synconset.imagepicker": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-app-version": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
@@ -16,6 +22,12 @@
             "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
             "XWALK_MODE": "embedded",
             "XWALK_MULTIPLEAPK": "true",
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-plugin-geolocation": {
@@ -30,7 +42,13 @@
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
         "cordova-plugin-tesseract": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-sqlite-storage": {
@@ -38,21 +56,6 @@
         },
         "phonegap-plugin-push": {
             "SENDER_ID": "716813832888",
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-file-transfer": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-app-version": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },

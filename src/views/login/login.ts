@@ -61,16 +61,10 @@ export class Login {
 					this.navCtrl.setRoot(Main);
 				});
 		} else {
-			let loader = this.loading.create({
-				content: "Syncing..."
-			});
-			loader.present();
+			this.navCtrl.setRoot(Main);			
 			this.client.getUpdates().subscribe(done => {
-				loader.dismiss();
 			}, (err) =>{
-				loader.dismiss();
 			});
-			this.navCtrl.setRoot(Main);
 		}
 	}
 }
