@@ -5,6 +5,7 @@ import { Subscription } from "rxjs";
 import { BaseElement } from "../base-element";
 import { ActionSheetController } from "ionic-angular";
 import { Camera, ImagePicker } from 'ionic-native';
+declare var cordova: any;
 
 @Component({
 	selector: 'image',
@@ -17,13 +18,59 @@ export class Image extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
 
+	images = {
+		true: "trash",
+		false: "images"
+	};
+
+	colors = {
+		true: "danger",
+		false: "dark"
+	};
+
+	selectionEnabled: any = false;
+	selection: any[] = [];
+
+	max = 5;
+
 	constructor(private fb: FormBuilder,
-				private zone: NgZone,
-				private actionCtrl: ActionSheetController) {
+		private zone: NgZone,
+		private actionCtrl: ActionSheetController) {
 		super();
+		this.currentValue = [];
+		/*setTimeout(()=>{
+			this.currentValue = ["http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg"];
+		}, 1000);*/
 	}
 
 	chooseType() {
+		if(this.selectionEnabled){
+			for(let i = this.selection.length - 1; i > -1; i--){
+				if(this.selection[i]){
+					(<any[]>this.currentValue).splice(i, 1);
+				}
+			}
+			this.propagateChange(this.currentValue);
+			this.selection = [];
+			this.selectionEnabled = false;
+			return;
+		}
+
+		if (this.currentValue.length >= this.max) {
+			return;
+		}
+
+		let onImageReceived = (imageData) => {
+			console.log(imageData);
+			if (!this.currentValue) {
+				this.currentValue = [];
+			}
+			this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
+				this.currentValue.push(newPath);
+				this.propagateChange(this.currentValue);
+			})
+		};
+
 		let sheet = this.actionCtrl.create({
 			title: "",
 			buttons: [
@@ -31,26 +78,22 @@ export class Image extends BaseElement {
 					text: 'Use Camera',
 					handler: () => {
 						Camera.getPicture({
-							sourceType: 1,
-							destinationType: 0
-						}).then(imageData => {
-
-						}).catch(err => {
-
-						});
+							sourceType: 1
+						}).then(onImageReceived)
+							.catch(err => {
+								//hmmm, what to do
+							});
 					}
 				},
 				{
 					text: 'Choose from Album',
 					handler: () => {
 						Camera.getPicture({
-							sourceType: 0,
-							destinationType: 0
-						}).then(imageData => {
-
-						}).catch(err => {
-
-						});
+							sourceType: 0
+						}).then(onImageReceived)
+							.catch(err => {
+								//hmmm, what to do
+							});
 					}
 				},
 				{
@@ -60,5 +103,24 @@ export class Image extends BaseElement {
 			]
 		});
 		sheet.present();
+	}
+
+	toggleSelection(index : number){
+		this.selection[index] = !this.selection[index];
+		this.selectionEnabled = false;
+		for(let i = 0; i < this.selection.length; i++){
+			if(!!this.selection[i]){
+				this.selectionEnabled = true;
+				break;
+			}
+		}
+	}
+
+	writeValue(obj: any):void{
+		if(!obj){
+			this.currentValue = [];
+		}else{
+			this.currentValue = obj;
+		}
 	}
 }

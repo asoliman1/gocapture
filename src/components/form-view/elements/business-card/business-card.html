@@ -2,12 +2,12 @@
 	<ion-row>
 		<ion-col>
 			<button ion-button color="light" (click)="captureImage(FRONT)">
-				<img src="assets/images/business-card-front.svg">
+				<img [src]="currentValue.front">
 			</button>
 		</ion-col>
 		<ion-col>
 			<button ion-button color="light" (click)="captureImage(BACK)">
-				<img src="assets/images/business-card-back.svg">
+				<img [src]="currentValue.back">
 			</button>
 		</ion-col>
 	</ion-row>

@@ -61,7 +61,7 @@ export class FormCapture {
 	  if(!this.submission.status){
 		  this.submission.status = SubmissionStatus.ToSubmit;
 	  }
-	  this.client.saveSubmission(this.submission).subscribe(sub => {
+	  this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
 		  this.navCtrl.pop();
 	  }, err => {
 
@@ -81,6 +81,13 @@ export class FormCapture {
 			  this.submission.email = data.fields["Email"];
 			  this.submission.first_name = data.fields["FirstName"];
 			  this.submission.last_name = data.fields["LastName"];
+			  let id = null;
+			  for(let field in data.fields){
+				  id = this.form.getIdByUniqueFieldName(field)
+				  if(id){
+					  this.submission.fields[id] = data.fields[field];
+				  }
+			  }
 		  }
 	  });
 	  search.present();

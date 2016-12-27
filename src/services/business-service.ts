@@ -5,7 +5,8 @@ import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership, Submis
 import { DBClient } from "./db-client";
 import { RESTClient } from "./rest-client";
 import { SyncClient } from "./sync-client";
-import { Transfer, File, Network } from 'ionic-native';
+import { Transfer, File, Network, Entry } from 'ionic-native';
+import { UUID } from "../util/uuid";
 declare var cordova: any;
 
 @Injectable()
@@ -28,6 +29,8 @@ export class BussinessClient {
 	private networkOff : Subscription;
 
 	private online: boolean = true;
+
+	private registration : User;
 
 	constructor(private db: DBClient, private rest: RESTClient, private sync: SyncClient) {
 		
@@ -63,6 +66,7 @@ export class BussinessClient {
 			this.db.getRegistration()
 				.subscribe((user) => {
 					if (user) {
+						this.registration = user;
 						this.db.setupWorkDb(user.db);
 						this.rest.token = user.access_token;
 					}
@@ -89,6 +93,7 @@ export class BussinessClient {
 						fileTransfer.download(reply.user_profile_picture, target, true, {})
 							.then((result) => {
 								reply.customer_logo = result.nativeURL;
+								this.registration = reply;
 								this.db.saveRegistration(reply).subscribe((done) => {
 									this.db.setupWorkDb(reply.db);
 									obs.next({user:reply, message: "Done"});
@@ -148,7 +153,30 @@ export class BussinessClient {
 		return this.db.getSubmissions(form.form_id, isDispatch);
 	}
 
-	public saveSubmission(sub: FormSubmission) : Observable<boolean>{
+	public saveSubmission(sub: FormSubmission, form: Form) : Observable<boolean>{
+		form.elements.forEach(element => {
+			switch(element.type){
+				case "simple_name":
+					if(!sub.first_name){
+						sub.first_name = <any>sub.fields[element["identifier"] + "_2"];
+						sub.last_name = <any>sub.fields[element["identifier"] + "_1"];
+					}
+					break;
+				case "email":
+					if(!sub.email){
+						sub.email = <any>sub.fields[element["identifier"]];
+					}
+					break;
+			}
+		});
+		var id = form.getIdByUniqueFieldName("WorkPhone");
+		if(id){
+			sub.phone = <any>sub.fields[id];
+		}
+		id = form.getIdByUniqueFieldName("Company");
+		if(id){
+			sub.company = <any>sub.fields[id];
+		}
 		return this.db.saveSubmission(sub);
 	}
 

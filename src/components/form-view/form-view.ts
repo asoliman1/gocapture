@@ -74,7 +74,7 @@ export class FormView {
 		if(this.submission && this.submission.fields){
 			data = Object.assign(Object.assign({}, this.submission.fields), data);
 		}
-		let theForm = this.fb.group({});
+		let f = this.fb.group({});
 		this.form.elements.forEach((element)=>{
 			var identifier = "element_" + element.id;
 			element["identifier"] = identifier;
@@ -90,23 +90,10 @@ export class FormView {
 				control = this.fb.control({value : data[identifier] || element.default_value, disabled: element.is_readonly});
 				control.setValidators(this.makeValidators(element));
 			}
-			theForm.addControl(identifier, control);
-			/*switch(element.type){
-				case "simple_name":
-					break;
-				case "email":
-					break;
-				case "url":
-					break;
-				case "text":
-					break;
-				case "select":
-					break;
-				case "radio":
-					break;
-			}*/
+			f.addControl(identifier, control);
 		});
-		this.theForm = theForm;
+		this.theForm = f;
+		console.log(this.form, f);
 		this.sub = this.theForm.statusChanges.subscribe(()=>{
 			this.onValidationChange.emit(this.theForm.valid);
 		});

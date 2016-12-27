@@ -16,4 +16,8 @@ export class SimpleName extends BaseGroupElement {
 	constructor() {
 		super();
 	}
+
+	ngOnChanges(changes: any) {
+		super.ngOnChanges(changes);
+	}
 }

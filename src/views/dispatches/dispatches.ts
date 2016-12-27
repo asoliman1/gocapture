@@ -13,6 +13,7 @@ import { DispatchOrder } from "../../model/dispatch-order";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";
+import { FormSubmission } from "../../model";
 
 @Component({
 	selector: 'dispatches',
@@ -56,6 +57,7 @@ export class Dispatches {
 
 	doRefresh(refresher?) {
 		this.client.getDispatches().subscribe(forms => {
+			console.log(forms);
 			this.dispatches = forms;
 			if (refresher) {
 				refresher.complete();
@@ -94,14 +96,20 @@ export class Dispatches {
 					icon: "magnet",
 					handler: () => {
 						console.log('capture clicked');
-						this.navCtrl.push(FormCapture, { form: form.form });
+						let sub : FormSubmission = new FormSubmission();
+						sub.prospect_id = form.prospect_id;
+						sub.form_id = form.form_id;
+						Object.keys(form.fields_values).forEach((key)=>{
+							sub.fields[key] = form.fields_values[key];
+						});
+						this.navCtrl.push(FormCapture, { form: form.form, submission: sub });
 					}
 				}, {
 					text: 'Review Submissions',
 					icon: "eye",
 					handler: () => {
 						console.log('review clicked');
-						this.navCtrl.push(FormReview, { form: form.form, isDispatch: true });
+						this.navCtrl.push(FormReview, { form: form, isDispatch: true });
 					}
 				}, {
 					text: 'Share',
@@ -114,7 +122,7 @@ export class Dispatches {
 					icon: "megaphone",
 					handler: () => {
 						console.log('summary clicked');
-						this.navCtrl.push(FormSummary, { form: form.form });
+						this.navCtrl.push(FormSummary, { form: form });
 					}
 				}, {
 					text: 'Cancel',

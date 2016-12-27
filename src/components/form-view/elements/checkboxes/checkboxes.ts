@@ -17,4 +17,30 @@ export class Checkboxes extends BaseElement {
 	constructor() {
 		super();
 	}
+
+	writeValue(obj: any): void{
+		this.currentValue = obj;
+		if(!obj){
+			this.currentValue = [];
+		}
+	}
+
+	onCheckChange(event, option){
+		console.log(event);
+		if(event.checked){
+			this.currentValue.push(option.option);
+		}else{
+			let idx = this.currentValue.indexOf(option.option);
+			if(idx > -1){
+				this.currentValue.splice(idx, 1);
+			}
+		}
+		this.propagateChange(this.currentValue);
+	}
+
+	has(values: any[], option){
+		return values && values.filter((val)=>{
+			return val == option.option;
+		}).length > 0;
+	}
 }

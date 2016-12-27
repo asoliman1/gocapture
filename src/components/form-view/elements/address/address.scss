@@ -1,4 +1,8 @@
 .address{
+	.address-label{
+		font-style: normal !important;
+		font-size: 1.2em !important;
+	}
 	ion-item{
 		padding-left:0 !important;
 		&.item-select .item-inner{

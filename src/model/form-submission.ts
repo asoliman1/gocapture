@@ -4,9 +4,11 @@ export class FormSubmission{
 	status: SubmissionStatus;
 	prospect_id: number;
 	email: string = "";
+	company: string = "";
+	phone: string = "";
 	first_name: string = "";
 	last_name: string = "";
-	fields : {[key: string]: string};
+	fields : {[key: string]: string | string[]} = {};
 }
 
 export enum SubmissionStatus{

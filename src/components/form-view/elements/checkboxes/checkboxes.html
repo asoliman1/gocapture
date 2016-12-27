@@ -1,9 +1,9 @@
 <ion-grid responsive-sm>
 	<ion-row responsive-sm>
-		<ion-col *ngFor="let option of element.options">
+		<ion-col *ngFor="let option of element.options; let i = index">
 			<ion-item>
 				<ion-label>{{option.option}}</ion-label>
-				<ion-checkbox></ion-checkbox>
+				<ion-checkbox [checked]="has(currentValue, option)" (ionChange)="onCheckChange($event, option)"></ion-checkbox>
 			</ion-item>
 		</ion-col>
 	</ion-row>

@@ -43,9 +43,9 @@
 	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px" *ngIf="filteredSubmissions.length > 0">
 		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
 			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
-			<h3>{{submission.first_name }}</h3>
+			<h3>{{submission.company }}</h3>
 			<h3>{{submission.email}}</h3>
-			<h3>{{submission.email}}</h3>
+			<h3>{{submission.telephone}}</h3>
 			<button ion-button item-right icon-only clear (click)="statusClick($event)" [disabled]="syncing">
 				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
 			</button>
