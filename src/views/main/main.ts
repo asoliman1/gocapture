@@ -125,7 +125,7 @@ export class Main {
 		if (complete) {
 			return "secondary";
 		}
-		return "light";
+		return "orange";
 	}
 
 	getStateLabel(loading, complete): string {

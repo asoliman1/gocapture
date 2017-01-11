@@ -51,6 +51,10 @@ export class BussinessClient {
 		});
 	}
 
+	public isOnline(): boolean{
+		return this.online;
+	}
+
 	private setOnline(val: boolean){
 		this.online = val;
 		this.networkSource.next(val ? "ON" : "OFF");
@@ -157,7 +161,7 @@ export class BussinessClient {
 				});
 			});
 		});
-	} 
+	}
 
 	public getForms() : Observable<Form[]>{
 		return this.db.getForms();
