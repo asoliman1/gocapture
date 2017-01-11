@@ -53,9 +53,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 				let ext = name.split(".").pop();
 				let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
 				let newName = new Date().getTime() + "." + ext;
-				console.log(newFolder, newName);
 				let doMove = (d) =>{
-					console.log("HEllo", d);
 					File.moveFile(oldFolder, name, newFolder, newName)
 					.then(entry => {
 						obs.next(newFolder + "/" + newName);

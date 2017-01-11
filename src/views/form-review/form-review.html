@@ -20,17 +20,17 @@
 		</ion-row>
 		<ion-row>
 			<ion-col>
-				<ion-segment [(ngModel)]="filter"  (ionChange)="onFilterChanged()" color="dark">
-					<ion-segment-button value="" >
+				<ion-segment [(ngModel)]="filter"  (ionChange)="onFilterChanged()" color="dark" class="segment">
+					<ion-segment-button value="" class="all" >
 						All
 					</ion-segment-button>
-					<ion-segment-button value="1" >
+					<ion-segment-button value="1"class="submitted" >
 						Submitted
 					</ion-segment-button>
-					<ion-segment-button value="2" >
+					<ion-segment-button value="2" class="hold">
 						On Hold
 					</ion-segment-button>
-					<ion-segment-button value="3" >
+					<ion-segment-button value="3" class="blocked">
 						Blocked
 					</ion-segment-button>
 				</ion-segment>
@@ -43,10 +43,10 @@
 	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px" *ngIf="filteredSubmissions.length > 0">
 		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
 			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
-			<h3>{{submission.company }}</h3>
-			<h3>{{submission.email}}</h3>
-			<h3>{{submission.telephone}}</h3>
-			<button ion-button item-right icon-only clear (click)="statusClick($event)" [disabled]="syncing">
+			<h2>{{submission.company }}</h2>
+			<h2>{{submission.email}}</h2>
+			<h2>{{submission.telephone}}</h2>
+			<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
 				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
 			</button>
 		</ion-item>

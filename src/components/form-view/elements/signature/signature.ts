@@ -5,6 +5,7 @@ import { SignatureModal} from "./signature.modal";
 import { ModalController} from "ionic-angular"
 import { BaseElement } from "../base-element";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+declare var screen;
 
 @Component({
 	selector: 'signature',
@@ -25,10 +26,12 @@ export class Signature extends BaseElement{
 	show(){
 		let modal = this.modalCtrl.create(SignatureModal);
 		modal.onDidDismiss((sigStr) => {
+			screen.unlockOrientation && screen.unlockOrientation();
 			if(sigStr){
 				this.onChange(sigStr);
 			}
 		});
 		modal.present();
+		screen.lockOrientation && screen.lockOrientation('landscape');
 	}
 }

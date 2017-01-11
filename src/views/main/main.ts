@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, Nav } from 'ionic-angular';
-import { Dashboard } from "../dashboard";
 import { Forms } from "../forms";
 import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
@@ -8,6 +7,7 @@ import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs";
 import { SyncClient } from "../../services/sync-client";
+import { Push } from 'ionic-native';
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 
 @Component({
@@ -18,7 +18,7 @@ export class Main {
 
 	@ViewChild(Nav) nav: Nav;
 
-	rootPage: any = Dashboard;
+	rootPage: any = Forms;
 
 	user: User = new User();	
 
@@ -41,7 +41,7 @@ export class Main {
 		private client: BussinessClient,
 		private syncClient: SyncClient) {
 		this.pages = [
-			{ title: 'Home', component: Dashboard, icon: "home" },
+			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Forms', component: Forms, icon: "document" },
 			{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
 			{ title: 'Settings', component: Settings, icon: "cog" }
@@ -55,7 +55,7 @@ export class Main {
 	ngOnInit() {
 		this.client.getRegistration().subscribe(user => {
 			this.user = user;
-		})
+		});
 	}
 
 	footerExpanded() {

@@ -1,4 +1,5 @@
-import { Push } from 'ionic-native';
+import { Push, PushNotification, NotificationEventResponse } from 'ionic-native';
+import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
 import { Config } from "../config";
 import { PushResponse } from "../model/protocol";
@@ -6,16 +7,38 @@ import { Util } from "../util/util";
 
 @Injectable()
 export class PushClient {
-	private push: {
+	
+	private errorSource: BehaviorSubject<any>;
+    /**
+     * Error event
+     */
+	error: Observable<any>;
+
+	private notificationSource: BehaviorSubject<{id: number, action: number}>;
+    /**
+     * Error event
+     */
+	notification: Observable<{id: number, action: number}>;
+
+	private push: PushNotification;
+	/**{
 		on: (event: "registration" | "notification" | "error", callback: (data: PushResponse) => void) => void,
 		off: (event: "registration" | "notification" | "error", callback: (err: any) => void) => void,
 		unregister: (successHandler: () => void, errorHandler: () => void, topics: any[]) => void,
 		clearAllNotifications: (successHandler: () => void, errorHandler: () => void) => void
-	};
+	};*/
 
 	private refs: any = {};
 
-	constructor() {
+	constructor() {		
+		this.errorSource = new BehaviorSubject<any>(null);
+		this.error = this.errorSource.asObservable();
+		
+		this.notificationSource = new BehaviorSubject<{id: number, action: number}>(null);
+		this.notification = this.notificationSource.asObservable();
+	}
+
+	initialize(){
 		this.push = <any>Push.init({
 			android: {
 				senderID: Config.androidGcmId
@@ -51,14 +74,16 @@ export class PushClient {
 	}
 
 	private onRegistration(data : PushResponse){
-
+		console.log("registration", data);
 	}
 
-	private onNotification(data : PushResponse){
-		
+	private onNotification(data : NotificationEventResponse){
+		let action = data.additionalData["action"];
+		let id = data.additionalData["id"];
+		this.notificationSource.next({id: id, action: action});
 	}
 
 	private onError(err){
-		
+		this.errorSource.next(err);
 	}
 }

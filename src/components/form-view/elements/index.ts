@@ -5,4 +5,5 @@ export * from "./signature";
 export * from "./gps";
 export * from "./address";
 export * from "./radios";
+export * from "./dropdown";
 export * from "./checkboxes";

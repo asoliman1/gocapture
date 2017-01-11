@@ -3,7 +3,7 @@
 		<ion-col *ngFor="let option of element.options; let i = index">
 			<ion-item>
 				<ion-label>{{option.option}}</ion-label>
-				<ion-checkbox [checked]="has(currentValue, option)" (ionChange)="onCheckChange($event, option)"></ion-checkbox>
+				<ion-checkbox color="orange" [checked]="has(currentValue, option)" (ionChange)="onCheckChange($event, option)"></ion-checkbox>
 			</ion-item>
 		</ion-col>
 	</ion-row>

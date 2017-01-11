@@ -95,6 +95,8 @@
 		3E3B84A83ABF4B53AC1D1542 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 815AF53CF564427F95A789CB /* Security.framework */; };
 		3A1C2F3EAC964906A9A454F5 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60B01030DF9A400588B25FDF /* Photos.framework */; };
 		6579EE83F62340A4908AB1AB /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B797D6A1DE4990A5D8374A /* QuartzCore.framework */; };
+		0BAFF27941A14F4BAC1C70C3 /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C08EF5E053340DFB95D369E /* YoikScreenOrientation.m */; };
+		31AA548740434062A25BDE23 /* CDVViewController+UpdateSupportedOrientations.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942639A5E014F5EBA63CDA0 /* CDVViewController+UpdateSupportedOrientations.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,6 +265,10 @@
 		815AF53CF564427F95A789CB /* Security.framework */ = {isa = PBXFileReference; name = "Security.framework"; path = "System/Library/Frameworks/Security.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		60B01030DF9A400588B25FDF /* Photos.framework */ = {isa = PBXFileReference; name = "Photos.framework"; path = "System/Library/Frameworks/Photos.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		D9B797D6A1DE4990A5D8374A /* QuartzCore.framework */ = {isa = PBXFileReference; name = "QuartzCore.framework"; path = "System/Library/Frameworks/QuartzCore.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		5C08EF5E053340DFB95D369E /* YoikScreenOrientation.m */ = {isa = PBXFileReference; name = "YoikScreenOrientation.m"; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		0942639A5E014F5EBA63CDA0 /* CDVViewController+UpdateSupportedOrientations.m */ = {isa = PBXFileReference; name = "CDVViewController+UpdateSupportedOrientations.m"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		6CA6F36993514313A6C81EFD /* YoikScreenOrientation.h */ = {isa = PBXFileReference; name = "YoikScreenOrientation.h"; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		3E8083D882A44768A7904207 /* CDVViewController+UpdateSupportedOrientations.h */ = {isa = PBXFileReference; name = "CDVViewController+UpdateSupportedOrientations.h"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -534,6 +540,10 @@
 				9D6AD14431764AC199646792 /* GMImagePickerController.h */,
 				D89D6801F27343BEBC5477EB /* PSYBlockTimer.h */,
 				400EA91FC1234F8D967A9595 /* GMPHAsset.h */,
+				5C08EF5E053340DFB95D369E /* YoikScreenOrientation.m */,
+				0942639A5E014F5EBA63CDA0 /* CDVViewController+UpdateSupportedOrientations.m */,
+				6CA6F36993514313A6C81EFD /* YoikScreenOrientation.h */,
+				3E8083D882A44768A7904207 /* CDVViewController+UpdateSupportedOrientations.h */,
 			);
 			name = Plugins;
 			path = mobilitEASE/Plugins;
@@ -753,6 +763,8 @@
 				8000EB4C4E7C4666B12E60F2 /* GMImagePickerController.m in Sources */,
 				B48B80C18B92456C8CFEC98E /* PSYBlockTimer.m in Sources */,
 				E4F58FC8CA1C4796AB4C2C0A /* GMPHAsset.m in Sources */,
+				0BAFF27941A14F4BAC1C70C3 /* YoikScreenOrientation.m in Sources */,
+				31AA548740434062A25BDE23 /* CDVViewController+UpdateSupportedOrientations.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

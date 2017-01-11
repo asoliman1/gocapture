@@ -25,7 +25,7 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>128</string>
+    <string>132</string>
     <key>GCM_SENDER_ID</key>
     <string>716813832888</string>
     <key>IS_GCM_ENABLED</key>
@@ -34,6 +34,14 @@
     <true/>
     <key>NSAppTransportSecurity</key>
     <dict>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>192.168.152.2</key>
+        <dict>
+          <key>NSExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+      </dict>
       <key>NSAllowsArbitraryLoads</key>
       <true/>
     </dict>

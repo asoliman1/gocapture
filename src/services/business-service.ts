@@ -5,6 +5,7 @@ import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership, Submis
 import { DBClient } from "./db-client";
 import { RESTClient } from "./rest-client";
 import { SyncClient } from "./sync-client";
+import { PushClient } from "./push-client";
 import { Transfer, File, Network, Entry } from 'ionic-native';
 import { UUID } from "../util/uuid";
 declare var cordova: any;
@@ -32,6 +33,8 @@ export class BussinessClient {
 
 	private registration : User;
 
+	private push : PushClient;
+
 	constructor(private db: DBClient, private rest: RESTClient, private sync: SyncClient) {
 		
 		this.networkSource = new BehaviorSubject<"ON"|"OFF">(null);
@@ -58,6 +61,29 @@ export class BussinessClient {
 					this.doSync();
 				}
 			});
+		}
+	}
+
+	public setupNotifications(){
+		if(!this.push){
+			this.push = new PushClient();
+			this.push.error.subscribe((err) => {
+				console.error("notification", err);
+			});
+			this.push.notification.subscribe((note)=>{
+				this.db.getConfig("lastSyncDate").subscribe(time =>{ 
+					let d = new Date();
+					if(time){
+						d.setTime(parseInt(time));
+					}
+					this.sync.download(time ? d : null).subscribe(data => {
+						this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(()=>{
+											
+						});
+					});
+				});
+			});
+			this.push.initialize();
 		}
 	}
 

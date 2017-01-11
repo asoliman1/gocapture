@@ -10,6 +10,8 @@ export class SignatureModal {
 
 	@ViewChild(SignaturePad) signaturePad: SignaturePad;
 
+	@ViewChild("content") content: Content;
+
 	signaturePadOptions: Object = {
 		'minWidth': 5,
 		'canvasWidth': 500,
@@ -22,8 +24,14 @@ export class SignatureModal {
 
 	}
 
+	ionViewDidEnter(){
+		let width = this.content.width() - 32;
+		let height = this.content.height() - this.content._footerHeight - this.content._headerHeight - 32;
+		this.signaturePad.set("canvasWidth", width);
+		this.signaturePad.set("canvasHeight", height);
+	}
+
 	ngAfterViewInit() {
-		//this.signaturePad.set('minWidth', 5);
 		this.clear();
 	}
 

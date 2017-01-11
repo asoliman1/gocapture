@@ -6,4 +6,10 @@
 	ion-col:last-child{
 		padding-right: 0;
 	}
+
+	.rotateright{
+		transform: rotate(90deg) translateY(-100%);
+    	transform-origin: top left;
+    	height: 100%;
+	}
 }
