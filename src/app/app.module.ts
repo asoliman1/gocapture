@@ -17,7 +17,7 @@ import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { FormView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios } from "../components/form-view/elements";
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
@@ -39,7 +39,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     FormCapture,
     ArrayFilterPipe,
 	FormView,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch
   ],
   imports: [
@@ -61,7 +61,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     FormReview,
     FormCapture,
 	FormView,	
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch
   ],
   providers: [

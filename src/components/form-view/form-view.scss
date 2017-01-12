@@ -5,13 +5,38 @@ form-view{
 		font-size: 1em !important;
 		color: black !important;
 	}
-}
+	
+	.image-picker{
+		padding: 20px 0 !important;
+	}
 
+	.item-md.item-input.input-has-focus .item-inner {
+		border-bottom-color: #eb7f00 !important;
+		box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
+	}
 
-.item-radio-checked .item-inner{
-	border-bottom: 1px solid #387ef5 !important;
-}
+	.list-md .item-input.input-has-focus:last-child {
+		border-bottom-color: #eb7f00 !important;
+		box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
+	}
 
-.image-picker{
-	padding: 20px 0 !important;
+	radios.ng-dirty .item-radio-checked .item-inner {
+		border-bottom: 1px solid #eb7f00 !important;
+	}
+
+	ion-select.ng-dirty{
+		color: #eb7f00;
+	}
+
+	ion-datetime.ng-dirty{
+		color: #eb7f00;
+	}
+
+	ion-input.ng-dirty {
+		color: #eb7f00;
+	}
+
+	ion-textarea.ng-dirty {
+		color: #eb7f00;
+	}
 }

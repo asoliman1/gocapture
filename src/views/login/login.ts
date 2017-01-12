@@ -10,7 +10,7 @@ import { Main } from "../main";
 })
 export class Login {
 
-	doAuth: boolean = false;
+	doAuth: boolean = null;
 	authCode: string;
 	user: User = <any>{};
 
@@ -28,6 +28,7 @@ export class Login {
 				if (!user) {
 					this.doAuth = true;
 				} else {
+					this.doAuth = false;
 					this.user = user;
 				}
 			});

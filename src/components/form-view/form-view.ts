@@ -26,6 +26,10 @@ export class FormView {
 
 	}
 
+	public hasChanges(): boolean{
+		return this.theForm.dirty;
+	}
+
 	public getValues(): {[key: string]: string}{
 		var data = {};
 		let parse = (form: FormGroup, data: any) => {

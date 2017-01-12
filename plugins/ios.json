@@ -54,6 +54,9 @@
         },
         "com.synconset.imagepicker": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {

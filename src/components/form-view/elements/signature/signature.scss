@@ -19,3 +19,22 @@ signature, .signature{
 	left: 0;
 	bottom: 0
 }
+
+.signature-modal .scroll-content{
+	padding: 16px;
+}
+
+.signature-guide{
+	position: absolute;
+    top: 85%;
+    left: 16px;
+    color: lightgray;
+    font-size: 1.2em;
+    right: 16px;
+    text-align: right;
+    border-top: 2px solid lightgray;
+
+	.text{
+		padding: 5px 32px 0 0;
+	}
+}

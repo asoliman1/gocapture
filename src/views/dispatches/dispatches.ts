@@ -102,14 +102,14 @@ export class Dispatches {
 						Object.keys(form.fields_values).forEach((key)=>{
 							sub.fields[key] = form.fields_values[key];
 						});
-						this.navCtrl.push(FormCapture, { form: form.form, submission: sub });
+						this.navCtrl.push(FormCapture, { form: form.form, submission: sub, dispatch: form });
 					}
 				}, {
 					text: 'Review Submissions',
 					icon: "eye",
 					handler: () => {
 						console.log('review clicked');
-						this.navCtrl.push(FormReview, { form: form, isDispatch: true });
+						this.navCtrl.push(FormReview, { form: form, isDispatch: true, dispatch: form  });
 					}
 				}, {
 					text: 'Share',

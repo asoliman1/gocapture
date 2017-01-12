@@ -2,12 +2,12 @@
 	<ion-row>
 		<ion-col>
 			<button ion-button color="light" (click)="captureImage(FRONT)">
-				<img [src]="currentValue.front">
+				<img [src]="currentValue.front" (load)="onImageLoaded($event)">
 			</button>
 		</ion-col>
 		<ion-col>
 			<button ion-button color="light" (click)="captureImage(BACK)">
-				<img [src]="currentValue.back">
+				<img [src]="currentValue.back" (load)="onImageLoaded($event)">
 			</button>
 		</ion-col>
 	</ion-row>

@@ -20,10 +20,10 @@
 			<h2>{{dispatch.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="dispatch.total_hold > 0">{{dispatch.total_hold}} on Hold</span></h2>
 		</a>
 	</ion-list>
-	<ion-refresher (ionRefresh)="doRefresh($event)">
+	<!--ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content pull-max="200"></ion-refresher-content>
   </ion-refresher>
-	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
 		<ion-infinite-scroll-content></ion-infinite-scroll-content>
 	</ion-infinite-scroll-->
 </ion-content>

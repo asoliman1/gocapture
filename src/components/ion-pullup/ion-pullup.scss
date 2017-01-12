@@ -3,7 +3,7 @@ $tabHeight:           22px;                             // tab height, set to 0p
 $tabRadius:           20px;                             // tab radius
 $tabBackground:       color($colors, primary, base);    // tab background color
 $tabIconColor:      white;                            // icon color within tab
-$tabShadow:         #666;                             // shadow color
+$tabShadow:         #ddd;                             // shadow color
 
 @mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
   position: relative;
@@ -16,7 +16,7 @@ $tabShadow:         #666;                             // shadow color
 }
 
 @mixin pullup-tab-shadow($shadowColor) {
-    box-shadow: 0px -2px 2px $shadowColor;
+    box-shadow: 0px -3px 2px $shadowColor;
 }
 
 ion-pullup { 
@@ -42,7 +42,7 @@ ion-pullup {
       
       .ios & {
         @import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
-        margin-top: calc(#{$toolbar-ios-height});
+        margin-top: calc(#{$toolbar-ios-height} - 12px);
 
         scroll-content {
           margin-bottom: calc(#{$toolbar-ios-height} + #{$tabHeight});
@@ -50,7 +50,7 @@ ion-pullup {
       }
       .md & {
         @import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
-        margin-top: calc(#{$toolbar-md-height});
+        margin-top: calc(#{$toolbar-md-height} - 12px);
 
         scroll-content {
           margin-bottom: calc(#{$toolbar-md-height} + #{$tabHeight});
@@ -63,6 +63,13 @@ ion-pullup {
       
       .toolbar-background {
           border-top: none;
+      }
+
+	  .ios & {
+         min-height: calc(#{$toolbar-ios-height} - 12px);
+      }
+      .md & {
+        min-height: calc(#{$toolbar-md-height} - 12px);
       }
     }
   } 

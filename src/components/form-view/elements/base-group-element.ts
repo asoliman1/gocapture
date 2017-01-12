@@ -23,7 +23,7 @@ export class BaseGroupElement {
 		}
 	}
 
-	config(){
+	protected config(){
 		if(this.element && this.element.mapping && this.rootGroup){
 			let elemIdentifier = "element_" + this.element.id;
 			this.group = <FormGroup> this.rootGroup.get(elemIdentifier);

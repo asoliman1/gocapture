@@ -236,7 +236,9 @@ export class RESTClient {
 					obs.complete();
 					return;
 				}
-				this.submitForm(data[index]).subscribe(handler, handler);
+				setTimeout(()=>{
+					this.submitForm(data[index]).subscribe(handler, handler);
+				}, 150);
 			}
 			this.submitForm(data[index]).subscribe(handler, handler);
 		});

@@ -20,4 +20,11 @@ export class SimpleName extends BaseGroupElement {
 	ngOnChanges(changes: any) {
 		super.ngOnChanges(changes);
 	}
+
+	protected config(){
+		super.config();
+		if(this.mapping){
+			this.mapping.reverse();
+		}
+	}
 }

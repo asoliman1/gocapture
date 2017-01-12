@@ -13,12 +13,7 @@
 				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
-			<ion-item *ngSwitchCase="'select'">
-				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-select [attr.name]="element.id" [formControlName]="element.identifier">
-					<ion-option *ngFor="let option of element.options" [value]="option.option" [attr.checked]="option.is_default == 1">{{option.option}}</ion-option>
-				</ion-select>
-			</ion-item>
+			<dropdown *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></dropdown>
 			<ion-item *ngSwitchCase="'radio'">
 				<ion-label stacked>{{element.title}}</ion-label>
 				<radios item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></radios>

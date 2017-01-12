@@ -25,12 +25,12 @@
 
 
 <ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()">
-	<ion-toolbar #toolbar>
+	<ion-toolbar #toolbar class="sync-header" color="orange">
 		<ion-spinner></ion-spinner>
 		<div class="action">Syncing...</div>
 		<div class="element">{{currentSyncForm}}</div>
 	</ion-toolbar>
-	<ion-content>
+	<ion-content class="sync-content">
 		<ion-list class="sync-list">
 			<ion-item *ngFor="let status of statuses" icon-left>
 				<ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>

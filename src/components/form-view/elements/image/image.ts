@@ -66,7 +66,7 @@ export class Image extends BaseElement {
 				this.currentValue = [];
 			}
 			this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-				this.currentValue.push(newPath);
+				this.currentValue.unshift(newPath);
 				this.propagateChange(this.currentValue);
 			})
 		};

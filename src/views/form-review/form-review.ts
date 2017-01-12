@@ -62,7 +62,7 @@ export class FormReview {
 		let result = "";
 		switch (submission.status) {
 			case SubmissionStatus.OnHold:
-				result = "yellow";
+				result = "orange";
 				break;
 			case SubmissionStatus.Blocked:
 				result = "danger";
@@ -71,7 +71,7 @@ export class FormReview {
 				result = "secondary";
 				break;
 			case SubmissionStatus.Submitted:
-				result = "light";
+				result = "primary";
 				break;
 		}
 		return result;
@@ -89,7 +89,6 @@ export class FormReview {
 			this.submissions = submissions;
 			this.loading = false;
 			this.onFilterChanged();
-			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
 		});
 	}
 
@@ -98,6 +97,8 @@ export class FormReview {
 		this.filteredSubmissions = this.submissions.filter((sub)=>{
 			return !f || sub.status + "" == f;
 		});
+		this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
+		
 	}
 
 	sync() {
@@ -105,12 +106,25 @@ export class FormReview {
 		this.client.doSync(this.form.form_id)
 	}
 
-	statusClick(event: Event) {
+	statusClick(event: Event, submission: FormSubmission) {
 		event.stopImmediatePropagation();
 		event.stopPropagation();
 		event.preventDefault();
-
-
+		var initialState = null;
+		if(submission.status == SubmissionStatus.ToSubmit){
+			initialState = submission.status;
+			submission.status = SubmissionStatus.Blocked;
+		}else if(submission.status == SubmissionStatus.Blocked){
+			initialState = submission.status;
+			submission.status = SubmissionStatus.ToSubmit;
+		}
+		if(initialState){
+			this.client.saveSubmission(submission, this.form).subscribe(()=>{
+				this.onFilterChanged();
+			}, (err)=>{
+				submission.status = initialState;
+			});
+		}
 
 		return false;
 	}

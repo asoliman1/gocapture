@@ -42,3 +42,17 @@
 		}
 	}
 }
+
+.sync-header{
+	color: white;
+	ion-spinner circle{
+		stroke: #fff !important;
+	}
+}
+
+.sync-content {
+	background-color: rgba(251, 143, 4, 0.1);
+	ion-item{
+		background: transparent;
+	}
+}

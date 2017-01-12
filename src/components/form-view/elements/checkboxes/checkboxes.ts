@@ -19,10 +19,15 @@ export class Checkboxes extends BaseElement {
 	}
 
 	writeValue(obj: any): void{
-		this.currentValue = obj;
 		if(!obj){
-			this.currentValue = [];
+			obj = [];
+			for(let i = 0; i < this.element.options.length; i++){
+				if(this.element.options[i].is_default == 1){
+					obj.push(this.element.options[i].option);
+				}
+			}
 		}
+		this.currentValue = obj;
 	}
 
 	onCheckChange(event, option){

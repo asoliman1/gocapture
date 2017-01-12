@@ -56,6 +56,9 @@ export class SyncClient {
 			this.syncSource.next(this.lastSyncStatus);
 			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 				result.forms = forms;
+				forms.forEach((form) => {
+					form.id = form.form_id + "";
+				})
 				map["forms"].percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				this.db.saveForms(forms).subscribe(reply => {
@@ -93,6 +96,7 @@ export class SyncClient {
 								});
 								orders.forEach(order => {
 									order.form = forms.filter(f => {return f.form_id == order.form_id})[0];
+									order.id = order.id + "" + order.form_id;
 								});
 								map["dispatches"].percent = 100;
 								this.syncSource.next(this.lastSyncStatus);
@@ -162,10 +166,12 @@ export class SyncClient {
 					this._isSyncing = false;
 					obs.next(result);
 					obs.complete();
-					this.syncSource.complete();
+					//this.syncSource.complete();
 					return;
 				}
-				this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+				setTimeout(()=>{
+					this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+				}, 500);
 			};
 			this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
 		});
