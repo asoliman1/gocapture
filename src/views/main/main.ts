@@ -90,6 +90,11 @@ export class Main {
 					this.pullup.minimize();
 				}, 1000);
 			});
+		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
+			console.log(response)
+		}, function(reason) {
+			console.error(reason);
+		});
 	}
 
 	ionViewDidLeave() {
@@ -128,14 +133,14 @@ export class Main {
 		return "orange";
 	}
 
-	getStateLabel(loading, complete): string {
+	getStateLabel(loading, complete, formName): string {
 		if (loading) {
-			return "Syncing";
+			return "Syncing " + formName;
 		}
 		if (complete) {
-			return "Complete";
+			return "Sync-ed " + formName;
 		}
-		return "Pending";
+		return formName;
 	}
 
 }

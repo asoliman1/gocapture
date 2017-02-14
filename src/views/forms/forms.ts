@@ -7,7 +7,7 @@ import {
 	animate, ViewChild, NgZone
 } from '@angular/core';
 
-import { Subscription } from "rxjs";
+import { Subscription, Subscriber } from "rxjs";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController, Searchbar } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
@@ -54,6 +54,8 @@ export class Forms {
 
 	forms: Form[] = [];
 	filteredForms: Form[] = [];
+
+	private sub : Subscription;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -142,8 +144,14 @@ export class Forms {
 
 	ionViewDidEnter() {
 		this.doRefresh();
+		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
+			if(type == "Forms"){
+				this.doRefresh();
+			}
+		});
 	}
 
 	ionViewDidLeave() {
+		this.sub.unsubscribe();
 	}
 }

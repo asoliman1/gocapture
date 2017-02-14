@@ -12,3 +12,8 @@
   https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html
 */
 declare module '*';
+
+declare module TesseractPlugin{
+   function recognizeText(image, language, successCallback, errorCallback) ;
+   function loadLanguage(language, successCallback, errorCallback);
+}

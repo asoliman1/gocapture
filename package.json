@@ -8,31 +8,32 @@
     "ionic:serve": "ionic-app-scripts serve"
   },
   "dependencies": {
-    "@angular/common": "2.1.1",
-    "@angular/compiler": "2.1.1",
-    "@angular/compiler-cli": "2.1.1",
-    "@angular/core": "2.1.1",
-    "@angular/forms": "2.1.1",
-    "@angular/http": "2.1.1",
-    "@angular/platform-browser": "2.1.1",
-    "@angular/platform-browser-dynamic": "2.1.1",
-    "@angular/platform-server": "2.1.1",
-    "@ionic/storage": "^1.0.6",
+	"@angular/common": "2.2.1",
+    "@angular/compiler": "2.2.1",
+    "@angular/compiler-cli": "2.2.1",
+    "@angular/core": "2.2.1",
+    "@angular/forms": "2.2.1",
+    "@angular/http": "2.2.1",
+    "@angular/platform-browser": "2.2.1",
+    "@angular/platform-browser-dynamic": "2.2.1",
+    "@angular/platform-server": "2.2.1",
+    "@ionic/storage": "1.1.7",
+    "ionic-angular": "2.0.0",
+    "ionic-native": "2.4.1",
+    "ionicons": "3.0.0",
+    "rxjs": "5.0.0-beta.12",
+    "zone.js": "0.6.26",
+    "sw-toolbox": "3.4.0",
     "@types/lodash": "^4.14.37",
     "angular2-signaturepad": "2.1.0",
     "angular2-text-mask": "^2.1.0",
-    "ionic-angular": "^2.0.0-rc.3",
-    "ionic-native": "^2.2.3",
-    "ionicons": "^3.0.0",
     "lodash": "^4.16.4",
     "ng2-validation": "^2.0.0",
-    "rxjs": "5.0.0-beta.12",
-    "signature_pad": "^1.5.3",
-    "zone.js": "^0.6.26"
+    "signature_pad": "^1.5.3"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "0.0.46",
-    "@types/cordova": "0.0.34",
-    "typescript": "^2.0.3"
+    "@ionic/app-scripts": "1.0.0",
+    "typescript": "2.0.9",
+    "@types/cordova": "0.0.34"
   }
 }

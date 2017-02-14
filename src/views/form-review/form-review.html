@@ -24,13 +24,13 @@
 					<ion-segment-button value="" class="all" >
 						All
 					</ion-segment-button>
-					<ion-segment-button value="1"class="submitted" >
+					<ion-segment-button value="1"class="all" >
 						Submitted
 					</ion-segment-button>
-					<ion-segment-button value="2" class="hold">
+					<ion-segment-button value="2" class="all">
 						On Hold
 					</ion-segment-button>
-					<ion-segment-button value="3" class="blocked">
+					<ion-segment-button value="3" class="all">
 						Blocked
 					</ion-segment-button>
 				</ion-segment>
@@ -40,7 +40,7 @@
 </ion-header>
 
 <ion-content class="form-summary">
-	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px" *ngIf="filteredSubmissions.length > 0">
+	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px">
 		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
 			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
 			<h2>{{submission.company }}</h2>

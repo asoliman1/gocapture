@@ -1,4 +1,5 @@
 import { Component, Input, forwardRef } from '@angular/core';
+import { ActionSheetController, AlertController } from "ionic-angular";
 import { Observable, Observer, BehaviorSubject, Subscription } from "rxjs/Rx"
 import { BaseElement } from "../base-element";
 import { FormElement } from "../../../../model";
@@ -24,7 +25,8 @@ export class BusinessCard extends BaseElement {
 	FRONT: number = 0;
 	BACK: number = 1;
 
-	constructor() {
+	constructor(private actionCtrl: ActionSheetController,
+				private alertCtrl: AlertController) {
 		super();
 		this.currentValue = {
 			front: this.front,
@@ -33,21 +35,66 @@ export class BusinessCard extends BaseElement {
 	}
 
 	captureImage(type: number) {
+		if ((type == this.FRONT && this.currentValue.front != this.front) ||
+				(type == this.BACK && this.currentValue.back != this.back)) {
+			let sheet = this.actionCtrl.create({
+				title: "",
+				buttons: [
+					{
+						text: 'Remove',
+          				role: 'destructive',
+						handler: () => {
+							if(type == this.FRONT){
+								this.currentValue.front = this.front;
+							}else{
+								this.currentValue.back = this.back;
+							}
+						}
+					},
+					{
+						text: 'Choose from Camera',
+						handler: () => {
+							this.doCapture(type);
+						}
+					},
+					{
+						text: 'Cancel',
+						role: 'cancel'
+					}
+				]
+			});
+			sheet.present();
+		}else{
+			this.doCapture(type);
+		}
+	}
+
+	private doCapture(type: number) {
 		Camera.getPicture({
 			sourceType: 1
 		}).then(imageData => {
+			let ctrl = this.alertCtrl;
 			this.ensureLandscape(imageData).subscribe((data) => {
+				window["TesseractPlugin"] && TesseractPlugin.recognizeText(data.split("base64,")[1], "eng", function(recognizedText) {
+					let alert = ctrl.create({
+						title: "Tesseract OCR",
+						message: "<pre>" + recognizedText + "</pre>"
+					});
+					alert.present();
+				}, function(reason) {
+					console.error( reason);
+				});
 				if (data != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
 					let folder = imageData.substr(0, imageData.lastIndexOf("/"));
 					console.log(name, folder);
-					File.writeFile(folder, name, this.dataURItoBlob(data), {replace: true}).then(() => {
+					File.writeFile(folder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
 						doMove(imageData);
 					},
-					(err) => {
-						console.error(err);
-					});
-				}else{
+						(err) => {
+							console.error(err);
+						});
+				} else {
 					doMove(imageData);
 				}
 			});
@@ -71,9 +118,9 @@ export class BusinessCard extends BaseElement {
 					this.propagateChange(v);
 				})
 			};
-			
-		}).catch(err => {
 
+		}).catch(err => {
+			console.error(err);
 		});
 	}
 
@@ -90,7 +137,13 @@ export class BusinessCard extends BaseElement {
 			var image = document.createElement("img");
 			image.onload = function (event: any) {
 				if (image.naturalWidth >= image.naturalHeight) {
-					obs.next(url);
+					var canvas = document.createElement("canvas");
+					canvas.width = image.naturalWidth;
+					canvas.height = image.naturalHeight;
+					var ctx = canvas.getContext('2d');
+					ctx.translate(canvas.width / 2, canvas.height / 2);
+					ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+					obs.next(canvas.toDataURL());
 					obs.complete();
 					return;
 				}
@@ -98,9 +151,9 @@ export class BusinessCard extends BaseElement {
 				canvas.width = image.naturalHeight;
 				canvas.height = image.naturalWidth;
 				var ctx = canvas.getContext('2d');
-				ctx.translate(canvas.width/2, canvas.height/2);
+				ctx.translate(canvas.width / 2, canvas.height / 2);
 				ctx.rotate(Math.PI / 2);
-				ctx.drawImage(image, -image.naturalWidth/2, -image.naturalHeight/2);
+				ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
 				obs.next(canvas.toDataURL());
 				obs.complete();
 			};

@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Headers, Response, Http, URLSearchParams, QueryEncoder } from "@angular/http";
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
-import { User, Form, Dispatch, DeviceFormMembership, FormSubmission } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse } from "../model/protocol";
+import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
+import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, SubmissionResponse, SubmissionDataResponse } from "../model/protocol";
 import { Device } from "ionic-native";
 
 @Injectable()
@@ -33,11 +33,11 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public authenticate(req: AuthenticationRequest): Observable<User> {
-		req.device_platform = <any>Device.device.platform;
-		req.device_model = Device.device.model;
-		req.device_manufacture = Device.device.manufacturer;
-		req.device_os_version = Device.device.version;
-		req.device_uuid = Device.device.uuid;
+		req.device_platform = <any>Device.platform;
+		req.device_model = Device.model;
+		req.device_manufacture = Device.manufacturer;
+		req.device_os_version = Device.version;
+		req.device_uuid = Device.uuid;
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 		.map(resp => {
 			if (resp.status != "200") {
@@ -127,6 +127,58 @@ export class RESTClient {
 					});
 					return resp;
 				});
+	}
+
+	public getSubmissions(form: Form, lastSyncDate: Date) : Observable<FormSubmission[]>{
+		let opts: any = {
+			id: form.id,
+			form_type: "device"
+		};
+		if(lastSyncDate){
+			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
+		}
+		return this.getAll<SubmissionResponse>("/submissions.json", opts)
+				.map(resp => {
+					let data: FormSubmission[] = [];
+					resp.forEach((item: SubmissionResponse) => {
+						let entry: FormSubmission = new FormSubmission();
+						entry.status = SubmissionStatus.Submitted;
+						entry.prospect_id = item.prospect_id;
+						entry.email = item.email;
+						entry.form_id = parseInt(form.id);
+						item.data.forEach((dataItem) => {
+							entry.fields[dataItem.element_id] = dataItem.value;
+						});
+						entry.updateFields(form);
+						data.push(entry);
+					})
+					return data;
+				});
+	}
+
+	public getAllSubmissions(forms: Form[], lastSync?: Date) : Observable<FormSubmission[]>{
+		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
+			var result: FormSubmission[] = [];
+			if(!forms || forms.length == 0){
+				setTimeout(()=>{
+					obs.next(result);
+					obs.complete();
+				});
+				return;
+			}
+			var index = 0;
+			let handler = (data: FormSubmission[])=>{
+				result.push.apply(result, data);
+				index++;
+				if(index < forms.length){
+					this.getSubmissions(forms[index], lastSync).subscribe(handler);
+				}else{
+					obs.next(result);
+					obs.complete();
+				}
+			};
+			this.getSubmissions(forms[index], lastSync).subscribe(handler);
+		});
 	}
 	/**
 	 * 

@@ -443,7 +443,6 @@ export class DBClient {
 		return this.saveAll<FormSubmission>(forms, "Submission");
 	}
 
-
 	/**
 	 * 
 	 */

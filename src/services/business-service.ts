@@ -154,6 +154,9 @@ export class BussinessClient {
 					d.setTime(parseInt(time));
 				}
 				this.sync.download(time ? d : null).subscribe(downloadData => {
+					console.log(downloadData);
+				}, 
+				() =>{
 					this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
 						obs.next(true);
 						obs.complete();
@@ -184,29 +187,7 @@ export class BussinessClient {
 	}
 
 	public saveSubmission(sub: FormSubmission, form: Form) : Observable<boolean>{
-		form.elements.forEach(element => {
-			switch(element.type){
-				case "simple_name":
-					if(!sub.first_name){
-						sub.first_name = <any>sub.fields[element["identifier"] + "_2"];
-						sub.last_name = <any>sub.fields[element["identifier"] + "_1"];
-					}
-					break;
-				case "email":
-					if(!sub.email){
-						sub.email = <any>sub.fields[element["identifier"]];
-					}
-					break;
-			}
-		});
-		var id = form.getIdByUniqueFieldName("WorkPhone");
-		if(id){
-			sub.phone = <any>sub.fields[id];
-		}
-		id = form.getIdByUniqueFieldName("Company");
-		if(id){
-			sub.company = <any>sub.fields[id];
-		}
+		sub.updateFields(form);
 		return this.db.saveSubmission(sub);
 	}
 

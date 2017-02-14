@@ -82,6 +82,7 @@ export class Image extends BaseElement {
 						}).then(onImageReceived)
 							.catch(err => {
 								//hmmm, what to do
+								console.error(err);
 							});
 					}
 				},
@@ -93,6 +94,7 @@ export class Image extends BaseElement {
 						}).then(onImageReceived)
 							.catch(err => {
 								//hmmm, what to do
+								console.error(err);
 							});
 					}
 				},

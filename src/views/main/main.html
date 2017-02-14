@@ -32,10 +32,9 @@
 	</ion-toolbar>
 	<ion-content class="sync-content">
 		<ion-list class="sync-list">
-			<ion-item *ngFor="let status of statuses" icon-left>
+			<ion-item *ngFor="let status of statuses">
 				<ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>
-				<h3>{{getStateLabel(status.loading, status.complete)}}</h3>
-				<h2 item-right>{{status.formName}}</h2>
+				<h3>{{getStateLabel(status.loading, status.complete, status.formName)}}</h3>
 			</ion-item>
 		</ion-list>
 	</ion-content>

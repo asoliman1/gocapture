@@ -25,14 +25,14 @@
 			<ion-label>Key</ion-label>
 			<ion-label></ion-label>
 		</ion-item>
-		<ion-item>
+		<ion-item class="last">
 			<ion-label>Operator</ion-label>
 			<ion-label>{{user.first_name + " " + user.last_name}}</ion-label>
 		</ion-item>
 		<ion-list-header>
 			Operations
 		</ion-list-header>
-		<ion-item>
+		<ion-item class="last">
 			<ion-label>Automatic Upload</ion-label>
 			<ion-toggle [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
@@ -43,12 +43,12 @@
 			<ion-label>App version</ion-label>
 			<ion-label>{{version}}</ion-label>
 		</ion-item>
-		<ion-item>
+		<ion-item class="last">
 			<ion-label>Enable logging</ion-label>
 			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
 		<ion-item>
-			<button ion-button  full large color="danger" (click)="unauthenticate()">Unauthenticate device</button>
+			<button ion-button  full large color="danger" (click)="unauthenticate()">Unauthenticate Device</button>
 		</ion-item>
 	</ion-list>
 

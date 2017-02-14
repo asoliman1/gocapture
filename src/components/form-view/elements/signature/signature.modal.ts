@@ -25,8 +25,8 @@ export class SignatureModal {
 	}
 
 	ionViewDidEnter(){
-		let width = this.content.width() - 32;
-		let height = this.content.height() - this.content._footerHeight - this.content._headerHeight - 32;
+		let width = this.content.contentWidth - 32;
+		let height = this.content.contentHeight - this.content.contentBottom - this.content.contentTop - 32;
 		this.signaturePad.set("canvasWidth", width);
 		this.signaturePad.set("canvasHeight", height);
 	}

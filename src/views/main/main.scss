@@ -54,5 +54,12 @@
 	background-color: rgba(251, 143, 4, 0.1);
 	ion-item{
 		background: transparent;
+		ion-icon{
+			font-size: 2.4em;
+			line-height: 14px;
+		}
+		ion-icon:before {
+			line-height: 14px;
+		}
 	}
 }
