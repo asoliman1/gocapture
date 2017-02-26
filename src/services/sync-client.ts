@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
 import { Transfer, FileEntry, File } from 'ionic-native';
-import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission } from "../model";
+import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 declare var cordova: any;
 
@@ -77,7 +77,9 @@ export class SyncClient {
 							obs.next(result);
 							obs.complete();
 							this._isSyncing = false;
-							this.syncSource.complete();
+							this.syncSource.complete();							
+							this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
+							this.onSync = this.syncSource.asObservable();
 						}, (err) => {
 							obs.error(err);
 						});
@@ -126,16 +128,16 @@ export class SyncClient {
 					this._isSyncing = false;
 					obs.next(result);
 					obs.complete();
-					//this.syncSource.complete();
+					this.syncSource.complete();
+					this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
+					this.onSync = this.syncSource.asObservable();
 					return;
 				}
 				setTimeout(() => {
-					//this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
 					this.doSubmitAll(map[formIds[index]]).subscribe(handler);
 				}, 500);
 			};
 			this.doSubmitAll(map[formIds[index]]).subscribe(handler);
-			//this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
 		});
 	}
 
@@ -173,28 +175,45 @@ export class SyncClient {
 				if(data.urlFields.indexOf(field) > -1){
 					let sub = submission.fields[field];
 					if(sub){
-						if(sub){
-							var val = [];
-							if(typeof(sub) == "object"){
-								Object.keys(sub).forEach((key)=>{
-									val.push(sub[key]);
-								});
-							}else{
-								val = val.concat(sub);
-							}
-							val.forEach((url) => { 
-								if(url){
-									urlMap[url] = "";
-									hasUrls = true;
-								}
+						var val = [];
+						if(typeof(sub) == "object"){
+							Object.keys(sub).forEach((key)=>{
+								val.push(sub[key]);
 							});
+						}else{
+							val = val.concat(sub);
 						}
+						val.forEach((url) => { 
+							if(url){
+								urlMap[url] = "";
+								hasUrls = true;
+							}
+						});
 					}
 				}
 			}
-			this.uploadImages(urlMap, hasUrls).subscribe((data)=> {
+			this.uploadImages(urlMap, hasUrls).subscribe((d)=> {
+				for(var field in submission.fields){
+					if(data.urlFields.indexOf(field) > -1){
+						let sub = submission.fields[field];
+						if(sub){
+							if(typeof(sub) == "object"){
+								Object.keys(sub).forEach((key)=>{
+									sub[key] = urlMap[sub[key]];
+								});
+							}else if(Array.isArray(sub)){
+								for(let i = 0; i < sub.length; i++){
+									sub[i] = urlMap[sub[i]];
+								}
+							}else{
+								submission.fields[field] = urlMap[sub];
+							}
+						}
+					}
+				}
 				this.rest.submitForm(submission).subscribe((sub_id)=>{
 					submission.activity_id = sub_id;
+					submission.status = SubmissionStatus.Submitted;
 					this.db.updateSubmissionId(submission).subscribe((ok) => {
 						submission.id = submission.activity_id;
 						obs.next(submission);
@@ -224,7 +243,10 @@ export class SyncClient {
 			let handler = ()=>{
 				if(index >= urls.length){
 					this.rest.uploadFiles(request).subscribe((data)=>{
-						obs.next(null);
+						urls.forEach((url, index)=>{
+							urlMap[url] = data[index].url;
+						});
+						obs.next(data);
 						obs.complete();
 					}, err =>{
 						obs.error(err);
@@ -242,8 +264,8 @@ export class SyncClient {
 									entry.data = d[1];
 									entry.name = file;
 									entry.size = metadata.size;
-									entry.mimeType = d[0].substr(5);
-									request.files = [entry];
+									entry.mime_type = d[0].substr(5);
+									request.files.push(entry);
 									index++;
 									handler();
 								}).catch((err)=>{

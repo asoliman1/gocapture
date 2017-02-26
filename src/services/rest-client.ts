@@ -3,7 +3,7 @@ import { Headers, Response, Http, URLSearchParams, QueryEncoder } from "@angular
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, SubmissionDataResponse, FileUploadRequest, FileUploadResponse } from "../model/protocol";
+import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, SubmissionDataResponse, FileUploadRequest, FileUploadResponse, FileInfo, FileResponse } from "../model/protocol";
 import { Device } from "ionic-native";
 
 @Injectable()
@@ -324,15 +324,19 @@ export class RESTClient {
 		});
 	}
 
-	public uploadFiles(req: FileUploadRequest) : Observable<any[]>{
-		return new Observable<any[]>((obs: Observer<any[]>) => {
-			this.call("POST", "/drive/upload.json?access_token=" + this.token, req)
-			.map((resp: BaseResponse) => {
-				if (resp.status == "200") {
-					return true;
+	public uploadFiles(req: FileUploadRequest) : Observable<FileResponse[]>{
+		return new Observable<FileResponse[]>((obs: Observer<FileResponse[]>) => {
+			this.call<FileUploadResponse>("POST", "/drive/upload.json?access_token=" + this.token, req)
+			.subscribe((data: FileUploadResponse) => {
+				if (data.status == "200") {
+					obs.next(data.files);
+					obs.complete();
 				}
-				this.errorSource.error(resp);
-				return false;
+				if(data == null){
+					obs.error(data.message);
+				}
+			}, (err) => {
+				obs.error(err);
 			});
 		});
 	}

@@ -238,9 +238,6 @@ export class BussinessClient {
 						submissions.forEach(sub => {
 							sub.status = SubmissionStatus.Submitted;
 						})
-						this.db.saveSubmisisons(submitted).subscribe((done) => {
-
-						});
 					}
 				});
 			});

@@ -22,11 +22,12 @@ export class MyApp {
 
 	constructor(public platform: Platform, private db: DBClient, private rest: RESTClient) {
 		this.initializeApp();
-		this.rootPage = Login;
 	}
 
 	initializeApp() {
 		this.platform.ready().then(() => {
+			console.log("ready!");			
+			this.rootPage = Login;
 			this.hideSplashScreen();
 			StatusBar.hide();
 			//ensure folders exist
@@ -70,7 +71,7 @@ export class MyApp {
 		if (navigator && navigator["splashscreen"]) {
 			setTimeout(() => {
 				navigator["splashscreen"].hide();
-			}, 100);
+			}, 200);
 		}
 	}
 }

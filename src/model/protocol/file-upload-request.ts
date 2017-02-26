@@ -6,5 +6,5 @@ export class FileInfo{
 	size: number;
 	data: string;
 	name: string;
-	mimeType: string;
+	mime_type: string;
 }

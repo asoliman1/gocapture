@@ -74,7 +74,16 @@ export class Main {
 			this.statuses = this.syncClient.getLastSync();
 			this.currentSyncForm = this.getCurrentUploadingForm();
 		}
-		this.sub = this.syncClient.onSync.subscribe(stats => {
+		this.sub = this.handleSync();
+		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
+			console.log(response);
+		}, function(reason) {
+			console.error(reason);
+		});
+	}
+
+	handleSync() : Subscription{
+		return this.syncClient.onSync.subscribe(stats => {
 			if (stats == null) {
 				return;
 			}
@@ -85,18 +94,15 @@ export class Main {
 				this.pullup.collapse();
 			}
 		},
-			(err) => {
+		(err) => {
 
-			},
-			() => {
-				setTimeout(()=>{
-					this.pullup.minimize();
-				}, 1000);
-			});
-		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
-			console.log(response);
-		}, function(reason) {
-			console.error(reason);
+		},
+		() => {
+			setTimeout(()=>{
+				this.pullup.minimize();
+				this.sub.unsubscribe();
+				this.sub = this.handleSync();
+			}, 1000);
 		});
 	}
 

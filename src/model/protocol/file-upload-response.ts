@@ -1,4 +1,6 @@
-export class FileUploadResponse{
+import {BaseResponse} from "./response";
+
+export class FileUploadResponse extends BaseResponse{
 	files: FileResponse[] = [];
 }
 
