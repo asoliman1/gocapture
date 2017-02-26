@@ -87,7 +87,7 @@ export class FormCapture {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
-						console.log('Cancel clicked');
+						//console.log('Cancel clicked');
 					}
 				},
 				{

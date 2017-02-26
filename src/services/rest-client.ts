@@ -3,7 +3,7 @@ import { Headers, Response, Http, URLSearchParams, QueryEncoder } from "@angular
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, SubmissionResponse, SubmissionDataResponse } from "../model/protocol";
+import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, SubmissionDataResponse, FileUploadRequest, FileUploadResponse } from "../model/protocol";
 import { Device } from "ionic-native";
 
 @Injectable()
@@ -71,6 +71,16 @@ export class RESTClient {
 			if (resp.status != "200") {
 				this.errorSource.error(resp);
 			}
+			let result: Form[] = [];
+			resp.records.forEach(record => {
+				let f = new Form();
+				Object.keys(record).forEach(key=>{
+					f[key] = record[key];
+				});
+				f.computeIdentifiers();
+				result.push(f);
+			});
+			resp.records = result;
 			return resp;
 		});
 	}
@@ -82,7 +92,18 @@ export class RESTClient {
 		if(lastSyncDate){
 			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
-		return this.getAll<Form>("/forms.json", opts);
+		return this.getAll<Form>("/forms.json", opts).map(resp => {
+			let result: Form[] = [];
+			resp.forEach(record => {
+				let f = new Form();
+				Object.keys(record).forEach(key=>{
+					f[key] = record[key];
+				});
+				result.push(f);
+				f.computeIdentifiers();
+			});
+			return result;
+		});
 	}
 	/**
 	 * 
@@ -131,25 +152,32 @@ export class RESTClient {
 
 	public getSubmissions(form: Form, lastSyncDate: Date) : Observable<FormSubmission[]>{
 		let opts: any = {
-			id: form.id,
+			form_id: form.id,
 			form_type: "device"
 		};
 		if(lastSyncDate){
 			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
 		}
-		return this.getAll<SubmissionResponse>("/submissions.json", opts)
+		let f = form;
+		return this.getAll<SubmissionResponse>("/forms/submissions.json", opts)
 				.map(resp => {
 					let data: FormSubmission[] = [];
 					resp.forEach((item: SubmissionResponse) => {
 						let entry: FormSubmission = new FormSubmission();
+						entry.id = item.activity_id;
+						entry.activity_id = item.activity_id;
 						entry.status = SubmissionStatus.Submitted;
-						entry.prospect_id = item.prospect_id;
+						entry.prospect_id = parseInt(item.prospect_id+"");
 						entry.email = item.email;
 						entry.form_id = parseInt(form.id);
 						item.data.forEach((dataItem) => {
 							entry.fields[dataItem.element_id] = dataItem.value;
 						});
-						entry.updateFields(form);
+						entry.first_name = "";
+						entry.last_name = "";
+						entry.company = "";
+						entry.phone = "";
+						entry.updateFields(f);
 						data.push(entry);
 					})
 					return data;
@@ -258,14 +286,14 @@ export class RESTClient {
 	 * 
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<boolean> {
+	public submitForm(data: FormSubmission): Observable<number> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json?access_token=" + this.token, data)
-			.map((resp: BaseResponse) => {
+			.map((resp: FormSubmitResponse) => {
 				if (resp.status == "200") {
-					return true;
+					return resp.activity_id;
 				}
 				this.errorSource.error(resp);
-				return false;
+				return -1;
 			});
 	}
 
@@ -278,8 +306,8 @@ export class RESTClient {
 				obs.complete();
 				return;
 			}
-			let handler = (success : boolean) =>{
-				if(success == true){
+			let handler = (id : number) =>{
+				if(id > 0){
 					result.push(data[index]);
 				}
 				index++;
@@ -293,6 +321,19 @@ export class RESTClient {
 				}, 150);
 			}
 			this.submitForm(data[index]).subscribe(handler, handler);
+		});
+	}
+
+	public uploadFiles(req: FileUploadRequest) : Observable<any[]>{
+		return new Observable<any[]>((obs: Observer<any[]>) => {
+			this.call("POST", "/drive/upload.json?access_token=" + this.token, req)
+			.map((resp: BaseResponse) => {
+				if (resp.status == "200") {
+					return true;
+				}
+				this.errorSource.error(resp);
+				return false;
+			});
 		});
 	}
 

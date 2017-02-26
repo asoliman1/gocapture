@@ -17,7 +17,7 @@ export class BaseGroupElement {
 	}
 
 	ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
-		console.log("group", this.element, this.group, this.rootGroup);
+		//console.log("group", this.element, this.group, this.rootGroup);
 		if (changes['element'] || changes['rootGroup']){
 			this.config();
 		}

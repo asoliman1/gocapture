@@ -13,10 +13,10 @@ export class Form extends BaseForm{
 	submit_button_text : string;
 	elements : FormElement[];
 
-	getIdByUniqueFieldName(name : string) : string{
+	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;
-		for(let i = 0; i < this.elements.length; i++){
-			element = this.elements[i];
+		for(let i = 0; i < form.elements.length; i++){
+			element = form.elements[i];
 			if(!element.mapping || element.mapping.length == 0){
 				continue;
 			}
@@ -33,5 +33,37 @@ export class Form extends BaseForm{
 			}
 		}
 		return null;
+	}
+
+	public getUrlFields() : string[]{
+		let res = [];
+		let types = ["business_card", "image", "signature"];
+		let element : FormElement = null;
+		for(let i = 0; i < this.elements.length; i++){
+			element = this.elements[i];
+			if(types.indexOf(element.type) > -1){
+				res.push(element["identifier"]);
+			}
+		}
+		return res;
+	}
+
+	public getIdByUniqueFieldName(name : string) : string{
+		return Form.getIdByUniqueFieldName(name, this);
+	}
+
+	public computeIdentifiers(){
+		this.elements.forEach((element)=>{
+			if(element["identifier"]){
+				return;
+			}
+			var identifier = "element_" + element.id;
+			element["identifier"] = identifier;
+			if(element.mapping.length > 1){
+				element.mapping.forEach((entry, index) =>{
+					entry["identifier"] = identifier + "_" + (index+1);
+				});
+			}
+		});
 	}
 }

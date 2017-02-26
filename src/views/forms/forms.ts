@@ -107,21 +107,21 @@ export class Forms {
 					text: 'Capture',
 					icon: "magnet",
 					handler: () => {
-						console.log('capture clicked');
+						//console.log('capture clicked');
 						this.navCtrl.push(FormCapture, { form: form });
 					}
 				}, {
 					text: 'Review Submissions',
 					icon: "eye",
 					handler: () => {
-						console.log('review clicked');
+						//console.log('review clicked');
 						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
 					}
 				}, {
 					text: 'Share',
 					icon: "share",
 					handler: () => {
-						console.log('share clicked');
+						//console.log('share clicked');
 					}
 				}, {
 					text: 'Summary',
@@ -134,7 +134,7 @@ export class Forms {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
-						console.log('Cancel clicked');
+						//console.log('Cancel clicked');
 					}
 				}
 			]
@@ -145,7 +145,7 @@ export class Forms {
 	ionViewDidEnter() {
 		this.doRefresh();
 		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
-			if(type == "Forms"){
+			if(type == "Forms" || type == "Submissions"){
 				this.doRefresh();
 			}
 		});

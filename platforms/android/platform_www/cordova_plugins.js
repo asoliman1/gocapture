@@ -293,6 +293,22 @@ module.exports = [
         ]
     },
     {
+        "id": "cordova-plugin-screen-orientation.screenorientation",
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+        "pluginId": "cordova-plugin-screen-orientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
+        "id": "cordova-plugin-screen-orientation.screenorientation.android",
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.android.js",
+        "pluginId": "cordova-plugin-screen-orientation",
+        "merges": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
         "id": "cordova-plugin-splashscreen.SplashScreen",
         "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
         "pluginId": "cordova-plugin-splashscreen",
@@ -331,22 +347,6 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
-    },
-    {
-        "id": "cordova-plugin-screen-orientation.screenorientation",
-        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
-        "pluginId": "cordova-plugin-screen-orientation",
-        "clobbers": [
-            "cordova.plugins.screenorientation"
-        ]
-    },
-    {
-        "id": "cordova-plugin-screen-orientation.screenorientation.android",
-        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.android.js",
-        "pluginId": "cordova-plugin-screen-orientation",
-        "merges": [
-            "cordova.plugins.screenorientation"
-        ]
     }
 ];
 module.exports.metadata = 
@@ -363,13 +363,13 @@ module.exports.metadata =
     "cordova-plugin-geolocation": "2.3.0",
     "cordova-plugin-globalization": "1.0.4",
     "cordova-plugin-network-information": "1.3.0",
+    "cordova-plugin-screen-orientation": "1.4.2",
     "cordova-plugin-splashscreen": "4.0.0",
     "cordova-plugin-statusbar": "2.2.0",
     "cordova-plugin-tesseract": "0.0.1",
     "cordova-plugin-whitelist": "1.3.0",
     "cordova-sqlite-storage": "1.4.7",
-    "phonegap-plugin-push": "1.8.2",
-    "cordova-plugin-screen-orientation": "1.4.2"
+    "phonegap-plugin-push": "1.8.2"
 };
 // BOTTOM OF METADATA
 });

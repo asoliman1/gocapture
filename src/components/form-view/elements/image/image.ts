@@ -61,7 +61,7 @@ export class Image extends BaseElement {
 		}
 
 		let onImageReceived = (imageData) => {
-			console.log(imageData);
+			//console.log(imageData);
 			if (!this.currentValue) {
 				this.currentValue = [];
 			}

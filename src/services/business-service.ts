@@ -81,6 +81,12 @@ export class BussinessClient {
 						d.setTime(parseInt(time));
 					}
 					this.sync.download(time ? d : null).subscribe(data => {
+					}, 
+					(err) => {
+						//obs.error(err);
+					}, 
+					() => {
+						console.log("sync-ed");
 						this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(()=>{
 											
 						});
@@ -129,6 +135,11 @@ export class BussinessClient {
 									obs.next({user:reply, message: "Done"});
 									obs.complete();
 									this.sync.download(null).subscribe(downloadData => {
+									}, 
+									(err) => {
+										obs.error(err);
+									},
+									() => {
 										this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
 											obs.next({user:reply, message: "Done"});
 										})
@@ -156,6 +167,9 @@ export class BussinessClient {
 				this.sync.download(time ? d : null).subscribe(downloadData => {
 					console.log(downloadData);
 				}, 
+				(err) => {
+					obs.error(err);
+				},
 				() =>{
 					this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
 						obs.next(true);

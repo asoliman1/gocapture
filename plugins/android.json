@@ -39,6 +39,9 @@
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
@@ -56,9 +59,6 @@
         },
         "phonegap-plugin-push": {
             "SENDER_ID": "716813832888",
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-screen-orientation": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },

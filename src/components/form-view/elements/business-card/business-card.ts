@@ -84,12 +84,12 @@ export class BusinessCard extends BaseElement {
 				}, function(reason) {
 					console.error( reason);
 				});
+				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
 				if (data != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
 					let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-					console.log(name, folder);
-					File.writeFile(folder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
-						doMove(imageData);
+					File.writeFile(newFolder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
+						this.setValue(type, newFolder + "/" + name);
 					},
 						(err) => {
 							console.error(err);
@@ -100,28 +100,32 @@ export class BusinessCard extends BaseElement {
 			});
 			var doMove = (imageData) => {
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-					if (type == this.FRONT) {
-						this.currentValue.front = newPath;
-					} else {
-						this.currentValue.back = newPath;
-					}
-					var v = {
-						front: null,
-						back: null
-					};
-					if (this.currentValue.front && this.currentValue.front != this.front) {
-						v.front = this.currentValue.front;
-					}
-					if (this.currentValue.back && this.currentValue.back != this.back) {
-						v.back = this.currentValue.back;
-					}
-					this.propagateChange(v);
+					this.setValue(type, newPath);
 				})
 			};
 
 		}).catch(err => {
 			console.error(err);
 		});
+	}
+
+	setValue(type, newPath){
+		if (type == this.FRONT) {
+			this.currentValue.front = newPath;
+		} else {
+			this.currentValue.back = newPath;
+		}
+		var v = {
+			front: null,
+			back: null
+		};
+		if (this.currentValue.front && this.currentValue.front != this.front) {
+			v.front = this.currentValue.front;
+		}
+		if (this.currentValue.back && this.currentValue.back != this.back) {
+			v.back = this.currentValue.back;
+		}
+		this.propagateChange(v);
 	}
 
 	onImageLoaded(event) {

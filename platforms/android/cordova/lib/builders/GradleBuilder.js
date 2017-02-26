@@ -87,9 +87,11 @@ GradleBuilder.prototype.prepBuildFiles = function() {
     });
 
     // Write the settings.gradle file.
-    fs.writeFileSync(path.join(this.root, 'settings.gradle'),
-        '// GENERATED FILE - DO NOT EDIT\n' +
-        'include ":"\n' + settingsGradlePaths.join(''));
+	//##### EDITED - Added tess-two library dependency
+	fs.writeFileSync(path.join(this.root, 'settings.gradle'),
+		'// GENERATED FILE - DO NOT EDIT\n' +
+		'include ":"\n' + settingsGradlePaths.join('') +
+		'include ":tess-two"');
     // Update dependencies within build.gradle.
     var buildGradle = fs.readFileSync(path.join(this.root, 'build.gradle'), 'utf8');
     var depsList = '';

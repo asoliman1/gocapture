@@ -31,7 +31,7 @@ export class Checkboxes extends BaseElement {
 	}
 
 	onCheckChange(event, option){
-		console.log(event);
+		//console.log(event);
 		if(event.checked){
 			this.currentValue.push(option.option);
 		}else{

@@ -97,7 +97,7 @@ export class FormView {
 			f.addControl(identifier, control);
 		});
 		this.theForm = f;
-		console.log(this.form, f);
+		//console.log(this.form, f);
 		this.sub = this.theForm.statusChanges.subscribe(()=>{
 			this.onValidationChange.emit(this.theForm.valid);
 		});

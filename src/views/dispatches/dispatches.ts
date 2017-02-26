@@ -57,7 +57,7 @@ export class Dispatches {
 
 	doRefresh(refresher?) {
 		this.client.getDispatches().subscribe(forms => {
-			console.log(forms);
+			//console.log(forms);
 			this.dispatches = forms;
 			if (refresher) {
 				refresher.complete();
@@ -95,7 +95,7 @@ export class Dispatches {
 					text: 'Capture',
 					icon: "magnet",
 					handler: () => {
-						console.log('capture clicked');
+						//console.log('capture clicked');
 						let sub : FormSubmission = new FormSubmission();
 						sub.prospect_id = form.prospect_id;
 						sub.form_id = form.form_id;
@@ -108,27 +108,27 @@ export class Dispatches {
 					text: 'Review Submissions',
 					icon: "eye",
 					handler: () => {
-						console.log('review clicked');
+						//console.log('review clicked');
 						this.navCtrl.push(FormReview, { form: form, isDispatch: true, dispatch: form  });
 					}
 				}, {
 					text: 'Share',
 					icon: "share",
 					handler: () => {
-						console.log('share clicked');
+						//console.log('share clicked');
 					}
 				}, {
 					text: 'Summary',
 					icon: "megaphone",
 					handler: () => {
-						console.log('summary clicked');
+						//console.log('summary clicked');
 						this.navCtrl.push(FormSummary, { form: form });
 					}
 				}, {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
-						console.log('Cancel clicked');
+						//console.log('Cancel clicked');
 					}
 				}
 			]

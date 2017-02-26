@@ -41131,12 +41131,26 @@ ion-item, *[ion-item] {
 }
 
 .sync-content ion-item ion-icon {
-  font-size: 2.4em;
-  line-height: 14px;
+  font-size: 27px;
+  line-height: 27px;
+  vertical-align: auto;
 }
 
 .sync-content ion-item ion-icon:before {
   line-height: 14px;
+}
+
+.sync-content ion-item h3 {
+  vertical-align: super;
+}
+
+ion-toast.error .toast-container {
+  background-color: red;
+  text-align: center;
+}
+
+ion-toast.error .toast-container .toast-message {
+  font-size: 1.1em;
 }
 
 .selected {

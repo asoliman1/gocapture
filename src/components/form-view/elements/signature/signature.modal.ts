@@ -37,11 +37,11 @@ export class SignatureModal {
 
 	drawComplete() {
 		this.hasSignature = true;
-		console.log("Done");
+		//console.log("Done");
 	}
 
 	drawStart() {
-		console.log('begin drawing');
+		//console.log('begin drawing');
 	}
 
 	clear(){

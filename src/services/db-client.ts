@@ -3,6 +3,7 @@ import { SQLite } from 'ionic-native';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership } from "../model";
+import { Migrator, Manager, Table } from "./db";
 
 let MASTER = "master";
 let WORK = "work";
@@ -10,10 +11,8 @@ let WORK = "work";
 @Injectable()
 export class DBClient {
 
-	private masterDb: Observable<SQLite>;
-	private workDb: Observable<SQLite>;
-
-	private map = {};
+	private migrator: Migrator;
+	private manager : Manager;
 
 	private registration: User;
 
@@ -21,7 +20,7 @@ export class DBClient {
 	private saveAllPageSize = 50;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
 
-	private tables = [
+	private tables: Table[] = [
 		{
 			name: 'forms',
 			master: false,
@@ -72,8 +71,9 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"toSend": "SELECT * FROM submissions where status=4",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId) VALUES (?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from submissions where id=?"
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+				"delete": "DELETE from submissions where id=?",
+				"updateById": "UPDATE submissions set id=? where activityId=?"
 			}
 		},
 		{
@@ -150,21 +150,63 @@ export class DBClient {
 			}
 		}
 	];
+
+	private versions = {
+		queries: {
+			getVersion: "select max(version) as version from versions;"
+		},
+		master: {
+			2: {
+				tables: [
+					{
+						name: 'versions',
+						columns: [
+							{ name: 'version', type: 'integer not null' },
+							{ name: 'updated_at', type: 'text' }
+						]
+					}
+				],
+				queries: [
+					"INSERT INTO versions(version, updated_at) values (2, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			}
+		},
+		work: {
+			1: {
+				tables: [
+					{
+						name: 'versions',
+						columns: [
+							{ name: 'version', type: 'integer not null' },
+							{ name: 'updated_at', type: 'text' }
+						]
+					}
+				],
+				queries: [
+					"ALTER TABLE submissions add column activityId VARCHAR(50)",
+					"INSERT INTO versions(version, updated_at) values (1, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			}
+		}
+	};
 	/**
 	 * 
 	 */
 	constructor(private platform: Platform) {
-		this.masterDb = this.initializeDb(platform, "tradeshow.db", true);
+		this.migrator = new Migrator();
+		this.migrator.setMigrations(this.versions);
+		this.manager = new Manager(platform, this.migrator, this.tables);
+		this.manager.registerDb("tradeshow.db", MASTER, true);
 	}
 	/**
 	 * 
 	 */
 	public setupWorkDb(dbName) {
-		this.workDb = this.initializeDb(this.platform, dbName + ".db", false);
-	}
+		this.manager.registerDb(dbName + ".db", WORK, false);
+	}	
 
 	public isWorkDbInited(): boolean {
-		return this.workDb != null && this.map[WORK] != null;
+		return this.manager.isDbInited(WORK);
 	}
 	/**
 	 * 
@@ -240,6 +282,7 @@ export class DBClient {
 		}
 		form.total_submissions = dbForm.totalSub;
 		form.total_hold = dbForm.totalHold;
+		form.computeIdentifiers();
 		return form;
 	}
 
@@ -256,7 +299,7 @@ export class DBClient {
 
 	public getFormsByIds(ids: number[]): Observable<Form[]> {
 		return new Observable<Form[]>((responseObserver: Observer<Form[]>) => {
-			this.db(WORK).subscribe((db) => {
+			this.manager.db(WORK).subscribe((db) => {
 				db.executeSql(this.getQuery("forms", "selectByIds"), [ids])
 					.then((data) => {
 						var resp = [];
@@ -333,7 +376,7 @@ export class DBClient {
 	}
 
 	public saveDispatchOrder(order: DispatchOrder): Observable<boolean> {
-		console.log("saving");
+		//console.log("saving");
 		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
 		return this.save(WORK, "forms", [order.id, order.form_id, order.name, order.form.title, order.description || order.form.description, order.form.success_message, order.form.submit_error_message, order.form.submit_button_text, order.date_created, order.date_last_modified, JSON.stringify(order.form.elements), true, JSON.stringify(order), null, null]);
 	}
@@ -401,6 +444,7 @@ export class DBClient {
 					form.first_name = dbForm.firstName;
 					form.last_name = dbForm.lastName;
 					form.email = dbForm.email;
+					form.activity_id - dbForm.activityId;
 					forms.push(form);
 				});
 				return forms;
@@ -409,7 +453,7 @@ export class DBClient {
 
 	public getSubmissionsToSend(): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
-			this.db(WORK).subscribe((db) => {
+			this.manager.db(WORK).subscribe((db) => {
 				db.executeSql(this.getQuery("submissions", "toSend"), {})
 					.then((data) => {
 						var resp = [];
@@ -423,6 +467,7 @@ export class DBClient {
 							form.first_name = dbForm.firstName;
 							form.last_name = dbForm.lastName;
 							form.email = dbForm.email;
+							form.activity_id - dbForm.activityId;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -436,10 +481,15 @@ export class DBClient {
 
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null]);
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id]);
 	}
 
-	public saveSubmisisons(forms: FormSubmission[]): Observable<boolean> {
+	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
+		//id, formId, data, sub_date, status, isDispatch, dispatchId
+		return this.updateById(WORK, "submissions", [form.id, form.activity_id]);
+	}
+
+	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
 		return this.saveAll<FormSubmission>(forms, "Submission");
 	}
 
@@ -480,7 +530,7 @@ export class DBClient {
 
 	private remove(type: string, table: string, parameters: any[]): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
-			this.db(type).subscribe((db) => {
+			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "delete"), parameters)
 					.then((data) => {
 						if (data.rowsAffected == 1) {
@@ -496,7 +546,7 @@ export class DBClient {
 		});
 	}
 
-	private saveAll<T>(items: T[], type: string): Observable<boolean> {
+	private saveAll<T>(items: T[], type: string, pageSize?: number): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			if (!items || items.length == 0) {
 				setTimeout(() => {
@@ -507,7 +557,7 @@ export class DBClient {
 			}
 			this.saveAllEnabled = true;
 			let index = 0;
-			console.log(new Date().getTime());
+			//console.log(new Date().getTime());
 			let name = "save" + type;
 			let exec = (done: boolean) => {
 				let query = this.saveAllData[0].query;
@@ -517,7 +567,7 @@ export class DBClient {
 					params.push.apply(params, this.saveAllData[i].parameters);
 				}
 				let isDone = done;
-				this.db(this.saveAllData[0].type).subscribe((db) => {
+				this.manager.db(this.saveAllData[0].type).subscribe((db) => {
 					db.executeSql(query, params)
 						.then((data) => {
 							this.saveAllData = [];
@@ -526,7 +576,7 @@ export class DBClient {
 									this.saveAllEnabled = false;
 									obs.next(true);
 									obs.complete();
-									console.log(new Date().getTime());
+									//console.log(new Date().getTime());
 								} else {
 									handler(true);
 								}
@@ -541,9 +591,10 @@ export class DBClient {
 						});
 				});
 			};
+			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
-				if (index % this.saveAllPageSize == 0 || index == items.length) {
+				if (index % page == 0 || index == items.length) {
 					exec(index == items.length);
 				} else if (index < items.length) {
 					this[name](items[index]).subscribe(handler);
@@ -563,8 +614,26 @@ export class DBClient {
 				});
 				return;
 			}
-			this.db(type).subscribe((db) => {
+			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "update"), parameters)
+					.then((data) => {
+						if (data.rowsAffected == 1) {
+							responseObserver.next(true);
+							responseObserver.complete();
+						} else {
+							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+						}
+					}, (err) => {
+						responseObserver.error("An error occured: " + err);
+					});
+			});
+		});
+	}
+
+	private updateById(type: string, table: string, parameters: any[]): Observable<boolean>{
+		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
+			this.manager.db(type).subscribe((db) => {
+				db.executeSql(this.getQuery(table, "updateById"), parameters)
 					.then((data) => {
 						if (data.rowsAffected == 1) {
 							responseObserver.next(true);
@@ -581,7 +650,7 @@ export class DBClient {
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {
 		return new Observable<T>((responseObserver: Observer<T>) => {
-			this.db(type).subscribe((db) => {
+			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "select"), parameters)
 					.then((data) => {
 						if (data.rows.length == 1) {
@@ -602,7 +671,7 @@ export class DBClient {
 
 	private getMultiple<T>(type: string, table: string, parameters: any[]): Observable<T[]> {
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
-			this.db(type).subscribe((db) => {
+			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "select"), parameters)
 					.then((data) => {
 						var resp = [];
@@ -620,7 +689,7 @@ export class DBClient {
 
 	private getAll<T>(type: string, table: string, params?: any[]): Observable<T[]> {
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
-			this.db(type).subscribe((db) => {
+			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "selectAll"), params)
 					.then((data) => {
 						var resp = [];
@@ -636,106 +705,6 @@ export class DBClient {
 		});
 	}
 
-	private db(type: string): Observable<SQLite> {
-		return new Observable<SQLite>((obs: Observer<SQLite>) => {
-			if (this.map[type]) {
-				setTimeout(() => {
-					obs.next(this.map[type]);
-					obs.complete();
-				})
-			} else {
-				let o: Observable<SQLite> = null;
-
-				let iterate = () => {
-					switch (type) {
-						case MASTER:
-							o = this.masterDb;
-							break;
-						case WORK:
-							o = this.workDb;
-							break;
-						default:
-							o = null;
-					}
-					if (!o) {
-						console.log("waiting for " + type);
-						setTimeout(iterate, 100);
-					} else {
-						o.subscribe((db) => {
-							this.map[type] = db;
-							obs.next(this.map[type]);
-							obs.complete();
-						});
-					}
-				};
-
-				iterate();
-			}
-		});
-	}
-
-	private initializeDb(platform: Platform, name: string, master: boolean): Observable<SQLite> {
-		return new Observable<SQLite>((obs: Observer<SQLite>) => {
-			platform.ready().then(() => {
-				let db = null;
-				if (platform.is("cordova")) {
-					db = new SQLite();
-				} else {
-					db = new LocalSql();
-				}
-				db.openDatabase({
-					name: name,
-					location: 'default' // the location field is required
-				}).then(() => {
-					this.setup(db, master);
-					setTimeout(() => {
-						obs.next(db);
-						obs.complete();
-					}, 250);
-				}, (err) => {
-					console.error('Unable to open database: ', err);
-					obs.error(err);
-				});
-			});
-		});
-	}
-
-	private setup(db: SQLite, master) {
-		let index = 0;
-
-		let handler = (data) => {
-			if (index >= this.tables.length) {
-				return;
-			}
-			while (this.tables[index].master != master) {
-				index++;
-				if (index >= this.tables.length) {
-					return;
-				}
-			}
-			let query = this.makeCreateTableQuery(this.tables[index]);
-			index++;
-			db.executeSql(query, {}).then(handler, (err) => {
-				if (err.hasOwnProperty("rows")) {
-					handler(err);
-					return;
-				}
-				console.error('Unable to execute sql: ', err);
-			});
-		};
-
-		handler(null);
-	}
-
-	private makeCreateTableQuery(table) {
-		var columns = [];
-		table.columns.forEach((col) => {
-			columns.push(col.name + ' ' + col.type);
-		});
-		let query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
-		return query;
-	}
-
 	private getQuery(table: string, type: string): string {
 		for (let i = 0; i < this.tables.length; i++) {
 			if (this.tables[i].name == table) {
@@ -744,42 +713,4 @@ export class DBClient {
 		}
 		return "";
 	}
-}
-
-class LocalSql {
-	private db: any;
-
-	openDatabase(opts: { name: string, location: string }): Promise<any> {
-		let name = opts.name;
-		let description = opts.name;
-		let size = 2 * 1024 * 1024;
-		let version = "1.0";
-		return new Promise<any>((resolve, reject) => {
-			this.db = window["openDatabase"](name, version, description, size, (db) => {
-				resolve(null);
-			});
-			setTimeout(() => {
-				resolve(null)
-			}, 1);
-		});
-	}
-
-	executeSql(query, args): Promise<any> {
-		return new Promise((resolve, reject) => {
-			this.db.transaction(function (t) {
-				let params = args || {};
-				if (Object.keys(params).length == 0) {
-					params = [];
-				}
-				t.executeSql(query, params,
-					(t, r) => {
-						resolve(r);
-					},
-					(tx, err) => {
-						console.log(err);
-						reject(err);
-					});
-			});
-		});
-	};
 }

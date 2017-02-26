@@ -1,15 +1,16 @@
 import { Form } from "./form";
 
 export class FormSubmission{
-	id: number;
-	form_id: number;
-	status: SubmissionStatus;
-	prospect_id: number;
+	id: number = null;
+	form_id: number = null;
+	status: SubmissionStatus = null;
+	prospect_id: number = null;
 	email: string = "";
 	company: string = "";
 	phone: string = "";
 	first_name: string = "";
 	last_name: string = "";
+	activity_id: number = null;
 	fields : {[key: string]: string | string[]} = {};
 
 	public updateFields(form: Form){
@@ -17,24 +18,24 @@ export class FormSubmission{
 			switch(element.type){
 				case "simple_name":
 					if(!this.first_name){
-						this.first_name = <any>this.fields[element["identifier"] + "_2"];
-						this.last_name = <any>this.fields[element["identifier"] + "_1"];
+						this.first_name = <any>this.fields[element["identifier"] + "_2"] || "";
+						this.last_name = <any>this.fields[element["identifier"] + "_1"] || "";
 					}
 					break;
 				case "email":
 					if(!this.email){
-						this.email = <any>this.fields[element["identifier"]];
+						this.email = <any>this.fields[element["identifier"]] || "";
 					}
 					break;
 			}
 		});
-		var id = form.getIdByUniqueFieldName("WorkPhone");
+		var id = form instanceof Form ? form.getIdByUniqueFieldName("WorkPhone") :  Form.getIdByUniqueFieldName("WorkPhone", form);
 		if(id){
-			this.phone = <any>this.fields[id];
+			this.phone = <any>this.fields[id] || "";
 		}
-		id = form.getIdByUniqueFieldName("Company");
+		id = form instanceof Form ? form.getIdByUniqueFieldName("Company") :  Form.getIdByUniqueFieldName("Company", form);
 		if(id){
-			this.company = <any>this.fields[id];
+			this.company = <any>this.fields[id] || "";
 		}
 	}
 }

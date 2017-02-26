@@ -3,10 +3,12 @@ import { NavController, NavParams, Nav } from 'ionic-angular';
 import { Forms } from "../forms";
 import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
+import { Login } from "../login";
 import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs";
 import { SyncClient } from "../../services/sync-client";
+import { RESTClient } from "../../services/rest-client";
 import { Push } from 'ionic-native';
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 
@@ -77,6 +79,7 @@ export class Main {
 				return;
 			}
 			this.statuses = stats;
+			//console.log(stats);
 			this.currentSyncForm = this.getCurrentUploadingForm();
 			if (this.pullup.state == IonPullUpFooterState.Minimized) {
 				this.pullup.collapse();
@@ -91,7 +94,7 @@ export class Main {
 				}, 1000);
 			});
 		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
-			console.log(response)
+			console.log(response);
 		}, function(reason) {
 			console.error(reason);
 		});

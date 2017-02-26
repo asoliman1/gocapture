@@ -23,6 +23,17 @@ export class Login {
 	}
 
 	ngOnInit() {
+		if(this.navParams.data.unauthorized == true){
+			this.doAuth = true;
+			let toaster = this.toast.create({
+				message: "Authorization failed. Please obtain a new Authentication Code",
+				duration: 5000,
+				position: "top",
+				cssClass: "error"
+			});
+			toaster.present();
+			return;
+		}
 		this.client.getRegistration()
 			.subscribe((user) => {
 				if (!user) {

@@ -2,7 +2,10 @@ import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
+import { Transfer, FileEntry, File } from 'ionic-native';
 import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission } from "../model";
+import { FileUploadRequest, FileInfo } from "../model/protocol";
+declare var cordova: any;
 
 @Injectable()
 export class SyncClient {
@@ -64,17 +67,17 @@ export class SyncClient {
 				map["submissions"]
 			];
 			this.syncSource.next(this.lastSyncStatus);
-			this.downloadForms(lastSyncDate, map, result).subscribe((forms)=>{
+			this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
 				obs.next(result);
-				this.downloadContacts(forms, lastSyncDate, map, result).subscribe(() => {
+				this.downloadContacts(result.forms, lastSyncDate, map, result).subscribe(() => {
 					obs.next(result);
 					this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 						obs.next(result);
-						this.downloadSubmissions(forms, lastSyncDate, map, result).subscribe(() => {
+						this.downloadSubmissions(result.forms, lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
 							obs.complete();
-							//this._isSyncing = false;
-							//this.syncSource.complete();
+							this._isSyncing = false;
+							this.syncSource.complete();
 						}, (err) => {
 							obs.error(err);
 						});
@@ -94,17 +97,12 @@ export class SyncClient {
 		return new Observable<FormSubmission[]>(obs => {
 			this._isSyncing = true;
 			var result = [];
-			var map: {
-				[key: number]: {
-					form: Form,
-					status: SyncStatus,
-					submissions: FormSubmission[]
-				}
-			} = {};
+			var map: { [key: number]: FormMapEntry } = {};
 			this.lastSyncStatus = [];
 			forms.forEach(form => {
 				map[form.form_id] = {
 					form: form,
+					urlFields: form.getUrlFields(),
 					submissions: [],
 					status: new SyncStatus(false, false, form.form_id, form.name)
 				};
@@ -132,33 +130,160 @@ export class SyncClient {
 					return;
 				}
 				setTimeout(() => {
-					this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+					//this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+					this.doSubmitAll(map[formIds[index]]).subscribe(handler);
 				}, 500);
 			};
-			this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
+			this.doSubmitAll(map[formIds[index]]).subscribe(handler);
+			//this.rest.submitForms(map[formIds[index]].submissions).subscribe(handler);
 		});
 	}
 
-	private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData) : Observable<Form[]> {
+	private doSubmitAll(data: FormMapEntry): Observable<FormSubmission[]> {
+		return new Observable<FormSubmission[]>((obs :Observer<FormSubmission[]>) => {
+			let result = [];
+			var index = 0;
+			let handler = () => {
+				if(index == data.submissions.length){
+					obs.next(result);
+					obs.complete();
+					return;
+				}
+				this.doSubmit(data, index).subscribe((submission) => {
+					setTimeout(()=>{
+						result.push(submission);
+						index++;
+						handler();
+					});
+				}, (err) => {
+					index++;
+					handler();
+				});
+			}
+			handler();
+		});
+	}
+
+	private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission>{
+		return new Observable<FormSubmission>((obs :Observer<FormSubmission>) => {
+			let submission = data.submissions[index];
+			let urlMap: {[key: string]: string} = {};
+			let hasUrls = false;
+			for(var field in submission.fields){
+				if(data.urlFields.indexOf(field) > -1){
+					let sub = submission.fields[field];
+					if(sub){
+						if(sub){
+							var val = [];
+							if(typeof(sub) == "object"){
+								Object.keys(sub).forEach((key)=>{
+									val.push(sub[key]);
+								});
+							}else{
+								val = val.concat(sub);
+							}
+							val.forEach((url) => { 
+								if(url){
+									urlMap[url] = "";
+									hasUrls = true;
+								}
+							});
+						}
+					}
+				}
+			}
+			this.uploadImages(urlMap, hasUrls).subscribe((data)=> {
+				this.rest.submitForm(submission).subscribe((sub_id)=>{
+					submission.activity_id = sub_id;
+					this.db.updateSubmissionId(submission).subscribe((ok) => {
+						submission.id = submission.activity_id;
+						obs.next(submission);
+						obs.complete();
+					}, err => {
+						obs.error(err);
+					})
+				});
+			}, (err) => {
+				obs.error(err);
+			});
+
+		});
+	}
+
+	private uploadImages(urlMap: {[key: string]: string}, hasUrls: boolean): Observable<any>{
+		return new Observable<any>((obs : Observer<any>) => {
+			if(!hasUrls){
+				obs.next(null);
+				obs.complete();
+				return;
+			}
+			let index = 0;
+			let urls = Object.keys(urlMap);
+			let transfer = new Transfer();
+			let request = new FileUploadRequest();
+			let handler = ()=>{
+				if(index >= urls.length){
+					this.rest.uploadFiles(request).subscribe((data)=>{
+						obs.next(null);
+						obs.complete();
+					}, err =>{
+						obs.error(err);
+					})
+				}else{
+					let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
+					let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
+					File.resolveDirectoryUrl(folder).then(dir =>{
+						File.getFile(dir, file, {create:false}).then(fileEntry =>{
+							fileEntry.getMetadata((metadata) => {
+								//data:[<mediatype>][;base64],<data>
+								File.readAsDataURL(folder, file).then((data : string)=>{
+									let entry = new FileInfo();
+									let d = data.split(";base64,");
+									entry.data = d[1];
+									entry.name = file;
+									entry.size = metadata.size;
+									entry.mimeType = d[0].substr(5);
+									request.files = [entry];
+									index++;
+									handler();
+								}).catch((err)=>{
+									obs.error(err);
+								})
+							}, err =>{
+								obs.error(err);
+							});
+						}).catch(err => {
+							obs.error(err);
+						});
+					}).catch(err => {
+						obs.error(err);
+					});
+				}
+			}
+			handler();
+		});
+	}
+
+	private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<Form[]> {
 		return new Observable<any>(obs => {
+			let mapEntry = map["forms"];
+			mapEntry.loading = true;
+			mapEntry.percent = 10;
 			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 				result.forms = forms;
 				forms.forEach((form) => {
 					form.id = form.form_id + "";
 				})
-				let mapEntry = map["forms"];
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				this.db.saveForms(forms).subscribe(reply => {
 					mapEntry.complete = true;
 					mapEntry.loading = false;
 					mapEntry.percent = 100;
-					mapEntry.loading = true;
-					mapEntry.percent = 10;
 					this.entitySyncedSource.next(mapEntry.formName);
 					this.syncSource.next(this.lastSyncStatus);
 					obs.next(forms);
-					obs.complete();					
+					obs.complete();
 				}, err => {
 					obs.error(err);
 				});
@@ -170,17 +295,19 @@ export class SyncClient {
 
 	private downloadContacts(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
 		return new Observable<any>(obs => {
+			let mapEntry = map["contacts"];
+			mapEntry.loading = true;
+			mapEntry.percent = 10;
+			//obs.next(null);
+			//obs.complete();
 			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate).subscribe((contacts) => {
 				result.memberships.push.apply(result.memberships, contacts);
-				let mapEntry = map["contacts"];
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				this.db.saveMemberships(contacts).subscribe(res => {
 					mapEntry.complete = true;
 					mapEntry.loading = false;
 					mapEntry.percent = 100;
-					mapEntry.loading = true;
-					mapEntry.percent = 10;
 					this.entitySyncedSource.next(mapEntry.formName);
 					this.syncSource.next(this.lastSyncStatus);
 					obs.next(null);
@@ -196,8 +323,10 @@ export class SyncClient {
 
 	private downloadDispatches(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
 		return new Observable<any>(obs => {
+			let mapEntry = map["dispatches"];
+			mapEntry.loading = true;
+			mapEntry.percent = 10;
 			this.rest.getAllDispatches(lastSyncDate).subscribe(dispatches => {
-				let mapEntry = map["dispatches"]; 
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				result.dispatches = dispatches;
@@ -235,34 +364,133 @@ export class SyncClient {
 
 	private downloadSubmissions(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
 		return new Observable<any>(obs => {
+			let mapEntry = map["submissions"];
+			mapEntry.loading = true;
+			mapEntry.percent = 10;
 			this.rest.getAllSubmissions(forms, lastSyncDate).subscribe(submissions => {
-				let mapEntry = map["submissions"]; 
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				result.submissions = submissions;
-				let forms: Form[] = [];
-				this.syncSource.next(this.lastSyncStatus);
-				mapEntry.percent = 100;
-				this.syncSource.next(this.lastSyncStatus);
-				this.db.saveSubmisisons(submissions).subscribe(reply => {
-					mapEntry.complete = true;
-					mapEntry.loading = false;
-					mapEntry.percent = 100;
-					this.entitySyncedSource.next(mapEntry.formName);
-					this.syncSource.next(this.lastSyncStatus);
-					obs.next(null);
-					obs.complete();
+				//let forms: Form[] = [];
+				this.downloadImages(forms, submissions).subscribe(subs => {
+					this.db.saveSubmisisons(subs).subscribe(reply => {
+						mapEntry.complete = true;
+						mapEntry.loading = false;
+						mapEntry.percent = 100;
+						this.entitySyncedSource.next(mapEntry.formName);
+						this.syncSource.next(this.lastSyncStatus);
+						obs.next(null);
+						obs.complete();
+					}, err => {
+						obs.error(err);
+					});
+				}, err => {
+					obs.error(err);
 				});
 			}, err => {
 				obs.error(err);
 			});
 		});
 	}
+
+	private downloadImages(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
+		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
+			if(!submissions || submissions.length == 0){
+				obs.next([]);
+				obs.complete();
+				return;
+			}
+			let map: {[key:string]: Form} = forms.reduce((previous, current, index, array) => { 
+				previous[current.id] = current;
+				return previous;
+			}, {});
+
+			let urlMap: {[key: string]: string} = {};
+			let hasUrls = false;
+			submissions.forEach((submission) => {
+				let urlFields = map[submission.form_id].getUrlFields();
+				for(var field in submission.fields){
+					if(urlFields.indexOf(field) > -1){
+						if(submission.fields[field]){
+							var val = [].concat(submission.fields[field]);
+							val.forEach((url) => { 
+								if(url){
+									urlMap[url] = "";
+									hasUrls = true;
+								}
+							});
+						}
+					}
+				}
+			});
+			if(!hasUrls){
+				obs.next(submissions);
+				obs.complete();
+				return;
+			}
+			let fileTransfer = new Transfer();
+			var urls = Object.keys(urlMap);
+			let index = 0;
+			let handler = () => {
+				if(index == urls.length){
+					submissions.forEach(submission => {
+						let urlFields = map[submission.form_id].getUrlFields();
+						for(var field in submission.fields){
+							if(urlFields.indexOf(field) > -1){
+								if(submission.fields[field]){
+									if(Array.isArray(submission.fields[field])){
+										let val = <string[]> submission.fields[field];
+										for(let i = 0; i < val.length; i++){
+											val[i] = urlMap[val[i]];
+										}
+									}else{
+										submission.fields[field] = urlMap[<string>submission.fields[field]];
+									}
+								}
+							}
+						}
+					});
+					obs.next(submissions);
+					obs.complete();
+				}else{
+					fileTransfer.download(urls[index], cordova.file.dataDirectory + "leadliaison/images/dwn_" + new Date().getTime())
+					.then((value : FileEntry) => {
+						console.log(value);
+						urls[index] = value.fullPath;
+						index++;
+						setTimeout(()=>{
+							handler();
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+						index++;
+						setTimeout(()=>{
+							handler();
+						});
+					});
+				}
+			}
+			handler();
+		});
+	}
+
+	private isExternalUrl(url: string){
+		return url.indexOf("http") == 0;
+	}
 }
+
 
 export class DownloadData {
 	forms: Form[] = [];
 	dispatches: Dispatch[] = [];
 	memberships: DeviceFormMembership[] = [];
 	submissions: FormSubmission[] = [];
+}
+
+class FormMapEntry {
+	form: Form;
+	urlFields: string[];
+	status: SyncStatus;
+	submissions: FormSubmission[];
 }
