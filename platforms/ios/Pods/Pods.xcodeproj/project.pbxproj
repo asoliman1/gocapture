@@ -29,7 +29,6 @@
 		326B094EF18363CE6BD647E6F0074E27 /* G8TesseractDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D6D25659045F7D12BC9C1BF4689BF9 /* G8TesseractDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		334102A3F4C3800EF8D2DA99A4F86998 /* leptwin.h in Headers */ = {isa = PBXBuildFile; fileRef = B253ECDF9179D2790A3F8B176C510D89 /* leptwin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3556D5D7E2DD2541E46AF1111ED0FCFD /* bilateral.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA318C14118AEBA0BCFF8E28DDCF33B /* bilateral.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		391CC051470129FB3A832EE8659320D2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E86668F20F252C440D1015B816BE59C5 /* UIKit.framework */; };
 		395A976214D524C79DBC56CD7BE114C6 /* gplot.h in Headers */ = {isa = PBXBuildFile; fileRef = 1285CA812B05346135D49D72D13EDF3A /* gplot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C5DC378F5EC2DAF5946C859F877B53D /* ptra.h in Headers */ = {isa = PBXBuildFile; fileRef = F73B5DEC480FAE5B5B8E2FC61DDBF4FD /* ptra.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4D2C6863B029B31FA5635890FEDDC6BE /* bmp.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE2ADD4B5E00104661D117375035554 /* bmp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -74,7 +73,6 @@
 		B222D00710779E3EEF03884B19206C2C /* jerror.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FF9A4D61E2B1896D50667DB825463FA /* jerror.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4A0EBC28B0A788B8019F54A4F4ED081 /* G8Tesseract.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15D08322381FAC2E09B993AC49582667 /* G8Tesseract.mm */; };
 		C8E6B59A8BFB84CBDB5DBF8111CE815C /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCD2F727178FD7E593F875840E0AF38 /* png.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD7CEA1BC1F1808AF60B1A67E82029A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2A6FF208CEC4C2861F1E9D42D651453 /* Foundation.framework */; };
 		CEDF30AEFD57A121257B86809B497599 /* G8TesseractParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = C0067CC4F75C128C1A090FB1EB0D0C93 /* G8TesseractParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D78A72CA7A25F17A2CB38EEB17D1E2E5 /* helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A2FA59631A8E5F7F25779BA09806480 /* helpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD9C0CE16D033E77C7CD201E9AC5C91C /* tiffvers.h in Headers */ = {isa = PBXBuildFile; fileRef = AC2950207BEBF26A3F20E848CD99BF38 /* tiffvers.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -90,7 +88,8 @@
 		F086FC29A3798B43B635BD8AED2BB2D4 /* UIImage+G8Filters.h in Headers */ = {isa = PBXBuildFile; fileRef = 78F0F478557AD5A20C974D9D35AB5597 /* UIImage+G8Filters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F2725DD81883864844A8D531A3214B46 /* tiffio.h in Headers */ = {isa = PBXBuildFile; fileRef = 9634C43204FF9CD216DC73E9E6ADF6E1 /* tiffio.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4C9D3041DE75B0261285EFDCA85BA77 /* TesseractOCR.h in Headers */ = {isa = PBXBuildFile; fileRef = 87732DD716F64444A449516BF96E5761 /* TesseractOCR.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F56D44D0C4C3DB9E69F789538D2E9AEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2A6FF208CEC4C2861F1E9D42D651453 /* Foundation.framework */; };
+		FA1CB4F21E64C5DA007D7A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4F11E64C5DA007D7A2A /* Foundation.framework */; };
+		FA1CB4F41E64C5EA007D7A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4F31E64C5EA007D7A2A /* UIKit.framework */; };
 		FDBBD94A47161F0305E43DEBC661AE25 /* fileerr.h in Headers */ = {isa = PBXBuildFile; fileRef = FA667C0273B457D9242756D9F3F741E1 /* fileerr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFB3803BD39D9BEB65C59EB946C4D28A /* tesscallback.h in Headers */ = {isa = PBXBuildFile; fileRef = CA1B9D084D9338661935088E720F3C3B /* tesscallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
@@ -164,7 +163,6 @@
 		9FA318C14118AEBA0BCFF8E28DDCF33B /* bilateral.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bilateral.h; path = TesseractOCR/include/leptonica/bilateral.h; sourceTree = "<group>"; };
 		9FF9A4D61E2B1896D50667DB825463FA /* jerror.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = jerror.h; path = TesseractOCR/include/jerror.h; sourceTree = "<group>"; };
 		A1135453726FAF35DBCE68F9790121D9 /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = TesseractOCR/include/leptonica/stack.h; sourceTree = "<group>"; };
-		A2A6FF208CEC4C2861F1E9D42D651453 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		A555900F3FD04A2FFD32A816FE4D4970 /* unicharset.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = unicharset.h; path = TesseractOCR/include/tesseract/unicharset.h; sourceTree = "<group>"; };
 		A71DB19FA97D4426F171D7244C69B407 /* libpng.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libpng.a; path = TesseractOCR/lib/libpng.a; sourceTree = "<group>"; };
 		A7BEB98AC5B8AFC75EB13C84F86708B2 /* G8Constants.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = G8Constants.h; path = TesseractOCR/G8Constants.h; sourceTree = "<group>"; };
@@ -200,11 +198,12 @@
 		E32BFD1C94443C750DE0E4E5962412D0 /* jconfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = jconfig.h; path = TesseractOCR/include/jconfig.h; sourceTree = "<group>"; };
 		E77842F574E0119DCAB74D69F3F7FFC3 /* queue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = queue.h; path = TesseractOCR/include/leptonica/queue.h; sourceTree = "<group>"; };
 		E7A83C211AEEE38CB74F985465891318 /* libPods-mobilitEASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobilitEASE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E86668F20F252C440D1015B816BE59C5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0CF97B851A531EB69C9A791D9B22738 /* Pods-mobilitEASE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-mobilitEASE.release.xcconfig"; sourceTree = "<group>"; };
 		F1CDFC7F4EA04357E8C06234CF5D5EAB /* Pods-mobilitEASE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-mobilitEASE.debug.xcconfig"; sourceTree = "<group>"; };
 		F420F496E2A304A8ED7CC4D9CE4D03AB /* serialis.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = serialis.h; path = TesseractOCR/include/tesseract/serialis.h; sourceTree = "<group>"; };
 		F73B5DEC480FAE5B5B8E2FC61DDBF4FD /* ptra.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ptra.h; path = TesseractOCR/include/leptonica/ptra.h; sourceTree = "<group>"; };
+		FA1CB4F11E64C5DA007D7A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		FA1CB4F31E64C5EA007D7A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		FA667C0273B457D9242756D9F3F741E1 /* fileerr.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = fileerr.h; path = TesseractOCR/include/tesseract/fileerr.h; sourceTree = "<group>"; };
 		FE49A906FA515DFAB5EA20CC4DCCC6A9 /* G8TesseractParameters.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = G8TesseractParameters.m; path = TesseractOCR/G8TesseractParameters.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -214,8 +213,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD7CEA1BC1F1808AF60B1A67E82029A5 /* Foundation.framework in Frameworks */,
-				391CC051470129FB3A832EE8659320D2 /* UIKit.framework in Frameworks */,
+				FA1CB4F41E64C5EA007D7A2A /* UIKit.framework in Frameworks */,
+				FA1CB4F21E64C5DA007D7A2A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,7 +222,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F56D44D0C4C3DB9E69F789538D2E9AEE /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +329,8 @@
 		433CD3331B6C3787F473C941B61FC68F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F302CD3B306AF1ED96B9AF31FCDBC26C /* iOS */,
+				FA1CB4F31E64C5EA007D7A2A /* UIKit.framework */,
+				FA1CB4F11E64C5DA007D7A2A /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -400,15 +399,6 @@
 				AB2E0AA1D08189495CD8089CF0D2676E /* libTesseractOCRiOS.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F302CD3B306AF1ED96B9AF31FCDBC26C /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				A2A6FF208CEC4C2861F1E9D42D651453 /* Foundation.framework */,
-				E86668F20F252C440D1015B816BE59C5 /* UIKit.framework */,
-			);
-			name = iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -595,25 +585,41 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1C145697A7CC6732FC49BF92B82DB1C1 /* Release */ = {
+		0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F0CF97B851A531EB69C9A791D9B22738 /* Pods-mobilitEASE.release.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -622,6 +628,7 @@
 			baseConfigurationReference = 3056EEE3C6566586F08DF201AB4CBED5 /* TesseractOCRiOS.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = $PODS_CONFIGURATION_BUILD_DIR;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -635,11 +642,55 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
 			name = Release;
 		};
-		47BEF9D903506B003EA5C2B249729489 /* Debug */ = {
+		6EB3CA45BE6BD54E39296BDD97615EFE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F1CDFC7F4EA04357E8C06234CF5D5EAB /* Pods-mobilitEASE.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+			};
+			name = Debug;
+		};
+		9A0E23BF6C21209F60BD15984B3D3D11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F0CF97B851A531EB69C9A791D9B22738 /* Pods-mobilitEASE.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
+			};
+			name = Release;
+		};
+		D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -678,68 +729,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "${SRCROOT}/../build";
-				VALID_ARCHS = "arm64 armv7 armv7s";
-			};
-			name = Debug;
-		};
-		AAF678CED40D3499169D10F63CA0719E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_RELEASE=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SYMROOT = "${SRCROOT}/../build";
-				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
-			};
-			name = Release;
-		};
-		B4E51F4963133A3D2BAF5F69288284F9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1CDFC7F4EA04357E8C06234CF5D5EAB /* Pods-mobilitEASE.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -748,6 +737,7 @@
 			baseConfigurationReference = 3056EEE3C6566586F08DF201AB4CBED5 /* TesseractOCRiOS.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = $PODS_CONFIGURATION_BUILD_DIR;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -761,7 +751,7 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
+				VALID_ARCHS = "arm64 armv7 armv7s x86_64";
 			};
 			name = Debug;
 		};
@@ -771,8 +761,8 @@
 		0229743E4BCABCC2653792EC50DA176E /* Build configuration list for PBXNativeTarget "Pods-mobilitEASE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B4E51F4963133A3D2BAF5F69288284F9 /* Debug */,
-				1C145697A7CC6732FC49BF92B82DB1C1 /* Release */,
+				6EB3CA45BE6BD54E39296BDD97615EFE /* Debug */,
+				9A0E23BF6C21209F60BD15984B3D3D11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -780,8 +770,8 @@
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47BEF9D903506B003EA5C2B249729489 /* Debug */,
-				AAF678CED40D3499169D10F63CA0719E /* Release */,
+				D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */,
+				0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

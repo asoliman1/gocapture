@@ -10,7 +10,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   TesseractOCRiOS:
-    :commit: b4edaf737b9495b6d609375c1ff2875be9acdb47
+    :commit: c7ad56d6544839b2f84c7ffde8fa42efe2312405
     :git: https://github.com/gali8/Tesseract-OCR-iOS.git
 
 SPEC CHECKSUMS:

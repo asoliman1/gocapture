@@ -82,7 +82,6 @@
 		C50B187510F8402E865C3329 /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = AB09824B0DB44977B2C8CDAB /* tessdata */; };
 		C6358212540F4C0E8C551C26 /* libGSDK_Overload.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AE939263D7C4833832736DF /* libGSDK_Overload.a */; };
 		C6AC05E86E8349FAA459467E /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 98F85ACFD2A44DE594147400 /* SQLitePlugin.m */; };
-		C8EF6BAA4E62856F5D67237A /* libPods-mobilitEASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4254485800408FB8917D5E1D /* libPods-mobilitEASE.a */; };
 		CB96E8235B7A47C7BAD6E593 /* CDVViewController+SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = F3009C178B9847C38F45142A /* CDVViewController+SplashScreen.m */; };
 		CFA829D35FBC4C52B7A4BA7D /* SOSPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 799F47D9853A4C278EAFD540 /* SOSPicker.m */; };
 		D08A7B5FB785415AB8CEDCDD /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = EF9B500AAC564CABB9547376 /* CDVReachability.m */; };
@@ -98,7 +97,17 @@
 		FA1CB4E11E647CA6007D7A2A /* claseAuxiliar.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA1CB4DE1E647CA6007D7A2A /* claseAuxiliar.mm */; };
 		FA1CB4E21E647CA6007D7A2A /* TesseractPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */; };
 		FA1CB4E41E648247007D7A2A /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = FA1CB4E31E648247007D7A2A /* tessdata */; };
-		FA1CB4E61E6486AC007D7A2A /* libTesseractOCRiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */; };
+		FA1CB4F61E64CEC1007D7A2A /* libPods-mobilitEASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4EC1E64B3C2007D7A2A /* libPods-mobilitEASE.a */; };
+		FA1CB4F81E64CEC2007D7A2A /* libTesseractOCRiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4F71E64CEC2007D7A2A /* libTesseractOCRiOS.a */; };
+		FA1CB4FA1E64D148007D7A2A /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4F91E64D148007D7A2A /* libstdc++.6.0.9.tbd */; };
+		FA1CB4FC1E64DA62007D7A2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4FB1E64DA62007D7A2A /* Foundation.framework */; };
+		FA1CB4FE1E64DA6B007D7A2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4FD1E64DA6B007D7A2A /* UIKit.framework */; };
+		FA1CB5001E64DA7E007D7A2A /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4FF1E64DA7E007D7A2A /* libc++.tbd */; };
+		FA1CB5101E64E201007D7A2A /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5011E64DB74007D7A2A /* libjpeg.a */; };
+		FA1CB5111E64E201007D7A2A /* liblept.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5021E64DB74007D7A2A /* liblept.a */; };
+		FA1CB5121E64E201007D7A2A /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5031E64DB74007D7A2A /* libpng.a */; };
+		FA1CB5131E64E201007D7A2A /* libtesseract.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5041E64DB74007D7A2A /* libtesseract.a */; };
+		FA1CB5141E64E201007D7A2A /* libtiff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5051E64DB74007D7A2A /* libtiff.a */; };
 		FA2399FE1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */; };
 		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
@@ -135,6 +144,7 @@
 		10DD93D73172437583181D77 /* CDVFileTransfer.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVFileTransfer.m; path = "cordova-plugin-file-transfer/CDVFileTransfer.m"; sourceTree = "<group>"; };
 		11E2A3A20E7E49BF8C2B3F4B /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVAssetLibraryFilesystem.h; path = "cordova-plugin-file/CDVAssetLibraryFilesystem.h"; sourceTree = "<group>"; };
 		13565D2F48804D919297AE58 /* GMGridViewCell.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = GMGridViewCell.m; path = com.synconset.imagepicker/GMGridViewCell.m; sourceTree = "<group>"; };
+		1414182B8E20B3F2F5A80BD9 /* libPods-mobilitEASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobilitEASE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		141E448DC62A4F60B26D27C3 /* es.lproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = es.lproj; sourceTree = "<group>"; };
 		157DC6DB6E0847C08F01EDE7 /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocalFilesystem.h; path = "cordova-plugin-file/CDVLocalFilesystem.h"; sourceTree = "<group>"; };
 		1A5586BAF75B4DE7B61615E2 /* GMAlbumsViewController.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = GMAlbumsViewController.m; path = com.synconset.imagepicker/GMAlbumsViewController.m; sourceTree = "<group>"; };
@@ -172,7 +182,6 @@
 		3F4709D5A38C464A86066EF9 /* CDVReachability.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVReachability.h; path = "cordova-plugin-network-information/CDVReachability.h"; sourceTree = "<group>"; };
 		400EA91FC1234F8D967A9595 /* GMPHAsset.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GMPHAsset.h; path = com.synconset.imagepicker/GMPHAsset.h; sourceTree = "<group>"; };
 		40B5C140C7294350B97DCC08 /* GGLContext+CloudMessaging.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "GGLContext+CloudMessaging.h"; path = "phonegap-plugin-push/GCM/Headers/GGLContext+CloudMessaging.h"; sourceTree = "<group>"; };
-		4254485800408FB8917D5E1D /* libPods-mobilitEASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobilitEASE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		43ED7C392474498A92CC317C /* sqlite3.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = "cordova-sqlite-storage/sqlite3.h"; sourceTree = "<group>"; };
 		46ADA57833D9414CABA7987A /* CoreLocation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		486C00CDF21A441A9EC1C797 /* CDVAssetLibraryFilesystem.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVAssetLibraryFilesystem.m; path = "cordova-plugin-file/CDVAssetLibraryFilesystem.m"; sourceTree = "<group>"; };
@@ -273,7 +282,18 @@
 		FA1CB4DF1E647CA6007D7A2A /* TesseractPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TesseractPlugin.h; path = "cordova-plugin-tesseract/TesseractPlugin.h"; sourceTree = "<group>"; };
 		FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TesseractPlugin.m; path = "cordova-plugin-tesseract/TesseractPlugin.m"; sourceTree = "<group>"; };
 		FA1CB4E31E648247007D7A2A /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tessdata; path = ../../../tessdata; sourceTree = "<group>"; };
-		FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTesseractOCRiOS.a; path = "../../../Library/Developer/Xcode/DerivedData/mobilitease-hanxntksivuqnggplcshnwlyjtgv/Build/Products/Debug-iphonesimulator/TesseractOCRiOS/libTesseractOCRiOS.a"; sourceTree = "<group>"; };
+		FA1CB4EC1E64B3C2007D7A2A /* libPods-mobilitEASE.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-mobilitEASE.a"; path = "../../../Library/Developer/Xcode/DerivedData/mobilitease-hanxntksivuqnggplcshnwlyjtgv/Build/Products/Debug-iphonesimulator/libPods-mobilitEASE.a"; sourceTree = "<group>"; };
+		FA1CB4F71E64CEC2007D7A2A /* libTesseractOCRiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTesseractOCRiOS.a; path = "../../../Library/Developer/Xcode/DerivedData/mobilitease-hanxntksivuqnggplcshnwlyjtgv/Build/Products/Debug-iphonesimulator/libTesseractOCRiOS.a"; sourceTree = "<group>"; };
+		FA1CB4F91E64D148007D7A2A /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
+		FA1CB4FB1E64DA62007D7A2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FA1CB4FD1E64DA6B007D7A2A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FA1CB4FF1E64DA7E007D7A2A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		FA1CB5011E64DB74007D7A2A /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libjpeg.a; sourceTree = "<group>"; };
+		FA1CB5021E64DB74007D7A2A /* liblept.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblept.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/liblept.a; sourceTree = "<group>"; };
+		FA1CB5031E64DB74007D7A2A /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libpng.a; sourceTree = "<group>"; };
+		FA1CB5041E64DB74007D7A2A /* libtesseract.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtesseract.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libtesseract.a; sourceTree = "<group>"; };
+		FA1CB5051E64DB74007D7A2A /* libtiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtiff.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libtiff.a; sourceTree = "<group>"; };
+		FA1CB50C1E64DC65007D7A2A /* libGcmLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGcmLib.a; path = "../../plugins/phonegap-plugin-push/src/ios/GoogleCloudMessaging/Libraries/libGcmLib.a"; sourceTree = "<group>"; };
 		FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVViewController+UpdateSupportedOrientations.h"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.h"; sourceTree = "<group>"; };
 		FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CDVViewController+UpdateSupportedOrientations.m"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.m"; sourceTree = "<group>"; };
 		FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YoikScreenOrientation.h; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; };
@@ -287,7 +307,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA1CB4E61E6486AC007D7A2A /* libTesseractOCRiOS.a in Frameworks */,
+				FA1CB5101E64E201007D7A2A /* libjpeg.a in Frameworks */,
+				FA1CB5111E64E201007D7A2A /* liblept.a in Frameworks */,
+				FA1CB5121E64E201007D7A2A /* libpng.a in Frameworks */,
+				FA1CB5131E64E201007D7A2A /* libtesseract.a in Frameworks */,
+				FA1CB5141E64E201007D7A2A /* libtiff.a in Frameworks */,
+				FA1CB5001E64DA7E007D7A2A /* libc++.tbd in Frameworks */,
+				FA1CB4FE1E64DA6B007D7A2A /* UIKit.framework in Frameworks */,
+				FA1CB4FC1E64DA62007D7A2A /* Foundation.framework in Frameworks */,
+				FA1CB4FA1E64D148007D7A2A /* libstdc++.6.0.9.tbd in Frameworks */,
+				FA1CB4F81E64CEC2007D7A2A /* libTesseractOCRiOS.a in Frameworks */,
+				FA1CB4F61E64CEC1007D7A2A /* libPods-mobilitEASE.a in Frameworks */,
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
 				35650E5482784AB2A534A08C /* ImageIO.framework in Frameworks */,
 				4F8B1CB0F7B8457D88811194 /* CoreLocation.framework in Frameworks */,
@@ -323,7 +353,6 @@
 				7ABD77FB470447B3A8E93241 /* AddressBook.framework in Frameworks */,
 				FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */,
 				B35751D4EC4F4F739E825FE0 /* libz.tbd in Frameworks */,
-				C8EF6BAA4E62856F5D67237A /* libPods-mobilitEASE.a in Frameworks */,
 				1B28AA445A3F4D09B3CC8175 /* Accelerate.framework in Frameworks */,
 				3E3B84A83ABF4B53AC1D1542 /* Security.framework in Frameworks */,
 				3A1C2F3EAC964906A9A454F5 /* Photos.framework in Frameworks */,
@@ -413,7 +442,18 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */,
+				FA1CB50C1E64DC65007D7A2A /* libGcmLib.a */,
+				FA1CB5011E64DB74007D7A2A /* libjpeg.a */,
+				FA1CB5021E64DB74007D7A2A /* liblept.a */,
+				FA1CB5031E64DB74007D7A2A /* libpng.a */,
+				FA1CB5041E64DB74007D7A2A /* libtesseract.a */,
+				FA1CB5051E64DB74007D7A2A /* libtiff.a */,
+				FA1CB4FF1E64DA7E007D7A2A /* libc++.tbd */,
+				FA1CB4FD1E64DA6B007D7A2A /* UIKit.framework */,
+				FA1CB4FB1E64DA62007D7A2A /* Foundation.framework */,
+				FA1CB4F91E64D148007D7A2A /* libstdc++.6.0.9.tbd */,
+				FA1CB4F71E64CEC2007D7A2A /* libTesseractOCRiOS.a */,
+				FA1CB4EC1E64B3C2007D7A2A /* libPods-mobilitEASE.a */,
 				D77814B4E08146E1867B10A1 /* ImageIO.framework */,
 				46ADA57833D9414CABA7987A /* CoreLocation.framework */,
 				96380BFB7C0C49E9BA3090A5 /* AVFoundation.framework */,
@@ -448,11 +488,11 @@
 				810B5B3EDEDD4515831A950A /* AddressBook.framework */,
 				C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */,
 				777C011733084BDC9C7B04D5 /* libz.tbd */,
-				4254485800408FB8917D5E1D /* libPods-mobilitEASE.a */,
 				6F23F39E20244B3AAF60FFC2 /* Accelerate.framework */,
 				815AF53CF564427F95A789CB /* Security.framework */,
 				60B01030DF9A400588B25FDF /* Photos.framework */,
 				D9B797D6A1DE4990A5D8374A /* QuartzCore.framework */,
+				1414182B8E20B3F2F5A80BD9 /* libPods-mobilitEASE.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -724,7 +764,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${SRCROOT}/Podfile.lock\" \"${SRCROOT}/Pods/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		C03E0C39E4CACB4CF34E1B3F /* [CP] Copy Pods Resources */ = {
@@ -811,7 +851,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Pods/TesseractOCRiOS\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
+					"$(inherited)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -819,6 +862,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include\"",
@@ -830,32 +874,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"$(PROJECT_DIR)/Pods/TesseractOCRiOS/TesseractOCR/lib",
+					"$(PROJECT_DIR)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.leadliaison.mobilitease;
 				PRODUCT_NAME = mobilitEASE;
@@ -874,12 +898,16 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Pods/TesseractOCRiOS\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
+					"$(inherited)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
 					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include\"",
@@ -890,32 +918,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
-					"\"$(SRCROOT)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries\"",
+					"$(PROJECT_DIR)/Pods/TesseractOCRiOS/TesseractOCR/lib",
+					"$(PROJECT_DIR)/mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.leadliaison.mobilitease;
 				PRODUCT_NAME = mobilitEASE;
@@ -940,6 +948,7 @@
 				DEVELOPMENT_TEAM = K69VAF6CNF;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_THUMB_SUPPORT = NO;
@@ -951,6 +960,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				PODS_ROOT = "${SRCROOT}/Pods";
 				SDKROOT = iphoneos;
@@ -977,6 +987,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = K69VAF6CNF;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_THUMB_SUPPORT = NO;
@@ -988,6 +999,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PODS_ROOT = "${SRCROOT}/Pods";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
