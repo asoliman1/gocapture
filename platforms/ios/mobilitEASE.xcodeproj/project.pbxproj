@@ -95,6 +95,10 @@
 		E7DFA64D97174F45A3AA8001 /* libGTMSessionFetcher_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71643E3C1561496585F73AF7 /* libGTMSessionFetcher_core.a */; };
 		ECFE1C173A144619A0294723 /* libGIP_Reachability.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC92FE0A38774CEEB11AF01A /* libGIP_Reachability.a */; };
 		EE28C0F6C86046DCBA0842AC /* CDVCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 078C2C95B15948BE8365218A /* CDVCamera.m */; };
+		FA1CB4E11E647CA6007D7A2A /* claseAuxiliar.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA1CB4DE1E647CA6007D7A2A /* claseAuxiliar.mm */; };
+		FA1CB4E21E647CA6007D7A2A /* TesseractPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */; };
+		FA1CB4E41E648247007D7A2A /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = FA1CB4E31E648247007D7A2A /* tessdata */; };
+		FA1CB4E61E6486AC007D7A2A /* libTesseractOCRiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */; };
 		FA2399FE1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */; };
 		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
@@ -264,6 +268,12 @@
 		F6B5E75A7311469C987F05E9 /* CDVLocation.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVLocation.m; path = "cordova-plugin-geolocation/CDVLocation.m"; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = mobilitEASE/config.xml; sourceTree = "<group>"; };
 		F9BFF589986544158BCE6C93 /* GCMPubSub.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMPubSub.h; path = "phonegap-plugin-push/GCM/Headers/GCMPubSub.h"; sourceTree = "<group>"; };
+		FA1CB4DD1E647CA6007D7A2A /* claseAuxiliar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = claseAuxiliar.h; path = "cordova-plugin-tesseract/claseAuxiliar.h"; sourceTree = "<group>"; };
+		FA1CB4DE1E647CA6007D7A2A /* claseAuxiliar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = claseAuxiliar.mm; path = "cordova-plugin-tesseract/claseAuxiliar.mm"; sourceTree = "<group>"; };
+		FA1CB4DF1E647CA6007D7A2A /* TesseractPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TesseractPlugin.h; path = "cordova-plugin-tesseract/TesseractPlugin.h"; sourceTree = "<group>"; };
+		FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TesseractPlugin.m; path = "cordova-plugin-tesseract/TesseractPlugin.m"; sourceTree = "<group>"; };
+		FA1CB4E31E648247007D7A2A /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tessdata; path = ../../../tessdata; sourceTree = "<group>"; };
+		FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTesseractOCRiOS.a; path = "../../../Library/Developer/Xcode/DerivedData/mobilitease-hanxntksivuqnggplcshnwlyjtgv/Build/Products/Debug-iphonesimulator/TesseractOCRiOS/libTesseractOCRiOS.a"; sourceTree = "<group>"; };
 		FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVViewController+UpdateSupportedOrientations.h"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.h"; sourceTree = "<group>"; };
 		FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CDVViewController+UpdateSupportedOrientations.m"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.m"; sourceTree = "<group>"; };
 		FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YoikScreenOrientation.h; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; };
@@ -277,6 +287,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA1CB4E61E6486AC007D7A2A /* libTesseractOCRiOS.a in Frameworks */,
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
 				35650E5482784AB2A534A08C /* ImageIO.framework in Frameworks */,
 				4F8B1CB0F7B8457D88811194 /* CoreLocation.framework in Frameworks */,
@@ -347,6 +358,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				FA1CB4E31E648247007D7A2A /* tessdata */,
 				EB87FDF41871DAF40020F90C /* config.xml */,
 				EB87FDF31871DA8E0020F90C /* www */,
 				EB87FDF11871DA420020F90C /* Staging */,
@@ -401,6 +413,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA1CB4E51E6486AC007D7A2A /* libTesseractOCRiOS.a */,
 				D77814B4E08146E1867B10A1 /* ImageIO.framework */,
 				46ADA57833D9414CABA7987A /* CoreLocation.framework */,
 				96380BFB7C0C49E9BA3090A5 /* AVFoundation.framework */,
@@ -465,6 +478,10 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				FA1CB4DD1E647CA6007D7A2A /* claseAuxiliar.h */,
+				FA1CB4DE1E647CA6007D7A2A /* claseAuxiliar.mm */,
+				FA1CB4DF1E647CA6007D7A2A /* TesseractPlugin.h */,
+				FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */,
 				FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */,
 				FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */,
 				FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */,
@@ -651,6 +668,7 @@
 				0C4A04EC43D5455CA1FD21AC /* GMSelected@2x.png in Resources */,
 				1E64C31C9222431798F0767E /* GMVideoIcon.png in Resources */,
 				7F154E3EA3284176A1792351 /* GMVideoIcon@2x.png in Resources */,
+				FA1CB4E41E648247007D7A2A /* tessdata in Resources */,
 				73B6AD5A989D41ACA04E1E49 /* ca.lproj in Resources */,
 				7F6C1309E7D547BD990B30CC /* de.lproj in Resources */,
 				38FC8A3B6717453E86415BC1 /* en.lproj in Resources */,
@@ -750,6 +768,7 @@
 				5946C37B966C44B0A53DE280 /* PushPlugin.m in Sources */,
 				B2447E0E72F3459C9032C12C /* CDVFile.m in Sources */,
 				B2F6D36D93C34518A92C0645 /* CDVLocalFilesystem.m in Sources */,
+				FA1CB4E11E647CA6007D7A2A /* claseAuxiliar.mm in Sources */,
 				6C0A7F75138B43048FCF1D02 /* CDVAssetLibraryFilesystem.m in Sources */,
 				38ABFB016A284760B3026B85 /* CDVFileTransfer.m in Sources */,
 				A0073A4DB3DD4D19A3A004C2 /* CDVDevice.m in Sources */,
@@ -762,6 +781,7 @@
 				6EC40D8513A4427F8437CCA8 /* GMAlbumsViewController.m in Sources */,
 				DB49ED6D27884D09980D31DA /* GMFetchItem.m in Sources */,
 				A8287896F3C2452891592BDF /* GMGridViewCell.m in Sources */,
+				FA1CB4E21E647CA6007D7A2A /* TesseractPlugin.m in Sources */,
 				B45F6558657A48B9AC28C725 /* GMGridViewController.m in Sources */,
 				8000EB4C4E7C4666B12E60F2 /* GMImagePickerController.m in Sources */,
 				B48B80C18B92456C8CFEC98E /* PSYBlockTimer.m in Sources */,
@@ -791,12 +811,20 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Pods/TesseractOCRiOS\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
+				);
 				INFOPLIST_FILE = "mobilitEASE/mobilitEASE-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -846,10 +874,18 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Pods/TesseractOCRiOS\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/include\"",
+					"\"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
+				);
 				INFOPLIST_FILE = "mobilitEASE/mobilitEASE-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LIBRARY_SEARCH_PATHS = (

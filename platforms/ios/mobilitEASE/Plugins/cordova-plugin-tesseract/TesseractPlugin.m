@@ -72,7 +72,7 @@
     {
         // Call  the Failure Javascript function
         
-        [self writeJavascript: [pluginResult toErrorCallbackString:self.callbackID]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
         
                 
     } else
@@ -81,7 +81,7 @@
         
         // Call  the Success Javascript function
         
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
 
         
     }
