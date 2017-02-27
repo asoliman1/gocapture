@@ -73,7 +73,7 @@ export class DBClient {
 				"toSend": "SELECT * FROM submissions where status=4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
-				"updateById": "UPDATE submissions set id=?, status=? where activityId=?"
+				"updateById": "UPDATE submissions set id=?, status=?, activityId=? where id=?"
 			}
 		},
 		{
@@ -486,7 +486,7 @@ export class DBClient {
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.id, form.activity_id, form.status]);
+		return this.updateById(WORK, "submissions", [form.activity_id, form.activity_id, form.status, form.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {

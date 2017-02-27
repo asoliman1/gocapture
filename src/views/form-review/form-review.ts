@@ -1,5 +1,5 @@
 import { Component, NgZone } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus } from "../../model";
@@ -34,7 +34,8 @@ export class FormReview {
 		private navParams: NavParams,
 		private client: BussinessClient,
 		private zone: NgZone,
-		private syncClient: SyncClient) {
+		private syncClient: SyncClient,
+		private toast: ToastController) {
 
 	}
 
@@ -49,7 +50,7 @@ export class FormReview {
 			(err) => { },
 			() => {
 				this.syncing = this.syncClient.isSyncing();
-				//this.doRefresh();
+				this.doRefresh();
 			});
 	}
 
@@ -103,7 +104,24 @@ export class FormReview {
 
 	sync() {
 		this.syncing = true;
-		this.client.doSync(this.form.form_id)
+		this.client.doSync(this.form.form_id).subscribe((data)=>{
+			this.zone.run(() => {
+				this.syncing = false;
+				this.doRefresh();
+			});
+		}, (err) => {
+			this.zone.run(() => {
+				this.syncing = false;
+				this.doRefresh();
+				let toaster = this.toast.create({
+					message: "There was an error sync-ing the submissions",
+					duration: 5000,
+					position: "top",
+					cssClass: "error"
+				});
+				toaster.present();
+			});
+		});
 	}
 
 	statusClick(event: Event, submission: FormSubmission) {

@@ -205,40 +205,40 @@ export class BussinessClient {
 		return this.db.saveSubmission(sub);
 	}
 
-	public doSync(formId?: number){
-		if(!this.online){
-			return;
-		}
-		this.db.getSubmissionsToSend().subscribe((submissions) => {
-			if(submissions.length == 0){
-				//that's it
+	public doSync(formId?: number): Observable<any>{
+		return new Observable<any>((obs: Observer<any>) => {
+			if(!this.online){
+				obs.complete();
 				return;
 			}
-			let formIds = [];
-			
-			if(formId > 0){
-				formIds.push(formId);
-				var tmp = [];
-				submissions.forEach(sub => {
-					if(sub.form_id == formId){
-						tmp.push(sub);
-					}
-				});
-				submissions = tmp;
-			}else{
-				submissions.forEach(sub => {
-					if(formIds.indexOf(sub.form_id) == -1){
-						formIds.push(sub.form_id);
-					}
-				});
-			}
-			this.db.getFormsByIds(formIds).subscribe(forms => {
-				this.sync.sync(submissions, forms).subscribe(submitted => {
-					if(submitted && submitted.length > 0){
-						submissions.forEach(sub => {
-							sub.status = SubmissionStatus.Submitted;
-						})
-					}
+			this.db.getSubmissionsToSend().subscribe((submissions) => {
+				if(submissions.length == 0){
+					obs.complete();
+					return;
+				}
+				let formIds = [];
+				
+				if(formId > 0){
+					formIds.push(formId);
+					var tmp = [];
+					submissions.forEach(sub => {
+						if(sub.form_id == formId){
+							tmp.push(sub);
+						}
+					});
+					submissions = tmp;
+				}else{
+					submissions.forEach(sub => {
+						if(formIds.indexOf(sub.form_id) == -1){
+							formIds.push(sub.form_id);
+						}
+					});
+				}
+				this.db.getFormsByIds(formIds).subscribe(forms => {
+					this.sync.sync(submissions, forms).subscribe(submitted => {
+						obs.next(true);
+						obs.complete();
+					});
 				});
 			});
 		});
