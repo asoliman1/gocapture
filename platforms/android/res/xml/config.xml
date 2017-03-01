@@ -53,6 +53,10 @@
     <feature name="PushNotification">
         <param name="android-package" value="com.adobe.phonegap.push.PushPlugin" />
     </feature>
+    <feature name="FabricPlugin">
+        <param name="android-package" value="com.sarriaroman.fabric.FabricPlugin" />
+        <param name="onload" value="true" />
+    </feature>
     <name>mobilitEASE</name>
     <description>LeadLiason MobilitEASE app</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -98,6 +102,7 @@
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="ShowSplashScreen" value="true" />
+    <preference name="loadUrlTimeoutValue" value="60000" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="30000" />
     <preference name="AutoHideSplashScreen" value="false" />

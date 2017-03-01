@@ -2,13 +2,15 @@
     "ImageIO.framework": 2,
     "CoreLocation.framework": 2,
     "AVFoundation.framework": 2,
-    "SystemConfiguration.framework": 3,
+    "SystemConfiguration.framework": 4,
     "CoreTelephony.framework": 2,
     "AddressBook.framework": 2,
     "libsqlite3.tbd": 2,
     "libz.tbd": 2,
     "Accelerate.framework": 1,
-    "Security.framework": 1,
+    "Security.framework": 2,
     "Photos.framework": 1,
-    "QuartzCore.framework": 1
+    "QuartzCore.framework": 1,
+    "libz.dylib": 1,
+    "libc++.dylib": 1
 }

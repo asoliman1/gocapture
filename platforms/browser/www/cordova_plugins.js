@@ -381,6 +381,30 @@ module.exports = [
         "clobbers": [
             "cordova.plugins.screenorientation"
         ]
+    },
+    {
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.js",
+        "id": "cordova-fabric-plugin.FabricPlugin",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.core"
+        ]
+    },
+    {
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Answers.js",
+        "id": "cordova-fabric-plugin.FabricAnswersPlugin",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.Answers"
+        ]
+    },
+    {
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Crashlytics.js",
+        "id": "cordova-fabric-plugin.FabricCrashlyticsPlugin",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.Crashlytics"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -403,7 +427,8 @@ module.exports.metadata =
     "cordova-plugin-whitelist": "1.3.0",
     "cordova-sqlite-storage": "1.4.7",
     "phonegap-plugin-push": "1.8.2",
-    "cordova-plugin-screen-orientation": "1.4.2"
+    "cordova-plugin-screen-orientation": "1.4.2",
+    "cordova-fabric-plugin": "1.1.7"
 }
 // BOTTOM OF METADATA
 });

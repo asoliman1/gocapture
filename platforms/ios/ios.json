@@ -79,6 +79,10 @@
                         {
                             "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"ios-package\" value=\"YoikScreenOrientation\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"FabricPlugin\"><param name=\"ios-package\" value=\"FabricPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -118,6 +122,12 @@
                     "IS_GCM_ENABLED": [
                         {
                             "xml": "<true />",
+                            "count": 1
+                        }
+                    ],
+                    "Fabric": [
+                        {
+                            "xml": "<dict><key>APIKey</key><string>87c5f596ba1288e89c53293ff749dca7b2f1ec1a</string></dict>",
                             "count": 1
                         }
                     ]
@@ -181,6 +191,11 @@
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-fabric-plugin": {
+            "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
+            "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7",
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
@@ -551,6 +566,30 @@
             "merges": [
                 "cordova.plugins.screenorientation"
             ]
+        },
+        {
+            "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.js",
+            "id": "cordova-fabric-plugin.FabricPlugin",
+            "pluginId": "cordova-fabric-plugin",
+            "clobbers": [
+                "window.fabric.core"
+            ]
+        },
+        {
+            "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Answers.js",
+            "id": "cordova-fabric-plugin.FabricAnswersPlugin",
+            "pluginId": "cordova-fabric-plugin",
+            "clobbers": [
+                "window.fabric.Answers"
+            ]
+        },
+        {
+            "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Crashlytics.js",
+            "id": "cordova-fabric-plugin.FabricCrashlyticsPlugin",
+            "pluginId": "cordova-fabric-plugin",
+            "clobbers": [
+                "window.fabric.Crashlytics"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -571,6 +610,7 @@
         "cordova-plugin-whitelist": "1.3.0",
         "cordova-plugin-statusbar": "2.2.0",
         "com.synconset.imagepicker": "2.1.5",
-        "cordova-plugin-screen-orientation": "1.4.2"
+        "cordova-plugin-screen-orientation": "1.4.2",
+        "cordova-fabric-plugin": "1.1.7"
     }
 }

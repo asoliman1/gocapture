@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Images.xcassets */; };
 		07193201F4F445DFA734E489 /* libGTMSessionFetcher_full.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C30DB92FC942A881C6D5F6 /* libGTMSessionFetcher_full.a */; };
@@ -111,6 +110,11 @@
 		FA2399FE1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */; };
 		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
+		670DCB356DB94B9782E86666 /* FabricPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 23BB7694833D4BEF91467914 /* FabricPlugin.m */; };
+		DAAE87FB4E3947ACB49BD485 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B839C124CD684264AE935F3B /* libz.dylib */; };
+		E1F2BC433CE2481AACF59286 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95A08976EC8A4EB69D3E88B7 /* libc++.dylib */; };
+		FDC1B107BA344D01A3DBA1F0 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97FD95EE5BBE42ED93D99E6B /* Fabric.framework */; };
+		5F8FF86401B6423E94D5445E /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067B290A4B274F10BE30D196 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -300,6 +304,11 @@
 		FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YoikScreenOrientation.m; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; };
 		FB73860783514C6797D20399 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
 		FC384F105F8F47E4AFF41CBA /* GGLContext.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLContext.h; path = "phonegap-plugin-push/GCM/Headers/GGLContext.h"; sourceTree = "<group>"; };
+		23BB7694833D4BEF91467914 /* FabricPlugin.m */ = {isa = PBXFileReference; name = "FabricPlugin.m"; path = "cordova-fabric-plugin/FabricPlugin.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		B839C124CD684264AE935F3B /* libz.dylib */ = {isa = PBXFileReference; name = "libz.dylib"; path = "usr/lib/libz.dylib"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = compiled.mach-o.dylib; explicitFileType = undefined; includeInIndex = 0; };
+		95A08976EC8A4EB69D3E88B7 /* libc++.dylib */ = {isa = PBXFileReference; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = compiled.mach-o.dylib; explicitFileType = undefined; includeInIndex = 0; };
+		97FD95EE5BBE42ED93D99E6B /* Fabric.framework */ = {isa = PBXFileReference; name = "Fabric.framework"; path = "mobilitEASE/Plugins/cordova-fabric-plugin/Fabric.framework"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		067B290A4B274F10BE30D196 /* Crashlytics.framework */ = {isa = PBXFileReference; name = "Crashlytics.framework"; path = "mobilitEASE/Plugins/cordova-fabric-plugin/Crashlytics.framework"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +366,10 @@
 				3E3B84A83ABF4B53AC1D1542 /* Security.framework in Frameworks */,
 				3A1C2F3EAC964906A9A454F5 /* Photos.framework in Frameworks */,
 				6579EE83F62340A4908AB1AB /* QuartzCore.framework in Frameworks */,
+				DAAE87FB4E3947ACB49BD485 /* libz.dylib in Frameworks */,
+				E1F2BC433CE2481AACF59286 /* libc++.dylib in Frameworks */,
+				FDC1B107BA344D01A3DBA1F0 /* Fabric.framework in Frameworks */,
+				5F8FF86401B6423E94D5445E /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +506,10 @@
 				60B01030DF9A400588B25FDF /* Photos.framework */,
 				D9B797D6A1DE4990A5D8374A /* QuartzCore.framework */,
 				1414182B8E20B3F2F5A80BD9 /* libPods-mobilitEASE.a */,
+				B839C124CD684264AE935F3B /* libz.dylib */,
+				95A08976EC8A4EB69D3E88B7 /* libc++.dylib */,
+				97FD95EE5BBE42ED93D99E6B /* Fabric.framework */,
+				067B290A4B274F10BE30D196 /* Crashlytics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -602,6 +619,7 @@
 				9D6AD14431764AC199646792 /* GMImagePickerController.h */,
 				D89D6801F27343BEBC5477EB /* PSYBlockTimer.h */,
 				400EA91FC1234F8D967A9595 /* GMPHAsset.h */,
+				23BB7694833D4BEF91467914 /* FabricPlugin.m */,
 			);
 			name = Plugins;
 			path = mobilitEASE/Plugins;
@@ -637,6 +655,7 @@
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
 				797F6C2896671E8701452934 /* [CP] Embed Pods Frameworks */,
 				C03E0C39E4CACB4CF34E1B3F /* [CP] Copy Pods Resources */,
+				C87A055A6AAC433681F59014 /* "Fabric.io: Crashlytics" */,
 			);
 			buildRules = (
 			);
@@ -782,6 +801,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobilitEASE/Pods-mobilitEASE-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C87A055A6AAC433681F59014 /* "Fabric.io: Crashlytics" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fabric.io: Crashlytics";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/\"mobilitEASE\"/Plugins/cordova-fabric-plugin/Fabric.framework/run 87c5f596ba1288e89c53293ff749dca7b2f1ec1a 1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -826,6 +860,7 @@
 				8000EB4C4E7C4666B12E60F2 /* GMImagePickerController.m in Sources */,
 				B48B80C18B92456C8CFEC98E /* PSYBlockTimer.m in Sources */,
 				E4F58FC8CA1C4796AB4C2C0A /* GMPHAsset.m in Sources */,
+				670DCB356DB94B9782E86666 /* FabricPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,6 +889,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
 					"$(inherited)",
+					"\"mobilitEASE/Plugins/cordova-fabric-plugin\"",
+					"\"mobilitEASE/Plugins/cordova-fabric-plugin\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -901,6 +938,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Pods/TesseractOCRiOS\"",
 					"$(inherited)",
+					"\"mobilitEASE/Plugins/cordova-fabric-plugin\"",
+					"\"mobilitEASE/Plugins/cordova-fabric-plugin\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "mobilitEASE/mobilitEASE-Prefix.pch";
