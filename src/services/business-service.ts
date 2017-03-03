@@ -99,16 +99,30 @@ export class BussinessClient {
 
 	public getRegistration(): Observable<User> {
 		return new Observable<User>((obs: Observer<User>) => {
-			this.db.getRegistration()
-				.subscribe((user) => {
-					if (user) {
-						this.registration = user;
-						this.db.setupWorkDb(user.db);
-						this.rest.token = user.access_token;
+			this.db.getRegistration().subscribe((user) => {
+				if (user) {
+					this.registration = user;
+					this.db.setupWorkDb(user.db);
+					this.rest.token = user.access_token;
+					if(user.pushRegistered == 0){
+						this.rest.registerDeviceToPush(user.access_token, true).subscribe((done)=>{
+							if(done){
+								user.pushRegistered = 1;
+								this.db.saveRegistration(user).subscribe(()=> {
+									obs.next(user);
+									obs.complete();
+								});
+							}
+						});
+					}else{						
+						obs.next(user);
+						obs.complete();
 					}
+				}else{					
 					obs.next(user);
 					obs.complete();
-				})
+				}
+			})
 		});
 	}
 

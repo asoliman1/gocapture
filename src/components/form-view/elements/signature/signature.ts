@@ -18,12 +18,16 @@ export class Signature extends BaseElement{
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
+	@Input() readonly: boolean = false;
 
 	constructor(private modalCtrl: ModalController) {
 		super();
 	}
 
 	show(){
+		if(this.readonly){
+			return;
+		}
 		let modal = this.modalCtrl.create(SignatureModal);
 		modal.onDidDismiss((sigStr) => {
 			screen.unlockOrientation && screen.unlockOrientation();

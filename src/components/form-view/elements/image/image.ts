@@ -17,6 +17,7 @@ declare var cordova: any;
 export class Image extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
+	@Input() readonly: boolean = false;
 
 	images = {
 		true: "trash",
@@ -44,6 +45,9 @@ export class Image extends BaseElement {
 	}
 
 	chooseType() {
+		if(this.readonly){
+			return;
+		}
 		if(this.selectionEnabled){
 			for(let i = this.selection.length - 1; i > -1; i--){
 				if(this.selection[i]){
@@ -108,6 +112,9 @@ export class Image extends BaseElement {
 	}
 
 	toggleSelection(index : number){
+		if(this.readonly){
+			return;
+		}
 		this.selection[index] = !this.selection[index];
 		this.selectionEnabled = false;
 		for(let i = 0; i < this.selection.length; i++){

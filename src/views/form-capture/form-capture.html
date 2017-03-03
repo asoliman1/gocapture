@@ -2,7 +2,7 @@
 	<ion-navbar color="orange" #navbar>
 		<ion-title>{{form ? form.name : ''}}</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="doSave()">
+			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission)">
 				<ion-icon name="checkmark" class="capture"></ion-icon>
 			</button>
 		</ion-buttons>
@@ -11,7 +11,7 @@
 
 <ion-content class="form-summary">
 	<ion-grid>
-		<ion-row *ngIf="form && form.list_id > 0">
+		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
 				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Pre-fill from List</button>
 			</ion-col>
@@ -21,7 +21,8 @@
 						[form]="form"
 						[prospect]="prospect" 
 						[submission]="submission"
-						(onValidationChange)="onValidationChange($event)"></form-view>
+						(onValidationChange)="onValidationChange($event)"
+						[readOnly]="isReadOnly(submission)"></form-view>
 		</ion-row>
 	</ion-grid>
 </ion-content>

@@ -50,7 +50,7 @@ export class Migrator{
 	private executeMigration(db: SQLite, type, migration) : Promise<any>{
 		return new Promise<any>((resolve, reject) => {
 			var toExecute = [];
-			migration.tables.forEach(table => {
+			migration.tables && migration.tables.forEach(table => {
 				toExecute.push(Utils.makeCreateTableQuery(table));
 			});
 			toExecute = toExecute.concat(migration.queries);

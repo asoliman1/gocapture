@@ -5,14 +5,16 @@ import { Platform } from 'ionic-angular';
 import { StatusBar, File } from 'ionic-native';
 
 import { Login } from '../views/login';
+import { Main } from '../views/main';
 
 import { DBClient } from "../services/db-client";
 import { RESTClient } from "../services/rest-client";
+import { BussinessClient } from "../services/business-service";
 import { NavController }  from "ionic-angular";
 declare var cordova;
 
 @Component({
-	template: '<ion-nav #nav [root]="rootPage"></ion-nav>'
+	template: '<ion-nav #nav></ion-nav>'
 })
 export class MyApp {
 
@@ -20,16 +22,25 @@ export class MyApp {
 
 	@ViewChild(Nav) nav: Nav;
 
-	constructor(public platform: Platform, private db: DBClient, private rest: RESTClient) {
+	constructor(public platform: Platform, private db: DBClient, private rest: RESTClient, private client: BussinessClient) {
 		this.initializeApp();
 	}
 
 	initializeApp() {
 		this.platform.ready().then(() => {
-			console.log("ready!");			
-			this.rootPage = Login;
+			console.log("ready!");	
+			this.client.getRegistration().subscribe((user) => {
+				if(user){
+					this.nav.setRoot(Main);
+				}else{
+					this.nav.setRoot(Login);
+				}
+			})
 			this.hideSplashScreen();
 			StatusBar.hide();
+			if(!window["cordova"]){
+				return;
+			}
 			//ensure folders exist
 			File.checkDir(cordova.file.dataDirectory, "leadliaison")
 			.then((exists)=>{

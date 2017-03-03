@@ -15,6 +15,7 @@ export class Gps {
 	@Input() prospect: DeviceFormMembership;
 	@Output() onChange = new EventEmitter<any>();
 	@Output() onValidationChange = new EventEmitter<any>();
+	@Input() readonly: boolean = false;
 
 	theForm : FormGroup = new FormGroup({});
 

@@ -13,6 +13,8 @@ export class SimpleName extends BaseGroupElement {
 	
 	@Input() rootGroup: FormGroup;
 
+	@Input() readonly: boolean = false;
+
 	nameMap = {
 		"FirstName": "First Name",
 		"LastName": "Last Name"

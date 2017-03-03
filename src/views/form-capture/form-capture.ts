@@ -27,13 +27,13 @@ export class FormCapture {
 	private backUnregister;
 
 	constructor(private navCtrl: NavController,
-		private navParams: NavParams,
-		private client: BussinessClient,
-		private zone: NgZone,
-		private modal: ModalController,
-		private alertCtrl: AlertController,
-		private platform: Platform) {
-
+			private navParams: NavParams,
+			private client: BussinessClient,
+			private zone: NgZone,
+			private modal: ModalController,
+			private alertCtrl: AlertController,
+			private platform: Platform) {
+		console.log("FormCapture");
 	}
 
 	ionViewWillEnter() {
@@ -51,6 +51,10 @@ export class FormCapture {
 				this.prospect = contact;
 			});
 		}
+	}
+
+	isReadOnly(submission: FormSubmission) : boolean{
+		return submission && submission.status == SubmissionStatus.Submitted;
 	}
 
 	ionViewDidEnter(){

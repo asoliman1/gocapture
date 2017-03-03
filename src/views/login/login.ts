@@ -73,10 +73,7 @@ export class Login {
 					this.navCtrl.setRoot(Main);
 				});
 		} else {
-			this.navCtrl.setRoot(Main);			
-			this.client.getUpdates().subscribe(done => {
-			}, (err) =>{
-			});
+			this.navCtrl.setRoot(Main);
 		}
 	}
 }

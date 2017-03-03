@@ -145,7 +145,7 @@ export class DBClient {
 			],
 			queries: {
 				"select": "SELECT * from org_master WHERE active = 1",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?"
 			}
 		}
@@ -168,6 +168,12 @@ export class DBClient {
 				],
 				queries: [
 					"INSERT INTO versions(version, updated_at) values (2, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			},
+			3: {
+				queries: [
+					"ALTER TABLE org_master add column pushRegistered integer default 0",
+					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
 			}
 		},
@@ -345,6 +351,7 @@ export class DBClient {
 					user.is_active = data.active;
 					user.last_name = data.operatorLastName;
 					user.title = data.title;
+					user.pushRegistered = data.pushRegistered;
 					this.registration = user;
 					return user;
 				}
@@ -486,7 +493,7 @@ export class DBClient {
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.activity_id, form.activity_id, form.status, form.id]);
+		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
@@ -513,7 +520,8 @@ export class DBClient {
 			user.email,
 			user.title,
 			user.first_name,
-			user.last_name
+			user.last_name,
+			user.pushRegistered
 		]).map(data => {
 			this.registration = user;
 			return data;

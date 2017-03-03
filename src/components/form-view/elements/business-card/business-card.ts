@@ -18,6 +18,7 @@ export class BusinessCard extends BaseElement {
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
+	@Input() readonly: boolean = false;
 
 	front: string = "assets/images/business-card-front.svg";
 	back: string = "assets/images/business-card-back.svg";
@@ -35,6 +36,9 @@ export class BusinessCard extends BaseElement {
 	}
 
 	captureImage(type: number) {
+		if(this.readonly){
+			return;
+		}
 		if ((type == this.FRONT && this.currentValue.front != this.front) ||
 				(type == this.BACK && this.currentValue.back != this.back)) {
 			let sheet = this.actionCtrl.create({

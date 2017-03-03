@@ -32966,6 +32966,39 @@ form-view ion-textarea.ng-dirty {
   color: #eb7f00;
 }
 
+form-view .text-input[disabled] {
+  opacity: .8;
+}
+
+form-view .checkbox-disabled, form-view .item-checkbox-disabled ion-label {
+  opacity: 0.8 !important;
+  pointer-events: none;
+}
+
+form-view .item-select-disabled ion-label {
+  opacity: 1;
+}
+
+form-view .select-disabled, form-view .item-select-disabled ion-label {
+  opacity: .8;
+}
+
+form-view .item-datetime-disabled ion-label {
+  opacity: 1;
+}
+
+form-view .datetime-disabled, form-view .item-datetime-disabled ion-label {
+  opacity: .8;
+}
+
+form-view .item-radio-disabled ion-label {
+  opacity: 1 !important;
+}
+
+form-view .radio-disabled, form-view .item-radio-disabled ion-label {
+  opacity: .8 !important;
+}
+
 .address .address-label {
   font-style: normal !important;
   font-size: 1.2em !important;
@@ -41004,22 +41037,6 @@ ion-item, *[ion-item] {
 .sync-list h3 {
   display: inline-block;
   vertical-align: bottom;
-}
-
-.forms.content-md .fixed-content {
-  margin-top: 56px !important;
-}
-
-.forms.content-md .scroll-content {
-  margin-top: 56px !important;
-}
-
-.forms.content-ios .fixed-content {
-  margin-top: 44px !important;
-}
-
-.forms.content-ios .scroll-content {
-  margin-top: 44px !important;
 }
 
 .login {

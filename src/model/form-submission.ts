@@ -13,19 +13,19 @@ export class FormSubmission{
 	activity_id: number = null;
 	fields : {[key: string]: string | string[]} = {};
 
+	public isSubmitted(): boolean{
+		return this.status == SubmissionStatus.Submitted;
+	}
+
 	public updateFields(form: Form){
 		form.elements.forEach(element => {
 			switch(element.type){
 				case "simple_name":
-					if(!this.first_name){
-						this.first_name = <any>this.fields[element["identifier"] + "_2"] || "";
-						this.last_name = <any>this.fields[element["identifier"] + "_1"] || "";
-					}
+					this.first_name = <any>this.fields[element["identifier"] + "_2"] || "";
+					this.last_name = <any>this.fields[element["identifier"] + "_1"] || "";
 					break;
 				case "email":
-					if(!this.email){
-						this.email = <any>this.fields[element["identifier"]] || "";
-					}
+					this.email = <any>this.fields[element["identifier"]] || "";
 					break;
 			}
 		});

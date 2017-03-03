@@ -143,12 +143,14 @@ export class Forms {
 	}
 
 	ionViewDidEnter() {
-		this.doRefresh();
-		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
-			if(type == "Forms" || type == "Submissions"){
-				this.doRefresh();
-			}
-		});
+		setTimeout(()=>{				
+			this.doRefresh();
+			this.sub = this.syncClient.entitySynced.subscribe((type)=>{
+				if(type == "Forms" || type == "Submissions"){
+					this.doRefresh();
+				}
+			});
+		}, 100);
 	}
 
 	ionViewDidLeave() {

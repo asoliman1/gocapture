@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { Input, SimpleChange } from '@angular/core';
 import { FormElement } from "../../../model";
 import { AbstractControl, FormGroup } from "@angular/forms";
 
@@ -11,6 +11,8 @@ export class BaseGroupElement {
 	mapping = [];
 
 	group: FormGroup = new FormGroup({});
+
+	readonly: boolean = false;
 
 	constructor() {
 

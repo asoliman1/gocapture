@@ -10,6 +10,7 @@ import { BaseGroupElement} from "../base-group-element";
 export class Address extends BaseGroupElement {
 	@Input() element: any;
 	@Input() rootGroup: FormGroup;
+	@Input() readonly: boolean = false;
 
 	constructor() {
 		super();

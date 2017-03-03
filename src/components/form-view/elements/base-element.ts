@@ -10,6 +10,8 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 	name: string;
 	formControlName: string;
 
+	readonly: boolean = false;
+
 	propagateChange:any = () => {};
     validateFn:any = () => {};
 

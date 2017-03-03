@@ -5,6 +5,7 @@
 				<ion-label>{{option.option}}</ion-label>
 				<ion-radio color="orange" [attr.name]="formControlName + index" 
 						   [value]="option.option" 
+						   [disabled]="readonly"
 						   [checked]="option.is_default == 1 || option.option == currentValue"></ion-radio>
 			</ion-item>
 		</ion-col>

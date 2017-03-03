@@ -79,9 +79,6 @@ export class FormReview {
 	}
 
 	goToEntry(submission) {
-		if (submission.status == SubmissionStatus.Submitted) {
-			return;
-		}
 		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
 

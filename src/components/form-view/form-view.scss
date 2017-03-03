@@ -39,4 +39,37 @@ form-view{
 	ion-textarea.ng-dirty {
 		color: #eb7f00;
 	}
+
+	.text-input[disabled] {
+		opacity: .8;
+	}
+
+	.checkbox-disabled, .item-checkbox-disabled ion-label {
+		opacity: 0.8 !important;
+		pointer-events: none;
+	}
+
+	.item-select-disabled ion-label {
+		opacity: 1;
+	}
+
+	.select-disabled, .item-select-disabled ion-label {
+		opacity: .8;
+	}
+
+	.item-datetime-disabled ion-label {
+		opacity: 1;
+	}
+
+	.datetime-disabled, .item-datetime-disabled ion-label {
+		opacity: .8;
+	}
+
+	.item-radio-disabled ion-label {
+		opacity: 1 !important;
+	}
+
+	.radio-disabled, .item-radio-disabled ion-label {
+		opacity: .8 !important;
+	}
 }

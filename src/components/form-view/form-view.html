@@ -13,10 +13,10 @@
 				<ion-label stacked>{{element.title}}</ion-label>
 				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
-			<dropdown *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></dropdown>
+			<dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></dropdown>
 			<ion-item *ngSwitchCase="'radio'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<radios item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
+				<radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
 			</ion-item>
 			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
 			<ion-item *ngSwitchCase="'textarea'">
@@ -25,7 +25,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'time'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-datetime displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+				<ion-datetime [disabled]="readOnly" (click)="setHour($event)" displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
 			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
 			<ion-item *ngSwitchCase="'money'">
@@ -38,27 +38,27 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'date'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-datetime displayFormat="DDD, DD MM YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+				<ion-datetime [disabled]="readOnly" (click)="setDate($event)" displayFormat="DDD, DD MM YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
 			<ion-item *ngSwitchCase="'phone'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<ion-input type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
 			<ion-item *ngSwitchCase="'checkbox'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<checkboxes item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
+				<checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
   			</ion-item>
 			<ion-item *ngSwitchCase="'image'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<image item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
+				<image [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
 			</ion-item>
 			<ion-item *ngSwitchCase="'business_card'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<business-card item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></business-card>
+				<business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></business-card>
 			</ion-item>
 			<ion-item *ngSwitchCase="'signature'">
 				<ion-label stacked>{{element.title}}</ion-label>
-				<signature item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
+				<signature [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
 			</ion-item>
 			<ion-item *ngSwitchDefault>
 				<ion-label>Coming soon! A component for {{element.type}}</ion-label>

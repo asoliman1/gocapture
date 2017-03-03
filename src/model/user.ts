@@ -13,4 +13,5 @@ export class User{
 	user_profile_picture : string;
 	is_active : 0 | 1;
 	db: string;
+	pushRegistered: 0 | 1 = 0;
 }

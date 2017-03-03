@@ -13,6 +13,7 @@ import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 export class Radios extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
+	@Input() readonly: boolean = false;
 
 	constructor() {
 		super();

@@ -1,5 +1,6 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../model";
+import { DateTime } from "ionic-angular";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs";
@@ -16,6 +17,10 @@ export class FormView {
 	@Output() onChange = new EventEmitter<any>();
 	@Output() onValidationChange = new EventEmitter<any>();
 
+	@Input() readOnly: boolean = false;
+
+	@ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
+
 	theForm : FormGroup = null;
 
 	displayForm: Form = <any>{};
@@ -23,7 +28,16 @@ export class FormView {
 	private sub: Subscription;
 
 	constructor(private fb: FormBuilder, private zone: NgZone) {
+		console.log("FormView");
+	}
 
+	 ngAfterViewInit() {
+		this.dateTimes.changes.subscribe((dateTime)=>{
+			console.log(dateTime);
+			this.dateTimes.forEach((dt) => {
+				dt.setValue(new Date().toISOString());
+			})
+		});
 	}
 
 	public hasChanges(): boolean{
@@ -47,8 +61,9 @@ export class FormView {
 	}
 
 	ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
-		if (changes['form']){
-			if(this.form) {
+		if (changes['form'] || changes['submission']){
+			if(this.form && this.submission) {
+				this.readOnly = this.submission.isSubmitted();
 				this.setupFormGroup();
 			}else{
 				this.theForm = new FormGroup({});
@@ -87,11 +102,11 @@ export class FormView {
 				var opts = {};
 				element.mapping.forEach((entry, index) =>{
 					entry["identifier"] = identifier + "_" + (index+1);
-					opts[entry["identifier"]] = new FormControl(data[entry["identifier"]] ? data[entry["identifier"]] : element.default_value, this.makeValidators(element));
+					opts[entry["identifier"]] = new FormControl({value: data[entry["identifier"]] ? data[entry["identifier"]] : element.default_value, disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
 				})
 				control = this.fb.group(opts);
 			}else{
-				control = this.fb.control({value : data[identifier] || element.default_value, disabled: element.is_readonly});
+				control = this.fb.control({value : data[identifier] || element.default_value, disabled: element.is_readonly || this.readOnly});
 				control.setValidators(this.makeValidators(element));
 			}
 			f.addControl(identifier, control);
@@ -126,5 +141,13 @@ export class FormView {
 
 	onInputChange(){
 
+	}
+
+	setHour(event){
+
+	}
+
+	setDate(event){
+		console.log(event);
 	}
 }

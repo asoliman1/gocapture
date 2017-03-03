@@ -80,6 +80,9 @@ export class Main {
 		}, function(reason) {
 			console.error(reason);
 		});
+		this.client.getUpdates().subscribe(done => {
+		}, (err) =>{
+		});
 	}
 
 	handleSync() : Subscription{
