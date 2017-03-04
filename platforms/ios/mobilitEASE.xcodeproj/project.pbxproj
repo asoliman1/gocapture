@@ -304,6 +304,7 @@
 		FA1CB5041E64DB74007D7A2A /* libtesseract.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtesseract.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libtesseract.a; sourceTree = "<group>"; };
 		FA1CB5051E64DB74007D7A2A /* libtiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtiff.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libtiff.a; sourceTree = "<group>"; };
 		FA1CB50C1E64DC65007D7A2A /* libGcmLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGcmLib.a; path = "../../plugins/phonegap-plugin-push/src/ios/GoogleCloudMessaging/Libraries/libGcmLib.a"; sourceTree = "<group>"; };
+		FA22928E1E6B26DF0003D774 /* mobilitEASE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mobilitEASE.entitlements; path = mobilitEASE/mobilitEASE.entitlements; sourceTree = "<group>"; };
 		FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVViewController+UpdateSupportedOrientations.h"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.h"; sourceTree = "<group>"; };
 		FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CDVViewController+UpdateSupportedOrientations.m"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.m"; sourceTree = "<group>"; };
 		FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YoikScreenOrientation.h; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; };
@@ -401,6 +402,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				FA22928E1E6B26DF0003D774 /* mobilitEASE.entitlements */,
 				FA1CB4E31E648247007D7A2A /* tessdata */,
 				EB87FDF41871DAF40020F90C /* config.xml */,
 				EB87FDF31871DA8E0020F90C /* www */,
@@ -678,6 +680,11 @@
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = K69VAF6CNF;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -885,6 +892,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = mobilitEASE/mobilitEASE.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -933,6 +941,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = mobilitEASE/mobilitEASE.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = K69VAF6CNF;
