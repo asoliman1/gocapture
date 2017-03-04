@@ -48,7 +48,13 @@
 			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
 		<ion-item>
-			<button ion-button  full large color="danger" (click)="unauthenticate()">Unauthenticate Device</button>
+			<button ion-button full large color="light" (click)="sync()"><ion-icon name=""></ion-icon> Sync</button>
+		</ion-item>
+		<ion-item>
+			<button ion-button full large color="danger" (click)="unauthenticate()">Unauthenticate Device</button>
+		</ion-item>
+		<ion-item>
+			<button ion-button full large color="light" (click)="recognize()">Recognize with Tesseract</button>
 		</ion-item>
 	</ion-list>
 

@@ -91,6 +91,10 @@ export class Forms {
 		});
 	}
 
+	sync() {
+		this.client.getUpdates().subscribe(()=> {});
+	}
+
 	getItems(event) {
 		let val = event.target.value;
 		let regexp = new RegExp(val, "i");

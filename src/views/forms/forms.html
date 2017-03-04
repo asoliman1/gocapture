@@ -5,7 +5,10 @@
     </button>
 		<ion-title>Forms</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="toggleSearch()" [class.search]="searchMode">
+			<button ion-button (click)="sync()" class="larger" >
+				<ion-icon name="sync"></ion-icon>
+			</button>
+			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
         <ion-icon name="search"></ion-icon>
       </button>
 		</ion-buttons>

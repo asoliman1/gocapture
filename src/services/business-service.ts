@@ -104,7 +104,7 @@ export class BussinessClient {
 					this.registration = user;
 					this.db.setupWorkDb(user.db);
 					this.rest.token = user.access_token;
-					if(user.pushRegistered == 0){
+					if(!user.pushRegistered || user.pushRegistered < 1){
 						this.rest.registerDeviceToPush(user.access_token, true).subscribe((done)=>{
 							if(done){
 								user.pushRegistered = 1;
@@ -144,19 +144,23 @@ export class BussinessClient {
 							.then((result) => {
 								reply.customer_logo = result.nativeURL;
 								this.registration = reply;
-								this.db.saveRegistration(reply).subscribe((done) => {
-									this.db.setupWorkDb(reply.db);
-									obs.next({user:reply, message: "Done"});
-									obs.complete();
-									this.sync.download(null).subscribe(downloadData => {
-									}, 
-									(err) => {
-										obs.error(err);
-									},
-									() => {
-										this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
-											obs.next({user:reply, message: "Done"});
-										})
+								reply.pushRegistered = 1;
+								this.rest.registerDeviceToPush(reply.access_token).subscribe((d)=>{
+									this.db.saveRegistration(reply).subscribe((done) => {
+										this.db.setupWorkDb(reply.db);
+										obs.next({user:reply, message: "Done"});
+										obs.complete();
+										let d = new Date();
+										this.sync.download(null).subscribe(downloadData => {
+										}, 
+										(err) => {
+											obs.error(err);
+										},
+										() => {
+											this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(()=>{
+												obs.next({user:reply, message: "Done"});
+											})
+										});
 									});
 								});
 							})
@@ -178,6 +182,7 @@ export class BussinessClient {
 				if(time){
 					d.setTime(parseInt(time));
 				}
+				let newD = new Date();
 				this.sync.download(time ? d : null).subscribe(downloadData => {
 					console.log(downloadData);
 				}, 
@@ -185,7 +190,7 @@ export class BussinessClient {
 					obs.error(err);
 				},
 				() =>{
-					this.db.saveConfig("lastSyncDate", new Date().getTime() + "").subscribe(()=>{
+					this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(()=>{
 						obs.next(true);
 						obs.complete();
 					})

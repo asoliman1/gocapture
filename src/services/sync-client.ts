@@ -69,11 +69,20 @@ export class SyncClient {
 			this.syncSource.next(this.lastSyncStatus);
 			this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
 				obs.next(result);
-				this.downloadContacts(result.forms, lastSyncDate, map, result).subscribe(() => {
+				let filteredForms = [];
+				let current = new Date();
+				forms.forEach(form => {
+					if(new Date(form.archive_date) > current){
+						filteredForms.push(form);
+					}else{
+						console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
+					}
+				});
+				this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
 					obs.next(result);
 					this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 						obs.next(result);
-						this.downloadSubmissions(result.forms, lastSyncDate, map, result).subscribe(() => {
+						this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
 							obs.complete();
 							this._isSyncing = false;
