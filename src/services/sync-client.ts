@@ -166,32 +166,37 @@ export class SyncClient {
 		});
 	}
 
+	private buildUrlMap(submission: FormSubmission, urlFields: string[], urlMap: {[key: string] : string}): boolean{
+		let hasUrls = false;
+		for(var field in submission.fields){
+			if(urlFields.indexOf(field) > -1){
+				let sub = submission.fields[field];
+				if(sub){
+					var val = [];
+					if(typeof(sub) == "object"){
+						Object.keys(sub).forEach((key)=>{
+							val.push(sub[key]);
+						});
+					}else{
+						val = val.concat(sub);
+					}
+					val.forEach((url) => { 
+						if(url){
+							urlMap[url] = "";
+							hasUrls = true;
+						}
+					});
+				}
+			}
+		}
+		return hasUrls;
+	}
+
 	private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission>{
 		return new Observable<FormSubmission>((obs :Observer<FormSubmission>) => {
 			let submission = data.submissions[index];
 			let urlMap: {[key: string]: string} = {};
-			let hasUrls = false;
-			for(var field in submission.fields){
-				if(data.urlFields.indexOf(field) > -1){
-					let sub = submission.fields[field];
-					if(sub){
-						var val = [];
-						if(typeof(sub) == "object"){
-							Object.keys(sub).forEach((key)=>{
-								val.push(sub[key]);
-							});
-						}else{
-							val = val.concat(sub);
-						}
-						val.forEach((url) => { 
-							if(url){
-								urlMap[url] = "";
-								hasUrls = true;
-							}
-						});
-					}
-				}
-			}
+			let hasUrls = this.buildUrlMap(submission, data.urlFields, urlMap);
 			this.uploadImages(urlMap, hasUrls).subscribe((d)=> {
 				for(var field in submission.fields){
 					if(data.urlFields.indexOf(field) > -1){
@@ -431,19 +436,7 @@ export class SyncClient {
 			let hasUrls = false;
 			submissions.forEach((submission) => {
 				let urlFields = map[submission.form_id].getUrlFields();
-				for(var field in submission.fields){
-					if(urlFields.indexOf(field) > -1){
-						if(submission.fields[field]){
-							var val = [].concat(submission.fields[field]);
-							val.forEach((url) => { 
-								if(url){
-									urlMap[url] = "";
-									hasUrls = true;
-								}
-							});
-						}
-					}
-				}
+				hasUrls = this.buildUrlMap(submission, urlFields, urlMap) || hasUrls;
 			});
 			if(!hasUrls){
 				obs.next(submissions);
@@ -459,14 +452,19 @@ export class SyncClient {
 						let urlFields = map[submission.form_id].getUrlFields();
 						for(var field in submission.fields){
 							if(urlFields.indexOf(field) > -1){
-								if(submission.fields[field]){
-									if(Array.isArray(submission.fields[field])){
+								let sub = submission.fields[field];
+								if(sub){
+									if(typeof(sub) == "object"){
+										Object.keys(sub).forEach((key)=>{
+											sub[key] = urlMap[sub[key]];
+										});
+									}else if(Array.isArray(sub)){
 										let val = <string[]> submission.fields[field];
 										for(let i = 0; i < val.length; i++){
 											val[i] = urlMap[val[i]];
 										}
 									}else{
-										submission.fields[field] = urlMap[<string>submission.fields[field]];
+										submission.fields[field] = urlMap[sub];
 									}
 								}
 							}
@@ -478,7 +476,7 @@ export class SyncClient {
 					fileTransfer.download(urls[index], cordova.file.dataDirectory + "leadliaison/images/dwn_" + new Date().getTime())
 					.then((value : FileEntry) => {
 						console.log(value);
-						urls[index] = value.fullPath;
+						urlMap[urls[index]] = value.fullPath;
 						index++;
 						setTimeout(()=>{
 							handler();

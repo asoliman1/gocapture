@@ -19,6 +19,7 @@ import { IonPullUpComponent } from '../components/ion-pullup';
 import { FormView } from '../components/form-view';
 import { BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
+import { FormControlPipe } from '../pipes/form-control-pipe';
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
 import { SignaturePadModule } from 'angular2-signaturepad';
@@ -38,6 +39,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     FormReview,
     FormCapture,
     ArrayFilterPipe,
+	FormControlPipe,
 	FormView,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch

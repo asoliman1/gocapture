@@ -171,7 +171,47 @@ export class RESTClient {
 						entry.email = item.email;
 						entry.form_id = parseInt(form.id);
 						item.data.forEach((dataItem) => {
-							entry.fields[dataItem.element_id] = dataItem.value;
+							if(!dataItem.value){
+								return;
+							}
+							let fieldName = "element_" + dataItem.element_id;
+							let field = form.getFieldById(dataItem.element_id);
+	
+							switch(field.type){
+								case "simple_name":
+								case "address":
+									let vals = dataItem.value.split(" ");
+									if(field.type == "address"){
+										if(vals.length > 6){
+											let tmp = [];
+											vals.forEach((val, index) => {
+												if(index <= 6){
+													tmp.push(val);
+												}else{
+													tmp[tmp.length - 1] += " " + val;
+												}
+											});
+											vals = tmp;
+										}
+									}
+									vals.forEach((value, index) => {
+										entry.fields[fieldName + "_" + (index+1)] = value;
+									});
+									break;
+								case "image":
+								case "business_card":
+									try{
+										entry.fields[fieldName] = JSON.parse(dataItem.value);
+									}catch(e){
+										console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
+									}
+									break;
+								case "checkbox":
+									entry.fields[fieldName] = dataItem.value.split(";");
+									break;
+								default:
+									entry.fields[fieldName] = dataItem.value;
+							}							
 						});
 						entry.first_name = "";
 						entry.last_name = "";

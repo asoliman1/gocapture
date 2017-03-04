@@ -52,6 +52,17 @@ export class Form extends BaseForm{
 		return Form.getIdByUniqueFieldName(name, this);
 	}
 
+	public getFieldById(id: number) : FormElement{
+		if(id > 0){
+			for(let i = 0; i < this.elements.length; i++){
+				if(this.elements[i].id == id){
+					return this.elements[i];
+				}
+			}
+		}
+		return null;
+	}
+
 	public computeIdentifiers(){
 		this.elements.forEach((element)=>{
 			if(element["identifier"]){
