@@ -8,7 +8,7 @@ export class BaseGroupElement {
 	
 	rootGroup: FormGroup;
 
-	mapping = [];
+	mapping: {id: number, identifier: string, label: string}[] = [];
 
 	group: FormGroup = new FormGroup({});
 

@@ -87,6 +87,10 @@ export class Dispatches {
 		});
 	}
 
+	sync() {
+		this.client.getUpdates().subscribe(()=> {});
+	}
+
 	presentActionSheet(form: DispatchOrder) {
 		let actionSheet = this.actionCtrl.create({
 			title: form.name,
