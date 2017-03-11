@@ -265,6 +265,17 @@ export class RESTClient {
 				return false;
 			});
 	}
+
+	public unauthenticate(token: string): Observable<boolean>{
+		return this.call<BaseResponse>("POST", '/devices/unauthenticate.json?access_token=' + token, null)
+		.map((resp: BaseResponse) => {
+				if (resp.status == "200") {
+					return true;
+				}
+				this.errorSource.error(resp);
+				return false;
+			});
+	}
 	/**
 	 * 
 	 * @returns Observable

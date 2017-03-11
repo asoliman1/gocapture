@@ -29,7 +29,7 @@ export class MyApp {
 	initializeApp() {
 		this.platform.ready().then(() => {
 			console.log("ready!");	
-			this.client.getRegistration().subscribe((user) => {
+			this.client.getRegistration(true).subscribe((user) => {
 				if(user){
 					this.nav.setRoot(Main);
 				}else{

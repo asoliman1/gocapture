@@ -1,7 +1,7 @@
 <ion-row class="simpleName" [formGroup]="group">
 	<ion-col *ngFor="let map of mapping">
 		<ion-item>
-			<ion-label stacked>{{nameMap[map.label]}}</ion-label>
+			<ion-label stacked [class.required]="element.is_required">{{nameMap[map.label]}}</ion-label>
 			<ion-input type="text" [attr.name]="map.id" [formControlName]="map.identifier"></ion-input>
 		</ion-item>
 	</ion-col>

@@ -32950,6 +32950,13 @@ form-view radios.ng-dirty .item-radio-checked .item-inner {
   border-bottom: 1px solid #eb7f00 !important;
 }
 
+form-view ion-label.required:after {
+  content: "*";
+  font-weight: bold;
+  padding-left: 5px;
+  color: red;
+}
+
 form-view ion-select.ng-dirty {
   color: #eb7f00;
 }
@@ -33030,6 +33037,24 @@ address, .address {
   -webkit-transform-origin: top left;
   transform-origin: top left;
   height: 100%;
+}
+
+.business.card img.hidden {
+  opacity: 0;
+}
+
+.business.card ion-spinner {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  z-index: 40;
+  left: 0;
+  top: 0;
+  margin: 10% 0 0 20%;
+}
+
+.business.card ion-spinner.hidden {
+  display: none;
 }
 
 checkboxes, .checkboxes {
@@ -33185,7 +33210,7 @@ ion-pullup ion-footer ion-pullup-tab {
   color: white;
   border-radius: 20px 20px 0 0;
   margin: 0 auto;
-  box-shadow: 0px -3px 2px #ddd;
+  box-shadow: none;
 }
 
 ion-pullup ion-footer ion-content {
@@ -40897,7 +40922,7 @@ ion-pullup ion-footer ion-content {
 }
 
 ion-pullup ion-footer ion-toolbar {
-  box-shadow: 0px -3px 2px #ddd;
+  box-shadow: none;
 }
 
 ion-pullup ion-footer ion-toolbar .toolbar-background {

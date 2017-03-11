@@ -16,7 +16,7 @@ $tabShadow:         #ddd;                             // shadow color
 }
 
 @mixin pullup-tab-shadow($shadowColor) {
-    box-shadow: 0px -3px 2px $shadowColor;
+    box-shadow: none;
 }
 
 ion-pullup { 

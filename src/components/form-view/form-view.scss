@@ -24,6 +24,13 @@ form-view{
 		border-bottom: 1px solid #eb7f00 !important;
 	}
 
+	ion-label.required:after{
+		content: "*";
+		font-weight: bold;
+		padding-left: 5px;
+		color: red;
+	}
+
 	ion-select.ng-dirty{
 		color: #eb7f00;
 	}

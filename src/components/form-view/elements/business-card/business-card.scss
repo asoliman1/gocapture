@@ -12,4 +12,20 @@
     	transform-origin: top left;
     	height: 100%;
 	}
+	img.hidden{
+		opacity: 0;
+	}
+	ion-spinner{
+		position: absolute;
+		width: 60%;
+		height: 60%;
+		z-index: 40;
+		left: 0;
+		top: 0;
+		margin: 10% 0 0 20%;
+	}
+
+	ion-spinner.hidden{
+		display: none;
+	}
 }

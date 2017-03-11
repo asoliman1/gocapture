@@ -82,7 +82,7 @@ export class Settings {
 				{
 					text: 'Unauthenticate',
 					handler: () => {
-						this.db.deleteRegistration(this.user.id + "").subscribe(()=>{
+						this.client.unregister(this.user).subscribe(()=>{
 							this.user = <any>{};
 							setTimeout(()=>{
 								this.navCtrl.setRoot(Login);

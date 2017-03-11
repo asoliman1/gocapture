@@ -97,14 +97,14 @@ export class BussinessClient {
 		}
 	}
 
-	public getRegistration(): Observable<User> {
+	public getRegistration(registerForPush? : boolean): Observable<User> {
 		return new Observable<User>((obs: Observer<User>) => {
 			this.db.getRegistration().subscribe((user) => {
 				if (user) {
 					this.registration = user;
 					this.db.setupWorkDb(user.db);
 					this.rest.token = user.access_token;
-					if(!user.pushRegistered || user.pushRegistered < 1){
+					if(registerForPush){
 						this.rest.registerDeviceToPush(user.access_token, true).subscribe((done)=>{
 							if(done){
 								user.pushRegistered = 1;
@@ -171,6 +171,25 @@ export class BussinessClient {
 								obs.error("There was an error retrieving the logo picture")
 							});
 					});
+			});
+		});
+	}
+
+	public unregister(user: User): Observable<User>{
+		return new Observable<User>((obs: Observer<User>) => {
+			this.rest.unauthenticate(user.access_token).subscribe((done)=>{
+				if(done){
+					this.db.deleteRegistration(user.id + "").subscribe(()=>{					
+						obs.next(user);
+						obs.complete();
+					}, err => {
+						obs.error(err);
+					});
+				}else{
+					obs.error("Could not unauthenticate");
+				}
+			}, err => {
+				obs.error(err);
 			});
 		});
 	}

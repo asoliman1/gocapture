@@ -1,5 +1,5 @@
 <div class="address" [formGroup]="group">
-	<ion-label class="address-label" stacked>{{element.title}}</ion-label>
+	<ion-label class="address-label" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 	<ion-grid>
 		<ion-row responsive-sm>
 			<ion-col>

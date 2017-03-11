@@ -23,6 +23,9 @@ export class BusinessCard extends BaseElement {
 	front: string = "assets/images/business-card-front.svg";
 	back: string = "assets/images/business-card-back.svg";
 
+	backLoading: boolean = false;
+	frontLoading: boolean = false;
+
 	FRONT: number = 0;
 	BACK: number = 1;
 
@@ -77,17 +80,13 @@ export class BusinessCard extends BaseElement {
 		Camera.getPicture({
 			sourceType: 1
 		}).then(imageData => {
+			if(type == this.FRONT){
+				this.frontLoading = true;
+			}else{
+				this.backLoading = true;
+			}
 			let ctrl = this.alertCtrl;
 			this.ensureLandscape(imageData).subscribe((data) => {
-				window["TesseractPlugin"] && TesseractPlugin.recognizeText(data.split("base64,")[1], "eng", function(recognizedText) {
-					let alert = ctrl.create({
-						title: "Tesseract OCR",
-						message: "<pre>" + recognizedText + "</pre>"
-					});
-					alert.present();
-				}, function(reason) {
-					console.error( reason);
-				});
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
 				if (data != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
@@ -101,6 +100,17 @@ export class BusinessCard extends BaseElement {
 				} else {
 					doMove(imageData);
 				}
+				setTimeout(()=>{
+					window["TesseractPlugin"] && TesseractPlugin.recognizeText(data.split("base64,")[1], "eng", function(recognizedText) {
+						let alert = ctrl.create({
+							title: "Tesseract OCR",
+							message: "<pre>" + recognizedText + "</pre>"
+						});
+						alert.present();
+					}, function(reason) {
+						console.error( reason);
+					});
+				}, 250);
 			});
 			var doMove = (imageData) => {
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
@@ -132,12 +142,12 @@ export class BusinessCard extends BaseElement {
 		this.propagateChange(v);
 	}
 
-	onImageLoaded(event) {
-		/*if (event.currentTarget.naturalWidth < event.currentTarget.naturalHeight) {
-			event.currentTarget.className = "rotateright";
-		} else {
-			event.currentTarget.className = "";
-		}*/
+	onImageLoaded(event, front) {
+		if(front){
+			this.frontLoading = false;
+		}else{
+			this.backLoading = false;
+		}
 	}
 
 	ensureLandscape(url: string): Observable<string> {

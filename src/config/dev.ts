@@ -11,7 +11,7 @@ export function setupConfig() {
 	}
 }
 
-class FileTransfer {
+/*class FileTransfer {
 	public download(source: string, target: string, successCallback: Function, errorCallback: Function, trustAllHosts: boolean, options: any) {
 		setTimeout(() => {
 			successCallback && successCallback({
@@ -44,4 +44,4 @@ window["device"] = {
 	manufacturer: "Google",
 	version: "5.2",
 	uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
-};
+};*/
