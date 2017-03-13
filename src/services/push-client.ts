@@ -20,6 +20,12 @@ export class PushClient {
      */
 	notification: Observable<{id: number, action: number}>;
 
+	private registrationSource: BehaviorSubject<string>;
+    /**
+     * Error event
+     */
+	registration: Observable<string>;
+
 	private push: PushNotification;
 	/**{
 		on: (event: "registration" | "notification" | "error", callback: (data: PushResponse) => void) => void,
@@ -34,6 +40,9 @@ export class PushClient {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		
+		this.registrationSource = new BehaviorSubject<string>(null);
+		this.registration = this.registrationSource.asObservable();
+		
 		this.notificationSource = new BehaviorSubject<{id: number, action: number}>(null);
 		this.notification = this.notificationSource.asObservable();
 	}
@@ -41,7 +50,9 @@ export class PushClient {
 	initialize(){
 		this.push = <any>Push.init({
 			android: {
-				senderID: Config.androidGcmId
+				senderID: Config.androidGcmId,
+				icon: "icon_notif",
+				iconColor: "orange"
 			},
 			ios: {
 				alert: 'true',
@@ -75,6 +86,7 @@ export class PushClient {
 
 	private onRegistration(data : PushResponse){
 		console.log("registration", data);
+		this.registrationSource.next(data.registrationId);
 	}
 
 	private onNotification(data : NotificationEventResponse){

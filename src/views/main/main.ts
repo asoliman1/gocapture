@@ -57,6 +57,7 @@ export class Main {
 	ngOnInit() {
 		this.client.getRegistration().subscribe(user => {
 			this.user = user;
+			this.client.setupNotifications();
 		});
 	}
 

@@ -14,4 +14,5 @@ export class User{
 	is_active : 0 | 1;
 	db: string;
 	pushRegistered: 0 | 1 = 0;
+	device_token: string;
 }

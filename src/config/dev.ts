@@ -1,7 +1,7 @@
 import { Config } from "./";
 const CFG = {
 	serverUrl: "https://demo-api.leadliaison.com/v1.0",
-	androidGcmId: "668502260026"
+	androidGcmId: "56276941492"
 };
 
 export function setupConfig() {

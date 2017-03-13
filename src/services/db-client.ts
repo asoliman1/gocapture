@@ -146,7 +146,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from org_master where id = ?"
+				"delete": "DELETE from org_master where id = ?",
+				'updateRegistration': 'UPDATE org_master set registrationId = ?'
 			}
 		}
 	];
@@ -174,6 +175,12 @@ export class DBClient {
 				queries: [
 					"ALTER TABLE org_master add column pushRegistered integer default 0",
 					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			},
+			4: {
+				queries: [
+					"ALTER TABLE org_master add column registrationId text",
+					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
 			}
 		},
@@ -254,6 +261,24 @@ export class DBClient {
 	 */
 	public deleteConfig(key: string): Observable<boolean> {
 		return this.remove(WORK, "configuration", [key]);
+	}
+
+	public updateRegistration(registrationid: string): Observable<boolean>{
+		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
+			this.manager.db(MASTER).subscribe((db) => {
+				db.executeSql(this.getQuery('org_master', "updateRegistration"), [registrationid])
+					.then((data) => {
+						if (data.rowsAffected == 1) {
+							responseObserver.next(true);
+							responseObserver.complete();
+						} else {
+							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+						}
+					}, (err) => {
+						responseObserver.error("An error occured: " + err);
+					});
+			});
+		});
 	}
 
 	private parseForm(dbForm): Form {
@@ -361,6 +386,7 @@ export class DBClient {
 					user.last_name = data.operatorLastName;
 					user.title = data.title;
 					user.pushRegistered = data.pushRegistered;
+					user.device_token = data.registrationId;
 					this.registration = user;
 					return user;
 				}
