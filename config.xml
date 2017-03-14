@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.leadliaison.mobilitease" version="2.0.1" android-versionCode="200186" ios-CFBundleVersion="186" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.leadliaison.mobilitease" version="2.0.1" android-versionCode="200187" ios-CFBundleVersion="187" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>mobilitEASE</name>
   <description>LeadLiason MobilitEASE app</description>
   <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -80,8 +80,9 @@
 	<feature name="SplashScreen">
 		<param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen"/>
 	</feature>
-  <preference name="FadeSplashScreen" value="false"/>
-  <preference name="FadeSplashScreenDuration" value="0"/>
+  <preference name="ShowSplashScreenSpinner" value="false" />  
+  <preference name="FadeSplashScreen" value="true" />  
+  <preference name="FadeSplashScreenDuration" value="1" />
   <preference name="SplashScreenBackgroundColor" value="0xFFFFFFFF"/>
   <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
 <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
