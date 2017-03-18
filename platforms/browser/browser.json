@@ -81,6 +81,9 @@
             "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
             "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7",
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {},
@@ -490,6 +493,14 @@
             "clobbers": [
                 "window.fabric.Crashlytics"
             ]
+        },
+        {
+            "file": "plugins/com.verso.cordova.clipboard/www/clipboard.js",
+            "id": "com.verso.cordova.clipboard.Clipboard",
+            "pluginId": "com.verso.cordova.clipboard",
+            "clobbers": [
+                "cordova.plugins.clipboard"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -511,6 +522,7 @@
         "cordova-sqlite-storage": "1.4.7",
         "phonegap-plugin-push": "1.8.2",
         "cordova-plugin-screen-orientation": "1.4.2",
-        "cordova-fabric-plugin": "1.1.7"
+        "cordova-fabric-plugin": "1.1.7",
+        "com.verso.cordova.clipboard": "0.1.0"
     }
 }

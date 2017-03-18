@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { User } from "../../model";
-import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, ModalController } from 'ionic-angular';
 import { DBClient } from "../../services/db-client";
 import { BussinessClient } from "../../services/business-service";
 import { AppVersion } from 'ionic-native';
 import { Login } from "../login";
-
+import { LogView } from "../log";
 @Component({
 	selector: 'settings',
 	templateUrl: 'settings.html'
@@ -21,7 +21,8 @@ export class Settings {
 		private navParams: NavParams,
 		private db: DBClient,
 		private client: BussinessClient,
-		private alertCtrl: AlertController) {
+		private alertCtrl: AlertController,
+		private modalCtrl: ModalController) {
 		AppVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
@@ -36,6 +37,11 @@ export class Settings {
 			});
 		});
 
+	}
+
+	showLogs(){
+		let modal = this.modalCtrl.create(LogView);
+		modal.present();
 	}
 
 	onChange() {

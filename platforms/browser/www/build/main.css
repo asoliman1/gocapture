@@ -32950,6 +32950,13 @@ form-view radios.ng-dirty .item-radio-checked .item-inner {
   border-bottom: 1px solid #eb7f00 !important;
 }
 
+form-view ion-label.required:after {
+  content: "*";
+  font-weight: bold;
+  padding-left: 5px;
+  color: red;
+}
+
 form-view ion-select.ng-dirty {
   color: #eb7f00;
 }
@@ -32964,6 +32971,39 @@ form-view ion-input.ng-dirty {
 
 form-view ion-textarea.ng-dirty {
   color: #eb7f00;
+}
+
+form-view .text-input[disabled] {
+  opacity: .8;
+}
+
+form-view .checkbox-disabled, form-view .item-checkbox-disabled ion-label {
+  opacity: 0.8 !important;
+  pointer-events: none;
+}
+
+form-view .item-select-disabled ion-label {
+  opacity: 1;
+}
+
+form-view .select-disabled, form-view .item-select-disabled ion-label {
+  opacity: .8;
+}
+
+form-view .item-datetime-disabled ion-label {
+  opacity: 1;
+}
+
+form-view .datetime-disabled, form-view .item-datetime-disabled ion-label {
+  opacity: .8;
+}
+
+form-view .item-radio-disabled ion-label {
+  opacity: 1 !important;
+}
+
+form-view .radio-disabled, form-view .item-radio-disabled ion-label {
+  opacity: .8 !important;
 }
 
 .address .address-label {
@@ -32997,6 +33037,24 @@ address, .address {
   -webkit-transform-origin: top left;
   transform-origin: top left;
   height: 100%;
+}
+
+.business.card img.hidden {
+  opacity: 0;
+}
+
+.business.card ion-spinner {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  z-index: 40;
+  left: 0;
+  top: 0;
+  margin: 10% 0 0 20%;
+}
+
+.business.card ion-spinner.hidden {
+  display: none;
 }
 
 checkboxes, .checkboxes {
@@ -33152,7 +33210,7 @@ ion-pullup ion-footer ion-pullup-tab {
   color: white;
   border-radius: 20px 20px 0 0;
   margin: 0 auto;
-  box-shadow: 0px -3px 2px #ddd;
+  box-shadow: none;
 }
 
 ion-pullup ion-footer ion-content {
@@ -40864,7 +40922,7 @@ ion-pullup ion-footer ion-content {
 }
 
 ion-pullup ion-footer ion-toolbar {
-  box-shadow: 0px -3px 2px #ddd;
+  box-shadow: none;
 }
 
 ion-pullup ion-footer ion-toolbar .toolbar-background {
@@ -41006,20 +41064,13 @@ ion-item, *[ion-item] {
   vertical-align: bottom;
 }
 
-.forms.content-md .fixed-content {
-  margin-top: 56px !important;
+.log .showAll {
+  word-wrap: break-word;
+  white-space: initial;
 }
 
-.forms.content-md .scroll-content {
-  margin-top: 56px !important;
-}
-
-.forms.content-ios .fixed-content {
-  margin-top: 44px !important;
-}
-
-.forms.content-ios .scroll-content {
-  margin-top: 44px !important;
+.log ion-item.activated {
+  background-color: white !important;
 }
 
 .login {

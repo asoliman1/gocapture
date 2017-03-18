@@ -99,7 +99,11 @@ export class Main {
 			}
 		},
 		(err) => {
-
+			setTimeout(()=>{
+				this.pullup.minimize();
+				this.sub.unsubscribe();
+				this.sub = this.handleSync();
+			}, 200);
 		},
 		() => {
 			setTimeout(()=>{

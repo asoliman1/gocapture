@@ -204,7 +204,7 @@ export class BussinessClient {
 				}
 				let newD = new Date();
 				this.sync.download(time ? d : null).subscribe(downloadData => {
-					console.log(downloadData);
+					//console.log(downloadData);
 				},
 					(err) => {
 						obs.error(err);

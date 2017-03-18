@@ -371,6 +371,14 @@ module.exports = [
         "clobbers": [
             "window.fabric.Crashlytics"
         ]
+    },
+    {
+        "id": "com.verso.cordova.clipboard.Clipboard",
+        "file": "plugins/com.verso.cordova.clipboard/www/clipboard.js",
+        "pluginId": "com.verso.cordova.clipboard",
+        "clobbers": [
+            "cordova.plugins.clipboard"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -394,7 +402,8 @@ module.exports.metadata =
     "cordova-plugin-whitelist": "1.3.0",
     "cordova-sqlite-storage": "1.4.7",
     "phonegap-plugin-push": "1.8.2",
-    "cordova-fabric-plugin": "1.1.7"
+    "cordova-fabric-plugin": "1.1.7",
+    "com.verso.cordova.clipboard": "0.1.0"
 };
 // BOTTOM OF METADATA
 });

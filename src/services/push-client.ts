@@ -61,6 +61,9 @@ export class PushClient {
 			},
 			windows: {}
 		});
+		if(this.push && this.push['error']){
+			this.push = null;
+		}
 		this.startup();
 	}
 
@@ -74,14 +77,14 @@ export class PushClient {
 
 	shutdown(){
 		for(let event in this.refs){
-			this.push.off(<any>event, this.refs[event])
+			this.push && this.push.off(<any>event, this.refs[event])
 		}
 	}
 
 	private on(event: "registration" | "notification" | "error", cb: Function){
 		let func = Util.proxy(cb, this);
 		this.refs[event] = func;
-		this.push.on(event, func);
+		this.push && this.push.on(event, func);
 	}
 
 	private onRegistration(data : PushResponse){

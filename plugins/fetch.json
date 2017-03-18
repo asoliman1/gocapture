@@ -156,5 +156,14 @@
             "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
             "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
         }
+    },
+    "com.verso.cordova.clipboard": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/VersoSolutions/CordovaClipboard.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

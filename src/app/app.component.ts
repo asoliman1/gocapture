@@ -8,6 +8,7 @@ import { Login } from '../views/login';
 import { Main } from '../views/main';
 
 import { DBClient } from "../services/db-client";
+import { LogClient } from "../services/log-client";
 import { RESTClient } from "../services/rest-client";
 import { BussinessClient } from "../services/business-service";
 import { NavController }  from "ionic-angular";
@@ -22,7 +23,12 @@ export class MyApp {
 
 	@ViewChild(Nav) nav: Nav;
 
-	constructor(public platform: Platform, private db: DBClient, private rest: RESTClient, private client: BussinessClient) {
+	constructor(
+			public platform: Platform, 
+			private db: DBClient, 
+			private rest: RESTClient, 
+			private client: BussinessClient,
+			private logClient: LogClient) {
 		this.initializeApp();
 	}
 
@@ -37,7 +43,7 @@ export class MyApp {
 				}
 			})
 			this.hideSplashScreen();
-			StatusBar.hide();
+			//StatusBar.hide();
 			if(!window["cordova"]){
 				return;
 			}

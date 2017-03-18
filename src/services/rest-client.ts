@@ -253,7 +253,7 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public registerDeviceToPush(device_token: string, receiveNotifications: boolean = true): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json?access_token=' + this.token, {
+		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json', {
 			device_token: device_token,
 			is_allow_to_receive_notification: receiveNotifications
 		})
@@ -267,7 +267,7 @@ export class RESTClient {
 	}
 
 	public unauthenticate(token: string): Observable<boolean>{
-		return this.call<BaseResponse>("POST", '/devices/unauthenticate.json?access_token=' + token, null)
+		return this.call<BaseResponse>("POST", '/devices/unauthenticate.json', null)
 		.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
 					return true;
@@ -338,7 +338,7 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public submitForm(data: FormSubmission): Observable<number> {
-		return this.call<BaseResponse>("POST", "/forms/submit.json?access_token=" + this.token, data)
+		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				if (resp.status == "200") {
 					return resp.activity_id;
@@ -377,7 +377,7 @@ export class RESTClient {
 
 	public uploadFiles(req: FileUploadRequest) : Observable<FileResponse[]>{
 		return new Observable<FileResponse[]>((obs: Observer<FileResponse[]>) => {
-			this.call<FileUploadResponse>("POST", "/drive/upload.json?access_token=" + this.token, req)
+			this.call<FileUploadResponse>("POST", "/drive/upload.json", req)
 			.subscribe((data: FileUploadResponse) => {
 				if (data.status == "200") {
 					obs.next(data.files);

@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Images.xcassets */; };
 		07193201F4F445DFA734E489 /* libGTMSessionFetcher_full.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C30DB92FC942A881C6D5F6 /* libGTMSessionFetcher_full.a */; };
@@ -116,6 +115,7 @@
 		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
 		FDC1B107BA344D01A3DBA1F0 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97FD95EE5BBE42ED93D99E6B /* Fabric.framework */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
+		778C7115303641F3A9A018BE /* CDVClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AF13B838224ABC874C085A /* CDVClipboard.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -311,6 +311,8 @@
 		FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YoikScreenOrientation.m; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; };
 		FB73860783514C6797D20399 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
 		FC384F105F8F47E4AFF41CBA /* GGLContext.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLContext.h; path = "phonegap-plugin-push/GCM/Headers/GGLContext.h"; sourceTree = "<group>"; };
+		E4AF13B838224ABC874C085A /* CDVClipboard.m */ = {isa = PBXFileReference; name = "CDVClipboard.m"; path = "com.verso.cordova.clipboard/CDVClipboard.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		E9D198B1EE2348C5BCB6BA35 /* CDVClipboard.h */ = {isa = PBXFileReference; name = "CDVClipboard.h"; path = "com.verso.cordova.clipboard/CDVClipboard.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -623,6 +625,8 @@
 				D89D6801F27343BEBC5477EB /* PSYBlockTimer.h */,
 				400EA91FC1234F8D967A9595 /* GMPHAsset.h */,
 				23BB7694833D4BEF91467914 /* FabricPlugin.m */,
+				E4AF13B838224ABC874C085A /* CDVClipboard.m */,
+				E9D198B1EE2348C5BCB6BA35 /* CDVClipboard.h */,
 			);
 			name = Plugins;
 			path = mobilitEASE/Plugins;
@@ -659,6 +663,7 @@
 				797F6C2896671E8701452934 /* [CP] Embed Pods Frameworks */,
 				C03E0C39E4CACB4CF34E1B3F /* [CP] Copy Pods Resources */,
 				C87A055A6AAC433681F59014 /* Fabric.io: Crashlytics */,
+				18F82EBA37F342D3B3A53705 /* "Fabric.io: Crashlytics" */,
 			);
 			buildRules = (
 			);
@@ -809,7 +814,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobilitEASE/Pods-mobilitEASE-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C87A055A6AAC433681F59014 /* Fabric.io: Crashlytics */ = {
+		18F82EBA37F342D3B3A53705 /* "Fabric.io: Crashlytics" */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -869,6 +874,7 @@
 				B48B80C18B92456C8CFEC98E /* PSYBlockTimer.m in Sources */,
 				E4F58FC8CA1C4796AB4C2C0A /* GMPHAsset.m in Sources */,
 				670DCB356DB94B9782E86666 /* FabricPlugin.m in Sources */,
+				778C7115303641F3A9A018BE /* CDVClipboard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
