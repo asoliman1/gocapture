@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Images.xcassets */; };
 		07193201F4F445DFA734E489 /* libGTMSessionFetcher_full.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C30DB92FC942A881C6D5F6 /* libGTMSessionFetcher_full.a */; };
@@ -50,6 +51,7 @@
 		7115796CCB0B4F47B7110F71 /* libGTM_NSStringXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE3F3E417B2245138C4CB9D5 /* libGTM_NSStringXML.a */; };
 		71B0852CA9DA4DDC99017429 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96380BFB7C0C49E9BA3090A5 /* AVFoundation.framework */; };
 		73B6AD5A989D41ACA04E1E49 /* ca.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 0BAA45DE39594C9AA44880F8 /* ca.lproj */; };
+		778C7115303641F3A9A018BE /* CDVClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AF13B838224ABC874C085A /* CDVClipboard.m */; };
 		7ABD77FB470447B3A8E93241 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 810B5B3EDEDD4515831A950A /* AddressBook.framework */; };
 		7F154E3EA3284176A1792351 /* GMVideoIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D4CD568799CE4E06A29118CD /* GMVideoIcon@2x.png */; };
 		7F6C1309E7D547BD990B30CC /* de.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 3883D080A2E94D34BC7CAE3F /* de.lproj */; };
@@ -115,7 +117,6 @@
 		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
 		FDC1B107BA344D01A3DBA1F0 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97FD95EE5BBE42ED93D99E6B /* Fabric.framework */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
-		778C7115303641F3A9A018BE /* CDVClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AF13B838224ABC874C085A /* CDVClipboard.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -278,6 +279,8 @@
 		D9B797D6A1DE4990A5D8374A /* QuartzCore.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		DC92FE0A38774CEEB11AF01A /* libGIP_Reachability.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libGIP_Reachability.a; path = "mobilitEASE/Plugins/phonegap-plugin-push/GCM/Libraries/libGIP_Reachability.a"; sourceTree = "<group>"; };
 		E3E670ECB70E42C79790053C /* GCMConfig.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GCMConfig.h; path = "phonegap-plugin-push/GCM/Headers/GCMConfig.h"; sourceTree = "<group>"; };
+		E4AF13B838224ABC874C085A /* CDVClipboard.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVClipboard.m; path = com.verso.cordova.clipboard/CDVClipboard.m; sourceTree = "<group>"; };
+		E9D198B1EE2348C5BCB6BA35 /* CDVClipboard.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVClipboard.h; path = com.verso.cordova.clipboard/CDVClipboard.h; sourceTree = "<group>"; };
 		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -311,8 +314,6 @@
 		FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YoikScreenOrientation.m; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; };
 		FB73860783514C6797D20399 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
 		FC384F105F8F47E4AFF41CBA /* GGLContext.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLContext.h; path = "phonegap-plugin-push/GCM/Headers/GGLContext.h"; sourceTree = "<group>"; };
-		E4AF13B838224ABC874C085A /* CDVClipboard.m */ = {isa = PBXFileReference; name = "CDVClipboard.m"; path = "com.verso.cordova.clipboard/CDVClipboard.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
-		E9D198B1EE2348C5BCB6BA35 /* CDVClipboard.h */ = {isa = PBXFileReference; name = "CDVClipboard.h"; path = "com.verso.cordova.clipboard/CDVClipboard.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -662,8 +663,7 @@
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
 				797F6C2896671E8701452934 /* [CP] Embed Pods Frameworks */,
 				C03E0C39E4CACB4CF34E1B3F /* [CP] Copy Pods Resources */,
-				C87A055A6AAC433681F59014 /* Fabric.io: Crashlytics */,
-				18F82EBA37F342D3B3A53705 /* "Fabric.io: Crashlytics" */,
+				18F82EBA37F342D3B3A53705 /* Fabric.io: Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -754,6 +754,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		18F82EBA37F342D3B3A53705 /* Fabric.io: Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fabric.io: Crashlytics";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/\"mobilitEASE\"/Plugins/cordova-fabric-plugin/Fabric.framework/run 87c5f596ba1288e89c53293ff749dca7b2f1ec1a 1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7";
+			showEnvVarsInLog = 0;
+		};
 		304B58A110DAC018002A0835 /* Copy www directory */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -812,21 +827,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobilitEASE/Pods-mobilitEASE-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		18F82EBA37F342D3B3A53705 /* "Fabric.io: Crashlytics" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Fabric.io: Crashlytics";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/\"mobilitEASE\"/Plugins/cordova-fabric-plugin/Fabric.framework/run 87c5f596ba1288e89c53293ff749dca7b2f1ec1a 1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
