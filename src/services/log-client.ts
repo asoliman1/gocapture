@@ -31,21 +31,23 @@ export class LogClient{
 	private makeConsole() : any{
 		return {
 			log: Util.proxy(function(message){
-								this.logEntry(message, LogSeverity.LOG)
+								this.logEntry(arguments, LogSeverity.LOG)
 							}, this),
 			error: Util.proxy(function(message){
-								this.logEntry(message, LogSeverity.ERROR)
+								this.logEntry(arguments, LogSeverity.ERROR)
 							}, this),
 			info: Util.proxy(function(message){
-								this.logEntry(message, LogSeverity.INFO)
+								this.logEntry(arguments, LogSeverity.INFO)
 							}, this),
 			warn: Util.proxy(function(message){
-								this.logEntry(message, LogSeverity.WARN)
+								this.logEntry(arguments, LogSeverity.WARN)
 							}, this)
 		}
 	}
 
-	private logEntry(message: any, severity: LogSeverity){
+	private logEntry(messages: any[], severity: LogSeverity){
+		this.consoleHandler[severity.name].apply(this.consoleHandler, messages);
+		var message = messages[0];
 		if(typeof(message) == "object"){
 			var cache = [];
 			message = JSON.stringify(message, function(key, value) {
