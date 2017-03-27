@@ -28,12 +28,10 @@ export class FormView {
 	private sub: Subscription;
 
 	constructor(private fb: FormBuilder, private zone: NgZone) {
-		console.log("FormView");
 	}
 
 	 ngAfterViewInit() {
 		this.dateTimes.changes.subscribe((dateTime)=>{
-			console.log(dateTime);
 			this.dateTimes.forEach((dt) => {
 				dt.setValue(new Date().toISOString());
 			})
@@ -148,6 +146,6 @@ export class FormView {
 	}
 
 	setDate(event){
-		console.log(event);
+		//console.log(event);
 	}
 }

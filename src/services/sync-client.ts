@@ -485,7 +485,7 @@ export class SyncClient {
 					let ext = urls[index].substr(urls[index].lastIndexOf("."));
 					fileTransfer.download(urls[index], cordova.file.dataDirectory + "leadliaison/images/dwn_" + new Date().getTime() + ext)
 					.then((value : FileEntry) => {
-						console.log(value);
+						//console.log(value);
 						urlMap[urls[index]] = "/" + value.nativeURL.split("///")[1];
 						index++;
 						setTimeout(()=>{
