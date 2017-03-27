@@ -51,6 +51,12 @@ export class LogClient{
 		if(typeof(message) == "object"){
 			var cache = [];
 			message = JSON.stringify(message, function(key, value) {
+				if(value instanceof Date){
+					if(!value.toISOString){
+						return "<DATE>";
+					}
+					return value;
+				}
 				if (typeof value === 'object' && value !== null) {
 					if (cache.indexOf(value) !== -1) {
 						return "<CIRCULAR_REF>";

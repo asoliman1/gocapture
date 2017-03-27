@@ -62,7 +62,7 @@ export class RESTClient {
 			opts.updated_at = updatedAt.toISOString().split(".")[0] + "+00:00";
 		}
 		if (createdAt) {
-			opts.created_at = updatedAt.toISOString().split(".")[0] + "+00:00";
+			opts.created_at = createdAt.toISOString().split(".")[0] + "+00:00";
 		}
 		if(offset > 0){
 			opts.offset = offset;
