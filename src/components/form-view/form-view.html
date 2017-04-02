@@ -1,5 +1,5 @@
 <div class="form-view">
-	<form [formGroup]="theForm" style="width:100%;">
+	<form [formGroup]="theForm" style="width:100%;" novalidate>
 		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
 			<ion-item *ngSwitchCase="'email'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>

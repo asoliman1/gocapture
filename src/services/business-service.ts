@@ -172,6 +172,8 @@ export class BussinessClient {
 								obs.error("There was an error retrieving the logo picture")
 							});
 					});
+			}, err =>{
+				obs.error("Could not authenticate the provided code");
 			});
 		});
 	}

@@ -25,10 +25,12 @@ export class SignatureModal {
 	}
 
 	ionViewDidEnter(){
-		let width = this.content.contentWidth - 32;
-		let height = this.content.contentHeight - this.content.contentBottom - this.content.contentTop - 32;
-		this.signaturePad.set("canvasWidth", width);
-		this.signaturePad.set("canvasHeight", height);
+		setTimeout(()=>{
+			let width = this.content.contentWidth - 32;
+			let height = this.content.contentHeight - /*this.content.contentBottom - this.content.contentTop -*/ 32;
+			this.signaturePad.set("canvasWidth", width);
+			this.signaturePad.set("canvasHeight", height);
+		}, 200);
 	}
 
 	ngAfterViewInit() {

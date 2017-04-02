@@ -1,6 +1,6 @@
 import {Config} from "./";
 const CFG = {
-	serverUrl: "https://prod.leadliaison.com",
+	serverUrl: "https://demo-api.leadliaison.com/v1.0",
 	androidGcmId: "56276941492"
 };
 
