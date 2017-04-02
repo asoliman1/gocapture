@@ -1,14 +1,6 @@
 cordova.define('cordova/plugin_list', function(require, exports, module) {
 module.exports = [
     {
-        "id": "com.synconset.imagepicker.ImagePicker",
-        "file": "plugins/com.synconset.imagepicker/www/imagepicker.js",
-        "pluginId": "com.synconset.imagepicker",
-        "clobbers": [
-            "plugins.imagePicker"
-        ]
-    },
-    {
         "id": "cordova-plugin-app-version.AppVersionPlugin",
         "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
         "pluginId": "cordova-plugin-app-version",
@@ -17,35 +9,89 @@ module.exports = [
         ]
     },
     {
-        "id": "cordova-plugin-camera.Camera",
-        "file": "plugins/cordova-plugin-camera/www/CameraConstants.js",
-        "pluginId": "cordova-plugin-camera",
+        "id": "cordova-plugin-splashscreen.SplashScreen",
+        "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+        "pluginId": "cordova-plugin-splashscreen",
         "clobbers": [
-            "Camera"
+            "navigator.splashscreen"
         ]
     },
     {
-        "id": "cordova-plugin-camera.CameraPopoverOptions",
-        "file": "plugins/cordova-plugin-camera/www/CameraPopoverOptions.js",
-        "pluginId": "cordova-plugin-camera",
+        "id": "cordova-plugin-statusbar.statusbar",
+        "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
+        "pluginId": "cordova-plugin-statusbar",
         "clobbers": [
-            "CameraPopoverOptions"
+            "window.StatusBar"
         ]
     },
     {
-        "id": "cordova-plugin-camera.camera",
-        "file": "plugins/cordova-plugin-camera/www/Camera.js",
-        "pluginId": "cordova-plugin-camera",
+        "id": "cordova-plugin-tesseract.TesseractPlugin",
+        "file": "plugins/cordova-plugin-tesseract/www/tesseractPlugin.js",
+        "pluginId": "cordova-plugin-tesseract",
         "clobbers": [
-            "navigator.camera"
+            "TesseractPlugin"
         ]
     },
     {
-        "id": "cordova-plugin-camera.CameraPopoverHandle",
-        "file": "plugins/cordova-plugin-camera/www/CameraPopoverHandle.js",
-        "pluginId": "cordova-plugin-camera",
+        "id": "cordova-sqlite-storage.SQLitePlugin",
+        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+        "pluginId": "cordova-sqlite-storage",
         "clobbers": [
-            "CameraPopoverHandle"
+            "SQLitePlugin"
+        ]
+    },
+    {
+        "id": "cordova-fabric-plugin.FabricPlugin",
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.js",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.core"
+        ]
+    },
+    {
+        "id": "cordova-fabric-plugin.FabricAnswersPlugin",
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Answers.js",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.Answers"
+        ]
+    },
+    {
+        "id": "cordova-fabric-plugin.FabricCrashlyticsPlugin",
+        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Crashlytics.js",
+        "pluginId": "cordova-fabric-plugin",
+        "clobbers": [
+            "window.fabric.Crashlytics"
+        ]
+    },
+    {
+        "id": "com.verso.cordova.clipboard.Clipboard",
+        "file": "plugins/com.verso.cordova.clipboard/www/clipboard.js",
+        "pluginId": "com.verso.cordova.clipboard",
+        "clobbers": [
+            "cordova.plugins.clipboard"
+        ]
+    },
+    {
+        "id": "es6-promise-plugin.Promise",
+        "file": "plugins/es6-promise-plugin/www/promise.js",
+        "pluginId": "es6-promise-plugin",
+        "runs": true
+    },
+    {
+        "id": "cordova-plugin-screen-orientation.screenorientation",
+        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
+        "pluginId": "cordova-plugin-screen-orientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
+    },
+    {
+        "id": "com.synconset.imagepicker.ImagePicker",
+        "file": "plugins/com.synconset.imagepicker/www/imagepicker.js",
+        "pluginId": "com.synconset.imagepicker",
+        "clobbers": [
+            "plugins.imagePicker"
         ]
     },
     {
@@ -293,51 +339,35 @@ module.exports = [
         ]
     },
     {
-        "id": "cordova-plugin-screen-orientation.screenorientation",
-        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.js",
-        "pluginId": "cordova-plugin-screen-orientation",
+        "id": "cordova-plugin-camera.Camera",
+        "file": "plugins/cordova-plugin-camera/www/CameraConstants.js",
+        "pluginId": "cordova-plugin-camera",
         "clobbers": [
-            "cordova.plugins.screenorientation"
+            "Camera"
         ]
     },
     {
-        "id": "cordova-plugin-screen-orientation.screenorientation.android",
-        "file": "plugins/cordova-plugin-screen-orientation/www/screenorientation.android.js",
-        "pluginId": "cordova-plugin-screen-orientation",
-        "merges": [
-            "cordova.plugins.screenorientation"
+        "id": "cordova-plugin-camera.CameraPopoverOptions",
+        "file": "plugins/cordova-plugin-camera/www/CameraPopoverOptions.js",
+        "pluginId": "cordova-plugin-camera",
+        "clobbers": [
+            "CameraPopoverOptions"
         ]
     },
     {
-        "id": "cordova-plugin-splashscreen.SplashScreen",
-        "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
-        "pluginId": "cordova-plugin-splashscreen",
+        "id": "cordova-plugin-camera.camera",
+        "file": "plugins/cordova-plugin-camera/www/Camera.js",
+        "pluginId": "cordova-plugin-camera",
         "clobbers": [
-            "navigator.splashscreen"
+            "navigator.camera"
         ]
     },
     {
-        "id": "cordova-plugin-statusbar.statusbar",
-        "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
-        "pluginId": "cordova-plugin-statusbar",
+        "id": "cordova-plugin-camera.CameraPopoverHandle",
+        "file": "plugins/cordova-plugin-camera/www/CameraPopoverHandle.js",
+        "pluginId": "cordova-plugin-camera",
         "clobbers": [
-            "window.StatusBar"
-        ]
-    },
-    {
-        "id": "cordova-plugin-tesseract.TesseractPlugin",
-        "file": "plugins/cordova-plugin-tesseract/www/tesseractPlugin.js",
-        "pluginId": "cordova-plugin-tesseract",
-        "clobbers": [
-            "TesseractPlugin"
-        ]
-    },
-    {
-        "id": "cordova-sqlite-storage.SQLitePlugin",
-        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
-        "pluginId": "cordova-sqlite-storage",
-        "clobbers": [
-            "SQLitePlugin"
+            "CameraPopoverHandle"
         ]
     },
     {
@@ -347,63 +377,32 @@ module.exports = [
         "clobbers": [
             "PushNotification"
         ]
-    },
-    {
-        "id": "cordova-fabric-plugin.FabricPlugin",
-        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.js",
-        "pluginId": "cordova-fabric-plugin",
-        "clobbers": [
-            "window.fabric.core"
-        ]
-    },
-    {
-        "id": "cordova-fabric-plugin.FabricAnswersPlugin",
-        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Answers.js",
-        "pluginId": "cordova-fabric-plugin",
-        "clobbers": [
-            "window.fabric.Answers"
-        ]
-    },
-    {
-        "id": "cordova-fabric-plugin.FabricCrashlyticsPlugin",
-        "file": "plugins/cordova-fabric-plugin/www/FabricPlugin.Crashlytics.js",
-        "pluginId": "cordova-fabric-plugin",
-        "clobbers": [
-            "window.fabric.Crashlytics"
-        ]
-    },
-    {
-        "id": "com.verso.cordova.clipboard.Clipboard",
-        "file": "plugins/com.verso.cordova.clipboard/www/clipboard.js",
-        "pluginId": "com.verso.cordova.clipboard",
-        "clobbers": [
-            "cordova.plugins.clipboard"
-        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "com.synconset.imagepicker": "2.1.5",
     "cordova-plugin-app-version": "0.1.9",
     "cordova-plugin-compat": "1.0.0",
-    "cordova-plugin-camera": "2.3.0",
-    "cordova-plugin-crosswalk-webview": "2.1.0",
-    "cordova-plugin-device": "1.1.3",
-    "cordova-plugin-file": "4.3.0",
-    "cordova-plugin-file-transfer": "1.6.0",
-    "cordova-plugin-geolocation": "2.3.0",
-    "cordova-plugin-globalization": "1.0.4",
-    "cordova-plugin-network-information": "1.3.0",
-    "cordova-plugin-screen-orientation": "1.4.2",
     "cordova-plugin-splashscreen": "4.0.0",
     "cordova-plugin-statusbar": "2.2.0",
     "cordova-plugin-tesseract": "0.0.1",
     "cordova-plugin-whitelist": "1.3.0",
     "cordova-sqlite-storage": "1.4.7",
-    "phonegap-plugin-push": "1.8.2",
     "cordova-fabric-plugin": "1.1.7",
-    "com.verso.cordova.clipboard": "0.1.0"
+    "com.verso.cordova.clipboard": "0.1.0",
+    "cordova-plugin-crosswalk-webview": "2.1.0",
+    "es6-promise-plugin": "4.1.0",
+    "cordova-plugin-screen-orientation": "2.0.0",
+    "com.synconset.imagepicker": "2.1.7",
+    "cordova-plugin-device": "1.1.5",
+    "cordova-plugin-file": "4.3.2",
+    "cordova-plugin-file-transfer": "1.6.2",
+    "cordova-plugin-geolocation": "2.3.0",
+    "cordova-plugin-globalization": "1.0.6",
+    "cordova-plugin-network-information": "1.3.2",
+    "cordova-plugin-camera": "2.3.1",
+    "phonegap-plugin-push": "1.8.4"
 };
 // BOTTOM OF METADATA
 });

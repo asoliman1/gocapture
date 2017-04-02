@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="com.synconset.imagepicker"
-  version="2.1.5">
+  version="2.1.7">
 
     <name>ImagePicker</name>
 
@@ -26,6 +26,11 @@
             <feature name="ImagePicker">
                 <param name="ios-package" value="SOSPicker"/>
             </feature>
+        </config-file>
+        
+        <preference name="PHOTO_LIBRARY_USAGE_DESCRIPTION" default=" " />
+        <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
+          <string>$PHOTO_LIBRARY_USAGE_DESCRIPTION</string>
         </config-file>
 
         <header-file src="src/ios/SOSPicker.h" />

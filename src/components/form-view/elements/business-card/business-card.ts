@@ -1,10 +1,11 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { ActionSheetController, AlertController } from "ionic-angular";
-import { Observable, Observer, BehaviorSubject, Subscription } from "rxjs/Rx"
+import { Observable, Observer } from "rxjs/Rx"
 import { BaseElement } from "../base-element";
 import { FormElement } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { Camera, File } from "ionic-native";
+import { Camera } from "@ionic-native/camera";
+import { File } from "@ionic-native/file";
 declare var cordova: any;
 
 @Component({
@@ -30,7 +31,8 @@ export class BusinessCard extends BaseElement {
 	BACK: number = 1;
 
 	constructor(private actionCtrl: ActionSheetController,
-				private alertCtrl: AlertController) {
+				private alertCtrl: AlertController,
+				private camera: Camera) {
 		super();
 		this.currentValue = {
 			front: this.front,
@@ -77,7 +79,7 @@ export class BusinessCard extends BaseElement {
 	}
 
 	private doCapture(type: number) {
-		Camera.getPicture({
+		this.camera.getPicture({
 			sourceType: 1
 		}).then(imageData => {
 			if(type == this.FRONT){
@@ -91,7 +93,7 @@ export class BusinessCard extends BaseElement {
 				if (data != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
 					let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-					File.writeFile(newFolder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
+					this.file.writeFile(newFolder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
 						this.setValue(type, newFolder + "/" + name);
 					},
 						(err) => {
@@ -152,10 +154,10 @@ export class BusinessCard extends BaseElement {
 
 	ensureLandscape(url: string): Observable<string> {
 		return new Observable<string>((obs: Observer<string>) => {
-			var image = document.createElement("img");
+			var image: any = document.createElement("img");
 			image.onload = function (event: any) {
 				if (image.naturalWidth >= image.naturalHeight) {
-					var canvas = document.createElement("canvas");
+					var canvas: any = document.createElement("canvas");
 					canvas.width = image.naturalWidth;
 					canvas.height = image.naturalHeight;
 					var ctx = canvas.getContext('2d');
@@ -165,7 +167,7 @@ export class BusinessCard extends BaseElement {
 					obs.complete();
 					return;
 				}
-				var canvas = document.createElement("canvas");
+				var canvas : any = document.createElement("canvas");
 				canvas.width = image.naturalHeight;
 				canvas.height = image.naturalWidth;
 				var ctx = canvas.getContext('2d');

@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { NavParams, Nav } from 'ionic-angular';
 import { Platform } from 'ionic-angular';
-import { StatusBar, File } from 'ionic-native';
+import { File } from "@ionic-native/file";
 
 import { Login } from '../views/login';
 import { Main } from '../views/main';
@@ -28,7 +28,8 @@ export class MyApp {
 			private db: DBClient, 
 			private rest: RESTClient, 
 			private client: BussinessClient,
-			private logClient: LogClient) {
+			private logClient: LogClient,
+			private file: File) {
 		this.initializeApp();
 	}
 
@@ -48,13 +49,13 @@ export class MyApp {
 				return;
 			}
 			//ensure folders exist
-			File.checkDir(cordova.file.dataDirectory, "leadliaison")
+			this.file.checkDir(cordova.file.dataDirectory, "leadliaison")
 			.then((exists)=>{
-				File.checkDir(cordova.file.dataDirectory + "leadliaison/", "images")
+				this.file.checkDir(cordova.file.dataDirectory + "leadliaison/", "images")
 				.then((exists)=>{
 					console.log("Images folder present");
 				}).catch(err=>{
-					File.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
+					this.file.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
 					.then(ok => {
 						console.log("Created images folder");
 					}).catch(err => {
@@ -62,9 +63,9 @@ export class MyApp {
 					})
 				});
 			}).catch(err=>{
-				File.createDir(cordova.file.dataDirectory, "leadliaison", true)
+				this.file.createDir(cordova.file.dataDirectory, "leadliaison", true)
 				.then(ok => {
-					File.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
+					this.file.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
 					.then(ok => {
 						console.log("Created images folder");
 					}).catch(err => {

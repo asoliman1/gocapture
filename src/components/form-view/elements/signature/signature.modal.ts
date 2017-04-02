@@ -26,11 +26,12 @@ export class SignatureModal {
 
 	ionViewDidEnter(){
 		setTimeout(()=>{
-			let width = this.content.contentWidth - 32;
-			let height = this.content.contentHeight - /*this.content.contentBottom - this.content.contentTop -*/ 32;
+			let dim = this.content.getContentDimensions();
+			let width = dim.contentWidth - 32;
+			let height = dim.contentHeight - /*this.content.contentBottom - this.content.contentTop -*/ 32;
 			this.signaturePad.set("canvasWidth", width);
 			this.signaturePad.set("canvasHeight", height);
-		}, 200);
+		}, 650);
 	}
 
 	ngAfterViewInit() {
@@ -63,7 +64,7 @@ export class SignatureModal {
      cropSignatureCanvas(canvas) {
 
             // First duplicate the canvas to not alter the original
-            var croppedCanvas = document.createElement('canvas'),
+            var croppedCanvas: any = document.createElement('canvas'),
                 croppedCtx    = croppedCanvas.getContext('2d');
 
                 croppedCanvas.width  = canvas.width;
@@ -71,6 +72,7 @@ export class SignatureModal {
                 croppedCtx.drawImage(canvas, 0, 0);
 
             // Next do the actual cropping
+			
             var w         = croppedCanvas.width,
                 h         = croppedCanvas.height,
                 pix       = {x:[], y:[]},

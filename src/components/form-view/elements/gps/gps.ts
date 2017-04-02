@@ -1,8 +1,7 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
-import { Subscription } from "rxjs";
-import { Geolocation } from "ionic-native";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Form, DeviceFormMembership, FormSubmission } from "../../../../model";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { Geolocation } from "@ionic-native/geolocation";
 
 @Component({
 	selector: 'gps',
@@ -13,8 +12,8 @@ export class Gps {
 	@Input() form: Form;
 	@Input() submission: FormSubmission;
 	@Input() prospect: DeviceFormMembership;
-	@Output() onChange = new EventEmitter<any>();
-	@Output() onValidationChange = new EventEmitter<any>();
+	@Output() onChange = new EventEmitter();
+	@Output() onValidationChange = new EventEmitter();
 	@Input() readonly: boolean = false;
 
 	theForm : FormGroup = new FormGroup({});
@@ -24,7 +23,7 @@ export class Gps {
 	latitude: string;
 	longitude: string;
 
-	constructor(private fb: FormBuilder, private zone: NgZone) {
+	constructor(private fb: FormBuilder, private geolocation: Geolocation) {
 
 	}
 
@@ -34,7 +33,7 @@ export class Gps {
 
 	refresh(){
 		this.loading = true;
-		Geolocation.getCurrentPosition()
+		this.geolocation.getCurrentPosition()
 		.then(pos => {
 			this.latitude = pos.coords.latitude + "";
 			this.longitude = pos.coords.longitude + "";

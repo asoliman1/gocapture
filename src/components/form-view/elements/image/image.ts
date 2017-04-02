@@ -1,10 +1,10 @@
-import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, forwardRef } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { Subscription } from "rxjs";
+import { Component, Input, Output, forwardRef } from '@angular/core';
+import { Form, FormElement } from "../../../../model";
+import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
 import { ActionSheetController } from "ionic-angular";
-import { Camera, ImagePicker } from 'ionic-native';
+import { Camera } from '@ionic-native/camera';
+import { ImagePicker } from '@ionic-native/image-picker';
 declare var cordova: any;
 
 @Component({
@@ -35,8 +35,8 @@ export class Image extends BaseElement {
 	max = 5;
 
 	constructor(private fb: FormBuilder,
-		private zone: NgZone,
-		private actionCtrl: ActionSheetController) {
+		private actionCtrl: ActionSheetController,
+		private camera: Camera) {
 		super();
 		this.currentValue = [];
 		/*setTimeout(()=>{
@@ -74,14 +74,14 @@ export class Image extends BaseElement {
 				this.propagateChange(this.currentValue);
 			})
 		};
-
+		let camera = this.camera;
 		let sheet = this.actionCtrl.create({
 			title: "",
 			buttons: [
 				{
 					text: 'Use Camera',
 					handler: () => {
-						Camera.getPicture({
+						camera.getPicture({
 							sourceType: 1
 						}).then(onImageReceived)
 							.catch(err => {
@@ -93,7 +93,7 @@ export class Image extends BaseElement {
 				{
 					text: 'Choose from Album',
 					handler: () => {
-						Camera.getPicture({
+						camera.getPicture({
 							sourceType: 0
 						}).then(onImageReceived)
 							.catch(err => {

@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
-import { Transfer, FileEntry, File } from 'ionic-native';
+import { Transfer } from '@ionic-native/transfer';
+import { FileEntry, File } from '@ionic-native/file';
 import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 declare var cordova: any;
@@ -32,7 +33,9 @@ export class SyncClient {
 
 	private lastSyncStatus: SyncStatus[];
 
-	constructor(private rest: RESTClient, private db: DBClient) {
+	private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
+
+	constructor(private rest: RESTClient, private db: DBClient, private file: File, private transfer: Transfer) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -266,13 +269,26 @@ export class SyncClient {
 						obs.error(err);
 					})
 				}else{
+					if(this.dataUrlRegexp.test(urls[index])){
+						let data = urls[index];
+						let entry = new FileInfo();
+						let d = data.split(";base64,");
+						entry.mime_type = d[0].substr(5);
+						entry.data = d[1];
+						entry.name = "sig" + new Date().getTime();
+						entry.size = atob(entry.data).length;
+						request.files.push(entry);
+						index++;
+						handler();
+						return;
+					}
 					let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
 					let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-					File.resolveDirectoryUrl(folder).then(dir =>{
-						File.getFile(dir, file, {create:false}).then(fileEntry =>{
+					this.file.resolveDirectoryUrl(folder).then(dir =>{
+						this.file.getFile(dir, file, {create:false}).then(fileEntry =>{
 							fileEntry.getMetadata((metadata) => {
 								//data:[<mediatype>][;base64],<data>
-								File.readAsDataURL(folder, file).then((data : string)=>{
+								this.file.readAsDataURL(folder, file).then((data : string)=>{
 									let entry = new FileInfo();
 									let d = data.split(";base64,");
 									entry.data = d[1];
@@ -452,9 +468,9 @@ export class SyncClient {
 				obs.complete();
 				return;
 			}
-			let fileTransfer = new Transfer();
 			var urls = Object.keys(urlMap);
 			let index = 0;
+			let fileTransfer = this.transfer.create();
 			let handler = () => {
 				if(index == urls.length){
 					submissions.forEach(submission => {

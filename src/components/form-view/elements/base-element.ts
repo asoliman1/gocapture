@@ -2,7 +2,7 @@ import { Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormElement } from "../../../model";
 import { FormGroup, ControlValueAccessor } from "@angular/forms";
 import { Observable, Observer, Subscription } from "rxjs";
-import { File, Entry } from 'ionic-native';
+import { File, Entry } from '@ionic-native/file';
 
 export class BaseElement implements OnChanges, ControlValueAccessor {
 
@@ -17,8 +17,10 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 
 	currentValue: any = "";
 
-	constructor() {
+	protected file: File;
 
+	constructor() {
+		this.file = new File();
 	}
 
 	ngOnChanges(changes: SimpleChanges){
@@ -56,7 +58,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 				let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
 				let newName = new Date().getTime() + "." + ext;
 				let doMove = (d) =>{
-					File.moveFile(oldFolder, name, newFolder, newName)
+					this.file.moveFile(oldFolder, name, newFolder, newName)
 					.then(entry => {
 						obs.next(newFolder + "/" + newName);
 						obs.complete();
@@ -66,7 +68,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 					});
 				}
 				//console.log(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1));
-				File.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
+				this.file.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
 				.then(doMove)
 				.catch(doMove);
 		});

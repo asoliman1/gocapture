@@ -4,7 +4,7 @@ import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, SubmissionDataResponse, FileUploadRequest, FileUploadResponse, FileInfo, FileResponse } from "../model/protocol";
-import { Device } from "ionic-native";
+import { Device } from "@ionic-native/device";
 
 @Injectable()
 export class RESTClient {
@@ -18,10 +18,12 @@ export class RESTClient {
 	token: string;
 
 	private online = true;
+	private device: Device;
 
 	constructor(private http: Http) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
+		this.device = new Device();
 	}
 
 	public setOnline(val : boolean){
@@ -33,11 +35,11 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public authenticate(req: AuthenticationRequest): Observable<User> {
-		req.device_platform = <any>Device.platform;
-		req.device_model = Device.model;
-		req.device_manufacture = Device.manufacturer;
-		req.device_os_version = Device.version;
-		req.device_uuid = Device.uuid;
+		req.device_platform = <any>this.device.platform;
+		req.device_model = this.device.model;
+		req.device_manufacture = this.device.manufacturer;
+		req.device_os_version = this.device.version;
+		req.device_uuid = this.device.uuid;
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 		.map(resp => {
 			if (resp.status != "200") {

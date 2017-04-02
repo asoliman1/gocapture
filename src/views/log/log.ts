@@ -2,7 +2,7 @@ import { Component, NgZone } from '@angular/core';
 import { ViewController } from 'ionic-angular';
 import { LogClient, LogEntry, LogSeverity } from "../../services/log-client";
 import { Subscription } from "rxjs";
-import { Clipboard } from 'ionic-native';
+import { Clipboard } from '@ionic-native/clipboard';
 
 @Component({
 	selector: 'log',
@@ -14,7 +14,10 @@ export class LogView{
 
 	logs: LogEntry[];
 
-	constructor(private logClient: LogClient, private zone: NgZone, private viewCtrl: ViewController) {
+	constructor(private logClient: LogClient, 
+				private zone: NgZone, 
+				private viewCtrl: ViewController,
+				private clipboard: Clipboard) {
 
 	}
 
@@ -68,7 +71,7 @@ export class LogView{
 		this.logs.forEach((log)=>{
 			result += "[" + log.severity.name + "] - " + log.message + "\n\n";
 		});
-		Clipboard.copy(result)
+		this.clipboard.copy(result)
 			.then((data) => {
 
 			})

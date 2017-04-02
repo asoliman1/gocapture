@@ -3,7 +3,7 @@ import { User } from "../../model";
 import { NavController, NavParams, AlertController, ModalController } from 'ionic-angular';
 import { DBClient } from "../../services/db-client";
 import { BussinessClient } from "../../services/business-service";
-import { AppVersion } from 'ionic-native';
+import { AppVersion } from '@ionic-native/app-version';
 import { Login } from "../login";
 import { LogView } from "../log";
 @Component({
@@ -22,8 +22,9 @@ export class Settings {
 		private db: DBClient,
 		private client: BussinessClient,
 		private alertCtrl: AlertController,
-		private modalCtrl: ModalController) {
-		AppVersion.getVersionNumber().then((version) => {
+		private modalCtrl: ModalController,
+		private appVersion: AppVersion) {
+		this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
 	}

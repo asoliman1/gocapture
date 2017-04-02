@@ -91,11 +91,13 @@ export class FormReview {
 	}
 
 	onFilterChanged() {
-		var f = this.filter;
-		this.filteredSubmissions = this.submissions.filter((sub)=>{
-			return !f || sub.status + "" == f;
+		this.zone.run(() => {
+			var f = this.filter;
+			this.filteredSubmissions = this.submissions.filter((sub)=>{
+				return !f || sub.status + "" == f + "";
+			});
+			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
 		});
-		this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
 		
 	}
 
