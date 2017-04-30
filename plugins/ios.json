@@ -7,23 +7,6 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-camera": {
-            "CAMERA_USAGE_DESCRIPTION": " ",
-            "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-crosswalk-webview": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-globalization": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
@@ -31,16 +14,6 @@
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-sqlite-storage": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "phonegap-plugin-push": {
-            "SENDER_ID": "716813832888",
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-file-transfer": {
-            "PACKAGE_NAME": "$(PRODUCT_BUNDLE_IDENTIFIER)"
-        },
-        "cordova-plugin-device": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-plugin-app-version": {
@@ -52,18 +25,46 @@
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
-        "com.synconset.imagepicker": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
-        "cordova-plugin-screen-orientation": {
-            "PACKAGE_NAME": "com.leadliaison.mobilitease"
-        },
         "cordova-fabric-plugin": {
             "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
             "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7",
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-crosswalk-webview": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "com.synconset.imagepicker": {
+            "PHOTO_LIBRARY_USAGE_DESCRIPTION": " ",
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-globalization": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "cordova-plugin-camera": {
+            "CAMERA_USAGE_DESCRIPTION": " ",
+            "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "716813832888",
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
@@ -72,7 +73,7 @@
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
         },
         "cordova-plugin-file": {
-            "PACKAGE_NAME": "$(PRODUCT_BUNDLE_IDENTIFIER)"
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     }
 }

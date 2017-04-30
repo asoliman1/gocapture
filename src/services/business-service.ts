@@ -6,7 +6,9 @@ import { DBClient } from "./db-client";
 import { RESTClient } from "./rest-client";
 import { SyncClient } from "./sync-client";
 import { PushClient } from "./push-client";
-import { Transfer, File, Network, Entry } from 'ionic-native';
+import { Transfer } from '@ionic-native/transfer';
+import { File, Entry } from '@ionic-native/file';
+import { Network } from '@ionic-native/network';
 import { UUID } from "../util/uuid";
 declare var cordova: any;
 
@@ -33,19 +35,24 @@ export class BussinessClient {
 
 	private registration: User;
 
-	private push: PushClient;
+	private setup: boolean = false;
 
-	constructor(private db: DBClient, private rest: RESTClient, private sync: SyncClient) {
+	constructor(private db: DBClient, 
+				private rest: RESTClient, 
+				private sync: SyncClient, 
+				private push: PushClient,
+				private net: Network,
+				private fileTransfer: Transfer) {
 
 		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
 		this.network = this.networkSource.asObservable();
 
-		this.networkOff = Network.onDisconnect().subscribe(() => {
+		this.networkOff = this.net.onDisconnect().subscribe(() => {
 			console.log("network was disconnected :-(");
 			this.setOnline(false);
 		});
 
-		this.networkOn = Network.onConnect().subscribe(() => {
+		this.networkOn = this.net.onConnect().subscribe(() => {
 			console.log("network was connected");
 			this.setOnline(true);
 		});
@@ -69,12 +76,15 @@ export class BussinessClient {
 	}
 
 	public setupNotifications() {
-		if (!this.push) {
-			this.push = new PushClient();
+		if (!this.setup) {
+			this.setup = true;
 			this.push.error.subscribe((err) => {
 				console.error("notification", err);
 			});
 			this.push.notification.subscribe((note) => {
+				if(!note){
+					return;
+				}
 				this.db.getConfig("lastSyncDate").subscribe(time => {
 					let d = new Date();
 					if (time) {
@@ -138,12 +148,12 @@ export class BussinessClient {
 				let fileTransfer = new Transfer();
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
-				fileTransfer.download(reply.user_profile_picture, target, true, {})
+				this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
 					.then((result) => {
 						reply.user_profile_picture = result.nativeURL;
 						ext = reply.customer_logo.split('.').pop();
 						target = cordova.file.dataDirectory + 'leadliaison/profile/logo.' + ext;
-						fileTransfer.download(reply.user_profile_picture, target, true, {})
+						this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
 							.then((result) => {
 								reply.customer_logo = result.nativeURL;
 								this.registration = reply;
@@ -263,7 +273,7 @@ export class BussinessClient {
 					formIds.push(formId);
 					var tmp = [];
 					submissions.forEach(sub => {
-						if (sub.form_id == formId) {
+						if (sub.form_id + "" == formId + "") {
 							tmp.push(sub);
 						}
 					});

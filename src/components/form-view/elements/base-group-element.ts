@@ -1,6 +1,6 @@
 import { Input, SimpleChange } from '@angular/core';
 import { FormElement } from "../../../model";
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 
 export class BaseGroupElement {
 

@@ -1,6 +1,6 @@
-<ion-grid responsive-sm radio-group (ionChange)="onChange($event)">
-	<ion-row responsive-sm>
-		<ion-col *ngFor="let option of element.options; let i = index">
+<ion-grid radio-group (ionChange)="onChange($event)">
+	<ion-row>
+		<ion-col col-12 col-sm *ngFor="let option of element.options; let i = index">
 			<ion-item>
 				<ion-label>{{option.option}}</ion-label>
 				<ion-radio color="orange" [attr.name]="formControlName + index" 

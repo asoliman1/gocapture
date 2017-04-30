@@ -40,17 +40,20 @@
 </ion-header>
 
 <ion-content class="form-summary">
-	<ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="110px">
-		<ion-item *virtualItem="let submission" (click)="goToEntry(submission)">
-			<h1>{{submission.first_name + " " + submission.last_name}}</h1>
-			<h2>{{submission.company }}</h2>
-			<h2>{{submission.email}}</h2>
-			<h2>{{submission.telephone}}</h2>
-			<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
-				<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
-			</button>
-		</ion-item>
-	</ion-list>
+	<div [hidden]="filteredSubmissions.length == 0">
+		<!-- [virtualScroll]="filteredSubmissions" approxItemHeight="84px"-->
+		<ion-list >
+			<ion-item *ngFor="let submission of filteredSubmissions" (click)="goToEntry(submission)">
+				<h1>{{submission.first_name + " " + submission.last_name}}</h1>
+				<h2>{{submission.company }}</h2>
+				<h2>{{submission.email}}</h2>
+				<h2>{{submission.telephone}}</h2>
+				<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
+					<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
+				</button>
+			</ion-item>
+		</ion-list>
+	</div>
 	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">
 		<ion-infinite-scroll-content></ion-infinite-scroll-content>
 	</ion-infinite-scroll-->

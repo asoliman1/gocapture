@@ -1,4 +1,4 @@
-import { SQLite } from 'ionic-native';
+import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { Utils } from "./utils";
@@ -11,7 +11,7 @@ export class Migrator{
 		this.migrations = migrations;
 	}
 
-	public runMigrations(db: SQLite, type: string): Observable<any>{
+	public runMigrations(db: SQLiteObject, type: string): Observable<any>{
 		return new Observable<any>((responseObserver: Observer<any>) => {
 			this.migrateForType(db, type).subscribe(() => {
 				responseObserver.next({});
@@ -22,7 +22,7 @@ export class Migrator{
 		});
 	}
 
-	private migrateForType(db: SQLite, type: string): Observable<any>{
+	private migrateForType(db: SQLiteObject, type: string): Observable<any>{
 		return new Observable<any>((responseObserver: Observer<any>) => {
 			this.getDbMigrationVersion(db, type).subscribe((version) => {
 				let promise: Promise<any> = Promise.resolve();
@@ -47,7 +47,7 @@ export class Migrator{
 		});
 	}
 
-	private executeMigration(db: SQLite, type, migration) : Promise<any>{
+	private executeMigration(db: SQLiteObject, type, migration) : Promise<any>{
 		return new Promise<any>((resolve, reject) => {
 			var toExecute = [];
 			migration.tables && migration.tables.forEach(table => {
@@ -75,7 +75,7 @@ export class Migrator{
 		});
 	}
 
-	private getDbMigrationVersion(db: SQLite, type: string): Observable<number>{
+	private getDbMigrationVersion(db: SQLiteObject, type: string): Observable<number>{
 		return new Observable<number>((responseObserver: Observer<number>) => {
 			db.executeSql(this.migrations.queries.getVersion, {})
 			.then((data) => {

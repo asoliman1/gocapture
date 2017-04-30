@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { SQLite } from 'ionic-native';
+import { SQLite } from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership } from "../model";

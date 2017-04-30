@@ -1,4 +1,4 @@
-import { Push, PushNotification, NotificationEventResponse } from 'ionic-native';
+import { Push, PushObject, NotificationEventResponse } from '@ionic-native/push';
 import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
 import { Config } from "../config";
@@ -26,7 +26,8 @@ export class PushClient {
      */
 	registration: Observable<string>;
 
-	private push: PushNotification;
+	private pushObj: PushObject;
+	
 	/**{
 		on: (event: "registration" | "notification" | "error", callback: (data: PushResponse) => void) => void,
 		off: (event: "registration" | "notification" | "error", callback: (err: any) => void) => void,
@@ -36,7 +37,7 @@ export class PushClient {
 
 	private refs: any = {};
 
-	constructor() {		
+	constructor(private push: Push) {		
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		
@@ -48,7 +49,7 @@ export class PushClient {
 	}
 
 	initialize(){
-		this.push = <any>Push.init({
+		this.pushObj = this.push.init({
 			android: {
 				senderID: Config.androidGcmId,
 				icon: "icon_notif",
@@ -61,8 +62,8 @@ export class PushClient {
 			},
 			windows: {}
 		});
-		if(this.push && this.push['error']){
-			this.push = null;
+		if(this.pushObj && this.pushObj['error']){
+			this.pushObj = null;
 		}
 		this.startup();
 	}
@@ -76,15 +77,15 @@ export class PushClient {
 	}
 
 	shutdown(){
-		for(let event in this.refs){
-			this.push && this.push.off(<any>event, this.refs[event])
-		}
+		this.pushObj.unregister();
 	}
 
 	private on(event: "registration" | "notification" | "error", cb: Function){
 		let func = Util.proxy(cb, this);
 		this.refs[event] = func;
-		this.push && this.push.on(event, func);
+		this.pushObj && this.pushObj.on(event).subscribe((d) => {
+			func(d);
+		});
 	}
 
 	private onRegistration(data : PushResponse){

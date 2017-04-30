@@ -9,7 +9,6 @@ import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs";
 import { SyncClient } from "../../services/sync-client";
 import { RESTClient } from "../../services/rest-client";
-import { Push } from 'ionic-native';
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 
 @Component({

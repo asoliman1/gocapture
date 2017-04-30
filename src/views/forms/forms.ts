@@ -1,11 +1,14 @@
 import {
-	Component,
+	Component, ViewChild, NgZone
+} from '@angular/core';
+
+import {
 	trigger,
 	state,
 	style,
 	transition,
-	animate, ViewChild, NgZone
-} from '@angular/core';
+	animate
+} from '@angular/animations';
 
 import { Subscription, Subscriber } from "rxjs";
 
@@ -16,6 +19,7 @@ import { Form, SyncStatus } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";
+import { FormControlPipe } from "../../pipes/form-control-pipe";
 
 
 @Component({
@@ -57,6 +61,8 @@ export class Forms {
 
 	private sub : Subscription;
 
+	private filterPipe: FormControlPipe = new FormControlPipe();
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
@@ -67,8 +73,10 @@ export class Forms {
 
 	doRefresh(refresher?) {
 		this.client.getForms().subscribe(forms => {
-			this.forms = forms;
-			this.getItems({target: {value: ""}});
+			this.zone.run(()=>{
+				this.forms = this.filterPipe.transform(forms, "");
+				this.getItems({target: {value: ""}});
+			});
 		});
 	}
 
@@ -98,9 +106,9 @@ export class Forms {
 	getItems(event) {
 		let val = event.target.value;
 		let regexp = new RegExp(val, "i");
-		this.filteredForms = this.forms.filter(form => {
+		this.filteredForms = [].concat(this.forms.filter(form => {
 			return !val || regexp.test(form.name);
-		});
+		}));
 	}
 
 	presentActionSheet(form: Form) {
@@ -146,15 +154,13 @@ export class Forms {
 		actionSheet.present();
 	}
 
-	ionViewDidEnter() {
-		setTimeout(()=>{				
-			this.doRefresh();
-			this.sub = this.syncClient.entitySynced.subscribe((type)=>{
-				if(type == "Forms" || type == "Submissions"){
-					this.doRefresh();
-				}
-			});
-		}, 100);
+	ionViewDidEnter() {				
+		this.doRefresh();
+		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
+			if(type == "Forms" || type == "Submissions"){
+				this.doRefresh();
+			}
+		});
 	}
 
 	ionViewDidLeave() {

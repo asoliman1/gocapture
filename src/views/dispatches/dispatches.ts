@@ -1,11 +1,14 @@
 import {
-	Component,
+	Component, ViewChild, NgZone
+} from '@angular/core';
+
+import {
 	trigger,
 	state,
 	style,
 	transition,
-	animate, ViewChild, NgZone
-} from '@angular/core';
+	animate
+} from '@angular/animations';
 
 import { NavController, NavParams, InfiniteScroll,ActionSheetController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
@@ -57,7 +60,6 @@ export class Dispatches {
 
 	doRefresh(refresher?) {
 		this.client.getDispatches().subscribe(forms => {
-			//console.log(forms);
 			this.dispatches = forms;
 			if (refresher) {
 				refresher.complete();

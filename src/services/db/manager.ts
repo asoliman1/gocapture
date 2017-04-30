@@ -1,4 +1,4 @@
-import { SQLite } from 'ionic-native';
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { Utils } from "./utils";
@@ -6,7 +6,7 @@ import { Migrator } from "./migrator";
 import { Table } from "./metadata";
 
 export class Manager{
-	private map: {[key:string]: {obs: Observable<SQLite>, db: SQLite, dbName: string, master: boolean}} = {};
+	private map: {[key:string]: {obs: Observable<SQLiteObject>, db: SQLiteObject, dbName: string, master: boolean}} = {};
 
 	constructor(private platform: Platform, private migrator: Migrator, private tables: Table[]){
 
@@ -25,8 +25,8 @@ export class Manager{
 		}
 	}
 
-	public db(type: string): Observable<SQLite> {
-		return new Observable<SQLite>((obs: Observer<SQLite>) => {
+	public db(type: string): Observable<SQLiteObject> {
+		return new Observable<SQLiteObject>((obs: Observer<SQLiteObject>) => {
 			if (this.map[type] && this.map[type].db) {
 				setTimeout(() => {
 					obs.next(this.map[type].db);
@@ -45,7 +45,7 @@ export class Manager{
 		});
 	}
 
-	private doSubscribe(type: string, o: Observable<SQLite>, obs: Observer<SQLite>){
+	private doSubscribe(type: string, o: Observable<SQLiteObject>, obs: Observer<SQLiteObject>){
 		o.subscribe((db) => {
 			if(!obs.closed){
 				this.map[type].db = db;
@@ -62,24 +62,25 @@ export class Manager{
 		return this.map[type] && this.map[type].obs != null;
 	}
 
-	private initializeDb(platform: Platform, type: string): Observable<SQLite> {
+	private initializeDb(platform: Platform, type: string): Observable<SQLiteObject> {
 		console.log("Initialize " + type);
-		return new Observable<SQLite>((obs: Observer<SQLite>) => {
-			let db = null;
+		return new Observable<SQLiteObject>((obs: Observer<SQLiteObject>) => {
+			let db: SQLite = null;
 			if (platform.is("cordova")) {
 				db = new SQLite();
 			} else {
 				db = new LocalSql();
 			}
 			console.log("OPen db " + this.map[type].dbName);
-			db.openDatabase({
+			let settings = {
 				name: this.map[type].dbName,
-				location: 'default', // the location field is required,
-				version: this.map[type].master ? '1.0' : ''
-			}).then(() => {
-				this.setup(db, type).subscribe(()=>{
+				location: 'default', // the location field is required
+			};
+			settings["version"] = this.map[type].master ? '1.0' : '';
+			db.create(settings).then((theDb: SQLiteObject) => {
+				this.setup(theDb, type).subscribe(()=>{
 					setTimeout(() => {
-						obs.next(db);
+						obs.next(theDb);
 						obs.complete();
 					}, 50);
 				}, (err) =>{
@@ -93,7 +94,7 @@ export class Manager{
 		});
 	}
 
-	private setup(db: SQLite, type: string) : Observable<any> {
+	private setup(db: SQLiteObject, type: string) : Observable<any> {
 		return new Observable<any>((obs: Observer<any>) => {
 			let index = 0;
 			let handler = (data) => {
@@ -138,7 +139,15 @@ export class Manager{
 class LocalSql {
 	private db: any;
 
-	openDatabase(opts: { name: string, location: string, version: string }): Promise<any> {
+	echoTest(): Promise<any>{
+		return null;
+	}
+
+    deleteDatabase(config): Promise<any>{
+		return null;
+	}
+
+	create(opts: { name: string, location: string, version: string }): Promise<any> {
 		let name = opts.name;
 		let description = opts.name;
 		let size = 2 * 1024 * 1024;
@@ -146,13 +155,13 @@ class LocalSql {
 		return new Promise<any>((resolve, reject) => {
 			try{
 				this.db = window["openDatabase"](name, version, description, size, (db) => {
-					resolve({});
+					resolve(this);
 				});
 			}catch(e){
 				console.log(e);
 			}
 			setTimeout(() => {
-				resolve({})
+				resolve(this);
 			}, 1);
 		});
 	}

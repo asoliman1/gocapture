@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormElement } from "../../../../model";
-import { AbstractControl, FormGroup, FormControl } from "@angular/forms";
+import { FormGroup, FormControl } from "@angular/forms";
 import { BaseGroupElement} from "../base-group-element";
 
 @Component({

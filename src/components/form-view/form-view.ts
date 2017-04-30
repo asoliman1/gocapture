@@ -14,8 +14,8 @@ export class FormView {
 	@Input() form: Form;
 	@Input() submission: FormSubmission;
 	@Input() prospect: DeviceFormMembership;
-	@Output() onChange = new EventEmitter<any>();
-	@Output() onValidationChange = new EventEmitter<any>();
+	@Output() onChange = new EventEmitter();
+	@Output() onValidationChange = new EventEmitter();
 
 	@Input() readOnly: boolean = false;
 

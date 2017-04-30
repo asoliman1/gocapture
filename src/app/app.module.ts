@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
-import { IonicApp, IonicModule, ClickBlock } from 'ionic-angular';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { Login } from "../views/login";
 import { Main } from "../views/main";
@@ -28,6 +30,17 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 //import { CustomFormsModule } from 'ng2-validation';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
+import { Transfer } from '@ionic-native/transfer';
+import { File } from '@ionic-native/file';
+import { Device } from "@ionic-native/device";
+import { Push } from '@ionic-native/push';
+import { Network } from '@ionic-native/network';
+import { Camera } from '@ionic-native/camera';
+import { ImagePicker } from '@ionic-native/image-picker';
+import { SQLite } from '@ionic-native/sqlite';
+import { Clipboard } from '@ionic-native/clipboard';
+import { AppVersion } from '@ionic-native/app-version';
+import { Geolocation } from "@ionic-native/geolocation";
 
 @NgModule({
   declarations: [
@@ -50,6 +63,9 @@ import { HttpService } from '../util/http';
 	ProspectSearch
   ],
   imports: [
+	BrowserModule,
+	HttpModule,
+	BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
 	TextMaskModule,
 	SignaturePadModule
@@ -79,6 +95,17 @@ import { HttpService } from '../util/http';
     SyncClient,
 	LogClient,
 	BussinessClient,
+	Transfer,
+	File,
+	Device,
+	Push,
+	Network,
+	Camera,
+	ImagePicker,
+	SQLite,
+	Clipboard,
+	AppVersion,
+	Geolocation,
 	{ provide: Http,
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]
