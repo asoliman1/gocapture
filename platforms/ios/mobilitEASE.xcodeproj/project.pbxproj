@@ -113,8 +113,7 @@
 		FA1CB5121E64E201007D7A2A /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5031E64DB74007D7A2A /* libpng.a */; };
 		FA1CB5131E64E201007D7A2A /* libtesseract.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5041E64DB74007D7A2A /* libtesseract.a */; };
 		FA1CB5141E64E201007D7A2A /* libtiff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA1CB5051E64DB74007D7A2A /* libtiff.a */; };
-		FA2399FE1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */; };
-		FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */; };
+		FA6E8A281E91A2E4007F1596 /* CDVOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6E8A271E91A2E4007F1596 /* CDVOrientation.m */; };
 		FDC1B107BA344D01A3DBA1F0 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97FD95EE5BBE42ED93D99E6B /* Fabric.framework */; };
 		FE9C16FE312F4878BA4BD3A0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C0B0811633DD4B2BAE32AE46 /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
@@ -308,10 +307,8 @@
 		FA1CB5051E64DB74007D7A2A /* libtiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtiff.a; path = Pods/TesseractOCRiOS/TesseractOCR/lib/libtiff.a; sourceTree = "<group>"; };
 		FA1CB50C1E64DC65007D7A2A /* libGcmLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGcmLib.a; path = "../../plugins/phonegap-plugin-push/src/ios/GoogleCloudMessaging/Libraries/libGcmLib.a"; sourceTree = "<group>"; };
 		FA22928E1E6B26DF0003D774 /* mobilitEASE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mobilitEASE.entitlements; path = mobilitEASE/mobilitEASE.entitlements; sourceTree = "<group>"; };
-		FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CDVViewController+UpdateSupportedOrientations.h"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.h"; sourceTree = "<group>"; };
-		FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CDVViewController+UpdateSupportedOrientations.m"; path = "cordova-plugin-screen-orientation/CDVViewController+UpdateSupportedOrientations.m"; sourceTree = "<group>"; };
-		FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YoikScreenOrientation.h; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; };
-		FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YoikScreenOrientation.m; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; };
+		FA6E8A261E91A2E4007F1596 /* CDVOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVOrientation.h; path = "cordova-plugin-screen-orientation/CDVOrientation.h"; sourceTree = "<group>"; };
+		FA6E8A271E91A2E4007F1596 /* CDVOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVOrientation.m; path = "cordova-plugin-screen-orientation/CDVOrientation.m"; sourceTree = "<group>"; };
 		FB73860783514C6797D20399 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
 		FC384F105F8F47E4AFF41CBA /* GGLContext.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = GGLContext.h; path = "phonegap-plugin-push/GCM/Headers/GGLContext.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -541,14 +538,12 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				FA6E8A261E91A2E4007F1596 /* CDVOrientation.h */,
+				FA6E8A271E91A2E4007F1596 /* CDVOrientation.m */,
 				FA1CB4DD1E647CA6007D7A2A /* claseAuxiliar.h */,
 				FA1CB4DE1E647CA6007D7A2A /* claseAuxiliar.mm */,
 				FA1CB4DF1E647CA6007D7A2A /* TesseractPlugin.h */,
 				FA1CB4E01E647CA6007D7A2A /* TesseractPlugin.m */,
-				FA2399FA1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.h */,
-				FA2399FB1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m */,
-				FA2399FC1E13397A0030D7DF /* YoikScreenOrientation.h */,
-				FA2399FD1E13397A0030D7DF /* YoikScreenOrientation.m */,
 				4FEE3B59719D4FD0AA60C294 /* UIImage+CropScaleOrientation.m */,
 				078C2C95B15948BE8365218A /* CDVCamera.m */,
 				59FC98AF695040AD86A905AF /* CDVJpegHeaderWriter.m */,
@@ -839,7 +834,6 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				FA2399FF1E13397A0030D7DF /* YoikScreenOrientation.m in Sources */,
 				6052E6C7A9CA499B92E68813 /* UIImage+CropScaleOrientation.m in Sources */,
 				EE28C0F6C86046DCBA0842AC /* CDVCamera.m in Sources */,
 				9D5548A693054CF5A25A5981 /* CDVJpegHeaderWriter.m in Sources */,
@@ -861,7 +855,6 @@
 				A0073A4DB3DD4D19A3A004C2 /* CDVDevice.m in Sources */,
 				3AA3752E87214B5896E677CE /* AppVersion.m in Sources */,
 				B0D1D51933E84740BB6AADB0 /* CDVStatusBar.m in Sources */,
-				FA2399FE1E13397A0030D7DF /* CDVViewController+UpdateSupportedOrientations.m in Sources */,
 				CFA829D35FBC4C52B7A4BA7D /* SOSPicker.m in Sources */,
 				DB7818682BC64E7EAEBE8D5C /* UIImage+fixOrientation.m in Sources */,
 				43217A47D09A4AD3B04DA325 /* GMAlbumsViewCell.m in Sources */,
@@ -872,6 +865,7 @@
 				B45F6558657A48B9AC28C725 /* GMGridViewController.m in Sources */,
 				8000EB4C4E7C4666B12E60F2 /* GMImagePickerController.m in Sources */,
 				B48B80C18B92456C8CFEC98E /* PSYBlockTimer.m in Sources */,
+				FA6E8A281E91A2E4007F1596 /* CDVOrientation.m in Sources */,
 				E4F58FC8CA1C4796AB4C2C0A /* GMPHAsset.m in Sources */,
 				670DCB356DB94B9782E86666 /* FabricPlugin.m in Sources */,
 				778C7115303641F3A9A018BE /* CDVClipboard.m in Sources */,
