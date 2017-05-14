@@ -98,19 +98,19 @@ static inline double radians (double degrees) {return degrees * M_PI/180;}
 	NSArray *words = [tesseract recognizedBlocksByIteratorLevel:G8PageIteratorLevelWord];
 
 	for(G8RecognizedBlock *block in words){
-		CGRect *rect = block.boundingBox;
-		NSDictionary *word = [NSDictionary dictionaryWithObjectsAndKeys:
-								block.text, @"word",
-								block.confidence, @"confidence",
-								[NSString stringWithFormat:@"@ @ @ @", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height], @"box",
-								nil];
-		[wordsArray addObject:word]
+        CGRect r = [block boundingBoxAtImageOfSize:uiImage.size];
+        NSMutableDictionary *word = [[NSMutableDictionary alloc] init];
+        [word setObject:block.text forKey:@"word"];
+        [word setValue:[NSNumber numberWithDouble:block.confidence] forKey:@"confidence"];
+        [word setObject:[NSString stringWithFormat:@"%f %f %f %f", r.origin.x, r.origin.y, r.size.width, r.size.height] forKey:@"box"];
+        [wordsArray addObject:word];
 	}
 	
 	[json setObject:wordsArray forKey:@"words"];    
 	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:json options:NSJSONWritingPrettyPrinted error:&error];
-	NSString *jsonString = [[NSString alloc] initWithData:info encoding:NSUTF8StringEncoding];
-    
+	NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    jsonData = nil;
+    wordsArray = nil;
     return jsonString;
 }
 

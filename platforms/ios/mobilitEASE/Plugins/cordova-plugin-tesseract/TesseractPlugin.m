@@ -41,8 +41,6 @@
     
     NSString *text = [cA ocrImage:Realimage withLanguage:language];
 	
-	NSArray *characterBoxes = [tesseract recognizedBlocksByIteratorLevel:G8PageIteratorLevelWord]
-
     [self performSelectorOnMainThread:@selector(ocrProcessingFinished:)
                            withObject:text
                         waitUntilDone:NO];
@@ -107,16 +105,15 @@
     {
         // Call  the Failure Javascript function
         
-        [self writeJavascript: [pluginResult toErrorCallbackString:self.callbackID]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
         
-                
     } else
         
     {    
         
         // Call  the Success Javascript function
         
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
 
         
     }
