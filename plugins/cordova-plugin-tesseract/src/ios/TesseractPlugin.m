@@ -74,7 +74,7 @@
     UIImage *Realimage = [[UIImage alloc] initWithData:data];
 
     
-    NSString *text = [cA ocrImage:Realimage withLanguage:language];
+    NSString *text = [cA ocrWords:Realimage withLanguage:language];
 
     [self performSelectorOnMainThread:@selector(ocrProcessingFinished:)
                            withObject:text

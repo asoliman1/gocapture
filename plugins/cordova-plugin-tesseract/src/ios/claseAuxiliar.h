@@ -21,6 +21,7 @@
 
 
 -(NSString *) ocrImage: (UIImage *) uiImage withLanguage: (NSString *) language;
+-(NSString *) ocrWords: (UIImage *) uiImage withLanguage: (NSString *) language;
 -(UIImage *)resizeImage:(UIImage *)image;
 
 
