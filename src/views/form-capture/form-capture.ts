@@ -113,7 +113,15 @@ export class FormCapture {
 		if (!this.submission.id) {
 			this.submission.id = new Date().getTime();
 		}
-		if (!this.submission.status) {
+		var valid = true;
+		this.form.elements.forEach((element: any) => {
+			if(element.is_required && !this.submission.fields[element.identifier]){
+				valid = false;
+			}
+		});
+		if(!valid){
+			this.submission.status = SubmissionStatus.OnHold;
+		}else if(this.submission.status != SubmissionStatus.Blocked) {
 			this.submission.status = SubmissionStatus.ToSubmit;
 		}
 		this.client.saveSubmission(this.submission, this.form).subscribe(sub => {

@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONObject;
@@ -15,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.googlecode.tesseract.android.ResultIterator;
+import com.googlecode.tesseract.android.TessBaseAPI.PageIteratorLevel;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,6 +27,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -46,7 +52,10 @@ public class TesseractPlugin extends CordovaPlugin {
             if (action.equals("recognizeText")) {
                 String imageData = args.getString(1);
                 result = recognizeText(imageData, language);
-            } else {
+            } else if(action.equals("recognizeWords")) {
+				String imageData = args.getString(1);
+                result = recognizeWords(imageData, language);
+			}else {
                 result = loadLanguage(language);
             }
 
@@ -90,6 +99,45 @@ public class TesseractPlugin extends CordovaPlugin {
         // You now have the text in recognizedText var, you can do anything with it.
         Log.v(TAG, "Recognized Text: " + recognizedText);
         return recognizedText;
+    }
+
+	public String recognizeWords(String imageData, String language) throws JSONException{
+        Log.v(TAG, "Starting process to recognize text in photo.");
+
+        byte[] decodedString = Base64.decode(imageData, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+        Log.v(TAG, "Before baseApi");
+
+        TessBaseAPI baseApi = new TessBaseAPI();
+        baseApi.setDebug(true);
+        baseApi.init(DATA_PATH, language);
+        baseApi.setImage(bitmap);
+
+        String recognizedText = "";
+        recognizedText = baseApi.getUTF8Text();
+
+		JSONObject obj = new JSONObject();
+		obj.put("recognizedText", recognizedText);
+		JSONArray words = new JSONArray();
+		obj = obj.put("words", words);
+
+		ResultIterator iterator = baseApi.getResultIterator();
+		iterator.begin();
+        do {
+			Rect r = iterator.getBoundingRect(PageIteratorLevel.RIL_WORD);
+			words.put(
+				new JSONObject()
+					.put("word", iterator.getUTF8Text(PageIteratorLevel.RIL_WORD))
+					.put("box", r.left + " " + r.top + " " + r.width() + " " + r.height())
+					.put("confidence", iterator.confidence(PageIteratorLevel.RIL_WORD))
+			);
+        } while (iterator.next(PageIteratorLevel.RIL_WORD));
+        baseApi.end();
+		iterator = null;
+        // You now have the text in recognizedText var, you can do anything with it.
+        Log.v(TAG, "Recognized Text: " + recognizedText);
+        return obj.toString();
     }
 
     public String loadLanguage(String language) {

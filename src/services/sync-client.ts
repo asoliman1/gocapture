@@ -75,9 +75,9 @@ export class SyncClient {
 				let filteredForms = [];
 				let current = new Date();
 				forms.forEach(form => {
-					if(new Date(form.archive_date) > current){
+					if (new Date(form.archive_date) > current) {
 						filteredForms.push(form);
-					}else{
+					} else {
 						console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
 					}
 				});
@@ -89,20 +89,24 @@ export class SyncClient {
 							obs.next(result);
 							obs.complete();
 							this._isSyncing = false;
-							this.syncSource.complete();							
+							this.syncSource.complete();
 							this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
 							this.onSync = this.syncSource.asObservable();
 						}, (err) => {
 							obs.error(err);
+							this.syncSource.complete();
 						});
 					}, (err) => {
 						obs.error(err);
+						this.syncSource.complete();
 					});
 				}, (err) => {
 					obs.error(err);
+					this.syncSource.complete();
 				});
 			}, (err) => {
 				obs.error(err);
+				this.syncSource.complete();
 			});
 		});
 	}
@@ -114,7 +118,7 @@ export class SyncClient {
 			var map: { [key: number]: FormMapEntry } = {};
 			this.lastSyncStatus = [];
 			forms.forEach(form => {
-				map[form.form_id] = {
+				map[form.form_id + ""] = {
 					form: form,
 					urlFields: form.getUrlFields(),
 					submissions: [],
@@ -123,7 +127,7 @@ export class SyncClient {
 				this.lastSyncStatus.push(map[form.form_id].status);
 			});
 			submissions.forEach(sub => {
-				map[sub.form_id].submissions.push(sub);
+				map[sub.form_id + ""].submissions.push(sub);
 			});
 
 			let formIds = Object.keys(map);
@@ -154,17 +158,17 @@ export class SyncClient {
 	}
 
 	private doSubmitAll(data: FormMapEntry): Observable<FormSubmission[]> {
-		return new Observable<FormSubmission[]>((obs :Observer<FormSubmission[]>) => {
+		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
 			let result = [];
 			var index = 0;
 			let handler = () => {
-				if(index == data.submissions.length){
+				if (index == data.submissions.length) {
 					obs.next(result);
 					obs.complete();
 					return;
 				}
 				this.doSubmit(data, index).subscribe((submission) => {
-					setTimeout(()=>{
+					setTimeout(() => {
 						result.push(submission);
 						index++;
 						handler();
@@ -178,22 +182,22 @@ export class SyncClient {
 		});
 	}
 
-	private buildUrlMap(submission: FormSubmission, urlFields: string[], urlMap: {[key: string] : string}): boolean{
+	private buildUrlMap(submission: FormSubmission, urlFields: string[], urlMap: { [key: string]: string }): boolean {
 		let hasUrls = false;
-		for(var field in submission.fields){
-			if(urlFields.indexOf(field) > -1){
+		for (var field in submission.fields) {
+			if (urlFields.indexOf(field) > -1) {
 				let sub = submission.fields[field];
-				if(sub){
+				if (sub) {
 					var val = [];
-					if(typeof(sub) == "object"){
-						Object.keys(sub).forEach((key)=>{
+					if (typeof (sub) == "object") {
+						Object.keys(sub).forEach((key) => {
 							val.push(sub[key]);
 						});
-					}else{
+					} else {
 						val = val.concat(sub);
 					}
-					val.forEach((url) => { 
-						if(url){
+					val.forEach((url) => {
+						if (url) {
 							urlMap[url] = "";
 							hasUrls = true;
 						}
@@ -204,32 +208,38 @@ export class SyncClient {
 		return hasUrls;
 	}
 
-	private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission>{
-		return new Observable<FormSubmission>((obs :Observer<FormSubmission>) => {
+	private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission> {
+		return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
 			let submission = data.submissions[index];
-			let urlMap: {[key: string]: string} = {};
+			let urlMap: { [key: string]: string } = {};
 			let hasUrls = this.buildUrlMap(submission, data.urlFields, urlMap);
-			this.uploadImages(urlMap, hasUrls).subscribe((d)=> {
-				for(var field in submission.fields){
-					if(data.urlFields.indexOf(field) > -1){
+			this.uploadImages(urlMap, hasUrls).subscribe((d) => {
+				for (var field in submission.fields) {
+					if (data.urlFields.indexOf(field) > -1) {
 						let sub = submission.fields[field];
-						if(sub){
-							if(typeof(sub) == "object"){
-								Object.keys(sub).forEach((key)=>{
+						if (sub) {
+							if (typeof (sub) == "object") {
+								Object.keys(sub).forEach((key) => {
 									sub[key] = urlMap[sub[key]];
 								});
-							}else if(Array.isArray(sub)){
-								for(let i = 0; i < sub.length; i++){
+							} else if (Array.isArray(sub)) {
+								for (let i = 0; i < sub.length; i++) {
 									sub[i] = urlMap[sub[i]];
 								}
-							}else{
+							} else {
 								submission.fields[field] = urlMap[sub];
 							}
 						}
 					}
 				}
-				this.rest.submitForm(submission).subscribe((sub_id)=>{
-					submission.activity_id = sub_id;
+				this.rest.submitForm(submission).subscribe((data) => {
+					if (!data.id || data.id < 0) {
+						let msg = "Could not process submission for form " + submission.form_id + ": " + data.message;
+						obs.error(msg);
+						this.errorSource.next(msg);
+						return;
+					}
+					submission.activity_id = data.id;
 					submission.status = SubmissionStatus.Submitted;
 					this.db.updateSubmissionId(submission).subscribe((ok) => {
 						submission.id = submission.activity_id;
@@ -237,6 +247,7 @@ export class SyncClient {
 						obs.complete();
 					}, err => {
 						obs.error(err);
+						this.errorSource.next(err);
 					})
 				});
 			}, (err) => {
@@ -246,9 +257,9 @@ export class SyncClient {
 		});
 	}
 
-	private uploadImages(urlMap: {[key: string]: string}, hasUrls: boolean): Observable<any>{
-		return new Observable<any>((obs : Observer<any>) => {
-			if(!hasUrls){
+	private uploadImages(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
+		return new Observable<any>((obs: Observer<any>) => {
+			if (!hasUrls) {
 				obs.next(null);
 				obs.complete();
 				return;
@@ -257,19 +268,19 @@ export class SyncClient {
 			let urls = Object.keys(urlMap);
 			let transfer = new Transfer();
 			let request = new FileUploadRequest();
-			let handler = ()=>{
-				if(index >= urls.length){
-					this.rest.uploadFiles(request).subscribe((data)=>{
-						urls.forEach((url, index)=>{
+			let handler = () => {
+				if (index >= urls.length) {
+					this.rest.uploadFiles(request).subscribe((data) => {
+						urls.forEach((url, index) => {
 							urlMap[url] = data[index].url;
 						});
 						obs.next(data);
 						obs.complete();
-					}, err =>{
+					}, err => {
 						obs.error(err);
 					})
-				}else{
-					if(this.dataUrlRegexp.test(urls[index])){
+				} else {
+					if (this.dataUrlRegexp.test(urls[index])) {
 						let data = urls[index];
 						let entry = new FileInfo();
 						let d = data.split(";base64,");
@@ -284,11 +295,11 @@ export class SyncClient {
 					}
 					let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
 					let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-					this.file.resolveDirectoryUrl(folder).then(dir =>{
-						this.file.getFile(dir, file, {create:false}).then(fileEntry =>{
+					this.file.resolveDirectoryUrl(folder).then(dir => {
+						this.file.getFile(dir, file, { create: false }).then(fileEntry => {
 							fileEntry.getMetadata((metadata) => {
 								//data:[<mediatype>][;base64],<data>
-								this.file.readAsDataURL(folder, file).then((data : string)=>{
+								this.file.readAsDataURL(folder, file).then((data: string) => {
 									let entry = new FileInfo();
 									let d = data.split(";base64,");
 									entry.data = d[1];
@@ -298,10 +309,10 @@ export class SyncClient {
 									request.files.push(entry);
 									index++;
 									handler();
-								}).catch((err)=>{
+								}).catch((err) => {
 									obs.error(err);
 								})
-							}, err =>{
+							}, err => {
 								obs.error(err);
 							});
 						}).catch(err => {
@@ -447,23 +458,23 @@ export class SyncClient {
 
 	private downloadImages(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
-			if(!submissions || submissions.length == 0){
+			if (!submissions || submissions.length == 0) {
 				obs.next([]);
 				obs.complete();
 				return;
 			}
-			let map: {[key:string]: Form} = forms.reduce((previous, current, index, array) => { 
+			let map: { [key: string]: Form } = forms.reduce((previous, current, index, array) => {
 				previous[current.id] = current;
 				return previous;
 			}, {});
 
-			let urlMap: {[key: string]: string} = {};
+			let urlMap: { [key: string]: string } = {};
 			let hasUrls = false;
 			submissions.forEach((submission) => {
 				let urlFields = map[submission.form_id].getUrlFields();
 				hasUrls = this.buildUrlMap(submission, urlFields, urlMap) || hasUrls;
 			});
-			if(!hasUrls){
+			if (!hasUrls) {
 				obs.next(submissions);
 				obs.complete();
 				return;
@@ -472,23 +483,23 @@ export class SyncClient {
 			let index = 0;
 			let fileTransfer = this.transfer.create();
 			let handler = () => {
-				if(index == urls.length){
+				if (index == urls.length) {
 					submissions.forEach(submission => {
 						let urlFields = map[submission.form_id].getUrlFields();
-						for(var field in submission.fields){
-							if(urlFields.indexOf(field) > -1){
+						for (var field in submission.fields) {
+							if (urlFields.indexOf(field) > -1) {
 								let sub = submission.fields[field];
-								if(sub){
-									if(typeof(sub) == "object"){
-										Object.keys(sub).forEach((key)=>{
+								if (sub) {
+									if (typeof (sub) == "object") {
+										Object.keys(sub).forEach((key) => {
 											sub[key] = urlMap[sub[key]];
 										});
-									}else if(Array.isArray(sub)){
-										let val = <string[]> submission.fields[field];
-										for(let i = 0; i < val.length; i++){
+									} else if (Array.isArray(sub)) {
+										let val = <string[]>submission.fields[field];
+										for (let i = 0; i < val.length; i++) {
 											val[i] = urlMap[val[i]];
 										}
-									}else{
+									} else {
 										submission.fields[field] = urlMap[sub];
 									}
 								}
@@ -497,31 +508,31 @@ export class SyncClient {
 					});
 					obs.next(submissions);
 					obs.complete();
-				}else{
+				} else {
 					let ext = urls[index].substr(urls[index].lastIndexOf("."));
 					fileTransfer.download(urls[index], cordova.file.dataDirectory + "leadliaison/images/dwn_" + new Date().getTime() + ext)
-					.then((value : FileEntry) => {
-						//console.log(value);
-						urlMap[urls[index]] = "/" + value.nativeURL.split("///")[1];
-						index++;
-						setTimeout(()=>{
-							handler();
+						.then((value: FileEntry) => {
+							//console.log(value);
+							urlMap[urls[index]] = "/" + value.nativeURL.split("///")[1];
+							index++;
+							setTimeout(() => {
+								handler();
+							});
+						})
+						.catch((err) => {
+							console.error(err);
+							index++;
+							setTimeout(() => {
+								handler();
+							});
 						});
-					})
-					.catch((err) => {
-						console.error(err);
-						index++;
-						setTimeout(()=>{
-							handler();
-						});
-					});
 				}
 			}
 			handler();
 		});
 	}
 
-	private isExternalUrl(url: string){
+	private isExternalUrl(url: string) {
 		return url.indexOf("http") == 0;
 	}
 }

@@ -39,7 +39,7 @@ export class FormReview {
 
 	}
 
-	ionViewWillEnter() {
+	ionViewDidEnter() {
 		this.form = this.navParams.get("form");
 		this.isDispatch = this.navParams.get("isDispatch");
 		this.loading = true;

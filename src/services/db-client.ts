@@ -340,7 +340,7 @@ export class DBClient {
 	public getFormsByIds(ids: number[]): Observable<Form[]> {
 		return new Observable<Form[]>((responseObserver: Observer<Form[]>) => {
 			this.manager.db(WORK).subscribe((db) => {
-				db.executeSql(this.getQuery("forms", "selectByIds"), [ids])
+				db.executeSql(this.getQuery("forms", "selectByIds").replace("?", ids.join(",")), [])
 					.then((data) => {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {

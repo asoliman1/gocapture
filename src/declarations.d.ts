@@ -14,6 +14,7 @@
 declare module '*';
 
 declare module TesseractPlugin{
-   function recognizeText(image, language, successCallback, errorCallback) ;
+   function recognizeText(image, language, successCallback: (text:string) => void, errorCallback) ;
+   function recognizeWords(image, language, successCallback: (data: {recognizedText: string, words: {word: string, box: string, confidence: number}[]}) => void, errorCallback) ;
    function loadLanguage(language, successCallback, errorCallback);
 }

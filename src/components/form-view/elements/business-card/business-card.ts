@@ -87,7 +87,6 @@ export class BusinessCard extends BaseElement {
 			}else{
 				this.backLoading = true;
 			}
-			let ctrl = this.alertCtrl;
 			this.ensureLandscape(imageData).subscribe((data) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
 				if (data != imageData) {
@@ -102,17 +101,7 @@ export class BusinessCard extends BaseElement {
 				} else {
 					doMove(imageData);
 				}
-				setTimeout(()=>{
-					window["TesseractPlugin"] && TesseractPlugin.recognizeText(data.split("base64,")[1], "eng", function(recognizedText) {
-						let alert = ctrl.create({
-							title: "Tesseract OCR",
-							message: "<pre>" + recognizedText + "</pre>"
-						});
-						alert.present();
-					}, function(reason) {
-						console.error( reason);
-					});
-				}, 250);
+				this.recognizeText(data);
 			});
 			var doMove = (imageData) => {
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
@@ -123,6 +112,21 @@ export class BusinessCard extends BaseElement {
 		}).catch(err => {
 			console.error(err);
 		});
+	}
+
+	recognizeText(data){
+		let ctrl = this.alertCtrl;
+		setTimeout(()=>{
+			window["TesseractPlugin"] && TesseractPlugin.recognizeWords(data.split("base64,")[1], "eng", function(data) {
+				let alert = ctrl.create({
+					title: "Tesseract OCR",
+					message: "<pre>" + data.recognizedText + "</pre>"
+				});
+				alert.present();
+			}, function(reason) {
+				console.error( reason);
+			});
+		}, 250);
 	}
 
 	setValue(type, newPath){

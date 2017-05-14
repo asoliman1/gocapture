@@ -43,7 +43,7 @@ export class RESTClient {
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 		.map(resp => {
 			if (resp.status != "200") {
-				this.errorSource.error(resp);
+				this.errorSource.next(resp);
 			}
 			this.token = resp.data.access_token;
 			return resp.data;
@@ -71,7 +71,7 @@ export class RESTClient {
 		}
 		return this.call<RecordsResponse<Form>>("GET", "/forms.json", opts).map(resp => {
 			if (resp.status != "200") {
-				this.errorSource.error(resp);
+				this.errorSource.next(resp);
 			}
 			let result: Form[] = [];
 			resp.records.forEach(record => {
@@ -124,7 +124,7 @@ export class RESTClient {
 		return this.call<RecordsResponse<Dispatch>>("GET", "/dispatches.json", opts)
 			.map(resp => {
 				if (resp.status != "200") {
-					this.errorSource.error(resp);
+					this.errorSource.next(resp);
 				}
 				return resp;
 			});
@@ -263,7 +263,7 @@ export class RESTClient {
 				if (resp.status == "200") {
 					return true;
 				}
-				this.errorSource.error(resp);
+				this.errorSource.next(resp);
 				return false;
 			});
 	}
@@ -274,7 +274,7 @@ export class RESTClient {
 				if (resp.status == "200") {
 					return true;
 				}
-				this.errorSource.error(resp);
+				this.errorSource.next(resp);
 				return false;
 			});
 	}
@@ -292,7 +292,7 @@ export class RESTClient {
 		}
 		return this.call<RecordsResponse<DeviceFormMembership>>("GET", "/forms/memberships.json", opts).map(resp => {
 			if (resp.status != "200") {
-				this.errorSource.error(resp);
+				this.errorSource.next(resp);
 			}
 			return resp;
 		});
@@ -339,14 +339,20 @@ export class RESTClient {
 	 * 
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<number> {
+	public submitForm(data: FormSubmission): Observable<{id:number,message:string}> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				if (resp.status == "200") {
-					return resp.activity_id;
+					return {
+						id: resp.activity_id,
+						message: ""
+					};
 				}
-				this.errorSource.error(resp);
-				return -1;
+				this.errorSource.next(resp);
+				return {
+						id: resp.activity_id,
+						message: resp.message
+					};
 			});
 	}
 
@@ -359,13 +365,13 @@ export class RESTClient {
 				obs.complete();
 				return;
 			}
-			let handler = (id : number) =>{
-				if(id > 0){
+			let handler = (reply: {id : number, message: string}) =>{
+				if(reply.id > 0){
 					result.push(data[index]);
 				}
 				index++;
 				if(index >= data.length){
-					obs.next(data);
+					obs.next(result);
 					obs.complete();
 					return;
 				}

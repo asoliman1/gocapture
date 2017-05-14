@@ -17,8 +17,8 @@
 
 <ion-content class="forms">
 	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
-	<ion-list *ngFor="let form of filteredForms" approxItemHeight="77px">
-		<a ion-item detail-none (click)="presentActionSheet(form)">
+	<ion-list approxItemHeight="77px">
+		<a ion-item detail-none (click)="presentActionSheet(form)" *ngFor="let form of filteredForms">
 			<h1>{{form.name}}</h1>
 			<h2>{{form.total_submissions}} submissions &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_hold > 0">{{form.total_hold}} on Hold</span></h2>
 		</a>

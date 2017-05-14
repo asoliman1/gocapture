@@ -21,12 +21,11 @@ import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { FormView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import { FormControlPipe } from '../pipes/form-control-pipe';
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
-import { SignaturePadModule } from 'angular2-signaturepad';
 //import { CustomFormsModule } from 'ng2-validation';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
@@ -59,6 +58,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 	FormControlPipe,
 	FormView,
 	LogView,
+	SignaturePad,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch
   ],
@@ -67,8 +67,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 	HttpModule,
 	BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
-	TextMaskModule,
-	SignaturePadModule
+	TextMaskModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -85,6 +84,7 @@ import { Geolocation } from "@ionic-native/geolocation";
     FormCapture,
 	FormView,	
 	LogView,
+	SignaturePad,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch
   ],

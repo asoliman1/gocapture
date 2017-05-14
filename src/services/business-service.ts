@@ -37,6 +37,12 @@ export class BussinessClient {
 
 	private setup: boolean = false;
 
+	private errorSource: BehaviorSubject<any>;
+    /**
+     * Error event
+     */
+	error: Observable<any>;
+
 	constructor(private db: DBClient, 
 				private rest: RESTClient, 
 				private sync: SyncClient, 
@@ -56,6 +62,9 @@ export class BussinessClient {
 			console.log("network was connected");
 			this.setOnline(true);
 		});
+
+		this.errorSource = new BehaviorSubject<any>(null);
+		this.error = this.errorSource.asObservable();
 	}
 
 	public isOnline(): boolean {
@@ -66,10 +75,12 @@ export class BussinessClient {
 		this.online = val;
 		this.networkSource.next(val ? "ON" : "OFF");
 		this.rest.setOnline(val);
-		if (val && this.db.isWorkDbInited()) {
+		if (val == true) {
 			this.db.getConfig("autoUpload").subscribe((val) => {
-				if (val == "true") {
-					this.doSync();
+				if (val+"" == "true") {
+					this.doSync().subscribe(()=>{
+						console.log("Sync up done")
+					});
 				}
 			});
 		}
@@ -289,6 +300,8 @@ export class BussinessClient {
 					this.sync.sync(submissions, forms).subscribe(submitted => {
 						obs.next(true);
 						obs.complete();
+					}, (err) => {
+						this.errorSource.next(err);
 					});
 				});
 			});
