@@ -1,5 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { SignaturePad } from "angular2-signaturepad/signature-pad";
+import { SignaturePad } from "./signature-pad";
 import { ViewController, Content } from "ionic-angular";
 
 @Component({
@@ -39,7 +39,9 @@ export class SignatureModal {
 	}
 
 	drawComplete() {
-		this.hasSignature = true;
+		this.zone.run(()=>{
+			this.hasSignature = true;
+		});
 		//console.log("Done");
 	}
 
@@ -56,9 +58,11 @@ export class SignatureModal {
 	}
 
 	done() {
-		let canvas = this.signaturePad["signaturePad"]._canvas;
-		let img = this.cropSignatureCanvas(canvas);
-		this.viewCtrl.dismiss(img);
+		if(this.hasSignature){
+			let canvas = this.signaturePad["signaturePad"]._canvas;
+			let img = this.cropSignatureCanvas(canvas);
+			this.viewCtrl.dismiss(img);
+		}
 	}
 
      cropSignatureCanvas(canvas) {

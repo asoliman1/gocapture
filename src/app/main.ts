@@ -1,7 +1,11 @@
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app.module';
-import { setupConfig } from "../config/dev";
+import { isDevMode } from '@angular/core';
 
-setupConfig();
+
+import * as dev from "../config/dev";
+import * as prod from "../config/prod";
+
 platformBrowserDynamic().bootstrapModule(AppModule);
 
+isDevMode() ? dev.setupConfig() : prod.setupConfig();

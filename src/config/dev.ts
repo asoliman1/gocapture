@@ -9,39 +9,44 @@ export function setupConfig() {
 		var val = CFG[field];
 		Config[field] = val;
 	}
+	doSetup();
 }
 
-class FileTransfer {
-	public download(source: string, target: string, successCallback: Function, errorCallback: Function, trustAllHosts: boolean, options: any) {
-		setTimeout(() => {
-			successCallback && successCallback({
-				isFile: true,
-				isDirectory: false,
-				name: source.substr(source.lastIndexOf("/") + 1),
-				fullPath: source,
-				fileSystem: {},
-				nativeURL: source
-			});
-		}, 500)
-	}
-}
-
-
-window["FileTransfer"] = FileTransfer;
-setTimeout(()=>{
-	if(!window["cordova"]){
-		window["cordova"] = <any>{
-			file: {
-				dataDirectory: "D:/"
-			}
+function doSetup(){
+	class FileTransfer {
+		public download(source: string, target: string, successCallback: Function, errorCallback: Function, trustAllHosts: boolean, options: any) {
+			setTimeout(() => {
+				successCallback && successCallback({
+					isFile: true,
+					isDirectory: false,
+					name: source.substr(source.lastIndexOf("/") + 1),
+					fullPath: source,
+					fileSystem: {},
+					nativeURL: source
+				});
+			}, 500)
 		}
 	}
-}, 6000);
 
-window["device"] = {
-	platform: "Android",
-	model: "Note7",
-	manufacturer: "Google",
-	version: "5.2",
-	uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
+
+	window["FileTransfer"] = FileTransfer;
+	setTimeout(()=>{
+		if(!window["cordova"]){
+			window["cordova"] = <any>{
+				file: {
+					dataDirectory: "D:/"
+				}
+			}
+		}
+	}, 6000);
+
+	if(!window["cordova"]){
+		window["device"] = {
+			platform: "Android",
+			model: "Note7",
+			manufacturer: "Google",
+			version: "5.2",
+			uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
+		};
+	};
 };

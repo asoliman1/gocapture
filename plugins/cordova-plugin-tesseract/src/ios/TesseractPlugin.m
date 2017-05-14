@@ -40,6 +40,41 @@
 
     
     NSString *text = [cA ocrImage:Realimage withLanguage:language];
+	
+	NSArray *characterBoxes = [tesseract recognizedBlocksByIteratorLevel:G8PageIteratorLevelWord]
+
+    [self performSelectorOnMainThread:@selector(ocrProcessingFinished:)
+                           withObject:text
+                        waitUntilDone:NO];
+    
+}
+
+- (void) recognizeWords:(CDVInvokedUrlCommand*)command { //get the callback id 
+    NSArray *arguments = command.arguments;
+    
+    NSString *language = [arguments objectAtIndex:0];
+    NSLog(@"%s:%d language=%@", __func__, __LINE__, language);
+    NSString *imagedata = [arguments objectAtIndex:1];
+
+
+    self.callbackID = command.callbackId;
+
+    NSData *data;
+
+    if ([NSData instancesRespondToSelector:@selector(initWithBase64EncodedString:options:)]) {
+        data = [[NSData alloc] initWithBase64EncodedString:imagedata options:kNilOptions];  // iOS 7+
+    } else {
+        data = [[NSData alloc] initWithBase64Encoding:imagedata];                           // pre iOS7
+    }
+
+
+    claseAuxiliar *cA = [[claseAuxiliar alloc]init];
+
+    
+    UIImage *Realimage = [[UIImage alloc] initWithData:data];
+
+    
+    NSString *text = [cA ocrImage:Realimage withLanguage:language];
 
     [self performSelectorOnMainThread:@selector(ocrProcessingFinished:)
                            withObject:text

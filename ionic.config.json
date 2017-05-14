@@ -1,6 +1,5 @@
 {
   "name": "mobilitEASE",
   "app_id": "com.leadliaison.mobilitease",
-  "typescript": true,
-  "v2": true
+  "type": "ionic-angular"
 }

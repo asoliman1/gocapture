@@ -10,8 +10,9 @@ import { Main } from '../views/main';
 import { DBClient } from "../services/db-client";
 import { LogClient } from "../services/log-client";
 import { RESTClient } from "../services/rest-client";
+import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
-import { NavController }  from "ionic-angular";
+import { NavController, ToastController }  from "ionic-angular";
 declare var cordova;
 
 @Component({
@@ -28,8 +29,10 @@ export class MyApp {
 			private db: DBClient, 
 			private rest: RESTClient, 
 			private client: BussinessClient,
+			private sync: SyncClient,
 			private logClient: LogClient,
-			private file: File) {
+			private file: File,
+			private toast: ToastController) {
 		this.initializeApp();
 	}
 
@@ -81,6 +84,26 @@ export class MyApp {
 			if(resp && resp.status == 401){
 				this.nav.setRoot(Login, {"unauthorized": true});
 			}
+		});
+
+		this.client.error.subscribe((resp)=>{
+			let toaster = this.toast.create({
+				message: resp,
+				duration: 5000,
+				position: "top",
+				cssClass: "error"
+			});
+			toaster.present();
+		});
+
+		this.sync.error.subscribe((resp)=>{
+			let toaster = this.toast.create({
+				message: resp,
+				duration: 5000,
+				position: "top",
+				cssClass: "error"
+			});
+			toaster.present();
 		});
 	}
 

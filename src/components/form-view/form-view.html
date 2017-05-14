@@ -5,6 +5,8 @@
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 				<ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 			</ion-item>
+			<div *ngSwitchCase="'page_break'"></div>
+			<div *ngSwitchCase="'section'"></div>
 			<ion-item *ngSwitchCase="'url'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 				<ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
@@ -25,7 +27,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'time'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-datetime [disabled]="readOnly" (click)="setHour($event)" displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+				<ion-datetime (click)="setHour($event)" displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
 			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
 			<ion-item *ngSwitchCase="'money'">
@@ -38,7 +40,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'date'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-datetime [disabled]="readOnly" (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+				<ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
 			<ion-item *ngSwitchCase="'phone'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
