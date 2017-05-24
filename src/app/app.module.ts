@@ -20,6 +20,7 @@ import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { IonPullUpComponent } from '../components/ion-pullup';
+import { OcrSelector } from "../components/ocr-selector";
 import { FormView } from '../components/form-view';
 import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
@@ -60,7 +61,8 @@ import { Geolocation } from "@ionic-native/geolocation";
 	LogView,
 	SignaturePad,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
-	ProspectSearch
+	ProspectSearch,
+	OcrSelector
   ],
   imports: [
 	BrowserModule,
@@ -86,7 +88,8 @@ import { Geolocation } from "@ionic-native/geolocation";
 	LogView,
 	SignaturePad,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
-	ProspectSearch
+	ProspectSearch,
+	OcrSelector
   ],
   providers: [
     DBClient,

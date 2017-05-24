@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { Headers, Response, Http, URLSearchParams, QueryEncoder } from "@angular/http";
+import { Headers, Response, Http, URLSearchParams } from "@angular/http";
 import { Config } from "../config";
 import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, SubmissionDataResponse, FileUploadRequest, FileUploadResponse, FileInfo, FileResponse } from "../model/protocol";
+import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
 import { Device } from "@ionic-native/device";
 
 @Injectable()

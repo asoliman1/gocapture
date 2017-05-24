@@ -3,12 +3,10 @@ import { NavController, NavParams, Nav } from 'ionic-angular';
 import { Forms } from "../forms";
 import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
-import { Login } from "../login";
 import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs";
 import { SyncClient } from "../../services/sync-client";
-import { RESTClient } from "../../services/rest-client";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 
 @Component({

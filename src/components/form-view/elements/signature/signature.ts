@@ -1,5 +1,5 @@
 import { Component, Input, forwardRef } from '@angular/core';
-import { Form, FormElement } from "../../../../model";
+import { FormElement } from "../../../../model";
 import { SignatureModal} from "./signature.modal";
 import { ModalController} from "ionic-angular"
 import { BaseElement } from "../base-element";

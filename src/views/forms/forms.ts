@@ -10,12 +10,12 @@ import {
 	animate
 } from '@angular/animations';
 
-import { Subscription, Subscriber } from "rxjs";
+import { Subscription } from "rxjs";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController, Searchbar } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form, SyncStatus } from "../../model";
+import { Form } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";

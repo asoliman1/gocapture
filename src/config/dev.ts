@@ -46,7 +46,7 @@ function doSetup(){
 			model: "Note7",
 			manufacturer: "Google",
 			version: "5.2",
-			uuid: "wqerqwerqwerqwerwerqwerqwerqweqr"
+			uuid: "ldkcbasdhoaidfyosdvweasadtr"
 		};
 	};
 };

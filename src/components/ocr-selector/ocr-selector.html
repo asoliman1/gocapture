@@ -1,0 +1,33 @@
+<ion-header>
+	<ion-navbar>
+		<ion-buttons start>
+			<button ion-button (click)="cancel()">
+				<ion-icon name="close" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+		<ion-title>Recognized text</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="done()" [disabled]="loading">
+				<ion-icon name="checkmark" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+<ion-content class="text-center">
+	<div class="ocr-layout">
+		<div class="holder">
+			<img #card [src]="image">
+			<div class="words-wrapper">
+				<div class="words">
+					<div class="word" [class.assigned]="word.assigned" *ngFor="let word of wordElements" (click)="wordClicked(word)" [style.width]="word.width"
+					 [style.height]="word.height" [style.top]="word.top" [style.left]="word.left">
+						{{word.word}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="loading" [@isVisibleChanged]="isLoading">
+			<ion-spinner></ion-spinner>
+		</div>
+	</div>
+</ion-content>

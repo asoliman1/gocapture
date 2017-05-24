@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import { NavParams, Nav } from 'ionic-angular';
+import { Nav } from 'ionic-angular';
 import { Platform } from 'ionic-angular';
 import { File } from "@ionic-native/file";
 
@@ -12,7 +12,7 @@ import { LogClient } from "../services/log-client";
 import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
-import { NavController, ToastController }  from "ionic-angular";
+import { ToastController }  from "ionic-angular";
 declare var cordova;
 
 @Component({

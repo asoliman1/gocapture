@@ -1,4 +1,4 @@
-import { Input, SimpleChange } from '@angular/core';
+import { SimpleChange } from '@angular/core';
 import { FormElement } from "../../../model";
 import { FormGroup } from "@angular/forms";
 

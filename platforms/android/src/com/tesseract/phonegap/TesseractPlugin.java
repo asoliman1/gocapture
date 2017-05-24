@@ -27,6 +27,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -124,10 +125,11 @@ public class TesseractPlugin extends CordovaPlugin {
 		ResultIterator iterator = baseApi.getResultIterator();
 		iterator.begin();
         do {
+			Rect r = iterator.getBoundingRect(PageIteratorLevel.RIL_WORD);
 			words.put(
 				new JSONObject()
 					.put("word", iterator.getUTF8Text(PageIteratorLevel.RIL_WORD))
-					.put("box", iterator.getBoundingRect(PageIteratorLevel.RIL_WORD).flattenToString())
+					.put("box", r.left + " " + r.top + " " + r.width() + " " + r.height())
 					.put("confidence", iterator.confidence(PageIteratorLevel.RIL_WORD))
 			);
         } while (iterator.next(PageIteratorLevel.RIL_WORD));

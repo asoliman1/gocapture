@@ -1,6 +1,6 @@
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
-import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
+import { Observable, Observer } from "rxjs/Rx";
 import { Utils } from "./utils";
 import { Migrator } from "./migrator";
 import { Table } from "./metadata";

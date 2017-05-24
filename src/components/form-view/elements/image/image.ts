@@ -1,10 +1,9 @@
-import { Component, Input, Output, forwardRef } from '@angular/core';
-import { Form, FormElement } from "../../../../model";
+import { Component, Input, forwardRef } from '@angular/core';
+import { FormElement } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
 import { ActionSheetController } from "ionic-angular";
 import { Camera } from '@ionic-native/camera';
-import { ImagePicker } from '@ionic-native/image-picker';
 declare var cordova: any;
 
 @Component({

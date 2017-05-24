@@ -1,8 +1,8 @@
-import { Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { OnChanges, SimpleChanges } from '@angular/core';
 import { FormElement } from "../../../model";
-import { FormGroup, ControlValueAccessor } from "@angular/forms";
-import { Observable, Observer, Subscription } from "rxjs";
-import { File, Entry } from '@ionic-native/file';
+import { ControlValueAccessor } from "@angular/forms";
+import { Observable, Observer } from "rxjs";
+import { File } from '@ionic-native/file';
 
 export class BaseElement implements OnChanges, ControlValueAccessor {
 

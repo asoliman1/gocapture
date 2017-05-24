@@ -1,15 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Observable, Observer, BehaviorSubject, Subscription } from "rxjs/Rx";
 import { AuthenticationRequest } from "../model/protocol";
-import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
+import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership } from "../model";
 import { DBClient } from "./db-client";
 import { RESTClient } from "./rest-client";
 import { SyncClient } from "./sync-client";
 import { PushClient } from "./push-client";
 import { Transfer } from '@ionic-native/transfer';
-import { File, Entry } from '@ionic-native/file';
 import { Network } from '@ionic-native/network';
-import { UUID } from "../util/uuid";
 declare var cordova: any;
 
 @Injectable()

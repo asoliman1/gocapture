@@ -1,12 +1,13 @@
 import { Component, Input, forwardRef } from '@angular/core';
-import { ActionSheetController, AlertController } from "ionic-angular";
+import { ActionSheetController, AlertController, ModalController } from "ionic-angular";
 import { Observable, Observer } from "rxjs/Rx"
 import { BaseElement } from "../base-element";
-import { FormElement } from "../../../../model";
+import { OcrSelector } from "../../../ocr-selector";
+import { FormElement, Form, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
-import { File } from "@ionic-native/file";
 declare var cordova: any;
+declare var screen;
 
 @Component({
 	selector: 'business-card',
@@ -20,6 +21,11 @@ export class BusinessCard extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
+	
+	@Input() form: Form;	
+	@Input() submission: FormSubmission;
+
+	@Input() doOcr: boolean = true;
 
 	front: string = "assets/images/business-card-front.svg";
 	back: string = "assets/images/business-card-back.svg";
@@ -32,7 +38,8 @@ export class BusinessCard extends BaseElement {
 
 	constructor(private actionCtrl: ActionSheetController,
 				private alertCtrl: AlertController,
-				private camera: Camera) {
+				private camera: Camera,
+				private modalCtrl: ModalController) {
 		super();
 		this.currentValue = {
 			front: this.front,
@@ -87,12 +94,12 @@ export class BusinessCard extends BaseElement {
 			}else{
 				this.backLoading = true;
 			}
-			this.ensureLandscape(imageData).subscribe((data) => {
+			this.ensureLandscape(imageData).subscribe((info) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
-				if (data != imageData) {
+				if (info.data != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
 					let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-					this.file.writeFile(newFolder, name, this.dataURItoBlob(data), { replace: true }).then(() => {
+					this.file.writeFile(newFolder, name, this.dataURItoBlob(info.data), { replace: true }).then(() => {
 						this.setValue(type, newFolder + "/" + name);
 					},
 						(err) => {
@@ -101,7 +108,9 @@ export class BusinessCard extends BaseElement {
 				} else {
 					doMove(imageData);
 				}
-				this.recognizeText(data);
+				if(this.element.is_scan_cards_and_prefill_form == 1){
+					this.recognizeText(info);
+				}
 			});
 			var doMove = (imageData) => {
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
@@ -114,19 +123,39 @@ export class BusinessCard extends BaseElement {
 		});
 	}
 
-	recognizeText(data){
-		let ctrl = this.alertCtrl;
-		setTimeout(()=>{
-			window["TesseractPlugin"] && TesseractPlugin.recognizeWords(data.split("base64,")[1], "eng", function(data) {
-				let alert = ctrl.create({
-					title: "Tesseract OCR",
-					message: "<pre>" + data.recognizedText + "</pre>"
-				});
-				alert.present();
-			}, function(reason) {
-				console.error( reason);
-			});
-		}, 250);
+	recognizeText(info: Info){
+		let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
+		modal.onDidDismiss((changedValues) => {
+			screen.orientation.unlock && screen.orientation.unlock();
+			if(changedValues){
+				var vals = {};
+				for(let id in this.formGroup.controls){
+					if(this.formGroup.controls[id]["controls"]){
+						vals[id] = {};
+						for(let subid in this.formGroup.controls[id]["controls"]){
+							vals[id][subid] = this.formGroup.controls[id]["controls"][subid].value;
+						}
+					}else{
+						vals[id] = this.formGroup.controls[id].value;
+					}
+				}
+				console.log(vals);
+				for(var id in changedValues){
+					let match = /(\w+\_\d+)\_\d+/g.exec(id);
+					if(match && match.length > 0){
+						if(!vals[match[1]]){
+							vals[match[1]] = {};
+						}
+						vals[match[1]][id] = changedValues[id];
+					}else{
+						vals[id] = changedValues[id];
+					}
+				}
+				this.formGroup.setValue(vals);
+			}
+		});
+		modal.present();
+		screen.orientation.lock && screen.orientation.lock('landscape');		
 	}
 
 	setValue(type, newPath){
@@ -156,8 +185,8 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-	ensureLandscape(url: string): Observable<string> {
-		return new Observable<string>((obs: Observer<string>) => {
+	ensureLandscape(url: string): Observable<Info> {
+		return new Observable<Info>((obs: Observer<Info>) => {
 			var image: any = document.createElement("img");
 			image.onload = function (event: any) {
 				if (image.naturalWidth >= image.naturalHeight) {
@@ -167,7 +196,11 @@ export class BusinessCard extends BaseElement {
 					var ctx = canvas.getContext('2d');
 					ctx.translate(canvas.width / 2, canvas.height / 2);
 					ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
-					obs.next(canvas.toDataURL());
+					obs.next({
+						width: canvas.width,
+						height: canvas.height,
+						data:canvas.toDataURL()
+					});
 					obs.complete();
 					return;
 				}
@@ -178,7 +211,11 @@ export class BusinessCard extends BaseElement {
 				ctx.translate(canvas.width / 2, canvas.height / 2);
 				ctx.rotate(Math.PI / 2);
 				ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
-				obs.next(canvas.toDataURL());
+				obs.next({
+					width: canvas.width,
+					height: canvas.height,
+					data:canvas.toDataURL()
+				});
 				obs.complete();
 			};
 			image.src = url;
@@ -216,4 +253,10 @@ export class BusinessCard extends BaseElement {
 			}
 		}
 	}
+}
+
+class Info{
+	width:number;
+	height:number;
+	data:string;
 }
