@@ -28,20 +28,20 @@ export class Checkboxes extends BaseElement {
 				}
 			}
 		}
-		this.currentValue = obj;
+		this.currentVal = obj;
 	}
 
 	onCheckChange(event, option){
 		//console.log(event);
 		if(event.checked){
-			this.currentValue.push(option.option);
+			this.currentVal.push(option.option);
 		}else{
-			let idx = this.currentValue.indexOf(option.option);
+			let idx = this.currentVal.indexOf(option.option);
 			if(idx > -1){
-				this.currentValue.splice(idx, 1);
+				this.currentVal.splice(idx, 1);
 			}
 		}
-		this.propagateChange(this.currentValue);
+		this.propagateChange(this.currentVal);
 	}
 
 	has(values: any[], option){

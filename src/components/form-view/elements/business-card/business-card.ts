@@ -1,6 +1,6 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { ActionSheetController, AlertController, ModalController } from "ionic-angular";
-import { Observable, Observer } from "rxjs/Rx"
+import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
 import { FormElement, Form, FormSubmission } from "../../../../model";
@@ -25,8 +25,6 @@ export class BusinessCard extends BaseElement {
 	@Input() form: Form;	
 	@Input() submission: FormSubmission;
 
-	@Input() doOcr: boolean = true;
-
 	front: string = "assets/images/business-card-front.svg";
 	back: string = "assets/images/business-card-back.svg";
 
@@ -39,9 +37,10 @@ export class BusinessCard extends BaseElement {
 	constructor(private actionCtrl: ActionSheetController,
 				private alertCtrl: AlertController,
 				private camera: Camera,
-				private modalCtrl: ModalController) {
+				private modalCtrl: ModalController,
+				private imageProc: ImageProcessor) {
 		super();
-		this.currentValue = {
+		this.currentVal = {
 			front: this.front,
 			back: this.back
 		};
@@ -51,8 +50,8 @@ export class BusinessCard extends BaseElement {
 		if(this.readonly){
 			return;
 		}
-		if ((type == this.FRONT && this.currentValue.front != this.front) ||
-				(type == this.BACK && this.currentValue.back != this.back)) {
+		if ((type == this.FRONT && this.currentVal.front != this.front) ||
+				(type == this.BACK && this.currentVal.back != this.back)) {
 			let sheet = this.actionCtrl.create({
 				title: "",
 				buttons: [
@@ -61,9 +60,9 @@ export class BusinessCard extends BaseElement {
           				role: 'destructive',
 						handler: () => {
 							if(type == this.FRONT){
-								this.currentValue.front = this.front;
+								this.currentVal.front = this.front;
 							}else{
-								this.currentValue.back = this.back;
+								this.currentVal.back = this.back;
 							}
 						}
 					},
@@ -94,12 +93,11 @@ export class BusinessCard extends BaseElement {
 			}else{
 				this.backLoading = true;
 			}
-			this.ensureLandscape(imageData).subscribe((info) => {
+			this.imageProc.ensureLandscape(imageData, this.element.is_scan_cards_and_prefill_form == 1).subscribe((info) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
-				if (info.data != imageData) {
+				if (info.dataUrl != imageData) {
 					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
-					let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-					this.file.writeFile(newFolder, name, this.dataURItoBlob(info.data), { replace: true }).then(() => {
+					this.file.writeFile(newFolder, name, this.imageProc.dataURItoBlob(info.dataUrl), { replace: true }).then(() => {
 						this.setValue(type, newFolder + "/" + name);
 					},
 						(err) => {
@@ -139,7 +137,6 @@ export class BusinessCard extends BaseElement {
 						vals[id] = this.formGroup.controls[id].value;
 					}
 				}
-				console.log(vals);
 				for(var id in changedValues){
 					let match = /(\w+\_\d+)\_\d+/g.exec(id);
 					if(match && match.length > 0){
@@ -160,19 +157,19 @@ export class BusinessCard extends BaseElement {
 
 	setValue(type, newPath){
 		if (type == this.FRONT) {
-			this.currentValue.front = newPath;
+			this.currentVal.front = newPath;
 		} else {
-			this.currentValue.back = newPath;
+			this.currentVal.back = newPath;
 		}
 		var v = {
 			front: null,
 			back: null
 		};
-		if (this.currentValue.front && this.currentValue.front != this.front) {
-			v.front = this.currentValue.front;
+		if (this.currentVal.front && this.currentVal.front != this.front) {
+			v.front = this.currentVal.front;
 		}
-		if (this.currentValue.back && this.currentValue.back != this.back) {
-			v.back = this.currentValue.back;
+		if (this.currentVal.back && this.currentVal.back != this.back) {
+			v.back = this.currentVal.back;
 		}
 		this.propagateChange(v);
 	}
@@ -185,78 +182,20 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-	ensureLandscape(url: string): Observable<Info> {
-		return new Observable<Info>((obs: Observer<Info>) => {
-			var image: any = document.createElement("img");
-			image.onload = function (event: any) {
-				if (image.naturalWidth >= image.naturalHeight) {
-					var canvas: any = document.createElement("canvas");
-					canvas.width = image.naturalWidth;
-					canvas.height = image.naturalHeight;
-					var ctx = canvas.getContext('2d');
-					ctx.translate(canvas.width / 2, canvas.height / 2);
-					ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
-					obs.next({
-						width: canvas.width,
-						height: canvas.height,
-						data:canvas.toDataURL()
-					});
-					obs.complete();
-					return;
-				}
-				var canvas : any = document.createElement("canvas");
-				canvas.width = image.naturalHeight;
-				canvas.height = image.naturalWidth;
-				var ctx = canvas.getContext('2d');
-				ctx.translate(canvas.width / 2, canvas.height / 2);
-				ctx.rotate(Math.PI / 2);
-				ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
-				obs.next({
-					width: canvas.width,
-					height: canvas.height,
-					data:canvas.toDataURL()
-				});
-				obs.complete();
-			};
-			image.src = url;
-		});
-	}
-
-	dataURItoBlob(dataURI: string): Blob {
-		var arr = dataURI.split(',');
-		var byteString = atob(arr[1]);
-		var mimeString = arr[0].split(':')[1].split(';')[0]
-
-		var ab = new ArrayBuffer(byteString.length);
-		var ia = new Uint8Array(ab);
-		for (var i = 0; i < byteString.length; i++) {
-			ia[i] = byteString.charCodeAt(i);
-		}
-
-		var blob = new Blob([ab], { type: mimeString });
-		return blob;
-	}
-
 	writeValue(obj: any): void {
 		if (!obj) {
-			this.currentValue = {
+			this.currentVal = {
 				front: this.front,
 				back: this.back
 			};
 		} else {
-			this.currentValue = obj;
-			if (!this.currentValue.front) {
-				this.currentValue.front = this.front;
+			this.currentVal = JSON.parse(JSON.stringify(obj));
+			if (!this.currentVal.front) {
+				this.currentVal.front = this.front;
 			}
-			if (!this.currentValue.back) {
-				this.currentValue.back = this.back;
+			if (!this.currentVal.back) {
+				this.currentVal.back = this.back;
 			}
 		}
 	}
-}
-
-class Info{
-	width:number;
-	height:number;
-	data:string;
 }

@@ -19,6 +19,7 @@ import { PushClient } from "../services/push-client";
 import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
+import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView } from '../components/form-view';
@@ -98,6 +99,7 @@ import { Geolocation } from "@ionic-native/geolocation";
     SyncClient,
 	LogClient,
 	BussinessClient,
+	ImageProcessor,
 	Transfer,
 	File,
 	Device,

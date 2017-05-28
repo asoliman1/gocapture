@@ -37,9 +37,9 @@ export class Image extends BaseElement {
 		private actionCtrl: ActionSheetController,
 		private camera: Camera) {
 		super();
-		this.currentValue = [];
+		this.currentVal = [];
 		/*setTimeout(()=>{
-			this.currentValue = ["http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg"];
+			this.currentVal = ["http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg"];
 		}, 1000);*/
 	}
 
@@ -50,28 +50,40 @@ export class Image extends BaseElement {
 		if(this.selectionEnabled){
 			for(let i = this.selection.length - 1; i > -1; i--){
 				if(this.selection[i]){
-					(<any[]>this.currentValue).splice(i, 1);
+					(<any[]>this.currentVal).splice(i, 1);
 				}
 			}
-			this.propagateChange(this.currentValue);
+			this.propagateChange(this.currentVal);
 			this.selection = [];
 			this.selectionEnabled = false;
 			return;
 		}
 
-		if (this.currentValue.length >= this.max) {
+		if (this.currentVal.length >= this.max) {
 			return;
 		}
 
 		let onImageReceived = (imageData) => {
 			//console.log(imageData);
-			if (!this.currentValue) {
-				this.currentValue = [];
+			if (!this.currentVal) {
+				this.currentVal = [];
 			}
-			this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-				this.currentValue.unshift(newPath);
-				this.propagateChange(this.currentValue);
-			})
+			let t = this;
+			if(imageData.indexOf("content://") == 0 && window["FilePath"]){
+				window["FilePath"].resolveNativePath(imageData, (path) => {
+					t.moveFile(path, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
+						t.currentVal.unshift(newPath);
+						t.propagateChange(t.currentVal);
+					})
+				}, (err)=> {
+					console.error(err);
+				});
+			}else{
+				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
+					this.currentVal.unshift(newPath);
+					this.propagateChange(this.currentVal);
+				})
+			}
 		};
 		let camera = this.camera;
 		let sheet = this.actionCtrl.create({
@@ -93,7 +105,8 @@ export class Image extends BaseElement {
 					text: 'Choose from Album',
 					handler: () => {
 						camera.getPicture({
-							sourceType: 0
+							sourceType: 0,
+							destinationType: 2
 						}).then(onImageReceived)
 							.catch(err => {
 								//hmmm, what to do
@@ -126,9 +139,9 @@ export class Image extends BaseElement {
 
 	writeValue(obj: any):void{
 		if(!obj){
-			this.currentValue = [];
+			this.currentVal = [];
 		}else{
-			this.currentValue = obj;
+			this.currentVal = obj;
 		}
 	}
 }

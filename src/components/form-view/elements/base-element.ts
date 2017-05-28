@@ -15,7 +15,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 	propagateChange:any = () => {};
     validateFn:any = () => {};
 
-	currentValue: any = "";
+	currentVal: any = "";
 
 	protected file: File;
 
@@ -31,7 +31,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 	}
 
 	writeValue(obj: any): void{
-		this.currentValue = obj;
+		this.currentVal = obj;
 	}
 	
     registerOnChange(fn: any): void{
@@ -47,7 +47,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 	}
 
 	onChange(value){
-		this.currentValue = value;
+		this.currentVal = value;
 		this.propagateChange(value);
 	}
 

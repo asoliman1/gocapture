@@ -174,5 +174,13 @@
         "variables": {
             "SENDER_ID": "716813832888"
         }
+    },
+    "cordova-plugin-filepath": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-filepath"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

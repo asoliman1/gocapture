@@ -249,9 +249,13 @@ export class SyncClient {
 						obs.error(err);
 						this.errorSource.next(err);
 					})
+				}, err => {
+					obs.error(err);
+					this.errorSource.next(err);
 				});
 			}, (err) => {
 				obs.error(err);
+				this.errorSource.next(err);
 			});
 
 		});

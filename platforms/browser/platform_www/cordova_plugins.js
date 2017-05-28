@@ -437,7 +437,8 @@ module.exports.metadata =
     "cordova-plugin-globalization": "1.0.6",
     "cordova-plugin-network-information": "1.3.2",
     "cordova-plugin-camera": "2.3.1",
-    "phonegap-plugin-push": "1.8.4"
+    "phonegap-plugin-push": "1.8.4",
+    "cordova-plugin-filepath": "1.0.2"
 }
 // BOTTOM OF METADATA
 });
