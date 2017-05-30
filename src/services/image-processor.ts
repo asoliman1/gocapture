@@ -75,9 +75,9 @@ export class ImageProcessor{
 			let contrastF = 1.36;
 			let saturate = -1;
 			//up the contrast
-			pix.data[i] = contrastF * (pix.data[i] - 128) + 128;
-			pix.data[i + 1] = contrastF * (pix.data[i + 1] - 128) + 128;
-			pix.data[i + 2] = contrastF * (pix.data[i + 2] - 128) + 128;
+			//pix.data[i] = contrastF * (pix.data[i] - 128) + 128;
+			//pix.data[i + 1] = contrastF * (pix.data[i + 1] - 128) + 128;
+			//pix.data[i + 2] = contrastF * (pix.data[i + 2] - 128) + 128;
 			//desaturate
 			let max = Math.max(pix.data[i], pix.data[i + 1], pix.data[i + 2]);
 			pix.data[i] += max !== pix.data[i] ? (max - pix.data[i]) * saturate : 0;

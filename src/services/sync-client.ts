@@ -134,6 +134,14 @@ export class SyncClient {
 			let index = 0;
 			map[formIds[index]].status.loading = true;
 			this.syncSource.next(this.lastSyncStatus);
+			let onError = (err) => {
+				this._isSyncing = false;
+				this.syncSource.complete();
+				this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
+				this.onSync = this.syncSource.asObservable();
+				obs.error(err);
+				this.errorSource.next(err);
+			};
 			let handler = (submitted: FormSubmission[]) => {
 				result.push.apply(result, submitted);
 				map[formIds[index]].status.complete = true;
@@ -150,10 +158,10 @@ export class SyncClient {
 					return;
 				}
 				setTimeout(() => {
-					this.doSubmitAll(map[formIds[index]]).subscribe(handler);
+					this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
 				}, 500);
 			};
-			this.doSubmitAll(map[formIds[index]]).subscribe(handler);
+			this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
 		});
 	}
 
@@ -233,29 +241,39 @@ export class SyncClient {
 					}
 				}
 				this.rest.submitForm(submission).subscribe((data) => {
-					if (!data.id || data.id < 0) {
+					if ((!data.id || data.id < 0) && (!data.hold_request_id || data.hold_request_id < 0)) {
 						let msg = "Could not process submission for form " + submission.form_id + ": " + data.message;
 						obs.error(msg);
 						this.errorSource.next(msg);
 						return;
 					}
-					submission.activity_id = data.id;
+					if(data.id > 0){
+						submission.activity_id = data.id;
+					}else{
+						submission.hold_request_id = data.hold_request_id;
+					}
+
 					submission.status = SubmissionStatus.Submitted;
 					this.db.updateSubmissionId(submission).subscribe((ok) => {
-						submission.id = submission.activity_id;
+						if(data.id > 0){
+							submission.id = submission.activity_id;
+						}
 						obs.next(submission);
 						obs.complete();
 					}, err => {
 						obs.error(err);
-						this.errorSource.next(err);
+						let msg = "Could not process submission for form " + submission.form_id;
+						this.errorSource.next(msg);
 					})
 				}, err => {
 					obs.error(err);
-					this.errorSource.next(err);
+					let msg = "Could not process submission for form " + submission.form_id;
+					this.errorSource.next(msg);
 				});
 			}, (err) => {
 				obs.error(err);
-				this.errorSource.next(err);
+				let msg = "Could not process submission for form " + submission.form_id;
+				this.errorSource.next(msg);
 			});
 
 		});

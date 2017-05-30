@@ -11,6 +11,7 @@ export class FormSubmission{
 	first_name: string = "";
 	last_name: string = "";
 	activity_id: number = null;
+	hold_request_id: number = null;
 	fields : {[key: string]: string | string[]} = {};
 
 	public isSubmitted(): boolean{

@@ -299,8 +299,13 @@ export class BussinessClient {
 						obs.next(true);
 						obs.complete();
 					}, (err) => {
+						console.error(err);
+						obs.error(err);
 						this.errorSource.next(err);
 					});
+				}, (err) => {
+					obs.error(err);
+					this.errorSource.next(err);
 				});
 			});
 		});

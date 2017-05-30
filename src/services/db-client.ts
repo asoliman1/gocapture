@@ -70,9 +70,9 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"toSend": "SELECT * FROM submissions where status=4",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
-				"updateById": "UPDATE submissions set id=?, status=?, activityId=? where id=?"
+				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, where id=?"
 			}
 		},
 		{
@@ -203,6 +203,12 @@ export class DBClient {
 				queries: [
 					"ALTER table forms add column archive_date VARCHAR(50)",
 					"INSERT INTO versions(version, updated_at) values (2, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			},
+			3: {
+				queries: [
+					"alter table submissions add column hold_request_id integer",
+					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
 			}
 		}
@@ -522,12 +528,12 @@ export class DBClient {
 
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id]);
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]);
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.id]);
+		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
