@@ -22,8 +22,8 @@ export class FormSubmission{
 		form.elements.forEach(element => {
 			switch(element.type){
 				case "simple_name":
-					this.first_name = <any>this.fields[element["identifier"] + "_1"] || "";
-					this.last_name = <any>this.fields[element["identifier"] + "_2"] || "";
+					this.first_name = <any>this.fields[element["identifier"] + "_2"] || "";
+					this.last_name = <any>this.fields[element["identifier"] + "_1"] || "";
 					break;
 				case "email":
 					this.email = <any>this.fields[element["identifier"]] || "";

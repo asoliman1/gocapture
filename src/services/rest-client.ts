@@ -345,6 +345,7 @@ export class RESTClient {
 				if (resp.status == "200") {
 					return {
 						id: resp.activity_id,
+						hold_request_id: resp.hold_request_id,
 						message: ""
 					};
 				}

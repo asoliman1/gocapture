@@ -50,6 +50,9 @@ export class Settings {
 
 	onChange() {
 		this.shouldSave = true;
+		setTimeout(()=>{
+			this.saveSettings();
+		},1)
 	}
 
 	saveSettings() {

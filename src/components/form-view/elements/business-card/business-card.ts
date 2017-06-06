@@ -4,7 +4,7 @@ import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
 import { FormElement, Form, FormSubmission } from "../../../../model";
-import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
 declare var cordova: any;
 declare var screen;
@@ -67,9 +67,15 @@ export class BusinessCard extends BaseElement {
 						}
 					},
 					{
-						text: 'Choose from Camera',
+						text: 'Camera',
 						handler: () => {
-							this.doCapture(type);
+							this.doCapture(type, 1);
+						}
+					},
+					{
+						text: 'Choose from Library',
+						handler: () => {
+							this.doCapture(type, 2);
 						}
 					},
 					{
@@ -84,9 +90,11 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-	private doCapture(type: number) {
+	private doCapture(type: number, captureType: number = 1) {
 		this.camera.getPicture({
-			sourceType: 1
+			sourceType: captureType,
+			correctOrientation: true,
+			encodingType: this.camera.EncodingType.JPEG
 		}).then(imageData => {
 			if(type == this.FRONT){
 				this.frontLoading = true;
@@ -106,7 +114,7 @@ export class BusinessCard extends BaseElement {
 				} else {
 					doMove(imageData);
 				}
-				if(this.element.is_scan_cards_and_prefill_form == 1){
+				if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
 					this.recognizeText(info);
 				}
 			});
@@ -137,6 +145,7 @@ export class BusinessCard extends BaseElement {
 						vals[id] = this.formGroup.controls[id].value;
 					}
 				}
+				let ctrl: AbstractControl = null;
 				for(var id in changedValues){
 					let match = /(\w+\_\d+)\_\d+/g.exec(id);
 					if(match && match.length > 0){
@@ -144,15 +153,20 @@ export class BusinessCard extends BaseElement {
 							vals[match[1]] = {};
 						}
 						vals[match[1]][id] = changedValues[id];
+						ctrl = this.formGroup.get(match[1]).get(id);
+						ctrl.markAsTouched();
+						ctrl.markAsDirty();
 					}else{
 						vals[id] = changedValues[id];
+						ctrl = this.formGroup.get(id);
+						ctrl.markAsTouched();
+						ctrl.markAsDirty();
 					}
 				}
 				this.formGroup.setValue(vals);
 			}
 		});
-		modal.present();
-		screen.orientation.lock && screen.orientation.lock('landscape');		
+		modal.present();		
 	}
 
 	setValue(type, newPath){

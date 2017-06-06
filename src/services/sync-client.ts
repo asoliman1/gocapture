@@ -88,27 +88,31 @@ export class SyncClient {
 						this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
 							obs.complete();
-							this._isSyncing = false;
-							this.syncSource.complete();
-							this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
-							this.onSync = this.syncSource.asObservable();
+							this.syncCleanup();
 						}, (err) => {
 							obs.error(err);
-							this.syncSource.complete();
+							this.syncCleanup();
 						});
 					}, (err) => {
 						obs.error(err);
-						this.syncSource.complete();
+						this.syncCleanup();
 					});
 				}, (err) => {
 					obs.error(err);
-					this.syncSource.complete();
+					this.syncCleanup();
 				});
 			}, (err) => {
 				obs.error(err);
-				this.syncSource.complete();
+				this.syncCleanup();
 			});
 		});
+	}
+
+	private syncCleanup(){
+		this._isSyncing = false;
+		this.syncSource.complete();
+		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
+		this.onSync = this.syncSource.asObservable();
 	}
 
 	public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {

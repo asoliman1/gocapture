@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, NgZone } from '@angular/core';
+import { Component, ElementRef, ViewChild, NgZone, HostListener } from '@angular/core';
 import {
   trigger,
   state,
@@ -7,8 +7,8 @@ import {
   transition
 } from '@angular/animations';
 import { NavParams, ActionSheetController, AlertController, ViewController, Content } from "ionic-angular";
-import { Form, FormSubmission } from "../../model";
-import { ImageProcessor, Info } from "../../services/image-processor";
+import { Form } from "../../model";
+import { ImageProcessor, Info, RecognitionResult } from "../../services/image-processor";
 
 @Component({
 	selector: 'ocr-selector',
@@ -39,6 +39,8 @@ export class OcrSelector {
 	isLoading = this.loading + "";
 	changedValues:any = {};
 
+	private result: RecognitionResult;
+
 	private restrictedTypes: string[] = [
 		"page_break",
 		"section",
@@ -63,11 +65,19 @@ export class OcrSelector {
 		let t = this;
 		setTimeout(() => {
 			t.imageProc.recognize(t.info.dataUrl).subscribe((data) => {
+				this.result = data;
 				t.positionWords(data);
 				t.loading = false;
 				t.isLoading = t.loading + "";
 			});
 		}, 1);
+	}
+
+	@HostListener("window:resize", ["$event"])
+	onResize(event){
+		if(this.result){
+			this.positionWords(this.result);
+		}
 	}
 
 	positionWords(data: {
@@ -144,6 +154,10 @@ export class OcrSelector {
 					handler: () => {
 						//console.log('review clicked');
 						let inputs = [];
+						let nameMap = {
+							"FirstName": "First Name",
+							"LastName": "Last Name"
+						}
 						this.form.elements.forEach(element => {
 							if(this.restrictedTypes.indexOf(element.type) > -1){
 								return;
@@ -152,7 +166,7 @@ export class OcrSelector {
 								element.mapping.forEach(mapping => {
 									inputs.push({
 									type: 'radio',
-									label: mapping.ll_field_unique_identifier,
+									label: nameMap[mapping.ll_field_unique_identifier] || mapping.ll_field_unique_identifier,
 									value: mapping["identifier"]
 								});
 								})

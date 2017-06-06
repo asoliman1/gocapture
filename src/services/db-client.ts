@@ -72,7 +72,7 @@ export class DBClient {
 				"toSend": "SELECT * FROM submissions where status=4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
-				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, where id=?"
+				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=? where id=?"
 			}
 		},
 		{
