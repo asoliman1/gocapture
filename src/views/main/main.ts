@@ -78,8 +78,14 @@ export class Main {
 		}, function(reason) {
 			console.error(reason);
 		});
-		this.client.getUpdates().subscribe(done => {
+		this.client.getUpdates().subscribe(done => {			
+			setTimeout(()=>{
+				this.client.doAutoSync();
+			}, 350);
 		}, (err) =>{
+			setTimeout(()=>{
+				this.client.doAutoSync();
+			}, 350);
 		});
 	}
 
@@ -107,7 +113,7 @@ export class Main {
 				this.pullup.minimize();
 				this.sub.unsubscribe();
 				this.sub = this.handleSync();
-			}, 1000);
+			}, 300);
 		});
 	}
 

@@ -94,7 +94,9 @@ export class BusinessCard extends BaseElement {
 		this.camera.getPicture({
 			sourceType: captureType,
 			correctOrientation: true,
-			encodingType: this.camera.EncodingType.JPEG
+			encodingType: this.camera.EncodingType.JPEG,
+			targetWidth: 1280,
+			targetHeight:1000
 		}).then(imageData => {
 			if(type == this.FRONT){
 				this.frontLoading = true;
@@ -103,27 +105,20 @@ export class BusinessCard extends BaseElement {
 			}
 			this.imageProc.ensureLandscape(imageData, this.element.is_scan_cards_and_prefill_form == 1).subscribe((info) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
-				if (info.dataUrl != imageData) {
-					let name = imageData.substr(imageData.lastIndexOf("/") + 1);
-					this.file.writeFile(newFolder, name, this.imageProc.dataURItoBlob(info.dataUrl), { replace: true }).then(() => {
-						this.setValue(type, newFolder + "/" + name);
-					},
-						(err) => {
-							console.error(err);
-						});
-				} else {
-					doMove(imageData);
-				}
-				if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
-					this.recognizeText(info);
-				}
+				let name = imageData.substr(imageData.lastIndexOf("/") + 1);
+				let folder = imageData.substr(0, imageData.lastIndexOf("/"));
+				this.file.moveFile(folder, name, newFolder, name).then((entry)=>{
+					this.setValue(type, newFolder + "/" + name);
+					info.dataUrl = newFolder + "/" + name;
+					
+					if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
+						this.recognizeText(info);
+					}
+				},
+				(err) => {
+					console.error(err);
+				});
 			});
-			var doMove = (imageData) => {
-				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-					this.setValue(type, newPath);
-				})
-			};
-
 		}).catch(err => {
 			console.error(err);
 		});
@@ -167,6 +162,7 @@ export class BusinessCard extends BaseElement {
 			}
 		});
 		modal.present();		
+		screen.orientation.lock && screen.orientation.lock("landscape");
 	}
 
 	setValue(type, newPath){

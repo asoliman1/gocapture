@@ -73,11 +73,15 @@ export class BussinessClient {
 		this.online = val;
 		this.networkSource.next(val ? "ON" : "OFF");
 		this.rest.setOnline(val);
-		if (val == true) {
+		this.doAutoSync();
+	}
+
+	public doAutoSync(){
+		if(this.isOnline()){
 			this.db.getConfig("autoUpload").subscribe((val) => {
 				if (val+"" == "true") {
 					this.doSync().subscribe(()=>{
-						console.log("Sync up done")
+						console.log("Sync up done");
 					});
 				}
 			});
@@ -262,7 +266,15 @@ export class BussinessClient {
 
 	public saveSubmission(sub: FormSubmission, form: Form): Observable<boolean> {
 		sub.updateFields(form);
-		return this.db.saveSubmission(sub);
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.db.saveSubmission(sub).subscribe((done)=>{
+				this.doAutoSync();
+				obs.next(done);
+				obs.complete();
+			}, (err)=>{
+				obs.error(err);
+			});
+		});
 	}
 
 	public doSync(formId?: number): Observable<any> {

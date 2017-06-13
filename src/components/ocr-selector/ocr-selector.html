@@ -17,9 +17,9 @@
 	<div class="ocr-layout">
 		<div class="holder">
 			<img #card [src]="image">
-			<div class="words-wrapper">
-				<div class="words">
-					<div class="word" [class.assigned]="word.assigned" *ngFor="let word of wordElements" (click)="wordClicked(word)" [style.width]="word.width"
+			<div class="words-wrapper" [class.overlay]="multiselect">
+				<div class="words" (press)="onPressStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onPressEnd($event)">
+					<div class="word" [class.assigned]="word.assigned" [class.selected]="word.selected" *ngFor="let word of wordElements; let i = index" [id]="i" (click)="wordClicked(word)" [style.width]="word.width"
 					 [style.height]="word.height" [style.top]="word.top" [style.left]="word.left">
 						{{word.word}}
 					</div>

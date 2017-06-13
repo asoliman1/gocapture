@@ -5,6 +5,9 @@ var TesseractPlugin = {
 	recognizeWords: function (image, language, successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "TesseractPlugin", "recognizeWords", [language, image]);
     },
+	recognizeWordsFromPath: function (imagePath, language, successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "TesseractPlugin", "recognizeWordsFromPath", [language, imagePath]);
+    },
     loadLanguage: function (language, successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "TesseractPlugin", "loadLanguage", [language]);
     }

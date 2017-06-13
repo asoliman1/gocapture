@@ -32,6 +32,10 @@ export class OcrSelector {
 
 	image: string;
 
+	private multiselect = false;
+
+	private selectedWords = {};
+
 	@ViewChild('card') elementView: ElementRef;
 
 	wordElements: Word[] = [];
@@ -99,16 +103,20 @@ export class OcrSelector {
 			w.word = element.word;
 			w.confidence = element.confidence;
 			var coords = element.box.split(" ");
-			w.left = (parseFloat(coords[0]) * ratio - 2) + uom;
-			w.top = (parseFloat(coords[1]) * ratio - 2) + uom;
-			w.width = (parseFloat(coords[2]) * ratio + 4) + uom;
-			w.height = (parseFloat(coords[3]) * ratio + 4) + uom;
+			w.nLeft = (parseFloat(coords[0]) * ratio - 2);
+			w.nTop = (parseFloat(coords[1]) * ratio - 2);
+			w.nWidth = (parseFloat(coords[2]) * ratio + 4);
+			w.nHeight = (parseFloat(coords[3]) * ratio + 4);
+			w.left = w.nLeft + uom;
+			w.top = w.nTop + uom;
+			w.width = w.nWidth + uom;
+			w.height = w.nHeight + uom;
 			list.push(w);
 		});
 		this.wordElements = list;
 	}
 
-	wordClicked(word: Word) {
+	wordClicked(word: Word, cb?: Function) {
 		let actionSheet = this.actionSheetCtrl.create({
 			title: word.word,
 			cssClass: "word-actions",
@@ -133,7 +141,9 @@ export class OcrSelector {
 									text: 'Cancel',
 									role: 'cancel',
 									handler: data => {
-										console.log('Cancel clicked');
+										this.wordElements.forEach((element)=>{
+											element.selected = false;
+										});
 									}
 								},
 								{
@@ -141,6 +151,7 @@ export class OcrSelector {
 									handler: data => {
 										word.word = data.word;
 										actionSheet.setTitle(word.word);
+										cb && cb(word);
 									}
 								}
 							]
@@ -152,7 +163,6 @@ export class OcrSelector {
 					text: word.assigned ? 'Assign to another field' : 'Assign to field',
 					icon: "eye",
 					handler: () => {
-						//console.log('review clicked');
 						let inputs = [];
 						let nameMap = {
 							"FirstName": "First Name",
@@ -191,11 +201,15 @@ export class OcrSelector {
 									role: 'cancel',
 									handler: data => {
 										console.log('Cancel clicked');
+										this.wordElements.forEach((element)=>{
+											element.selected = false;
+										});
 									}
 								},
 								{
 									text: 'Update',
 									handler: data => {
+										cb && cb(word);
 										if (data) {
 											var title = "";
 											for (let i = 0; i < this.form.elements.length; i++) {
@@ -217,7 +231,9 @@ export class OcrSelector {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
-						//console.log('Cancel clicked');
+						this.wordElements.forEach((element)=>{
+							element.selected = false;
+						});
 					}
 				}
 			]
@@ -232,6 +248,82 @@ export class OcrSelector {
 	done() {
 		this.viewCtrl.dismiss(this.changedValues);
 	}
+
+	onPressStart(event){
+		this.multiselect = true;
+		let w = {};
+		this.wordElements.forEach((element, index)=>{
+			w[index] = false;
+			element.selected = false;
+		});
+		this.selectedWords = w;
+	}
+
+	onPressEnd(event){
+		if(!this.multiselect){
+			return;
+		}
+		this.multiselect = false;
+		let words: Word[] = [];
+		for(let index in this.selectedWords){
+			this.selectedWords[index] && words.push(this.wordElements[index]);
+		}
+		let word = this.buildWordGroup(words);
+		this.wordClicked(word, (word) => {
+			let words:Word[] = [];
+			let done = false;
+			this.wordElements.forEach((w, index)=>{
+				if(!this.selectedWords[index]){
+					words.push(w);
+				}else if(!done){
+					words.push(word);
+					done = true;
+				}
+			});
+			this.wordElements = words;
+		});
+	}
+
+	private buildWordGroup(words: Word[]): Word{
+		let w = new Word();
+		w.word = "";
+		let uom = "px";
+		let minx = Infinity, maxx = 0, miny = Infinity, maxy = 0;
+		words.forEach((word) => {
+			if(w.word){
+				w.word += " ";
+			}
+			w.word += word.word;
+			minx = minx > word.nLeft ? word.nLeft: minx;
+			miny = miny > word.nTop ? word.nTop: miny;
+			maxx = maxx < word.nLeft + word.nWidth ? word.nLeft + word.nWidth: maxx;
+			maxy = maxy < word.nTop + word.nHeight ? word.nTop + word.nHeight: maxy;
+		});
+		w.nTop = miny;
+		w.nLeft = minx;
+		w.nWidth = maxx - minx;
+		w.nHeight = maxy - miny;
+		w.left = w.nLeft + uom;
+		w.top = w.nTop + uom;
+		w.width = w.nWidth + uom;
+		w.height = w.nHeight + uom;
+		return w;
+	}
+
+	onTouchMove(event:TouchEvent){
+		if(this.multiselect && event.touches.length > 0){
+			let t = event.touches.item(0);
+			let elem = document.elementFromPoint(t.pageX, t.pageY);
+			let index = parseInt(elem.id);
+			if(index > 0 && !this.selectedWords[index]){
+				this.selectedWords[index] = true;
+				if(this.wordElements[index]){
+					this.wordElements[index].selected = true;
+				}
+				console.log(index);
+			}
+		}
+	}
 }
 
 class Word {
@@ -240,8 +332,13 @@ class Word {
 	height: string|number;
 	top: string|number;
 	left: string|number;
+	nWidth: number;
+	nHeight: number;
+	nTop: number;
+	nLeft: number;
 	confidence: number;
 	assigned: Assigned;
+	selected: boolean = false;
 }
 
 class Assigned {

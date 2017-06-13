@@ -95,10 +95,9 @@ export class FormReview {
 			var f = this.filter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				return !f || sub.status + "" == f + "";
-			});
+			}).reverse();
 			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
-		});
-		
+		});		
 	}
 
 	sync() {
