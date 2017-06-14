@@ -69,10 +69,12 @@ export class OcrSelector {
 		let t = this;
 		setTimeout(() => {
 			t.imageProc.recognize(t.info.dataUrl).subscribe((data) => {
-				this.result = data;
-				t.positionWords(data);
-				t.loading = false;
-				t.isLoading = t.loading + "";
+				this.zone.run(()=>{
+					this.result = data;
+					t.positionWords(data);
+					t.loading = false;
+					t.isLoading = t.loading + "";
+				});
 			});
 		}, 1);
 	}
