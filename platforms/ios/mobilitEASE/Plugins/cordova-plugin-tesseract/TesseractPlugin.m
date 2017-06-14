@@ -81,6 +81,28 @@
 }
 
 
+- (void) recognizeWordsFromPath:(CDVInvokedUrlCommand*)command { //get the callback id
+    NSArray *arguments = command.arguments;    
+    NSString *language = [arguments objectAtIndex:0];
+    NSLog(@"%s:%d language=%@", __func__, __LINE__, language);
+    NSString *image_url = [arguments objectAtIndex:1];
+    
+    self.callbackID = command.callbackId;
+    
+    NSURL *url = [NSURL URLWithString:image_url];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    
+    claseAuxiliar *cA = [[claseAuxiliar alloc]init];
+    
+    UIImage *Realimage = [[UIImage alloc] initWithData:data];
+    
+    NSString *text = [cA ocrWords:Realimage withLanguage:language];
+    
+    [self performSelectorOnMainThread:@selector(ocrProcessingFinished:)
+                           withObject:text
+                        waitUntilDone:NO];
+    
+}
 
 - (void)ocrProcessingFinished:(NSString *)result
 {
