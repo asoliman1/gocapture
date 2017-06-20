@@ -11,32 +11,32 @@ export class ImageProcessor{
 			var image: any = document.createElement("img");
 			let t = this;
 			image.onload = function (event: any) {
-				/*if (image.naturalWidth >= image.naturalHeight) {
-					t.setupCanvas(image.naturalWidth, image.naturalHeight);
-					t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
-				}else{
-					t.setupCanvas(image.naturalHeight, image.naturalWidth)
-					t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
-					t.ctx.rotate(Math.PI / 2);
+				if (image.naturalWidth >= image.naturalHeight) {
+					obs.next({
+						width: image.naturalWidth,
+						height: image.naturalHeight,
+						dataUrl: url,
+						data: null,
+						isDataUrl: false
+					});
+					obs.complete();
+					return;
 				}
+				t.setupCanvas(image.naturalHeight, image.naturalWidth)
+				t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
+				t.ctx.rotate(Math.PI / 2);
 				t.ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
 				obs.next({
 					width: t.canvas.width,
 					height: t.canvas.height,
 					dataUrl:t.canvas.toDataURL(),
-					data: null
+					data: null,
+					isDataUrl: true
 				});
 				obs.complete();
-				if(!preserveCanvas){
+				//if(!preserveCanvas){
 					t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
-				}*/
-				obs.next({
-					width: image.naturalWidth,
-					height: image.naturalHeight,
-					dataUrl: url,
-					data: null
-				});
-				obs.complete();
+				//}				
 			};
 			image.src = url;
 		});
@@ -120,6 +120,7 @@ export class Info{
 	height:number;
 	dataUrl:string;
 	data: ImageData;
+	isDataUrl: boolean = false;
 }
 
 export class RecognitionResult{

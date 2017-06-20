@@ -90,7 +90,8 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-	private doCapture(type: number, captureType: number = 1) {
+	private doCapture(type: number, captureType: number = 1) {		
+		//screen.orientation.lock && screen.orientation.lock("landscape");
 		this.camera.getPicture({
 			sourceType: captureType,
 			correctOrientation: true,
@@ -106,21 +107,33 @@ export class BusinessCard extends BaseElement {
 			this.imageProc.ensureLandscape(imageData, this.element.is_scan_cards_and_prefill_form == 1).subscribe((info) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
 				let name = imageData.substr(imageData.lastIndexOf("/") + 1);
+				let newName = new Date().getTime() + name.substring(name.lastIndexOf("."));
 				let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-				this.file.moveFile(folder, name, newFolder, name).then((entry)=>{
-					this.setValue(type, newFolder + "/" + name);
-					info.dataUrl = newFolder + "/" + name;
+				let promise: Promise<any>;
+				if(info.isDataUrl){
+					promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+				}else{
+					promise = this.file.moveFile(folder, name, newFolder, newName);
+				}
+				
+				promise.then((entry)=>{
+					this.setValue(type, newFolder + "/" + newName);
+					info.dataUrl = newFolder + "/" + newName;
 					
 					if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
 						this.recognizeText(info);
-					}
+					}/*else{
+						screen.orientation.unlock && screen.orientation.unlock();
+					}*/
 				},
 				(err) => {
 					console.error(err);
+					//screen.orientation.unlock && screen.orientation.unlock();
 				});
 			});
 		}).catch(err => {
 			console.error(err);
+			//screen.orientation.unlock && screen.orientation.unlock();
 		});
 	}
 

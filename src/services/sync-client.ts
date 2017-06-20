@@ -254,6 +254,7 @@ export class SyncClient {
 					if(data.id > 0){
 						submission.activity_id = data.id;
 					}else{
+						submission.activity_id = submission.id;
 						submission.hold_request_id = data.hold_request_id;
 					}
 
