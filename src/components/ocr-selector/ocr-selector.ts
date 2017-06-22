@@ -9,6 +9,7 @@ import {
 import { NavParams, ActionSheetController, AlertController, ViewController, Content } from "ionic-angular";
 import { Form } from "../../model";
 import { ImageProcessor, Info, RecognitionResult } from "../../services/image-processor";
+import { File } from '@ionic-native/file';
 
 @Component({
 	selector: 'ocr-selector',
@@ -69,14 +70,28 @@ export class OcrSelector {
 		let t = this;
 		setTimeout(() => {
 			t.imageProc.recognize(t.info.dataUrl).subscribe((data) => {
-				this.zone.run(()=>{
-					this.result = data;
+				z.run(()=>{
+					t.result = data;
 					t.positionWords(data);
 					t.loading = false;
 					t.isLoading = t.loading + "";
 				});
 			});
 		}, 1);
+	}
+
+	flip(){
+		let image = this.info.dataUrl;
+		this.loading = true;
+		this.isLoading = this.loading + "";
+		this.imageProc.flip(this.info.dataUrl).subscribe( info => {
+			let name = image.substr(image.lastIndexOf("/") + 1);
+			let folder = image.substr(0, image.lastIndexOf("/"));
+			new File().writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
+				this.image = this.info.dataUrl + "?1123";
+				this.ionViewDidEnter();
+			});		
+		});
 	}
 
 	@HostListener("window:resize", ["$event"])
@@ -252,13 +267,15 @@ export class OcrSelector {
 	}
 
 	onPressStart(event){
-		this.multiselect = true;
-		let w = {};
-		this.wordElements.forEach((element, index)=>{
-			w[index] = false;
-			element.selected = false;
+		this.zone.run(()=>{
+			this.multiselect = true;
+			let w = {};
+			this.wordElements.forEach((element, index)=>{
+				w[index] = false;
+				element.selected = false;
+			});
+			this.selectedWords = w;
 		});
-		this.selectedWords = w;
 	}
 
 	onPressEnd(event){
@@ -318,11 +335,12 @@ export class OcrSelector {
 			let elem = document.elementFromPoint(t.pageX, t.pageY);
 			let index = parseInt(elem.id);
 			if(index > 0 && !this.selectedWords[index]){
-				this.selectedWords[index] = true;
-				if(this.wordElements[index]){
-					this.wordElements[index].selected = true;
-				}
-				console.log(index);
+				this.zone.run(()=>{
+					this.selectedWords[index] = true;
+					if(this.wordElements[index]){
+						this.wordElements[index].selected = true;
+					}
+				});
 			}
 		}
 	}

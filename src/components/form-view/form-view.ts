@@ -135,6 +135,12 @@ export class FormView {
 			case "url":
 				validators.push(CustomValidators.url);
 				break;
+			case "text":
+				validators.push(Validators.maxLength(255));
+				break;				
+			case "phone":
+				validators.push(CustomValidators.phone);
+				break;
 		}
 		return validators;
 	}

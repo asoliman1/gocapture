@@ -72,23 +72,28 @@ export class SyncClient {
 			this.syncSource.next(this.lastSyncStatus);
 			this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
 				obs.next(result);
-				let filteredForms = [];
-				let current = new Date();
-				forms.forEach(form => {
-					if (new Date(form.archive_date) > current) {
-						filteredForms.push(form);
-					} else {
-						console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
-					}
-				});
-				this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
-					obs.next(result);
-					this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
+				this.db.getForms().subscribe(forms => {
+					let filteredForms = [];
+					let current = new Date();
+					forms.forEach(form => {
+						if (new Date(form.archive_date) > current) {
+							filteredForms.push(form);
+						} else {
+							console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
+						}
+					});
+					this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
 						obs.next(result);
-						this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
+						this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
-							obs.complete();
-							this.syncCleanup();
+							this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
+								obs.next(result);
+								obs.complete();
+								this.syncCleanup();
+							}, (err) => {
+								obs.error(err);
+								this.syncCleanup();
+							});
 						}, (err) => {
 							obs.error(err);
 							this.syncCleanup();
@@ -97,9 +102,6 @@ export class SyncClient {
 						obs.error(err);
 						this.syncCleanup();
 					});
-				}, (err) => {
-					obs.error(err);
-					this.syncCleanup();
 				});
 			}, (err) => {
 				obs.error(err);
@@ -244,40 +246,40 @@ export class SyncClient {
 						}
 					}
 				}
-				this.rest.submitForm(submission).subscribe((data) => {
-					if ((!data.id || data.id < 0) && (!data.hold_request_id || data.hold_request_id < 0)) {
-						let msg = "Could not process submission for form " + submission.form_id + ": " + data.message;
+				this.rest.submitForm(submission).subscribe((d) => {
+					if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
+						let msg = "Could not process submission for form \"" + data.form.name + "\": " + d.message;
 						obs.error(msg);
 						this.errorSource.next(msg);
 						return;
 					}
-					if(data.id > 0){
-						submission.activity_id = data.id;
+					if(d.id > 0){
+						submission.activity_id = d.id;
 					}else{
 						submission.activity_id = submission.id;
-						submission.hold_request_id = data.hold_request_id;
+						submission.hold_request_id = d.hold_request_id;
 					}
 
 					submission.status = SubmissionStatus.Submitted;
 					this.db.updateSubmissionId(submission).subscribe((ok) => {
-						if(data.id > 0){
+						if(d.id > 0){
 							submission.id = submission.activity_id;
 						}
 						obs.next(submission);
 						obs.complete();
 					}, err => {
 						obs.error(err);
-						let msg = "Could not process submission for form " + submission.form_id;
+						let msg = "Could not process submission for form " + data.form.name;
 						this.errorSource.next(msg);
 					})
 				}, err => {
 					obs.error(err);
-					let msg = "Could not process submission for form " + submission.form_id;
+					let msg = "Could not process submission for form " + data.form.name;
 					this.errorSource.next(msg);
 				});
 			}, (err) => {
 				obs.error(err);
-				let msg = "Could not process submission for form " + submission.form_id;
+				let msg = "Could not process submission for form " + data.form.name;
 				this.errorSource.next(msg);
 			});
 

@@ -7,6 +7,9 @@
 		</ion-buttons>
 		<ion-title>Recognized text</ion-title>
 		<ion-buttons end>
+			<button ion-button (click)="flip()" [disabled]="loading">
+				<ion-icon name="repeat" class="capture"></ion-icon>
+			</button>
 			<button ion-button (click)="done()" [disabled]="loading">
 				<ion-icon name="checkmark" class="capture"></ion-icon>
 			</button>

@@ -42,6 +42,29 @@ export class ImageProcessor{
 		});
 	}
 
+	public flip(url: string): Observable<Info> {
+		return new Observable<Info>((obs: Observer<Info>) => {
+			var image: any = document.createElement("img");
+			let t = this;
+			image.onload = function (event: any) {
+				t.setupCanvas(image.naturalWidth, image.naturalHeight)
+				t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
+				t.ctx.rotate(Math.PI);
+				t.ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+				obs.next({
+					width: t.canvas.width,
+					height: t.canvas.height,
+					dataUrl:t.canvas.toDataURL(),
+					data: null,
+					isDataUrl: true
+				});
+				obs.complete();
+				t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
+			};
+			image.src = url;
+		});
+	}
+
 	public dataURItoBlob(dataURI: string): Blob {
 		var arr = dataURI.split(',');
 		var byteString = atob(arr[1]);

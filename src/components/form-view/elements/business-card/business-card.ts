@@ -67,6 +67,12 @@ export class BusinessCard extends BaseElement {
 						}
 					},
 					{
+						text: 'Flip image',
+						handler: () => {
+							this.flip(type);
+						}
+					},
+					{
 						text: 'Camera',
 						handler: () => {
 							this.doCapture(type, 1);
@@ -140,6 +146,7 @@ export class BusinessCard extends BaseElement {
 	recognizeText(info: Info){
 		let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
 		modal.onDidDismiss((changedValues) => {
+			this.currentVal.front = this.currentVal.front + "?1234";
 			screen.orientation.unlock && screen.orientation.unlock();
 			if(changedValues){
 				var vals = {};
@@ -203,6 +210,22 @@ export class BusinessCard extends BaseElement {
 		}else{
 			this.backLoading = false;
 		}
+	}
+
+	flip(type){
+		let image = "";
+		if(type == this.FRONT){
+			image = this.currentVal.front;
+		}else{
+			image = this.currentVal.back;
+		}
+		this.imageProc.flip(image).subscribe( info => {
+			let name = image.substr(image.lastIndexOf("/") + 1);
+			let folder = image.substr(0, image.lastIndexOf("/"));
+			this.file.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
+				this.setValue(type, folder + "/" + name);
+			});			
+		});
 	}
 
 	writeValue(obj: any): void {
