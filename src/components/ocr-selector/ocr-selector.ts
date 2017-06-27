@@ -88,7 +88,7 @@ export class OcrSelector {
 			let name = image.substr(image.lastIndexOf("/") + 1);
 			let folder = image.substr(0, image.lastIndexOf("/"));
 			new File().writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
-				this.image = this.info.dataUrl + "?1123";
+				this.image = this.info.dataUrl + "?" + parseInt(((1 + Math.random())*1000) + "");
 				this.ionViewDidEnter();
 			});		
 		});

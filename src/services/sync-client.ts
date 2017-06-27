@@ -361,27 +361,40 @@ export class SyncClient {
 			let mapEntry = map["forms"];
 			mapEntry.loading = true;
 			mapEntry.percent = 10;
-			this.rest.getAllForms(lastSyncDate).subscribe(forms => {
-				result.forms = forms;
-				forms.forEach((form) => {
-					form.id = form.form_id + "";
-				})
-				mapEntry.percent = 50;
-				this.syncSource.next(this.lastSyncStatus);
-				this.db.saveForms(forms).subscribe(reply => {
-					mapEntry.complete = true;
-					mapEntry.loading = false;
-					mapEntry.percent = 100;
-					this.entitySyncedSource.next(mapEntry.formName);
-					this.syncSource.next(this.lastSyncStatus);
-					obs.next(forms);
-					obs.complete();
-				}, err => {
-					obs.error(err);
+			this.rest.getAvailableFormIds().subscribe(ids => {
+				this.db.getForms().subscribe(forms => {
+					let toDelete = [];
+					forms.forEach(form => {
+						if(ids.indexOf(form.form_id) == -1){
+							toDelete.push(form.form_id);
+						}
+					});
+					this.db.deleteFormsInList(toDelete).subscribe(() => {
+						this.rest.getAllForms(lastSyncDate).subscribe(forms => {
+							result.forms = forms;
+							forms.forEach((form) => {
+								form.id = form.form_id + "";
+							})
+							mapEntry.percent = 50;
+							this.syncSource.next(this.lastSyncStatus);
+							this.db.saveForms(forms).subscribe(reply => {
+								mapEntry.complete = true;
+								mapEntry.loading = false;
+								mapEntry.percent = 100;
+								this.entitySyncedSource.next(mapEntry.formName);
+								this.syncSource.next(this.lastSyncStatus);
+								obs.next(forms);
+								obs.complete();
+							}, err => {
+								obs.error(err);
+							});
+						}, err => {
+							obs.error(err);
+						});
+					});				
 				});
-			}, err => {
-				obs.error(err);
 			});
+			
 		});
 	}
 

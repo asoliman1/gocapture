@@ -226,6 +226,27 @@ export class RESTClient {
 				});
 	}
 
+	public getAvailableFormIds(): Observable<number[]>{
+		return this.getAll<number>("/device/available_forms.json", {})
+		.map(response => {
+			let d: number[] = [];
+			if(Array.isArray(response)){
+				if(Number.isInteger(response[0])){
+					d = response;
+				}else{
+					Object.keys(response[0]).forEach(key => {
+						d.push(response[0][key]);
+					});
+				}
+			}else{
+				Object.keys(response).forEach(key => {
+					d.push(response[key]);
+				});
+			}
+			return d;
+		});
+	}
+
 	public getAllSubmissions(forms: Form[], lastSync?: Date) : Observable<FormSubmission[]>{
 		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
 			var result: FormSubmission[] = [];
@@ -288,7 +309,7 @@ export class RESTClient {
 			form_id: form_id
 		};
 		if (lastSync) {
-			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
+			opts.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";;
 		}
 		return this.call<RecordsResponse<DeviceFormMembership>>("GET", "/forms/memberships.json", opts).map(resp => {
 			if (resp.status != "200") {
@@ -328,7 +349,7 @@ export class RESTClient {
 					form_id: forms[index].form_id
 				}
 				if(lastSync){
-					params.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";
+					params.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";
 				}
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			}

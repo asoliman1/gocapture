@@ -47,7 +47,8 @@ export class DBClient {
 				"selectByIds": "SELECT * FROM forms where id in (?)",
 				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, archive_date FROM forms where isDispatch = (?)",
 				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from forms where id=?"
+				"delete": "DELETE from forms where id=?",
+				"deleteIn": "delete FROM forms where formId in (?)"
 			}
 		},
 		{
@@ -72,6 +73,7 @@ export class DBClient {
 				"toSend": "SELECT * FROM submissions where status=4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
+				"deleteIn": "DELETE from submissions where formId in (?)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=? where id=?"
 			}
 		},
@@ -105,7 +107,8 @@ export class DBClient {
 				"selectAll": "select * from contacts where formId=?",
 				"select": "select * from contacts where formId=? and prospectId=?",
 				"update": "INSERT OR REPLACE INTO contacts (id, data, formId, membershipId, prospectId, added, searchTerm) VALUES (?, ?, ?, ?, ?, ?, ?)",
-				"delete": "delete from contacts where id=?"
+				"delete": "delete from contacts where id=?",
+				"deleteIn": "delete from contacts where formId in (?)"
 			}
 		},
 		{
@@ -369,6 +372,38 @@ export class DBClient {
 	public saveForms(forms: Form[]): Observable<boolean> {
 		return this.saveAll<Form>(forms, "Form");
 	}
+
+	public deleteFormsInList(list: number[]): Observable<boolean>{
+		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
+			if(!list|| list.length == 0){
+				responseObserver.next(true);
+				responseObserver.complete();
+				return;
+			}
+			this.manager.db(WORK).subscribe((db) => {
+				console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
+				db.executeSql(this.getQuery("forms", "deleteIn").replace("?", list.join(",")), [])
+				.then((data) => {
+					console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
+					db.executeSql(this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), [])
+					.then((data) => {
+						console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
+						db.executeSql(this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), [])
+						.then((data) => {
+							responseObserver.next(true);
+							responseObserver.complete();
+						}, (err) => {
+							responseObserver.error("An error occured: " + err);
+						});
+					}, (err) => {
+						responseObserver.error("An error occured: " + err);
+					});
+					}, (err) => {
+						responseObserver.error("An error occured: " + err);
+					});
+			});
+		});
+	}
 	/**
 	 * 
 	 */
@@ -576,10 +611,10 @@ export class DBClient {
 			});
 	}
 
-	private remove(type: string, table: string, parameters: any[]): Observable<boolean> {
+	private remove(type: string, table: string, parameters: any[], key = "delete"): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, "delete"), parameters)
+				db.executeSql(this.getQuery(table, key), parameters)
 					.then((data) => {
 						if (data.rowsAffected == 1) {
 							responseObserver.next(true);

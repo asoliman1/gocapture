@@ -31,6 +31,8 @@ export class BusinessCard extends BaseElement {
 	backLoading: boolean = false;
 	frontLoading: boolean = false;
 
+	theVal: any;
+
 	FRONT: number = 0;
 	BACK: number = 1;
 
@@ -41,6 +43,11 @@ export class BusinessCard extends BaseElement {
 				private imageProc: ImageProcessor) {
 		super();
 		this.currentVal = {
+			front: this.front,
+			back: this.back
+		};
+
+		this.theVal = {
 			front: this.front,
 			back: this.back
 		};
@@ -146,7 +153,7 @@ export class BusinessCard extends BaseElement {
 	recognizeText(info: Info){
 		let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
 		modal.onDidDismiss((changedValues) => {
-			this.currentVal.front = this.currentVal.front + "?1234";
+			//this.currentVal.front = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
 			screen.orientation.unlock && screen.orientation.unlock();
 			if(changedValues){
 				var vals = {};
@@ -197,9 +204,11 @@ export class BusinessCard extends BaseElement {
 		};
 		if (this.currentVal.front && this.currentVal.front != this.front) {
 			v.front = this.currentVal.front;
+			this.theVal.from = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		if (this.currentVal.back && this.currentVal.back != this.back) {
 			v.back = this.currentVal.back;
+			this.theVal.back = this.currentVal.back + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		this.propagateChange(v);
 	}
