@@ -364,11 +364,21 @@ export class SyncClient {
 			this.rest.getAvailableFormIds().subscribe(ids => {
 				this.db.getForms().subscribe(forms => {
 					let toDelete = [];
+					let newForms = [];
 					forms.forEach(form => {
 						if(ids.indexOf(form.form_id) == -1){
 							toDelete.push(form.form_id);
 						}
 					});
+					ids.forEach((id) => {
+						let form = forms.find((f) => {
+							return f.form_id == id;
+						});
+						if(!form){
+							newForms.push(id);
+						}
+					});
+					result.newFormIds = newForms;
 					this.db.deleteFormsInList(toDelete).subscribe(() => {
 						this.rest.getAllForms(lastSyncDate).subscribe(forms => {
 							result.forms = forms;
@@ -405,7 +415,7 @@ export class SyncClient {
 			mapEntry.percent = 10;
 			//obs.next(null);
 			//obs.complete();
-			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate).subscribe((contacts) => {
+			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate, result.newFormIds).subscribe((contacts) => {
 				result.memberships.push.apply(result.memberships, contacts);
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
@@ -472,7 +482,7 @@ export class SyncClient {
 			let mapEntry = map["submissions"];
 			mapEntry.loading = true;
 			mapEntry.percent = 10;
-			this.rest.getAllSubmissions(forms, lastSyncDate).subscribe(submissions => {
+			this.rest.getAllSubmissions(forms, lastSyncDate, result.newFormIds).subscribe(submissions => {
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);
 				result.submissions = submissions;
@@ -585,6 +595,7 @@ export class DownloadData {
 	dispatches: Dispatch[] = [];
 	memberships: DeviceFormMembership[] = [];
 	submissions: FormSubmission[] = [];
+	newFormIds: number[] = [];
 }
 
 class FormMapEntry {

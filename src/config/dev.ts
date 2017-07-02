@@ -30,17 +30,14 @@ function doSetup(){
 
 
 	window["FileTransfer"] = FileTransfer;
-	setTimeout(()=>{
-		if(!window["cordova"]){
-			window["cordova"] = <any>{
+
+	if(!window["cordova"]){
+		setTimeout(()=>{window["cordova"] = <any>{
 				file: {
 					dataDirectory: "D:/"
 				}
-			}
-		}
-	}, 6000);
-
-	if(!window["cordova"]){
+			};
+		}, 1000);
 		window["device"] = {
 			platform: "Android",
 			model: "Note7",

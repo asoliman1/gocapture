@@ -27,12 +27,12 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'time'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-datetime (click)="setHour($event)" displayFormat="hh:mm" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+				<ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
 			</ion-item>
 			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
 			<ion-item *ngSwitchCase="'money'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
 			</ion-item>
 			<ion-item *ngSwitchCase="'number'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>

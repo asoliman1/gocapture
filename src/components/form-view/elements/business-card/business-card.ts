@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, NgZone } from '@angular/core';
 import { ActionSheetController, AlertController, ModalController } from "ionic-angular";
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
@@ -39,6 +39,7 @@ export class BusinessCard extends BaseElement {
 	constructor(private actionCtrl: ActionSheetController,
 				private alertCtrl: AlertController,
 				private camera: Camera,
+				private zone: NgZone,
 				private modalCtrl: ModalController,
 				private imageProc: ImageProcessor) {
 		super();
@@ -132,7 +133,8 @@ export class BusinessCard extends BaseElement {
 				promise.then((entry)=>{
 					this.setValue(type, newFolder + "/" + newName);
 					info.dataUrl = newFolder + "/" + newName;
-					
+					this.frontLoading = false;
+					this.backLoading = false;
 					if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
 						this.recognizeText(info);
 					}/*else{
@@ -189,7 +191,7 @@ export class BusinessCard extends BaseElement {
 			}
 		});
 		modal.present();		
-		screen.orientation.lock && screen.orientation.lock("landscape");
+		//screen.orientation.lock && screen.orientation.lock("landscape");
 	}
 
 	setValue(type, newPath){
@@ -204,11 +206,11 @@ export class BusinessCard extends BaseElement {
 		};
 		if (this.currentVal.front && this.currentVal.front != this.front) {
 			v.front = this.currentVal.front;
-			this.theVal.from = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
+			this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		if (this.currentVal.back && this.currentVal.back != this.back) {
 			v.back = this.currentVal.back;
-			this.theVal.back = this.currentVal.back + "?" + parseInt(((1 + Math.random())*1000) + "");
+			this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		this.propagateChange(v);
 	}
@@ -228,11 +230,15 @@ export class BusinessCard extends BaseElement {
 		}else{
 			image = this.currentVal.back;
 		}
+		let z = this.zone;
+		let t = this;
 		this.imageProc.flip(image).subscribe( info => {
-			let name = image.substr(image.lastIndexOf("/") + 1);
+			let name = image.substr(image.lastIndexOf("/") + 1).replace(/\?.*/, "");
 			let folder = image.substr(0, image.lastIndexOf("/"));
 			this.file.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
-				this.setValue(type, folder + "/" + name);
+				z.run(() => {
+					t.setValue(type, folder + "/" + name);
+				});
 			});			
 		});
 	}

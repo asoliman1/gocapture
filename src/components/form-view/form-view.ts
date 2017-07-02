@@ -27,6 +27,8 @@ export class FormView {
 
 	private sub: Subscription;
 
+	data: any;
+
 	constructor(private fb: FormBuilder, private zone: NgZone) {
 	}
 
@@ -89,9 +91,9 @@ export class FormView {
 		if (this.sub) {
 			this.sub.unsubscribe();
 		}
-		let data = this.getValues();
+		this.data = this.getValues();
 		if (this.submission && this.submission.fields) {
-			data = Object.assign(Object.assign({}, this.submission.fields), data);
+			this.data = Object.assign(Object.assign({}, this.submission.fields), this.data);
 		}
 		let f = this.fb.group({});
 		this.form.elements.forEach((element) => {
@@ -102,11 +104,11 @@ export class FormView {
 				var opts = {};
 				element.mapping.forEach((entry, index) => {
 					entry["identifier"] = identifier + "_" + (index + 1);
-					opts[entry["identifier"]] = new FormControl({ value: data[entry["identifier"]] ? data[entry["identifier"]] : element.default_value, disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
+					opts[entry["identifier"]] = new FormControl({ value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : element.default_value, disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
 				})
 				control = this.fb.group(opts);
 			} else {
-				control = this.fb.control({ value: data[identifier] || element.default_value, disabled: element.is_readonly || this.readOnly });
+				control = this.fb.control({ value: this.data[identifier] || element.default_value, disabled: element.is_readonly || this.readOnly });
 				control.setValidators(this.makeValidators(element));
 			}
 			f.addControl(identifier, control);
@@ -139,7 +141,7 @@ export class FormView {
 				validators.push(Validators.maxLength(255));
 				break;				
 			case "phone":
-				validators.push(CustomValidators.phone);
+				validators.push(CustomValidators.phone());
 				break;
 		}
 		return validators;

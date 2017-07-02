@@ -61,7 +61,7 @@ export class ImageProcessor{
 				obs.complete();
 				t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
 			};
-			image.src = url;
+			image.src = url.replace(/\?.*/, "?" + parseInt(((1 + Math.random())*1000) + ""));
 		});
 	}
 
@@ -128,6 +128,7 @@ export class ImageProcessor{
 	}
 
 	private setupCanvas(width: number, height: number){
+		this.canvas = null;
 		if(!this.canvas){
 			this.canvas = document.createElement("canvas");
 			this.ctx = this.canvas.getContext('2d');
@@ -135,6 +136,7 @@ export class ImageProcessor{
 		this.canvas.width = width;
 		this.canvas.height = height;
 		this.ctx.clearRect(0, 0, width, height);
+		this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 	}
 }
 

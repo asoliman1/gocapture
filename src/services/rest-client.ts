@@ -231,12 +231,14 @@ export class RESTClient {
 		.map(response => {
 			let d: number[] = [];
 			if(Array.isArray(response)){
-				if(Number.isInteger(response[0])){
-					d = response;
-				}else{
-					Object.keys(response[0]).forEach(key => {
-						d.push(response[0][key]);
-					});
+				if(response.length > 0){
+					if(Number.isInteger(response[0])){
+						d = response;
+					}else{
+						Object.keys(response[0]).forEach(key => {
+							d.push(response[0][key]);
+						});
+					}
 				}
 			}else{
 				Object.keys(response).forEach(key => {
@@ -247,7 +249,7 @@ export class RESTClient {
 		});
 	}
 
-	public getAllSubmissions(forms: Form[], lastSync?: Date) : Observable<FormSubmission[]>{
+	public getAllSubmissions(forms: Form[], lastSync?: Date, newFormIds?: number[]) : Observable<FormSubmission[]>{
 		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
 			var result: FormSubmission[] = [];
 			if(!forms || forms.length == 0){
@@ -258,17 +260,19 @@ export class RESTClient {
 				return;
 			}
 			var index = 0;
+			let syncDate =  newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 			let handler = (data: FormSubmission[])=>{
 				result.push.apply(result, data);
 				index++;
 				if(index < forms.length){
-					this.getSubmissions(forms[index], lastSync).subscribe(handler);
+					syncDate =  newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
+					this.getSubmissions(forms[index], syncDate).subscribe(handler);
 				}else{
 					obs.next(result);
 					obs.complete();
 				}
 			};
-			this.getSubmissions(forms[index], lastSync).subscribe(handler);
+			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
 	/**
@@ -305,7 +309,6 @@ export class RESTClient {
 	 */
 	public getDeviceFormMemberships(form_id: number, lastSync?: Date): Observable<RecordsResponse<DeviceFormMembership>> {
 		var opts: any = {
-			access_token: this.token,
 			form_id: form_id
 		};
 		if (lastSync) {
@@ -319,7 +322,7 @@ export class RESTClient {
 		});
 	}
 
-	public getAllDeviceFormMemberships(forms: Form[], lastSync?: Date) : Observable<DeviceFormMembership[]>{
+	public getAllDeviceFormMemberships(forms: Form[], lastSync?: Date, newFormIds?: number[]) : Observable<DeviceFormMembership[]>{
 		return new Observable<DeviceFormMembership[]>((obs: Observer<DeviceFormMembership[]>) => {
 			var result: DeviceFormMembership[] = [];
 			if(!forms || forms.length == 0){
@@ -345,11 +348,11 @@ export class RESTClient {
 			};
 			let doTheCall = ()=>{
 				let params = <any>{
-					access_token: this.token,
 					form_id: forms[index].form_id
 				}
-				if(lastSync){
-					params.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";
+				let syncDate =  newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
+				if(syncDate){
+					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			}

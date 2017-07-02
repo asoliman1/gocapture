@@ -40,7 +40,7 @@ export class ProspectSearch {
 	}
 
 	ionViewDidEnter() {
-		this.form = this.navParams.data["form"];
+		this.form = this.navParams.get("form");
 		this.loading = true;
 		this.client.getContacts(this.form).subscribe(contacts => {
 			this.loading = false;

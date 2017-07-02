@@ -5,4 +5,5 @@ export class BaseForm{
 	description : string;
 	total_submissions : number;
 	total_hold: number;
+	total_sent: number;
 }

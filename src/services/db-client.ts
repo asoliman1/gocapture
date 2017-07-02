@@ -45,7 +45,7 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, archive_date FROM forms where isDispatch = (?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
 				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)"
@@ -330,12 +330,13 @@ export class DBClient {
 		}
 		form.total_submissions = dbForm.totalSub;
 		form.total_hold = dbForm.totalHold;
+		form.total_sent = dbForm.totalSent;
 		form.computeIdentifiers();
 		return form;
 	}
 
 	public getForms(): Observable<Form[]> {
-		return this.getAll<any[]>(WORK, "forms", [false, false, false])
+		return this.getAll<any[]>(WORK, "forms", [false, false, false, false])
 			.map((data) => {
 				let forms = [];
 				data.forEach((dbForm: any) => {
@@ -435,7 +436,7 @@ export class DBClient {
 	}
 
 	public getDispatches(): Observable<DispatchOrder[]> {
-		return this.getAll<any[]>(WORK, "forms", [true, true, true])
+		return this.getAll<any[]>(WORK, "forms", [true, true, true, true])
 			.map((data) => {
 				let forms = [];
 				data.forEach((dbForm: any) => {

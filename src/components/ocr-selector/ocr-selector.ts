@@ -43,6 +43,7 @@ export class OcrSelector {
 	loading: boolean = true;
 	isLoading = this.loading + "";
 	changedValues:any = {};
+	private oldWidth = 0;
 
 	private result: RecognitionResult;
 
@@ -68,6 +69,7 @@ export class OcrSelector {
 	ionViewDidEnter() {
 		let z = this.zone;
 		let t = this;
+		this.oldWidth = this.elementView.nativeElement.width;
 		setTimeout(() => {
 			t.imageProc.recognize(t.info.dataUrl).subscribe((data) => {
 				z.run(()=>{
@@ -81,22 +83,29 @@ export class OcrSelector {
 	}
 
 	flip(){
+		let z = this.zone;
+		let t = this;
 		let image = this.info.dataUrl;
 		this.loading = true;
 		this.isLoading = this.loading + "";
 		this.imageProc.flip(this.info.dataUrl).subscribe( info => {
-			let name = image.substr(image.lastIndexOf("/") + 1);
+			let name = image.substr(image.lastIndexOf("/") + 1).replace(/\?.*/, "");
 			let folder = image.substr(0, image.lastIndexOf("/"));
 			new File().writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
-				this.image = this.info.dataUrl + "?" + parseInt(((1 + Math.random())*1000) + "");
-				this.ionViewDidEnter();
+				z.run(() => {
+					t.image = t.info.dataUrl.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+					t.info.dataUrl = t.image;
+					t.ionViewDidEnter();
+				});
 			});		
 		});
 	}
 
 	@HostListener("window:resize", ["$event"])
 	onResize(event){
-		if(this.result){
+		if(this.elementView.nativeElement.width != this.oldWidth && this.result){
+			this.oldWidth = this.elementView.nativeElement.width;
+			console.log("repositioning");
 			this.positionWords(this.result);
 		}
 	}

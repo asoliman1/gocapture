@@ -31,6 +31,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 //import { CustomFormsModule } from 'ng2-validation';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
+import { MyCurrencyDirective } from "../util/currency";
 import { Transfer } from '@ionic-native/transfer';
 import { File } from '@ionic-native/file';
 import { Device } from "@ionic-native/device";
@@ -63,7 +64,8 @@ import { Geolocation } from "@ionic-native/geolocation";
 	SignaturePad,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
 	ProspectSearch,
-	OcrSelector
+	OcrSelector,
+	MyCurrencyDirective
   ],
   imports: [
 	BrowserModule,
