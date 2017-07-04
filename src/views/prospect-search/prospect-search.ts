@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { DeviceFormMembership, Form } from "../../model";
 import { NavController, NavParams, ViewController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
@@ -25,7 +25,8 @@ export class ProspectSearch {
 	constructor(private navCtrl: NavController,
 		private viewCtrl: ViewController,
 		private navParams: NavParams,
-		private client: BussinessClient) {
+		private client: BussinessClient,
+		private zone: NgZone) {
 
 	}
 
@@ -43,11 +44,13 @@ export class ProspectSearch {
 		this.form = this.navParams.get("form");
 		this.loading = true;
 		this.client.getContacts(this.form).subscribe(contacts => {
-			this.loading = false;
-			this.contacts = contacts;
-			ProspectSearch.list = contacts;
-			ProspectSearch.formId = this.form.form_id+"";
-			this.onInput({target: {val: ""}})
+			this.zone.run(()=>{
+				this.loading = false;
+				this.contacts = contacts;
+				ProspectSearch.list = contacts;
+				ProspectSearch.formId = this.form.form_id+"";
+				this.onInput({target: {value: ""}})
+			});
 		});
 	}
 

@@ -31,7 +31,7 @@ export class SignatureModal {
 			let height = dim.contentHeight - /*this.content.contentBottom - this.content.contentTop -*/ 32;
 			this.signaturePad.set("canvasWidth", width);
 			this.signaturePad.set("canvasHeight", height);
-		}, 650);
+		}, 800);
 	}
 
 	ngAfterViewInit() {

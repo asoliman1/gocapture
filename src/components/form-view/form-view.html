@@ -32,7 +32,7 @@
 			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
 			<ion-item *ngSwitchCase="'money'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
+				<ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
 			</ion-item>
 			<ion-item *ngSwitchCase="'number'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
