@@ -71,6 +71,9 @@
         },
         "cordova-plugin-filepath": {
             "PACKAGE_NAME": "com.leadliaison.mobilitease"
+        },
+        "phonegap-plugin-barcodescanner": {
+            "PACKAGE_NAME": "com.leadliaison.mobilitease"
         }
     },
     "dependent_plugins": {

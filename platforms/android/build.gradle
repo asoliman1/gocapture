@@ -93,6 +93,7 @@ apply from: "cordova-plugin-crosswalk-webview/mobilitease-xwalk.gradle"
 apply from: "com.synconset.imagepicker/mobilitease-ignorelinterrors.gradle"
 apply from: "com.synconset.imagepicker/mobilitease-androidtarget.gradle"
 apply from: "phonegap-plugin-push/mobilitease-push.gradle"
+apply from: "phonegap-plugin-barcodescanner/mobilitease-barcodescanner.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras = file('build-extras.gradle').exists()

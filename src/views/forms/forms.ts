@@ -129,7 +129,7 @@ export class Forms {
 						//console.log('review clicked');
 						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
 					}
-				}, {
+				}, /*{
 					text: 'Share',
 					icon: "share",
 					handler: () => {
@@ -142,7 +142,7 @@ export class Forms {
 						console.log('summary clicked');
 						this.navCtrl.push(FormSummary, { form: form });
 					}
-				}, {
+				}*/, {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {

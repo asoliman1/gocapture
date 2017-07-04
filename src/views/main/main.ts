@@ -42,7 +42,7 @@ export class Main {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Forms', component: Forms, icon: "document" },
-			{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
+			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
 			{ title: 'Settings', component: Settings, icon: "cog" }
 		]
 	}
