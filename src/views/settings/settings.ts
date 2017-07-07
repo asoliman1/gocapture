@@ -59,7 +59,9 @@ export class Settings {
 	saveSettings() {
 		this.db.saveConfig("autoUpload", this.settings.autoUpload).subscribe(() => {
 			this.db.saveConfig("enableLogging", this.settings.enableLogging).subscribe(() => {
-				this.shouldSave = false;
+				this.db.saveConfig("kioskModePassword", this.settings.kioskModePassword).subscribe(() => {
+					this.shouldSave = false;
+				});
 			});
 		});
 	}

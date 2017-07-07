@@ -37,6 +37,13 @@
 			<ion-toggle [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
 		<ion-list-header>
+			Kiosk Mode
+		</ion-list-header>
+		<ion-item class="last">
+			<ion-label>Pass code</ion-label>
+			<ion-input type="password" class="align-right" [(ngModel)]="settings.kioskModePassword" (ionChange)="onChange()"></ion-input>
+		</ion-item>
+		<ion-list-header>
 			Diagnostics
 		</ion-list-header>
 		<ion-item>

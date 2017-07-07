@@ -23,7 +23,7 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown} from "../components/form-view/elements";
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import { FormControlPipe } from '../pipes/form-control-pipe';
 import {ProspectSearch} from "../views/prospect-search";
@@ -43,6 +43,7 @@ import { SQLite } from '@ionic-native/sqlite';
 import { Clipboard } from '@ionic-native/clipboard';
 import { AppVersion } from '@ionic-native/app-version';
 import { Geolocation } from "@ionic-native/geolocation";
+import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 
 @NgModule({
   declarations: [
@@ -62,7 +63,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 	FormView,
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder,
 	ProspectSearch,
 	OcrSelector,
 	MyCurrencyDirective
@@ -90,7 +91,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 	FormView,	
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder,
 	ProspectSearch,
 	OcrSelector
   ],
@@ -113,6 +114,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 	Clipboard,
 	AppVersion,
 	Geolocation,
+	BarcodeScanner,
 	{ provide: Http,
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]

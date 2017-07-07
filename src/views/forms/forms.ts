@@ -129,20 +129,7 @@ export class Forms {
 						//console.log('review clicked');
 						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
 					}
-				}, /*{
-					text: 'Share',
-					icon: "share",
-					handler: () => {
-						//console.log('share clicked');
-					}
 				}, {
-					text: 'Summary',
-					icon: "megaphone",
-					handler: () => {
-						console.log('summary clicked');
-						this.navCtrl.push(FormSummary, { form: form });
-					}
-				}*/, {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {

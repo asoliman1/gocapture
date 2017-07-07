@@ -11,7 +11,7 @@ let WORK = "work";
 export class DBClient {
 
 	private migrator: Migrator;
-	private manager : Manager;
+	private manager: Manager;
 
 	private registration: User;
 
@@ -45,8 +45,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)"
 			}
@@ -70,11 +70,13 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
+				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status=4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
-				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=? where id=?"
+				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=? where id=?",
+				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?"
 			}
 		},
 		{
@@ -213,6 +215,12 @@ export class DBClient {
 					"alter table submissions add column hold_request_id integer",
 					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
+			},
+			4: {
+				queries: [
+					"alter table forms add column is_mobile_kiosk_mode integer default 0",
+					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
 			}
 		}
 	};
@@ -230,7 +238,7 @@ export class DBClient {
 	 */
 	public setupWorkDb(dbName) {
 		this.manager.registerDb(dbName + ".db", WORK, false);
-	}	
+	}
 
 	public isWorkDbInited(): boolean {
 		return this.manager.isDbInited(WORK);
@@ -271,7 +279,7 @@ export class DBClient {
 		return this.remove(WORK, "configuration", [key]);
 	}
 
-	public updateRegistration(registrationid: string): Observable<boolean>{
+	public updateRegistration(registrationid: string): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			this.manager.db(MASTER).subscribe((db) => {
 				db.executeSql(this.getQuery('org_master', "updateRegistration"), [registrationid])
@@ -301,6 +309,7 @@ export class DBClient {
 		form.created_at = dbForm.created_at;
 		form.updated_at = dbForm.updated_at;
 		form.success_message = dbForm.success_message;
+		form.is_mobile_kiosk_mode = dbForm.is_mobile_kiosk_mode == 1;
 		form.submit_error_message = dbForm.submit_error_message;
 		form.submit_button_text = dbForm.submit_button_text;
 		form.elements = typeof dbForm.elements == "string" ? JSON.parse(dbForm.elements) : dbForm.elements;
@@ -367,16 +376,16 @@ export class DBClient {
 
 	public saveForm(form: Form): Observable<boolean> {
 		//id, name, list_id, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
-		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null, form.archive_date]);
+		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
 		return this.saveAll<Form>(forms, "Form");
 	}
 
-	public deleteFormsInList(list: number[]): Observable<boolean>{
+	public deleteFormsInList(list: number[]): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
-			if(!list|| list.length == 0){
+			if (!list || list.length == 0) {
 				responseObserver.next(true);
 				responseObserver.complete();
 				return;
@@ -384,21 +393,21 @@ export class DBClient {
 			this.manager.db(WORK).subscribe((db) => {
 				console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
 				db.executeSql(this.getQuery("forms", "deleteIn").replace("?", list.join(",")), [])
-				.then((data) => {
-					console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
-					db.executeSql(this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), [])
 					.then((data) => {
-						console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
-						db.executeSql(this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), [])
-						.then((data) => {
-							responseObserver.next(true);
-							responseObserver.complete();
-						}, (err) => {
-							responseObserver.error("An error occured: " + err);
-						});
-					}, (err) => {
-						responseObserver.error("An error occured: " + err);
-					});
+						console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
+						db.executeSql(this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), [])
+							.then((data) => {
+								console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
+								db.executeSql(this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), [])
+									.then((data) => {
+										responseObserver.next(true);
+										responseObserver.complete();
+									}, (err) => {
+										responseObserver.error("An error occured: " + err);
+									});
+							}, (err) => {
+								responseObserver.error("An error occured: " + err);
+							});
 					}, (err) => {
 						responseObserver.error("An error occured: " + err);
 					});
@@ -563,6 +572,40 @@ export class DBClient {
 	}
 
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
+
+		if (form.hold_request_id > 0) {
+			//UPDATE submissions set id=?, activityId=?, data=?, sub_date=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?
+			return new Observable<boolean>((obs: Observer<boolean>) => {
+				this.manager.db(MASTER).subscribe((db) => {
+					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
+						if (data.rows.length >= 1) {
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.email, false, null, form.hold_request_id])
+								.then((data) => {
+									if (data.rowsAffected == 1) {
+										obs.next(true);
+										obs.complete();
+									} else {
+										obs.error("Wrong number of affected rows: " + data.rowsAffected);
+									}
+								}, (err) => {
+									obs.error("An error occured: " + err);
+								});
+						}else{
+							this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]).subscribe(
+								(d) => {
+									obs.next(true);
+									obs.complete();
+								}, err => {
+									obs.error(err);
+								}
+							);			
+						}
+					}, (err) => {
+						obs.error("An error occured: " + err);
+					});
+				});
+			});
+		}
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
 		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]);
 	}
@@ -714,7 +757,7 @@ export class DBClient {
 		});
 	}
 
-	private updateById(type: string, table: string, parameters: any[]): Observable<boolean>{
+	private updateById(type: string, table: string, parameters: any[]): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, "updateById"), parameters)

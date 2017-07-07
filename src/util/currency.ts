@@ -27,6 +27,6 @@ export class MyCurrencyDirective implements OnInit {
 
 	@HostListener("blur", ["$event.target.value"])
 	onBlur(value) {
-		this.el.children[0].value = this.currencyPipe.transform(value).replace("USD", "$");
+		this.el.children[0].value = value ? this.currencyPipe.transform(value).replace("USD", "$") : "";
 	}
 }

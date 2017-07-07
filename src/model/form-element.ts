@@ -8,7 +8,7 @@ export class FormElement{
 	is_always_display : boolean;
 	is_conditional : boolean;
 	is_not_prefilled : boolean;
-	is_scan_cards_and_prefill_form: number;
+	is_scan_cards_and_prefill_form: 0 | 1;
 	is_hidden : boolean;
 	is_readonly : boolean;
 	type : string;

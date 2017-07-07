@@ -11,6 +11,7 @@ export class Form extends BaseForm{
 	submit_error_message : string;
 	total_views : number;
 	submit_button_text : string;
+	is_mobile_kiosk_mode: boolean;
 	elements : FormElement[];
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{

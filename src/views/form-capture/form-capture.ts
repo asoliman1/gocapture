@@ -1,5 +1,5 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { NavController, NavParams, ModalController, AlertController, Platform, Navbar } from 'ionic-angular';
+import { NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
 import { FormView } from "../../components/form-view";
@@ -27,12 +27,13 @@ export class FormCapture {
 	private backUnregister;
 
 	constructor(private navCtrl: NavController,
-			private navParams: NavParams,
-			private client: BussinessClient,
-			private zone: NgZone,
-			private modal: ModalController,
-			private alertCtrl: AlertController,
-			private platform: Platform) {
+		private navParams: NavParams,
+		private client: BussinessClient,
+		private zone: NgZone,
+		private modal: ModalController,
+		private menuCtrl: MenuController,
+		private alertCtrl: AlertController,
+		private platform: Platform) {
 		console.log("FormCapture");
 	}
 
@@ -51,34 +52,112 @@ export class FormCapture {
 				this.prospect = contact;
 			});
 		}
+		this.menuCtrl.enable(false);
 	}
 
-	isReadOnly(submission: FormSubmission) : boolean{
+	isReadOnly(submission: FormSubmission): boolean {
 		return submission && submission.status == SubmissionStatus.Submitted;
 	}
 
-	ionViewDidEnter(){
-		this.backUnregister = this.platform.registerBackButtonAction(()=>{
-           this.doBack();
+	ionViewDidEnter() {
+		this.backUnregister = this.platform.registerBackButtonAction(() => {
+			this.doBack();
 		}, Number.MAX_VALUE);
 		this["oldClick"] = this.navbar.backButtonClick;
 		this.navbar.backButtonClick = () => {
 			this.doBack();
 		};
+		if (this.form.is_mobile_kiosk_mode) {
+			this.client.hasKioskPassword().subscribe(hasPwd => {
+				if (!hasPwd) {
+					this.alertCtrl.create({
+						title: 'Set kiosk mode pass code',
+						inputs: [
+							{
+								name: 'passcode',
+								placeholder: 'Kiosk Mode Pass Code',
+								value: ""
+							}
+						],
+						buttons: [
+							{
+								text: 'Cancel',
+								role: 'cancel',
+								handler: () => {
+								}
+							},
+							{
+								text: 'Ok',
+								handler: (data) => {
+									let password = data.passcode;
+									this.client.setKioskPassword(password).subscribe((valid) => {
+
+									});
+								}
+							}
+						]
+					}).present();
+				}
+			})
+		}
 	}
 
-	ionViewWillLeave(){
-		if(this.backUnregister){
+	ionViewWillLeave() {
+		if (this.backUnregister) {
 			this.backUnregister();
 		}
 		this.navbar.backButtonClick = this["oldClick"];
+	}
+
+	ionViewDidLeave(){		
+		this.menuCtrl.enable(true);
 	}
 
 	doRefresh(refresher) {
 
 	}
 
+
 	doBack() {
+		if (this.form.is_mobile_kiosk_mode) {
+			let alert = this.alertCtrl.create({
+				title: 'Enter pass code',
+				inputs: [
+					{
+						name: 'passcode',
+						placeholder: 'Kiosk Mode Pass Code',
+						value: ""
+					}
+				],
+				buttons: [
+					{
+						text: 'Cancel',
+						role: 'cancel',
+						handler: () => {
+						}
+					},
+					{
+						text: 'Ok',
+						handler: (data) => {
+							let password = data.passcode;
+							this.client.validateKioskPassword(password).subscribe((valid) => {
+								if(valid){
+									this.internalBack();
+								}else{
+									return false;
+								}
+							});
+						}
+					}
+				]
+			});
+			alert.present();
+		}else{
+			this.internalBack();
+		}
+	}
+
+	private internalBack(){
 		if (!this.formView.hasChanges()) {
 			this.navCtrl.pop();
 			return;
@@ -115,17 +194,28 @@ export class FormCapture {
 		}
 		var valid = true;
 		this.form.elements.forEach((element: any) => {
-			if(element.is_required && !this.submission.fields[element.identifier]){
+			if (element.is_required && !this.submission.fields[element.identifier]) {
 				valid = false;
 			}
 		});
-		if(!valid){
+		if (!valid) {
 			this.submission.status = SubmissionStatus.OnHold;
-		}else if(this.submission.status != SubmissionStatus.Blocked) {
+		} else if (this.submission.status != SubmissionStatus.Blocked) {
 			this.submission.status = SubmissionStatus.ToSubmit;
 		}
 		this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
-			this.navCtrl.pop();
+			if(this.form.is_mobile_kiosk_mode){
+				this.submission = null;
+				this.form = null;
+				this.dispatch = null;
+				setTimeout(()=>{
+					this.zone.run(()=>{
+						this.ionViewWillEnter();
+					});
+				}, 10);
+			}else{
+				this.navCtrl.pop();
+			}
 		}, err => {
 
 		});

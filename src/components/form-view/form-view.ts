@@ -34,9 +34,11 @@ export class FormView {
 
 	ngAfterViewInit() {
 		setTimeout(() => {
+			var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+			var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0,-1);
 			this.dateTimes.changes.subscribe((dateTime) => {
 				this.dateTimes.forEach((dt) => {
-					dt.setValue(new Date().toISOString());
+					dt.setValue(localISOTime);
 				})
 			});
 		});
@@ -96,6 +98,26 @@ export class FormView {
 			this.data = Object.assign(Object.assign({}, this.submission.fields), this.data);
 		}
 		let f = this.fb.group({});
+		/*this.form.elements.push({
+			id : 3234,
+			title : "sdfsdf",
+			guidelines : "",
+			field_error_message : "2323r",
+			size : "123",
+			is_required : false,
+			is_always_display : true,
+			is_conditional : false,
+			is_not_prefilled : false,
+			is_scan_cards_and_prefill_form: 1,
+			is_hidden : false,
+			is_readonly : false,
+			type : "barcode",
+			position : 134,
+			default_value : "",
+			total_child : 1,
+			options : [],
+			mapping : []
+		});*/
 		this.form.elements.forEach((element) => {
 			var identifier = "element_" + element.id;
 			element["identifier"] = identifier;

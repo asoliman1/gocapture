@@ -7,3 +7,4 @@ export * from "./address";
 export * from "./radios";
 export * from "./dropdown";
 export * from "./checkboxes";
+export * from "./barcoder";

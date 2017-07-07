@@ -153,6 +153,39 @@ export class BussinessClient {
 		});
 	}
 
+	public validateKioskPassword(password: string): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
+				obs.next(pwd && password && password == pwd);
+				obs.complete();
+			}, err => {
+				obs.error(err);
+			});
+		});
+	}
+	
+	public setKioskPassword(password: string): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.db.saveConfig("kioskModePassword", password).subscribe((done) => {
+				obs.next(done);
+				obs.complete();
+			}, err => {
+				obs.error(err);
+			});
+		});
+	}
+
+	public hasKioskPassword(): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
+				obs.next(pwd != null && pwd.length > 0);
+				obs.complete();
+			}, err => {
+				obs.error(err);
+			});
+		});
+	}
+
 	public authenticate(authCode): Observable<{ user: User, message: string }> {
 		return new Observable<{ user: User, message: string }>((obs: Observer<{ user: User, message: string }>) => {
 			let req = new AuthenticationRequest();
