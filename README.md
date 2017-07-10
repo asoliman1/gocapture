@@ -1,20 +1,24 @@
-Ionic 2 App Base
+MobiliTEASE
 =====================
 
-This is the base template for Ionic 2 starter apps.
+MobiliTEASE mobile app for LeadLiason
 
-## Using this project
+## Setup
 
-You'll need the Ionic CLI with support for v2 apps:
-
-```bash
-$ npm install -g ionic
-```
-
-Then run:
+First you need to install ionic:
 
 ```bash
-$ ionic start myApp
+npm install -g ionic
+```
+Go into the project root and run:
+
+```bash
+npm install
 ```
 
-More info on this can be found on the Ionic [Getting Started](http://ionicframework.com/docs/v2/getting-started/) page.
+To run the app in browser run:
+
+```bash
+ionic serve
+```
+In Chrome you should open the Dev Tools and hit the Toggle Device toolbar to get that mobile feel.
