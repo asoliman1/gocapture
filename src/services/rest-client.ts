@@ -170,6 +170,7 @@ export class RESTClient {
 						entry.activity_id = item.activity_id;
 						entry.status = SubmissionStatus.Submitted;
 						entry.prospect_id = parseInt(item.prospect_id+"");
+						entry.hold_request_id = item.hold_request_id;
 						entry.email = item.email;
 						entry.form_id = parseInt(form.id);
 						item.data.forEach((dataItem) => {
@@ -376,7 +377,8 @@ export class RESTClient {
 				this.errorSource.next(resp);
 				return {
 						id: resp.activity_id,
-						message: resp.message
+						message: resp.message,
+						hold_request_id: null
 					};
 			});
 	}

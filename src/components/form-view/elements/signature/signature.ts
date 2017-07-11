@@ -4,6 +4,7 @@ import { SignatureModal} from "./signature.modal";
 import { ModalController} from "ionic-angular"
 import { BaseElement } from "../base-element";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 declare var screen;
 
 @Component({
@@ -19,7 +20,7 @@ export class Signature extends BaseElement{
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
 
-	constructor(private modalCtrl: ModalController) {
+	constructor(private modalCtrl: ModalController, private screen: ScreenOrientation) {
 		super();
 	}
 
@@ -29,12 +30,12 @@ export class Signature extends BaseElement{
 		}
 		let modal = this.modalCtrl.create(SignatureModal);
 		modal.onDidDismiss((sigStr) => {
-			screen.orientation.unlock && screen.orientation.unlock();
+			this.screen.unlock();
 			if(sigStr){
 				this.onChange(sigStr);
 			}
 		});
 		modal.present();
-		screen.orientation.lock && screen.orientation.lock('landscape');
+		this.screen.lock(this.screen.ORIENTATIONS.LANDSCAPE);
 	}
 }

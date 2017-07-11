@@ -3,6 +3,7 @@ export class SubmissionResponse{
 	prospect_id: number;
 	email: string;
 	submission_date: string;
+	hold_request_id: number;
 	data: [SubmissionDataResponse];
 }
 
