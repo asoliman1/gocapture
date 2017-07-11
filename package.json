@@ -86,7 +86,9 @@
       "cordova-plugin-network-information": {},
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-tesseract": {},
+      "cordova-plugin-tesseract": {
+		  "locator": "https://github.com/gustavomazzoni/cordova-plugin-tesseract"
+	  },
       "cordova-sqlite-storage": {},
       "phonegap-plugin-push": {
         "SENDER_ID": "56276941492"

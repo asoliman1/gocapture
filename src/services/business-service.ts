@@ -230,7 +230,7 @@ export class BussinessClient {
 							});
 					});
 			}, err =>{
-				obs.error("Could not authenticate the provided code");
+				obs.error("Invalid authentication code");
 			});
 		});
 	}
