@@ -1,5 +1,5 @@
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../model";
+import { Form, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
 import { DateTime } from "ionic-angular";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
@@ -55,7 +55,7 @@ export class FormView {
 				let control = form.controls[id];
 				if (control instanceof FormGroup) {
 					parse(control, data);
-				} else {
+				} else{
 					data[id] = control.value;
 				}
 			}
@@ -88,6 +88,8 @@ export class FormView {
 			}
 		}
 	}
+	
+	
 
 	private setupFormGroup() {
 		if (this.sub) {
@@ -126,11 +128,11 @@ export class FormView {
 				var opts = {};
 				element.mapping.forEach((entry, index) => {
 					entry["identifier"] = identifier + "_" + (index + 1);
-					opts[entry["identifier"]] = new FormControl({ value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : element.default_value, disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
+					opts[entry["identifier"]] = new FormControl({ value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
 				})
 				control = this.fb.group(opts);
 			} else {
-				control = this.fb.control({ value: this.data[identifier] || element.default_value, disabled: element.is_readonly || this.readOnly });
+				control = this.fb.control({ value: this.data[identifier] || this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly });
 				control.setValidators(this.makeValidators(element));
 			}
 			f.addControl(identifier, control);
@@ -145,6 +147,30 @@ export class FormView {
 				this.displayForm = this.form;
 			});
 		}, 150);
+	}
+
+	private getDefaultValue(element: FormElement): any{
+		switch(element.type){
+			case FormElementType.checkbox:
+				let data = [];
+				element.options.forEach((opt) => {
+					if(opt.is_default == "1"){
+						data.push(opt.option);
+					}
+				});
+				return data;
+			case FormElementType.select:
+			case FormElementType.radio:
+				let d = "";
+				element.options.forEach((opt) => {
+					if(opt.is_default == "1"){
+						d = opt.option;
+					}
+				});
+				return d;
+
+		}
+		return element.default_value;
 	}
 
 	private makeValidators(element: FormElement): any[] {

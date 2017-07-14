@@ -15,7 +15,7 @@
 	<ion-grid style="background-color: white;">
 		<ion-row>
 			<ion-col>
-				<h4>Touch an entry to edit. Check red to skip upload</h4>
+				<h4>Touch an entry to edit. Tap the blue circle to skip upload</h4>
 			</ion-col>
 		</ion-row>
 		<ion-row>
@@ -24,13 +24,16 @@
 					<ion-segment-button value="" class="all" >
 						All
 					</ion-segment-button>
-					<ion-segment-button value="1"class="all" >
-						Submitted
+					<ion-segment-button value="1"class="sent" color="secondary" >
+						Sent
 					</ion-segment-button>
-					<ion-segment-button value="2" class="all">
+					<ion-segment-button value="4"class="ready" color="primary">
+						Ready
+					</ion-segment-button>
+					<ion-segment-button value="2" class="hold" color="orange">
 						On Hold
 					</ion-segment-button>
-					<ion-segment-button value="3" class="all">
+					<ion-segment-button value="3" class="blocked" color="danger">
 						Blocked
 					</ion-segment-button>
 				</ion-segment>
@@ -43,13 +46,13 @@
 	<div [hidden]="filteredSubmissions.length == 0">
 		<!-- [virtualScroll]="filteredSubmissions" approxItemHeight="84px"-->
 		<ion-list >
-			<ion-item *ngFor="let submission of filteredSubmissions" (click)="goToEntry(submission)">
+			<ion-item *ngFor="let submission of filteredSubmissions" (click)="goToEntry(submission)" [class.danger]="submission.invalid_fields == 1">
 				<h1>{{submission.first_name + " " + submission.last_name}}</h1>
 				<h2>{{submission.company }}</h2>
 				<h2>{{submission.email}}</h2>
 				<h2>{{submission.telephone}}</h2>
 				<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
-					<ion-icon name="checkmark-circle" [color]="getColor(submission)"></ion-icon>
+					<ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
 				</button>
 			</ion-item>
 		</ion-list>

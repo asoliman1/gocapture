@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, NgZone } from '@angular/core';
+import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
 import { ActionSheetController, AlertController, ModalController } from "ionic-angular";
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
@@ -6,6 +6,9 @@ import { OcrSelector } from "../../../ocr-selector";
 import { FormElement, Form, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
+import { ScreenOrientation } from "@ionic-native/screen-orientation";
+import { ImageViewerController } from 'ionic-img-viewer';
+import { ImageViewer } from "./image-viewer";
 declare var cordova: any;
 declare var screen;
 
@@ -17,6 +20,12 @@ declare var screen;
 	]
 })
 export class BusinessCard extends BaseElement {
+
+	@ViewChild("frontImage") 
+	private frontImage:any;
+
+	@ViewChild("backImage") 
+	private backImage:any;
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
@@ -41,7 +50,8 @@ export class BusinessCard extends BaseElement {
 				private camera: Camera,
 				private zone: NgZone,
 				private modalCtrl: ModalController,
-				private imageProc: ImageProcessor) {
+				private imageProc: ImageProcessor,
+				private imageViewerCtrl: ImageViewerController) {
 		super();
 		this.currentVal = {
 			front: this.front,
@@ -72,6 +82,12 @@ export class BusinessCard extends BaseElement {
 							}else{
 								this.currentVal.back = this.back;
 							}
+						}
+					},
+					{
+						text: 'View image',
+						handler: () => {
+							this.viewImage(type);
 						}
 					},
 					{
@@ -258,5 +274,11 @@ export class BusinessCard extends BaseElement {
 				this.currentVal.back = this.back;
 			}
 		}
+	}
+
+	private viewImage(type){
+		//const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
+    	//imageViewer.present();
+		this.modalCtrl.create(ImageViewer, {image: type == this.FRONT ? this.currentVal.front : this.currentVal.back}).present();
 	}
 }

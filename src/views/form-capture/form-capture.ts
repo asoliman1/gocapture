@@ -199,7 +199,7 @@ export class FormCapture {
 			}
 		});
 		if (!valid) {
-			this.submission.status = SubmissionStatus.OnHold;
+			this.submission.status = SubmissionStatus.InvalidFields;
 		} else if (this.submission.status != SubmissionStatus.Blocked) {
 			this.submission.status = SubmissionStatus.ToSubmit;
 		}

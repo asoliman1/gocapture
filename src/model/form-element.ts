@@ -25,3 +25,26 @@ export class ElementMapping{
 	ll_field_type: string;
 	ll_field_data_type: string;
 }
+
+export const FormElementType = {
+	email: "email",
+	page_break: "page_break",
+	section: "section",
+	url: "url",
+	text: "text",			
+	select: "select",
+	radio: "radio",
+	simple_name: "simple_name",
+	textarea: "textarea",
+	time: "time",
+	address: "address",
+	money: "money",
+	number: "number",
+	date: "date",
+	phone: "phone",
+	checkbox: "checkbox",
+	image: "image",
+	business_card: "business_card",
+	signature: "signature",
+	barcode: "barcode"
+}

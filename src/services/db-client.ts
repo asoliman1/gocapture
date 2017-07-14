@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Platform } from 'ionic-angular';
 import { Observable, Observer } from "rxjs/Rx";
-import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership } from "../model";
+import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
 import { Migrator, Manager, Table } from "./db";
 
 let MASTER = "master";
@@ -75,7 +75,8 @@ export class DBClient {
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
-				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=? where id=?",
+				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
+				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?"
 			}
 		},
@@ -221,6 +222,18 @@ export class DBClient {
 					"alter table forms add column is_mobile_kiosk_mode integer default 0",
 					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
+			},
+			5: {
+				queries: [
+					"INSERT OR REPLACE INTO configuration (key, value) VALUES ('autoUpload','true')",
+					"INSERT INTO versions(version, updated_at) values (5, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			},
+			6: {
+				queries: [
+					"alter table submissions add column invalid_fields integer default 0",
+					"INSERT INTO versions(version, updated_at) values (6, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
 			}
 		}
 	};
@@ -291,7 +304,7 @@ export class DBClient {
 							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -368,7 +381,7 @@ export class DBClient {
 						responseObserver.next(resp);
 						responseObserver.complete();
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -403,13 +416,13 @@ export class DBClient {
 										responseObserver.next(true);
 										responseObserver.complete();
 									}, (err) => {
-										responseObserver.error("An error occured: " + err);
+										responseObserver.error("An error occured: " + JSON.stringify(err));
 									});
 							}, (err) => {
-								responseObserver.error("An error occured: " + err);
+								responseObserver.error("An error occured: " + JSON.stringify(err));
 							});
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -536,7 +549,8 @@ export class DBClient {
 					form.first_name = dbForm.firstName;
 					form.last_name = dbForm.lastName;
 					form.email = dbForm.email;
-					form.activity_id - dbForm.activityId;
+					form.activity_id = dbForm.activityId;
+					form.invalid_fields = dbForm.invalid_fields;
 					forms.push(form);
 				});
 				return forms;
@@ -559,13 +573,14 @@ export class DBClient {
 							form.first_name = dbForm.firstName;
 							form.last_name = dbForm.lastName;
 							form.email = dbForm.email;
-							form.activity_id - dbForm.activityId;
+							form.invalid_fields = dbForm.invalid_fields;
+							form.activity_id = dbForm.activityId;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
 						responseObserver.complete();
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -574,34 +589,51 @@ export class DBClient {
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 
 		if (form.hold_request_id > 0) {
-			//UPDATE submissions set id=?, activityId=?, data=?, sub_date=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?
+			//UPDATE submissions set id=?, status =?, activityId=?, data=?, sub_date=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?
 			return new Observable<boolean>((obs: Observer<boolean>) => {
-				this.manager.db(MASTER).subscribe((db) => {
+				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
-						if (data.rows.length >= 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.email, false, null, form.hold_request_id])
+						console.log(data.rows.length);
+						if (data.rows.length == 1) {
+							console.log("1 row");
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.email, false, null, form.hold_request_id])
 								.then((data) => {
-									if (data.rowsAffected == 1) {
-										obs.next(true);
-										obs.complete();
-									} else {
-										obs.error("Wrong number of affected rows: " + data.rowsAffected);
-									}
-								}, (err) => {
-									obs.error("An error occured: " + err);
-								});
-						}else{
-							this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]).subscribe(
-								(d) => {
 									obs.next(true);
 									obs.complete();
-								}, err => {
-									obs.error(err);
-								}
-							);			
+								}, (err) => {
+									obs.error("An error occured: " + JSON.stringify(err));
+								});
+								return;
+						}else if(data.rows.length > 1){
+							console.log("more than a row");
+							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
+							.then((data) => {
+									console.log(data);
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.email, false, null, form.hold_request_id])
+									.then((data) => {
+										console.log(data);
+										obs.next(true);
+										obs.complete();
+									}, (err) => {
+										obs.error("An error occured: " + JSON.stringify(err));
+									});
+								}, (err) => {
+									obs.error("An error occured: " + JSON.stringify(err));
+								});
+							return;
 						}
+
+						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]).subscribe(
+							(d) => {
+								obs.next(true);
+								obs.complete();
+							}, err => {
+								obs.error(err);
+							}
+						);			
+						
 					}, (err) => {
-						obs.error("An error occured: " + err);
+						obs.error("An error occured: " + JSON.stringify(err));
 					});
 				});
 			});
@@ -612,7 +644,7 @@ export class DBClient {
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.id]);
+		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
@@ -667,7 +699,7 @@ export class DBClient {
 							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -687,6 +719,12 @@ export class DBClient {
 			//console.log(new Date().getTime());
 			let name = "save" + type;
 			let exec = (done: boolean) => {
+				if(this.saveAllData.length == 0){
+					this.saveAllEnabled = false;
+					obs.next(true);
+					obs.complete();
+					return;
+				}
 				let query = this.saveAllData[0].query;
 				let params = [].concat(this.saveAllData[0].parameters);
 				for (var i = 1; i < this.saveAllData.length; i++) {
@@ -716,12 +754,20 @@ export class DBClient {
 							this.saveAllData = [];
 							obs.error(err);
 						});
+				}, (err) => {
+					this.saveAllEnabled = false;
+					this.saveAllData = [];
+					obs.error(err);
 				});
 			};
 			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
+				if(index > items.length){
+					this.saveAllEnabled = false;
+				}
 				if (index % page == 0 || index == items.length) {
+					this.saveAllEnabled = false;
 					exec(index == items.length);
 				} else if (index < items.length) {
 					this[name](items[index]).subscribe(handler);
@@ -751,7 +797,7 @@ export class DBClient {
 							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -769,7 +815,7 @@ export class DBClient {
 							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -790,7 +836,7 @@ export class DBClient {
 							responseObserver.error("More than one entry found");
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -808,7 +854,7 @@ export class DBClient {
 						responseObserver.next(resp);
 						responseObserver.complete();
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});
@@ -826,7 +872,7 @@ export class DBClient {
 						responseObserver.next(resp);
 						responseObserver.complete();
 					}, (err) => {
-						responseObserver.error("An error occured: " + err);
+						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
 			});
 		});

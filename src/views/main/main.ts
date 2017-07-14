@@ -90,6 +90,8 @@ export class Main {
 	}
 
 	handleSync() : Subscription{
+		let timer = null;
+		let hidePullup = false;
 		return this.syncClient.onSync.subscribe(stats => {
 			if (stats == null) {
 				return;
@@ -97,11 +99,16 @@ export class Main {
 			this.statuses = stats;
 			//console.log(stats);
 			this.currentSyncForm = this.getCurrentUploadingForm();
-			if (this.pullup.state == IonPullUpFooterState.Minimized) {
+			if (this.pullup.state == IonPullUpFooterState.Minimized && !hidePullup) {
 				this.pullup.collapse();
 			}
+			timer = setTimeout(()=> {
+				hidePullup = true;
+				this.pullup.minimize();
+			}, 12500);
 		},
 		(err) => {
+			clearTimeout(timer);
 			setTimeout(()=>{
 				this.pullup.minimize();
 				this.sub.unsubscribe();
@@ -109,6 +116,7 @@ export class Main {
 			}, 200);
 		},
 		() => {
+			clearTimeout(timer);
 			setTimeout(()=>{
 				this.pullup.minimize();
 				this.sub.unsubscribe();

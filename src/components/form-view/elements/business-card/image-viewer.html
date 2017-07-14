@@ -1,0 +1,13 @@
+<ion-header>
+	<ion-navbar color="dark">
+		<ion-buttons start>
+			<button ion-button (click)="cancel()">
+				<ion-icon name="back" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content class="image-viewer">
+	<img [src]="image">
+</ion-content>

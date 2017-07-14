@@ -12,6 +12,7 @@ export class FormSubmission{
 	last_name: string = "";
 	activity_id: number = null;
 	hold_request_id: number = null;
+	invalid_fields: number = 0;
 	fields : {[key: string]: string | string[]} = {};
 
 	public isSubmitted(): boolean{
@@ -46,5 +47,7 @@ export enum SubmissionStatus{
 	OnHold = 2,
 	Blocked = 3,
 	ToSubmit = 4,
-	Submitting = 5
+	Submitting = 5,
+	InvalidFields = 6,
+	Error = 7
 }

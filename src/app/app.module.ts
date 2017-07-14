@@ -23,7 +23,7 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder} from "../components/form-view/elements";
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import { FormControlPipe } from '../pipes/form-control-pipe';
 import {ProspectSearch} from "../views/prospect-search";
@@ -44,6 +44,9 @@ import { Clipboard } from '@ionic-native/clipboard';
 import { AppVersion } from '@ionic-native/app-version';
 import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
+
+import { IonicImageViewerModule } from 'ionic-img-viewer';
 
 @NgModule({
   declarations: [
@@ -63,7 +66,7 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 	FormView,
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer,
 	ProspectSearch,
 	OcrSelector,
 	MyCurrencyDirective
@@ -73,6 +76,7 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 	HttpModule,
 	BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
+	IonicImageViewerModule,
 	TextMaskModule
   ],
   bootstrap: [IonicApp],
@@ -91,7 +95,7 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 	FormView,	
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer,
 	ProspectSearch,
 	OcrSelector
   ],
@@ -115,6 +119,7 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 	AppVersion,
 	Geolocation,
 	BarcodeScanner,
+	ScreenOrientation,
 	{ provide: Http,
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]

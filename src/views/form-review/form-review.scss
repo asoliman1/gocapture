@@ -13,7 +13,12 @@
 	font-size: 2em !important;
 }
 
+.form-summary ion-item.danger {
+	color: #f53d3d;
+}
+
 .segment-ios ion-segment-button{
+	font-weight: bold !important;
 	&.all{
 		color: #222 !important;
 		&.segment-activated{
@@ -22,7 +27,15 @@
 		}
 	}
 
-	&.submitted{
+	&.sent{
+		color: #32db64 !important;
+		&.segment-activated{
+			background-color: #32db64 !important;
+			color: #fff !important;
+		}
+	}
+
+	&.ready{
 		color: #387ef5 !important;
 		&.segment-activated{
 			background-color: #387ef5 !important;
@@ -48,6 +61,7 @@
 }
 
 .segment-md ion-segment-button{
+	font-weight: bold !important;
 	&.all{
 		color: #222 !important;
 		&.segment-activated{
@@ -56,7 +70,15 @@
 		}
 	}
 
-	&.submitted{
+	&.sent{
+		color: #32db64 !important;
+		&.segment-activated{
+			border-color: #32db64 !important;
+			color: #32db64;
+		}
+	}
+
+	&.ready{
 		color: #387ef5 !important;
 		&.segment-activated{
 			border-color: #387ef5 !important;

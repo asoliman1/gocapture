@@ -204,7 +204,14 @@ export class RESTClient {
 								case "image":
 								case "business_card":
 									try{
-										entry.fields[fieldName] = JSON.parse(dataItem.value);
+										let obj = JSON.parse(dataItem.value);
+										if(typeof(obj) == "string" ){
+											obj = JSON.parse(obj);
+										}
+										entry.fields[fieldName] = obj;
+										for(var key in <any>entry.fields[fieldName]){
+											entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
+										}
 									}catch(e){
 										console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
 									}

@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild, HostListener } from '@angular/core';
 import { SignaturePad } from "./signature-pad";
 import { ViewController, Content } from "ionic-angular";
 
@@ -36,6 +36,15 @@ export class SignatureModal {
 
 	ngAfterViewInit() {
 		this.clear();
+	}
+
+	@HostListener("window:resize", ["$event"])
+	onResize(event){
+		let dim = this.content.getContentDimensions();
+		let width = dim.contentWidth - 32;
+		let height = dim.contentHeight - /*this.content.contentBottom - this.content.contentTop -*/ 32;
+		this.signaturePad.set("canvasWidth", width);
+		this.signaturePad.set("canvasHeight", height);
 	}
 
 	drawComplete() {

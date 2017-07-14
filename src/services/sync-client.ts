@@ -249,18 +249,28 @@ export class SyncClient {
 				this.rest.submitForm(submission).subscribe((d) => {
 					if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
 						let msg = "Could not process submission for form \"" + data.form.name + "\": " + d.message;
-						obs.error(msg);
-						this.errorSource.next(msg);
+						submission.invalid_fields = 1;
+						submission.activity_id = submission.id;
+						submission.hold_request_id = 0;
+						this.db.updateSubmissionId(submission).subscribe((ok) => {
+							obs.error(msg);
+							this.errorSource.next(msg);
+						}, err => {
+							obs.error(err);
+							let msg = "Could not process submission for form " + data.form.name;
+							this.errorSource.next(msg);
+						});
 						return;
 					}
 					if(d.id > 0){
 						submission.activity_id = d.id;
+						submission.status = SubmissionStatus.Submitted;
 					}else{
 						submission.activity_id = submission.id;
 						submission.hold_request_id = d.hold_request_id;
+						submission.status = SubmissionStatus.OnHold;
 					}
 
-					submission.status = SubmissionStatus.Submitted;
 					this.db.updateSubmissionId(submission).subscribe((ok) => {
 						if(d.id > 0){
 							submission.id = submission.activity_id;

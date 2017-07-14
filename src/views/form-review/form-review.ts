@@ -59,6 +59,16 @@ export class FormReview {
 		this.sub = null;
 	}
 
+	getIcon(sub: FormSubmission){
+		let result = "checkmark-circle";
+		switch (sub.status) {
+			case SubmissionStatus.ToSubmit:
+				result = sub.invalid_fields == 1 ? "warning": "checkmark-circle";
+				break;
+		}
+		return result;
+	}
+
 	getColor(submission: FormSubmission) {
 		let result = "";
 		switch (submission.status) {
@@ -69,10 +79,13 @@ export class FormReview {
 				result = "danger";
 				break;
 			case SubmissionStatus.ToSubmit:
-				result = "secondary";
+				result = submission.invalid_fields == 1 ? "danger": "primary";
 				break;
 			case SubmissionStatus.Submitted:
-				result = "primary";
+				result = "secondary";
+				break;
+			case SubmissionStatus.InvalidFields:
+				result = "danger";
 				break;
 		}
 		return result;
