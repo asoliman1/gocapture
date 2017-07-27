@@ -13,6 +13,7 @@ import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { ToastController }  from "ionic-angular";
+import { Config } from "../config";
 declare var cordova;
 
 @Component({
@@ -41,6 +42,7 @@ export class MyApp {
 			console.log("ready!");	
 			this.client.getRegistration(true).subscribe((user) => {
 				if(user){
+					Config.isProd = user.is_production == 1;
 					this.nav.setRoot(Main);
 				}else{
 					this.nav.setRoot(Login);

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
-import { Login } from "../views/login";
+import { Login, UrlChoose } from "../views/login";
 import { Main } from "../views/main";
 import { Dashboard } from "../views/dashboard";
 import { Forms } from "../views/forms";
@@ -66,7 +66,7 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
 	FormView,
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
 	ProspectSearch,
 	OcrSelector,
 	MyCurrencyDirective
@@ -95,7 +95,7 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
 	FormView,	
 	LogView,
 	SignaturePad,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer,
+	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
 	ProspectSearch,
 	OcrSelector
   ],

@@ -302,7 +302,7 @@ export class RESTClient {
 	}
 
 	public unauthenticate(token: string): Observable<boolean>{
-		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', {})
+		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', "")
 		.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
 					return true;
@@ -472,7 +472,7 @@ export class RESTClient {
 	private call<T>(method: String, relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((responseObserver: Observer<T>) => {
 			var sub: Observable<Response> = null;
-			let url = Config.serverUrl + relativeUrl;
+			let url = Config.getServerUrl() + relativeUrl;
 			let params = new URLSearchParams();
 			params.set("access_token", this.token);
 			var opts = {

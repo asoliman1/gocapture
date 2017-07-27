@@ -93,7 +93,10 @@ export class Image extends BaseElement {
 					text: 'Use Camera',
 					handler: () => {
 						camera.getPicture({
-							sourceType: 1
+							sourceType: 1,
+							encodingType: this.camera.EncodingType.JPEG,
+							targetWidth: 1280,
+							targetHeight:1000
 						}).then(onImageReceived)
 							.catch(err => {
 								//hmmm, what to do
@@ -106,6 +109,9 @@ export class Image extends BaseElement {
 					handler: () => {
 						camera.getPicture({
 							sourceType: 0,
+							encodingType: this.camera.EncodingType.JPEG,
+							targetWidth: 1280,
+							targetHeight:1000,
 							destinationType: 2
 						}).then(onImageReceived)
 							.catch(err => {

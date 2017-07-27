@@ -150,7 +150,7 @@ export class DBClient {
 			],
 			queries: {
 				"select": "SELECT * from org_master WHERE active = 1",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?'
 			}
@@ -186,6 +186,12 @@ export class DBClient {
 				queries: [
 					"ALTER TABLE org_master add column registrationId text",
 					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+				]
+			},
+			5: {
+				queries: [
+					"ALTER TABLE org_master add column isProduction integer default 1",
+					"INSERT INTO versions(version, updated_at) values (5, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 				]
 			}
 		},
@@ -450,6 +456,7 @@ export class DBClient {
 					user.title = data.title;
 					user.pushRegistered = data.pushRegistered;
 					user.device_token = data.registrationId;
+					user.is_production = data.isProduction;
 					this.registration = user;
 					return user;
 				}
@@ -672,7 +679,8 @@ export class DBClient {
 			user.title,
 			user.first_name,
 			user.last_name,
-			user.pushRegistered
+			user.pushRegistered,
+			user.is_production
 		]).map(data => {
 			this.registration = user;
 			return data;

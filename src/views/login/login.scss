@@ -39,3 +39,18 @@
     line-height: 1.4em;
     text-align: justify;
 }
+
+.connMode{
+	& ion-icon{
+		opacity: 0;
+	}
+	&.on{
+		font-weight: bold;
+		& *{
+			color: #fb8f04;
+		}
+		& ion-icon{
+			opacity: 1;
+		}
+	}
+}

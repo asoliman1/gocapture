@@ -64,6 +64,13 @@ export class BusinessCard extends BaseElement {
 		};
 	}
 
+	ngAfterContentInit(){
+		this.theVal = {
+			front: this.currentVal.front,
+			back: this.currentVal.back
+		};
+	}
+
 	captureImage(type: number) {
 		if(this.readonly){
 			return;

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { LoadingController, NavController, NavParams, PopoverController, ToastController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
+import { UrlChoose } from "./url-choose";
+import { Config } from "../../config";
 
 @Component({
 	selector: 'login',
@@ -14,11 +16,14 @@ export class Login {
 	authCode: string;
 	user: User = <any>{};
 
+	useProd: boolean = true;
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
 		private loading: LoadingController,
-		private toast: ToastController) {
+		private toast: ToastController,
+		private popoverCtrl: PopoverController) {
 
 	}
 
@@ -54,6 +59,7 @@ export class Login {
 				content: "Authenticating..."
 			});
 			loader.present();
+			Config["isProd"] = this.useProd;
 			this.client.authenticate(this.authCode).subscribe(
 				data => {
 					loader.setContent(data.message);
@@ -75,5 +81,17 @@ export class Login {
 		} else {
 			this.navCtrl.setRoot(Main);
 		}
+	}
+
+	presentPopover(event){
+		let popover = this.popoverCtrl.create(UrlChoose, {isProd: this.useProd});
+		popover.onDidDismiss((data)=> {
+			if(data){
+				this.useProd = data.prod;
+			}
+		});
+		popover.present({
+			ev: event
+		});
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="200205" id="com.leadliaison.mobilitease" ios-CFBundleVersion="205" version="2.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>mobilitEASE</name>
-    <description>LeadLiason MobilitEASE app</description>
+<widget android-versionCode="200206" id="com.leadliaison.mobilitease" ios-CFBundleVersion="206" version="2.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>GoCapture!</name>
+    <description>LeadLiason GoCapture!</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
     <content src="index.html" />
     <access origin="*" />

@@ -1,6 +1,7 @@
 import { Config } from "./";
 const CFG = {
-	serverUrl: "https://demo-api.leadliaison.com/v1.0",
+	devServerUrl: "https://demo-api.leadliaison.com/v1.0",
+	serverUrl: "https://api.leadliaison.com/v1.0",
 	androidGcmId: "56276941492"
 };
 
@@ -37,7 +38,7 @@ function doSetup(){
 					dataDirectory: "D:/"
 				}
 			};
-		}, 1000);
+		}, 10);
 		window["device"] = {
 			platform: "Android",
 			model: "Note7",

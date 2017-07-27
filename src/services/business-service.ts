@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Observable, Observer, BehaviorSubject, Subscription } from "rxjs/Rx";
-import { AuthenticationRequest } from "../model/protocol";
-import { User, Form, DispatchOrder, FormSubmission, DeviceFormMembership } from "../model";
-import { DBClient } from "./db-client";
-import { RESTClient } from "./rest-client";
-import { SyncClient } from "./sync-client";
+import { Config } from '../config';
+import { DeviceFormMembership, DispatchOrder, Form, FormSubmission, User } from '../model';
+import { AuthenticationRequest } from '../model/protocol';
+import { DBClient } from './db-client';
+import { RESTClient } from './rest-client';
+import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
 import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
@@ -205,6 +206,7 @@ export class BussinessClient {
 								reply.customer_logo = result.nativeURL;
 								this.registration = reply;
 								reply.pushRegistered = 1;
+								reply.is_production = Config.isProd? 1 : 0;
 								this.db.saveRegistration(reply).subscribe((done) => {
 									this.db.setupWorkDb(reply.db);
 									obs.next({ user: reply, message: "Done" });
