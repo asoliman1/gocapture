@@ -1,7 +1,7 @@
-MobiliTEASE
+GoCapture!
 =====================
 
-MobiliTEASE mobile app for LeadLiason
+GoCapture! mobile app for LeadLiason
 
 ## Setup
 

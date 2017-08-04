@@ -47,10 +47,11 @@
 		<!-- [virtualScroll]="filteredSubmissions" approxItemHeight="84px"-->
 		<ion-list >
 			<ion-item *ngFor="let submission of filteredSubmissions" (click)="goToEntry(submission)" [class.danger]="submission.invalid_fields == 1">
-				<h1>{{submission.first_name + " " + submission.last_name}}</h1>
-				<h2>{{submission.company }}</h2>
-				<h2>{{submission.email}}</h2>
-				<h2>{{submission.telephone}}</h2>
+				<img class="business-card-thumbnail" *ngIf="submission.hasOnlyBusinessCard" [src]="getBusinessCard(submission)">
+				<h1 *ngIf="!submission.hasOnlyBusinessCard">{{submission.first_name + " " + submission.last_name}}</h1>
+				<h2 *ngIf="!submission.hasOnlyBusinessCard">{{submission.company }}</h2>
+				<h2 *ngIf="!submission.hasOnlyBusinessCard">{{submission.email}}</h2>
+				<h2 *ngIf="!submission.hasOnlyBusinessCard">{{submission.telephone}}</h2>
 				<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
 					<ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
 				</button>

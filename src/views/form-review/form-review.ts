@@ -2,7 +2,7 @@ import { Component, NgZone } from '@angular/core';
 import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form, FormSubmission, SubmissionStatus } from "../../model";
+import { Form, FormSubmission, SubmissionStatus, FormElementType } from "../../model";
 import { FormCapture } from "../form-capture";
 import { Subscription } from "rxjs";
 
@@ -95,6 +95,20 @@ export class FormReview {
 		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
 
+	hasOnlyBusinessCard(submission: FormSubmission){
+		let id = this.form.getIdByFieldType(FormElementType.business_card);
+		let emailId = this.form.getIdByFieldType(FormElementType.email);
+		let nameId = this.form.getIdByFieldType(FormElementType.simple_name);
+		let email = emailId ? submission.fields[emailId] : "";
+		let name = nameId ? submission.fields[nameId][nameId + "_1"] || submission.fields[nameId][nameId + "_2"] : "";
+		return !email && !name && submission.fields[id];
+	}
+
+	getBusinessCard(submission: FormSubmission){
+		let id = this.form.getIdByFieldType(FormElementType.business_card);
+		return submission.fields[id] ? submission.fields[id]["front"] : "" ;
+	}
+
 	doRefresh() {
 		this.client.getSubmissions(this.form, this.isDispatch).subscribe(submissions => {
 			this.submissions = submissions;
@@ -107,6 +121,7 @@ export class FormReview {
 		this.zone.run(() => {
 			var f = this.filter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
+				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				return !f || sub.status + "" == f + "";
 			}).reverse();
 			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;

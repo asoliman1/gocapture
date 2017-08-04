@@ -84,11 +84,11 @@ export class BusinessCard extends BaseElement {
 						text: 'Remove',
           				role: 'destructive',
 						handler: () => {
-							if(type == this.FRONT){
-								this.currentVal.front = this.front;
-							}else{
-								this.currentVal.back = this.back;
-							}
+							this.zone.run(() =>{
+								this.setValue(type, type == this.FRONT ? this.front : this.back);
+		
+							});
+							
 						}
 					},
 					{
@@ -154,15 +154,17 @@ export class BusinessCard extends BaseElement {
 				}
 				
 				promise.then((entry)=>{
-					this.setValue(type, newFolder + "/" + newName);
-					info.dataUrl = newFolder + "/" + newName;
-					this.frontLoading = false;
-					this.backLoading = false;
-					if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
-						this.recognizeText(info);
-					}/*else{
-						screen.orientation.unlock && screen.orientation.unlock();
-					}*/
+					this.zone.run(()=>{
+						this.setValue(type, newFolder + "/" + newName);
+						info.dataUrl = newFolder + "/" + newName;
+						this.frontLoading = false;
+						this.backLoading = false;
+						if(this.element.is_scan_cards_and_prefill_form == 1 && type == this.FRONT){
+							this.recognizeText(info);
+						}/*else{
+							screen.orientation.unlock && screen.orientation.unlock();
+						}*/
+					});					
 				},
 				(err) => {
 					console.error(err);
@@ -220,8 +222,10 @@ export class BusinessCard extends BaseElement {
 	setValue(type, newPath){
 		if (type == this.FRONT) {
 			this.currentVal.front = newPath;
+			this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		} else {
 			this.currentVal.back = newPath;
+			this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		var v = {
 			front: null,
@@ -229,11 +233,9 @@ export class BusinessCard extends BaseElement {
 		};
 		if (this.currentVal.front && this.currentVal.front != this.front) {
 			v.front = this.currentVal.front;
-			this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		if (this.currentVal.back && this.currentVal.back != this.back) {
 			v.back = this.currentVal.back;
-			this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		this.propagateChange(v);
 	}

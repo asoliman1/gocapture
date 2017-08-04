@@ -36,6 +36,17 @@ export class Form extends BaseForm{
 		return null;
 	}
 
+	public static getIdByFieldType(type : string, form: any) : string{
+		let element : FormElement = null;
+		for(let i = 0; i < form.elements.length; i++){
+			element = form.elements[i];
+			if(element.type == type){
+				return element["identifier"];
+			}
+		}
+		return null;
+	}
+
 	public getUrlFields() : string[]{
 		let res = [];
 		let types = ["business_card", "image", "signature"];
@@ -51,6 +62,10 @@ export class Form extends BaseForm{
 
 	public getIdByUniqueFieldName(name : string) : string{
 		return Form.getIdByUniqueFieldName(name, this);
+	}
+
+	public getIdByFieldType(type : string) : string{
+		return Form.getIdByFieldType(type, this);
 	}
 
 	public getFieldById(id: number) : FormElement{
