@@ -100,7 +100,7 @@ export class FormReview {
 		let emailId = this.form.getIdByFieldType(FormElementType.email);
 		let nameId = this.form.getIdByFieldType(FormElementType.simple_name);
 		let email = emailId ? submission.fields[emailId] : "";
-		let name = nameId ? submission.fields[nameId][nameId + "_1"] || submission.fields[nameId][nameId + "_2"] : "";
+		let name = nameId && submission.fields[nameId] ? submission.fields[nameId][nameId + "_1"] || submission.fields[nameId][nameId + "_2"] : "";
 		return !email && !name && submission.fields[id];
 	}
 
