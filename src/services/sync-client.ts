@@ -86,6 +86,7 @@ export class SyncClient {
 						obs.next(result);
 						this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
+							console.log("Downloading contacts 1");
 							this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
 								obs.next(result);
 								obs.complete();
@@ -425,7 +426,10 @@ export class SyncClient {
 			mapEntry.percent = 10;
 			//obs.next(null);
 			//obs.complete();
+							console.log("Downloading contacts 2");
 			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate, result.newFormIds).subscribe((contacts) => {
+				
+							console.log("Downloading contacts 3");
 				result.memberships.push.apply(result.memberships, contacts);
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);

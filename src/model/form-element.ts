@@ -17,6 +17,9 @@ export class FormElement{
 	total_child : number;
 	options : any[];
 	mapping : ElementMapping[];
+	barcode_provider_id: string;
+	barcode_provider_name: string;
+
 }
 
 export class ElementMapping{

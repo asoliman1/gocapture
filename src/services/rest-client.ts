@@ -1,3 +1,4 @@
+import { BarcodeResponse, ItemData } from '../model/barcode';
 import { Injectable } from "@angular/core";
 import { Headers, Response, Http, URLSearchParams } from "@angular/http";
 import { Config } from "../config";
@@ -150,6 +151,13 @@ export class RESTClient {
 					});
 					return resp;
 				});
+	}
+
+	public fetchBarcodeData(barcodeId: string, providerId: string): Observable<ItemData[]>{
+		return this.call<BarcodeResponse>("GET", "/barcode/scan.json", {barcode_id: barcodeId, provider_id: providerId})
+		.map( resp => {
+			return resp.info;
+		});
 	}
 
 	public getSubmissions(form: Form, lastSyncDate: Date) : Observable<FormSubmission[]>{
@@ -333,7 +341,9 @@ export class RESTClient {
 	public getAllDeviceFormMemberships(forms: Form[], lastSync?: Date, newFormIds?: number[]) : Observable<DeviceFormMembership[]>{
 		return new Observable<DeviceFormMembership[]>((obs: Observer<DeviceFormMembership[]>) => {
 			var result: DeviceFormMembership[] = [];
+			console.log(forms);
 			if(!forms || forms.length == 0){
+				console.log("No contacts 1");
 				setTimeout(()=>{
 					obs.next(result);
 					obs.complete();

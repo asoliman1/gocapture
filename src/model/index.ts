@@ -6,3 +6,4 @@ export * from "./dispatch";
 export * from "./dispatch-order";
 export * from "./membership";
 export * from "./sync-status";
+export * from "./barcode";

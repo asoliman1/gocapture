@@ -62,7 +62,7 @@
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 				<signature [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
 			</ion-item>
-			<barcoder padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></barcoder>
+			<barcoder padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form"></barcoder>
 			<ion-item *ngSwitchDefault>
 				<ion-label>Coming soon! A component for {{element.type}}</ion-label>
 			</ion-item>

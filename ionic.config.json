@@ -1,5 +1,8 @@
 {
   "name": "GoCapture!",
   "app_id": "com.leadliaison.mobilitease",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }
