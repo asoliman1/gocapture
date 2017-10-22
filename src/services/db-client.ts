@@ -150,6 +150,8 @@ export class DBClient {
 			],
 			queries: {
 				"select": "SELECT * from org_master WHERE active = 1",
+				"makeAllInactive": "UPDATE org_master set active = 0",
+				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
 				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?'
@@ -437,7 +439,7 @@ export class DBClient {
 	 * 
 	 */
 	public getRegistration(): Observable<User> {
-		return this.getSingle<any>(MASTER, "org_master", null)
+		return this.getSingleWithCleanup<any>(MASTER, "org_master", null)
 			.map((data) => {
 				if (data) {
 					let user = new User();
@@ -687,6 +689,18 @@ export class DBClient {
 		});
 	}
 
+	public makeAllAccountsInactive(): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			this.manager.db(MASTER).subscribe((db) => {
+				db.executeSql(this.getQuery("org_master", "makeAllInactive"), [])
+					.then((data) => {
+						obs.next(true);
+						obs.complete();
+					});
+				});
+		});
+	}
+
 	public deleteRegistration(authId: string): Observable<boolean> {
 		return this.remove(MASTER, "org_master", [authId])
 			.map(data => {
@@ -842,6 +856,36 @@ export class DBClient {
 							responseObserver.complete();
 						} else {
 							responseObserver.error("More than one entry found");
+						}
+					}, (err) => {
+						responseObserver.error("An error occured: " + JSON.stringify(err));
+					});
+			});
+		});
+	}
+
+	private getSingleWithCleanup<T>(type: string, table: string, parameters: any[]): Observable<T> {
+		return new Observable<T>((responseObserver: Observer<T>) => {
+			this.manager.db(type).subscribe((db) => {
+				db.executeSql(this.getQuery(table, "select"), parameters)
+					.then((data) => {
+						if (data.rows.length == 1) {
+							responseObserver.next(data.rows.item(0));
+							responseObserver.complete();
+						} else if (data.rows.length == 0) {
+							responseObserver.next(null);
+							responseObserver.complete();
+						} else {
+							let ids = [];
+							for(let i = 0; i < data.rows.length-1; i++){
+								ids.push(data.rows.item(i).id);
+							}
+							db.executeSql(this.getQuery(table, "makeInactiveByIds").replace("?", ids.join(",")), []).then(()=> {
+								responseObserver.next(data.rows.item(data.rows.length-1));
+								responseObserver.complete();
+							}, (err) => {
+								responseObserver.error("An error occured: " + JSON.stringify(err));
+							})
 						}
 					}, (err) => {
 						responseObserver.error("An error occured: " + JSON.stringify(err));

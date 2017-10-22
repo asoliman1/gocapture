@@ -1,3 +1,6 @@
+import { FormUtils } from '../../util/form';
+import { FormElement, FormSubmission } from '../../../.tmp/model/index';
+import { FormElementType } from '../../model/index';
 import { Component, ElementRef, ViewChild, NgZone, HostListener } from '@angular/core';
 import {
   trigger,
@@ -27,13 +30,17 @@ export class OcrSelector {
 	@ViewChild(Content) 
 	content: Content;
 
-	private info: Info;
+	public form: Form;
 
-	private form: Form;
+	public submission: FormSubmission;
+
+	public valuesToPropagate: any;
 
 	image: string;
 
-	private multiselect = false;
+	private multiselect = false;	
+
+	private info: Info;
 
 	private selectedWords = {};
 
@@ -53,7 +60,11 @@ export class OcrSelector {
 		"image",
 		"business_card",
 		"signature"
-	]
+	];
+
+	private selectValueForElement: string;
+
+	public title: string = "Recognized text";
 
 	constructor(private params: NavParams,
 				private viewCtrl: ViewController,
@@ -62,8 +73,35 @@ export class OcrSelector {
 				private alertCtrl: AlertController,
 				private imageProc: ImageProcessor) {
 		this.info = params.get("imageInfo");
+		this.submission = JSON.parse(JSON.stringify(params.get('submission') || {}));
 		this.form = params.get("form") || { "id": 42, "form_id": 42, "description": "This is your form description. Click here to edit.", "title": "Untitled Form", "list_id": 0, "name": "Device Form - Collector", "archive_date": "2017-05-22T12:41:00+00:00", "created_at": "2016-02-22T10:45:21+00:00", "updated_at": "2016-02-22T15:54:11+00:00", "success_message": "Success! Your submission has been saved!", "submit_error_message": "Form not submitted.", "submit_button_text": "Submit", "elements": [{ "id": 1, "title": "Name", "field_error_message": "", "size": "small", "is_required": false, "is_always_display": false, "is_conditional": false, "is_not_prefilled": false, "is_hidden": false, "is_readonly": false, "type": "simple_name", "position": 0, "default_value": "", "total_child": 1, "options": [], "mapping": [{ "ll_field_id": "17", "ll_field_unique_identifier": "LastName", "ll_field_type": "Standard", "ll_field_data_type": "string", "identifier": "element_1_1" }, { "ll_field_id": "16", "ll_field_unique_identifier": "FirstName", "ll_field_type": "Standard", "ll_field_data_type": "string", "identifier": "element_1_2" }], "identifier": "element_1" }, { "id": 2, "title": "Email", "field_error_message": "", "size": "medium", "is_required": false, "is_always_display": false, "is_conditional": false, "is_not_prefilled": false, "is_hidden": false, "is_readonly": false, "type": "email", "position": 1, "default_value": "", "total_child": 0, "options": [], "mapping": [{ "ll_field_id": "21", "ll_field_unique_identifier": "Email", "ll_field_type": "Standard", "ll_field_data_type": "string" }], "identifier": "element_2" }, { "id": 3, "title": "Company", "field_error_message": "", "size": "medium", "is_required": false, "is_always_display": false, "is_conditional": false, "is_not_prefilled": false, "is_hidden": false, "is_readonly": false, "type": "text", "position": 2, "default_value": "", "total_child": 0, "options": [], "mapping": [{ "ll_field_id": "22", "ll_field_unique_identifier": "Company", "ll_field_type": "Standard", "ll_field_data_type": "string" }], "identifier": "element_3" }], "total_submissions": 1, "total_hold": 0 };
 		this.image = this.info.dataUrl;
+	}
+
+	onSelect(identifier: string){
+		this.content.scrollToTop(100);
+		this.selectValueForElement = identifier;
+		this.title = "Choose for " + FormUtils.getLabelByIdentifier(identifier, this.form);
+	}
+
+	propagateDirectChanges(data){
+		for(let identifier in data){
+			if(typeof data[identifier] == "object"){
+				for(let id in data[identifier]){
+					this.wordElements.forEach(word => {
+						if(word.assigned && word.assigned.field == id && word.word != data[identifier][id]){
+							word.word = data[identifier][id];
+						}
+					});
+				}
+			}else{
+				this.wordElements.forEach(word => {
+					if(word.assigned && word.assigned.field == identifier && word.word != data[identifier]){
+						word.word = data[identifier];
+					}
+				});
+			}
+		}
 	}
 
 	ionViewDidEnter() {
@@ -138,11 +176,32 @@ export class OcrSelector {
 			w.width = w.nWidth + uom;
 			w.height = w.nHeight + uom;
 			list.push(w);
+			this.attemptAutoAssignment(w);
 		});
+		let v = {};
+		let hasAssignments = false;
+		list.forEach(w => {
+			if(w.assigned){
+				v[w.assigned.field] = w.word;
+				hasAssignments = true;
+			}
+		});
+		if(hasAssignments){
+			this.valuesToPropagate = v;
+		}
 		this.wordElements = list;
 	}
 
 	wordClicked(word: Word, cb?: Function) {
+		if(this.selectValueForElement != null){
+			word.assigned = new Assigned(this.selectValueForElement, FormUtils.getLabelByIdentifier(this.selectValueForElement, this.form));
+			this.selectValueForElement = null;
+			let v = {};
+			v[word.assigned.field] = word.word;
+			this.valuesToPropagate = v;
+			this.title = "Recognized text";
+			return;
+		}
 		let actionSheet = this.actionSheetCtrl.create({
 			title: word.word,
 			cssClass: "word-actions",
@@ -177,6 +236,9 @@ export class OcrSelector {
 									handler: data => {
 										word.word = data.word;
 										actionSheet.setTitle(word.word);
+										let t = {};
+										t[word.assigned.field] = word.word;
+										this.valuesToPropagate = t;
 										cb && cb(word);
 									}
 								}
@@ -244,8 +306,10 @@ export class OcrSelector {
 													break;
 												}
 											}
-											this.changedValues[data] = word.word;
 											word.assigned = new Assigned(data, title);
+											let v = {};
+											v[word.assigned.field] = word.word;
+											this.valuesToPropagate = v;
 										}
 									}
 								}
@@ -272,7 +336,13 @@ export class OcrSelector {
 	}
 
 	done() {
-		this.viewCtrl.dismiss(this.changedValues);
+		let changedValues = {};
+		this.wordElements.forEach(word => {
+			if(!!word.assigned){
+				changedValues[word.assigned.field] = word.word;
+			}
+		})
+		this.viewCtrl.dismiss(changedValues);
 	}
 
 	onPressStart(event){
@@ -350,6 +420,22 @@ export class OcrSelector {
 						this.wordElements[index].selected = true;
 					}
 				});
+			}
+		}
+	}
+
+	private attemptAutoAssignment(word: Word){
+		//test for email
+		if(word.word.indexOf("@") > 0 && word.word.endsWith(".com") || word.word.endsWith(".net") || word.word.endsWith(".org")){
+			//we have an email, let's find an email field and if found set the word as assigned
+			let id = this.form.getIdByFieldType(FormElementType.email);
+			if(id){
+				for (let i = 0; i < this.form.elements.length; i++) {
+					if (this.form.elements[i]["identifier"] == id) {
+						word.assigned = new Assigned(this.form.elements[i]["identifier"], this.form.elements[i].title);
+						break;
+					}
+				}
 			}
 		}
 	}

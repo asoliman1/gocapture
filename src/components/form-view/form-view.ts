@@ -1,6 +1,7 @@
+import { OcrSelector } from '../ocr-selector/index';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Form, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
-import { DateTime } from "ionic-angular";
+import { DateTime, ModalController } from "ionic-angular";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs";
@@ -27,9 +28,16 @@ export class FormView {
 
 	private sub: Subscription;
 
+	selectionMode: boolean = false;
+
 	data: any;
 
-	constructor(private fb: FormBuilder, private zone: NgZone) {
+	constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
+	}
+
+	showSelection(){
+		let modal = this.modalCtrl.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
+		modal.present();
 	}
 
 	ngAfterViewInit() {
@@ -68,7 +76,9 @@ export class FormView {
 		if (changes['form'] || changes['submission']) {
 			if (this.form && this.submission) {
 				this.readOnly = this.submission.isSubmitted();
-				this.setupFormGroup();
+				setTimeout(()=> {
+					this.setupFormGroup();
+				}, 1);				
 			} else {
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
@@ -89,8 +99,6 @@ export class FormView {
 		}
 	}
 	
-	
-
 	private setupFormGroup() {
 		if (this.sub) {
 			this.sub.unsubscribe();
@@ -100,26 +108,6 @@ export class FormView {
 			this.data = Object.assign(Object.assign({}, this.submission.fields), this.data);
 		}
 		let f = this.fb.group({});
-		/*this.form.elements.push({
-			id : 3234,
-			title : "sdfsdf",
-			guidelines : "",
-			field_error_message : "2323r",
-			size : "123",
-			is_required : false,
-			is_always_display : true,
-			is_conditional : false,
-			is_not_prefilled : false,
-			is_scan_cards_and_prefill_form: 1,
-			is_hidden : false,
-			is_readonly : false,
-			type : "barcode",
-			position : 134,
-			default_value : "",
-			total_child : 1,
-			options : [],
-			mapping : []
-		});*/
 		this.form.elements.forEach((element) => {
 			var identifier = "element_" + element.id;
 			element["identifier"] = identifier;

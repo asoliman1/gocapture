@@ -424,12 +424,9 @@ export class SyncClient {
 			let mapEntry = map["contacts"];
 			mapEntry.loading = true;
 			mapEntry.percent = 10;
-			//obs.next(null);
-			//obs.complete();
-							console.log("Downloading contacts 2");
+			console.log("Downloading contacts 2");
 			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate, result.newFormIds).subscribe((contacts) => {
-				
-							console.log("Downloading contacts 3");
+				console.log("Downloading contacts 3");
 				result.memberships.push.apply(result.memberships, contacts);
 				mapEntry.percent = 50;
 				this.syncSource.next(this.lastSyncStatus);

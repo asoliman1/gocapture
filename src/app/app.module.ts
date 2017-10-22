@@ -22,7 +22,7 @@ import { BussinessClient } from "../services/business-service";
 import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
-import { FormView } from '../components/form-view';
+import { FormView, FormSelectionView } from '../components/form-view';
 import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe';
 import { FormControlPipe } from '../pipes/form-control-pipe';
@@ -66,6 +66,7 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
 	FormView,
 	LogView,
 	SignaturePad,
+	FormSelectionView,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
 	ProspectSearch,
 	OcrSelector,
@@ -95,6 +96,7 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
 	FormView,	
 	LogView,
 	SignaturePad,
+	FormSelectionView,
 	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
 	ProspectSearch,
 	OcrSelector

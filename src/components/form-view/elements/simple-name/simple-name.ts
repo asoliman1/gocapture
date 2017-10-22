@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { FormGroup } from "@angular/forms";
 import { BaseGroupElement} from "../base-group-element";
@@ -15,6 +15,10 @@ export class SimpleName extends BaseGroupElement {
 
 	@Input() readonly: boolean = false;
 
+	@Input() selection: boolean = false;
+
+	@Output() idSelected: EventEmitter<string>;
+
 	nameMap = {
 		"FirstName": "First Name",
 		"LastName": "Last Name"
@@ -22,10 +26,15 @@ export class SimpleName extends BaseGroupElement {
 
 	constructor() {
 		super();
+		this.idSelected = new EventEmitter<string>();
 	}
 
 	ngOnChanges(changes: any) {
 		super.ngOnChanges(changes);
+	}
+
+	selectEntry(identifier){
+		this.idSelected.emit(identifier);
 	}
 
 	protected config(){

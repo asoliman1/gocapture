@@ -5,7 +5,7 @@
 				<ion-icon name="close" class="capture"></ion-icon>
 			</button>
 		</ion-buttons>
-		<ion-title>Recognized text</ion-title>
+		<ion-title>{{title}}</ion-title>
 		<ion-buttons end>
 			<button ion-button (click)="flip()" [disabled]="loading">
 				<ion-icon name="repeat" class="capture"></ion-icon>
@@ -33,4 +33,9 @@
 			<ion-spinner></ion-spinner>
 		</div>
 	</div>
+	<selection-view [form]="form" 
+					[submission]="submission" 
+					(select)="onSelect($event)" 
+					[outsideChanged]="valuesToPropagate"
+					(inputChange)="propagateDirectChanges($event)"></selection-view>
 </ion-content>

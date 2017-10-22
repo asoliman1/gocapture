@@ -1,4 +1,5 @@
 <div class="form-view">
+	<!--button ion-button (click)="showSelection()"></button-->
 	<form [formGroup]="theForm" style="width:100%;" novalidate>
 		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
 			<ion-item *ngSwitchCase="'email'">
@@ -56,7 +57,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'business_card'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form"></business-card>
+				<business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"></business-card>
 			</ion-item>
 			<ion-item *ngSwitchCase="'signature'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>

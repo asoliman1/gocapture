@@ -207,22 +207,24 @@ export class BussinessClient {
 								this.registration = reply;
 								reply.pushRegistered = 1;
 								reply.is_production = Config.isProd? 1 : 0;
-								this.db.saveRegistration(reply).subscribe((done) => {
-									this.db.setupWorkDb(reply.db);
-									obs.next({ user: reply, message: "Done" });
-									obs.complete();
-									let d = new Date();
-									this.sync.download(null).subscribe(downloadData => {
-									},
-									(err) => {
-										obs.error(err);
-									},
-									() => {
-										this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-											obs.next({ user: reply, message: "Done" });
-										})
+								this.db.makeAllAccountsInactive().subscribe((done) => {
+									this.db.saveRegistration(reply).subscribe((done) => {
+										this.db.setupWorkDb(reply.db);
+										obs.next({ user: reply, message: "Done" });
+										obs.complete();
+										let d = new Date();
+										this.sync.download(null).subscribe(downloadData => {
+										},
+										(err) => {
+											obs.error(err);
+										},
+										() => {
+											this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+												obs.next({ user: reply, message: "Done" });
+											})
+										});
 									});
-								});
+								});								
 							})
 							.catch((err) => {
 								obs.error("There was an error retrieving the profile picture");
@@ -242,6 +244,7 @@ export class BussinessClient {
 			this.rest.unauthenticate(user.access_token).subscribe((done) => {
 				if (done) {
 					this.db.deleteRegistration(user.id + "").subscribe(() => {
+						this.push.shutdown();
 						obs.next(user);
 						obs.complete();
 					}, err => {

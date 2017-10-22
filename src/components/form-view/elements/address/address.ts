@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { FormGroup, FormControl } from "@angular/forms";
 import { BaseGroupElement} from "../base-group-element";
@@ -11,9 +11,12 @@ export class Address extends BaseGroupElement {
 	@Input() element: any;
 	@Input() rootGroup: FormGroup;
 	@Input() readonly: boolean = false;
+	@Input() selection: boolean = false;
+	@Output() idSelected: EventEmitter<string>;
 
 	constructor() {
 		super();
+		this.idSelected = new EventEmitter<string>();
 	}
 
 	ngOnChanges(changes: any) {
@@ -26,4 +29,8 @@ export class Address extends BaseGroupElement {
 		}
 		super.ngOnChanges(changes);
 	}	
+	
+	selectEntry(identifier){
+		this.idSelected.emit(identifier);
+	}
 }
