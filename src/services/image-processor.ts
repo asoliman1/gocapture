@@ -8,6 +8,8 @@ export class ImageProcessor{
 
 	public ensureLandscape(url: string, preserveCanvas: boolean): Observable<Info> {
 		return new Observable<Info>((obs: Observer<Info>) => {
+			console.log("Ensure landscape started ");
+			let start = new Date().getTime();
 			var image: any = document.createElement("img");
 			let t = this;
 			image.onload = function (event: any) {
@@ -19,6 +21,7 @@ export class ImageProcessor{
 						data: null,
 						isDataUrl: false
 					});
+					console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms")
 					obs.complete();
 					return;
 				}
@@ -33,6 +36,7 @@ export class ImageProcessor{
 					data: null,
 					isDataUrl: true
 				});
+				console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms")
 				obs.complete();
 				//if(!preserveCanvas){
 					t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
@@ -83,7 +87,8 @@ export class ImageProcessor{
 	public recognize(data: string): Observable<RecognitionResult>{
 		return new Observable<RecognitionResult>((obs: Observer<RecognitionResult>) => {
 			if (window["TesseractPlugin"]) {
-
+				console.log("Recognize started");
+				let start = new Date().getTime();
 				/*TesseractPlugin.recognizeWords(this.processCurrentImage().split("base64,")[1], "eng", function (data) {
 					obs.next(<RecognitionResult>JSON.parse(<any>data));
 					obs.complete();
@@ -91,9 +96,11 @@ export class ImageProcessor{
 					obs.error(reason);
 				});*/
 				TesseractPlugin.recognizeWordsFromPath(data, "eng", function (data) {
+					console.log("Recognize ended after " + (new Date().getTime() - start) + "ms")
 					obs.next(<RecognitionResult>JSON.parse(<any>data));
 					obs.complete();
 				}, function (reason) {
+					console.log("Recognize ended in error after " + (new Date().getTime() - start) + "ms")
 					obs.error(reason);
 				});
 

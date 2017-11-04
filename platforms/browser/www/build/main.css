@@ -37229,102 +37229,127 @@ image-viewer.ion-page img {
   margin: 0 auto;
 }
 
-form-view {
+form-view, .form-view {
   width: 100%;
 }
 
-form-view ion-label {
+form-view .selection ion-item, .form-view .selection ion-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center !important;
+  -webkit-align-items: center !important;
+  -ms-flex-align: center !important;
+  align-items: center !important;
+}
+
+form-view .selection [icon-only], .form-view .selection [icon-only] {
+  padding: 0 12px !important;
+}
+
+form-view ion-label, .form-view ion-label {
   font-size: 1em !important;
   color: black !important;
 }
 
-form-view .image-picker {
+form-view .image-picker, .form-view .image-picker {
   padding: 20px 0 !important;
 }
 
 form-view .item-md.item-input.input-has-focus .item-inner,
-form-view .item-ios.item-input.input-has-focus .item-inner {
+form-view .item-ios.item-input.input-has-focus .item-inner, .form-view .item-md.item-input.input-has-focus .item-inner,
+.form-view .item-ios.item-input.input-has-focus .item-inner {
   border-bottom-color: #eb7f00 !important;
   -webkit-box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
   box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
 }
 
 form-view .list-md .item-input.input-has-focus:last-child,
-form-view .list-ios .item-input.input-has-focus:last-child {
+form-view .list-ios .item-input.input-has-focus:last-child, .form-view .list-md .item-input.input-has-focus:last-child,
+.form-view .list-ios .item-input.input-has-focus:last-child {
   border-bottom-color: #eb7f00 !important;
   -webkit-box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
   box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
 }
 
-form-view radios.ng-dirty .item-radio-checked .item-inner {
+form-view radios.ng-dirty .item-radio-checked .item-inner, .form-view radios.ng-dirty .item-radio-checked .item-inner {
   border-bottom: 1px solid #eb7f00 !important;
 }
 
-form-view .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner {
+form-view .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+form-view .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+form-view .item-ios.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner,
+form-view .item-md.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner, .form-view .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+.form-view .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+.form-view .item-ios.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner,
+.form-view .item-md.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner {
   border-bottom-color: #f53d3d;
   -webkit-box-shadow: inset 0 -1px 0 0 #f53d3d;
   box-shadow: inset 0 -1px 0 0 #f53d3d;
 }
 
-form-view .item-ios.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner {
+form-view .item-ios.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+form-view .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner, .form-view .item-ios.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+.form-view .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner {
   border-bottom-color: #32db64;
   -webkit-box-shadow: inset 0 -1px 0 0 #32db64;
   box-shadow: inset 0 -1px 0 0 #32db64;
 }
 
-form-view ion-label.required:after {
+form-view ion-label.required:after, .form-view ion-label.required:after {
   content: "*";
   font-weight: bold;
   padding-left: 5px;
   color: red;
 }
 
-form-view ion-select.ng-dirty {
+form-view ion-select.ng-dirty, .form-view ion-select.ng-dirty {
   color: #eb7f00;
 }
 
-form-view ion-datetime.ng-dirty {
+form-view ion-datetime.ng-dirty, .form-view ion-datetime.ng-dirty {
   color: #eb7f00;
 }
 
-form-view ion-input.ng-dirty {
+form-view ion-input.ng-dirty, .form-view ion-input.ng-dirty {
   color: #eb7f00;
 }
 
-form-view ion-textarea.ng-dirty {
+form-view ion-textarea.ng-dirty, .form-view ion-textarea.ng-dirty {
   color: #eb7f00;
 }
 
-form-view .text-input[disabled] {
+form-view .text-input[disabled], .form-view .text-input[disabled] {
   opacity: .8;
 }
 
-form-view .checkbox-disabled, form-view .item-checkbox-disabled ion-label {
+form-view .checkbox-disabled, form-view .item-checkbox-disabled ion-label, .form-view .checkbox-disabled, .form-view .item-checkbox-disabled ion-label {
   opacity: 0.8 !important;
   pointer-events: none;
 }
 
-form-view .item-select-disabled ion-label {
+form-view .item-select-disabled ion-label, .form-view .item-select-disabled ion-label {
   opacity: 1;
 }
 
-form-view .select-disabled, form-view .item-select-disabled ion-label {
+form-view .select-disabled, form-view .item-select-disabled ion-label, .form-view .select-disabled, .form-view .item-select-disabled ion-label {
   opacity: .8;
 }
 
-form-view .item-datetime-disabled ion-label {
+form-view .item-datetime-disabled ion-label, .form-view .item-datetime-disabled ion-label {
   opacity: 1;
 }
 
-form-view .datetime-disabled, form-view .item-datetime-disabled ion-label {
+form-view .datetime-disabled, form-view .item-datetime-disabled ion-label, .form-view .datetime-disabled, .form-view .item-datetime-disabled ion-label {
   opacity: .8;
 }
 
-form-view .item-radio-disabled ion-label {
+form-view .item-radio-disabled ion-label, .form-view .item-radio-disabled ion-label {
   opacity: 1 !important;
 }
 
-form-view .radio-disabled, form-view .item-radio-disabled ion-label {
+form-view .radio-disabled, form-view .item-radio-disabled ion-label, .form-view .radio-disabled, .form-view .item-radio-disabled ion-label {
   opacity: .8 !important;
 }
 

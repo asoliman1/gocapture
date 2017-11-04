@@ -1,5 +1,6 @@
+import { Device } from '@ionic-native/device';
 import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
-import { ActionSheetController, AlertController, ModalController } from "ionic-angular";
+import { ActionSheetController, AlertController, ModalController, Platform } from 'ionic-angular';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
@@ -48,7 +49,9 @@ export class BusinessCard extends BaseElement {
 	constructor(private actionCtrl: ActionSheetController,
 				private alertCtrl: AlertController,
 				private camera: Camera,
+				private device: Device,
 				private zone: NgZone,
+				private platform: Platform,
 				private modalCtrl: ModalController,
 				private imageProc: ImageProcessor,
 				private imageViewerCtrl: ImageViewerController) {
@@ -130,7 +133,7 @@ export class BusinessCard extends BaseElement {
 	private doCapture(type: number, captureType: number = 1) {		
 		//screen.orientation.lock && screen.orientation.lock("landscape");
 		this.camera.getPicture({
-			sourceType: captureType,
+			sourceType: this.device.isVirtual && this.platform.is("ios") ? 2 : captureType,
 			correctOrientation: true,
 			encodingType: this.camera.EncodingType.JPEG,
 			targetWidth: 1280,
