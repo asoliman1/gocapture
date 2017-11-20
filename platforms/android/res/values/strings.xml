@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="app_name">mobilitEASE</string>
-    <string name="launcher_name">@string/app_name</string>
-    <string name="activity_name">@string/launcher_name</string>
-    <string name="google_app_id">716813832888</string>
+  <string name="app_name">GoCapture!</string>
+  <string name="launcher_name">@string/app_name</string>
+  <string name="activity_name">@string/launcher_name</string>
+  <string name="google_app_id">716813832888</string>
 </resources>
