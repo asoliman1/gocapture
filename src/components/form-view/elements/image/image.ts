@@ -64,11 +64,11 @@ export class Image extends BaseElement {
 		}
 
 		let onImageReceived = (imageData) => {
-			//console.log(imageData);
 			if (!this.currentVal) {
 				this.currentVal = [];
 			}
 			let t = this;
+			//TODO find a more generic way of handling file move/copy
 			if(imageData.indexOf("content://") == 0 && window["FilePath"]){
 				window["FilePath"].resolveNativePath(imageData, (path) => {
 					t.moveFile(path, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
@@ -79,6 +79,17 @@ export class Image extends BaseElement {
 					})
 				}, (err)=> {
 					console.error(err);
+				});
+			}else if(imageData.indexOf("assets-library://") == 0){
+				let t = this;
+				window["resolveLocalFileSystemURL"](imageData, (fileEntry) => {
+					let url = fileEntry.toInternalURL();
+					t.copyFile(url, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
+						t.currentVal.unshift(newPath);
+						t.propagateChange(t.currentVal);
+					}, (err) => {
+						console.error(err);
+					})
 				});
 			}else{
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
@@ -103,7 +114,6 @@ export class Image extends BaseElement {
 							targetHeight:1000
 						}).then(onImageReceived)
 							.catch(err => {
-								//hmmm, what to do
 								console.error(err);
 							});
 					}
@@ -119,7 +129,6 @@ export class Image extends BaseElement {
 							destinationType: 2
 						}).then(onImageReceived)
 							.catch(err => {
-								//hmmm, what to do
 								console.error(err);
 							});
 					}
