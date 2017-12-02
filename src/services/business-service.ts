@@ -105,7 +105,7 @@ export class BussinessClient {
 					if (time) {
 						d.setTime(parseInt(time));
 					}
-					this.sync.download(time ? d : null).subscribe(data => {
+					this.sync.download(time ? d : null,).subscribe(data => {
 					},
 						(err) => {
 							//obs.error(err);
@@ -262,23 +262,27 @@ export class BussinessClient {
 	public getUpdates(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.getConfig("lastSyncDate").subscribe(time => {
-				let d = new Date();
-				if (time) {
-					d.setTime(parseInt(time));
-				}
-				let newD = new Date();
-				this.sync.download(time ? d : null).subscribe(downloadData => {
-					//console.log(downloadData);
-				},
-					(err) => {
-						obs.error(err);
+				this.db.getConfig("getAllContacts").subscribe( getAllContacts => {
+					let d = new Date();
+					if (time) {
+						d.setTime(parseInt(time));
+					}
+					let newD = new Date();
+					this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
+						//console.log(downloadData);
 					},
-					() => {
-						this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
-							obs.next(true);
-							obs.complete();
-						})
-					});
+						(err) => {
+							obs.error(err);
+						},
+						() => {
+							this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
+								this.db.saveConfig("getAllContacts", "true").subscribe(() => {
+									obs.next(true);
+									obs.complete();
+								});
+							})
+						});
+				});
 			});
 		});
 	}

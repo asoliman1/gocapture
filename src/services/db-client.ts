@@ -740,6 +740,7 @@ export class DBClient {
 			let index = 0;
 			//console.log(new Date().getTime());
 			let name = "save" + type;
+			console.log("Start save all " + type + " " + items.length);
 			let exec = (done: boolean) => {
 				if(this.saveAllData.length == 0){
 					this.saveAllEnabled = false;
@@ -785,12 +786,17 @@ export class DBClient {
 			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
-				if(index > items.length){
-					this.saveAllEnabled = false;
-				}
-				if (index % page == 0 || index == items.length) {
-					this.saveAllEnabled = false;
+				if (index % page == 0) {
+					console.log("save " + type + " " + index);
 					exec(index == items.length);
+					if(index == items.length){
+						return;
+					}
+				}else if(index == items.length){
+					this.saveAllEnabled = false;
+					console.log("save " + type + " " + index);
+					exec(true);
+					return;
 				} else if (index < items.length) {
 					this[name](items[index]).subscribe(handler);
 				}

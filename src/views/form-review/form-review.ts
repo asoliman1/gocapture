@@ -106,7 +106,7 @@ export class FormReview {
 
 	getBusinessCard(submission: FormSubmission){
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
-		return submission.fields[id] ? submission.fields[id]["front"] : "" ;
+		return submission.fields[id] ? submission.fields[id]["front"] + "?" + new Date().getTime() : "" ;
 	}
 
 	doRefresh() {

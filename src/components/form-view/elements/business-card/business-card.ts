@@ -266,6 +266,11 @@ export class BusinessCard extends BaseElement {
 			this.file.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
 				z.run(() => {
 					t.setValue(type, folder + "/" + name);
+					if (type == this.FRONT) {
+						this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+					} else {
+						this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+					}
 				});
 			});			
 		});

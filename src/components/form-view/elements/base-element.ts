@@ -53,7 +53,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 
 	moveFile(filePath: string, newFolder: string) : Observable<string>{
 		return new Observable<string>((obs: Observer<string>) => {
-				let name = filePath.substr(filePath.lastIndexOf("/") + 1);
+				let name = filePath.substr(filePath.lastIndexOf("/") + 1).split("?")[0];
 				let ext = name.split(".").pop();
 				let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
 				let newName = new Date().getTime() + "." + ext;

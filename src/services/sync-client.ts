@@ -53,8 +53,9 @@ export class SyncClient {
 		return this.lastSyncStatus;
 	}
 
-	public download(lastSyncDate: Date): Observable<DownloadData> {
+	public download(lastSyncDate: Date, shouldDownloadAllContacts?: boolean): Observable<DownloadData> {
 		return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
+			console.log("Should download all contacts " + shouldDownloadAllContacts);
 			let result = new DownloadData();
 			var map: { [key: string]: SyncStatus } = {
 				forms: new SyncStatus(true, false, 0, "Forms", 10),
@@ -87,7 +88,7 @@ export class SyncClient {
 						this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
 							console.log("Downloading contacts 1");
-							this.downloadContacts(filteredForms, lastSyncDate, map, result).subscribe(() => {
+							this.downloadContacts(filteredForms, shouldDownloadAllContacts ? null : lastSyncDate, map, result).subscribe(() => {
 								obs.next(result);
 								obs.complete();
 								this.syncCleanup();

@@ -4,7 +4,7 @@
     "homepage": "http://leadliaison.com/",
     "private": true,
     "scripts": {
-        "ionic:build": "ionic-app-scripts build --debug --prod",
+        "ionic:build": "ionic-app-scripts build --prod",
         "ionic:serve": "ionic-app-scripts serve"
     },
     "dependencies": {
@@ -69,7 +69,7 @@
     "devDependencies": {
         "@ionic/app-scripts": "^3.0.0",
         "@types/cordova": "0.0.34",
-        "ionic": "3.18.0",
+        "ionic": "3.19.0",
         "parse5": "3.0.2",
         "typescript": "~2.5.3"
     },
