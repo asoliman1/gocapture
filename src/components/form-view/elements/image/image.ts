@@ -83,13 +83,21 @@ export class Image extends BaseElement {
 			}else if(imageData.indexOf("assets-library://") == 0){
 				let t = this;
 				window["resolveLocalFileSystemURL"](imageData, (fileEntry) => {
-					let url = fileEntry.toInternalURL();
-					t.copyFile(url, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-						t.currentVal.unshift(newPath);
-						t.propagateChange(t.currentVal);
-					}, (err) => {
-						console.error(err);
-					})
+					fileEntry.file((file) => {
+						var reader = new FileReader();
+						reader.onloadend = (event) => {
+							console.log((<any>event.target).result);
+							let blob = new Blob([(<any>event.target).result], {type: file.type});
+							t.writeFile(cordova.file.dataDirectory + "leadliaison/images", file.name, blob).subscribe((newPath) => {
+								t.currentVal.unshift(newPath);
+								t.propagateChange(t.currentVal);
+							}, (err) => {
+								console.error(err);
+							});
+						};
+						console.log('Reading file: ' + file.name);
+						reader.readAsArrayBuffer(file);
+					});
 				});
 			}else{
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {

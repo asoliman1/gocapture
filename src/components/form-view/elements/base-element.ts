@@ -74,6 +74,28 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 		});
 	}
 
+	writeFile(newFolder: string, fileName: string, data: any) : Observable<string>{
+		return new Observable<string>((obs: Observer<string>) => {
+				let name = fileName.split("?")[0];
+				let ext = name.split(".").pop();
+				let newName = new Date().getTime() + "." + ext;
+				let doWrite = (d) =>{
+					this.file.writeFile(newFolder, newName, data, {replace:true})
+					.then(entry => {
+						obs.next(newFolder + "/" + newName);
+						obs.complete();
+					})
+					.catch(err => {
+						obs.error(err);
+					});
+				}
+				//console.log(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1));
+				this.file.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
+				.then(doWrite)
+				.catch(doWrite);
+		});
+	}
+
 	copyFile(filePath: string, newFolder: string) : Observable<string>{
 		return new Observable<string>((obs: Observer<string>) => {
 				let name = filePath.substr(filePath.lastIndexOf("/") + 1).split("?")[0];
