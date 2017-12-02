@@ -74,6 +74,8 @@ export class Image extends BaseElement {
 					t.moveFile(path, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
 						t.currentVal.unshift(newPath);
 						t.propagateChange(t.currentVal);
+					}, (err) => {
+						console.error(err);
 					})
 				}, (err)=> {
 					console.error(err);
@@ -82,6 +84,8 @@ export class Image extends BaseElement {
 				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
 					this.currentVal.unshift(newPath);
 					this.propagateChange(this.currentVal);
+				}, (err) => {
+					console.error(err);
 				})
 			}
 		};
