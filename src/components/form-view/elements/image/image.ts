@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, NgZone } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
@@ -34,13 +34,11 @@ export class Image extends BaseElement {
 	max = 5;
 
 	constructor(private fb: FormBuilder,
-		private actionCtrl: ActionSheetController,
-		private camera: Camera) {
+				private actionCtrl: ActionSheetController,
+				private camera: Camera, 
+				private zone: NgZone) {
 		super();
 		this.currentVal = [];
-		/*setTimeout(()=>{
-			this.currentVal = ["http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg", "http://www.w3schools.com/css/img_fjords.jpg"];
-		}, 1000);*/
 	}
 
 	chooseType() {
@@ -89,8 +87,10 @@ export class Image extends BaseElement {
 							console.log((<any>event.target).result);
 							let blob = new Blob([(<any>event.target).result], {type: file.type});
 							t.writeFile(cordova.file.dataDirectory + "leadliaison/images", file.name, blob).subscribe((newPath) => {
-								t.currentVal.unshift(newPath);
-								t.propagateChange(t.currentVal);
+								t.zone.run(()=>{
+									t.currentVal.unshift(newPath);
+									t.propagateChange(t.currentVal);
+								});
 							}, (err) => {
 								console.error(err);
 							});
