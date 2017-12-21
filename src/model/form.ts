@@ -1,4 +1,5 @@
 import {FormElement} from "./form-element";
+import {BarcodeStatus} from "./form-submission";
 import {BaseForm} from "./base-form";
 
 export class Form extends BaseForm{
@@ -13,6 +14,7 @@ export class Form extends BaseForm{
 	submit_button_text : string;
 	is_mobile_kiosk_mode: boolean;
 	elements : FormElement[];
+	barcode_processed? : BarcodeStatus;
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;
@@ -72,6 +74,17 @@ export class Form extends BaseForm{
 		if(id > 0){
 			for(let i = 0; i < this.elements.length; i++){
 				if(this.elements[i].id == id){
+					return this.elements[i];
+				}
+			}
+		}
+		return null;
+	}
+
+	public getFieldByIdentifier(id: string) : FormElement{
+		if(id){
+			for(let i = 0; i < this.elements.length; i++){
+				if(this.elements[i].identifier == id){
 					return this.elements[i];
 				}
 			}

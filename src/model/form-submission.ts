@@ -15,6 +15,8 @@ export class FormSubmission{
 	invalid_fields: number = 0;
 	fields : {[key: string]: string | string[]} = {};
 
+	barcode_processed: BarcodeStatus = 0;
+
 	public isSubmitted(): boolean{
 		return this.status == SubmissionStatus.Submitted;
 	}
@@ -40,6 +42,12 @@ export class FormSubmission{
 			this.company = <any>this.fields[id] || "";
 		}
 	}
+}
+
+export enum BarcodeStatus{
+	None = 0,
+	Processed = 1,
+	Queued = 2
 }
 
 export enum SubmissionStatus{

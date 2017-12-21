@@ -4,7 +4,7 @@ import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
 import { Transfer } from '@ionic-native/transfer';
 import { FileEntry, File } from '@ionic-native/file';
-import { SyncStatus, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
+import { SyncStatus, BarcodeStatus, FormElementType, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 declare var cordova: any;
 
@@ -248,53 +248,85 @@ export class SyncClient {
 						}
 					}
 				}
-				this.rest.submitForm(submission).subscribe((d) => {
-					if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
-						let msg = "Could not process submission for form \"" + data.form.name + "\": " + d.message;
-						submission.invalid_fields = 1;
-						submission.activity_id = submission.id;
-						submission.hold_request_id = 0;
-						this.db.updateSubmissionId(submission).subscribe((ok) => {
-							obs.error(msg);
-							this.errorSource.next(msg);
-						}, err => {
-							obs.error(err);
-							let msg = "Could not process submission for form " + data.form.name;
-							this.errorSource.next(msg);
-						});
-						return;
-					}
-					if(d.id > 0){
-						submission.activity_id = d.id;
-						submission.status = SubmissionStatus.Submitted;
-					}else{
-						submission.activity_id = submission.id;
-						submission.hold_request_id = d.hold_request_id;
-						submission.status = SubmissionStatus.OnHold;
-					}
-
-					this.db.updateSubmissionId(submission).subscribe((ok) => {
-						if(d.id > 0){
-							submission.id = submission.activity_id;
+				if(submission.barcode_processed == BarcodeStatus.Queued){
+					let identifier = data.form.getIdByFieldType(FormElementType.barcode);
+					let form = data.form.getFieldByIdentifier(identifier);
+					this.rest.fetchBarcodeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe( barcodeData => {
+						if(!barcodeData || barcodeData.length == 0){
+							return;
 						}
-						obs.next(submission);
-						obs.complete();
-					}, err => {
+						submission.barcode_processed = BarcodeStatus.Processed;						
+						barcodeData.forEach(entry => {
+							let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
+							if(!id){
+								return;
+							}
+							submission.fields[id] = entry.value;
+						});
+						this.db.updateSubmissionFields(submission).subscribe((done) => {
+							this.actuallySubmitForm(data.form.name, submission, obs);
+						}, (err) => {
+							obs.error(err);
+							this.errorSource.next("Could not save updated barcode info into teh submission for form " + data.form.name);
+						});
+					}, (err) => {
 						obs.error(err);
-						let msg = "Could not process submission for form " + data.form.name;
+						let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
 						this.errorSource.next(msg);
-					})
-				}, err => {
-					obs.error(err);
-					let msg = "Could not process submission for form " + data.form.name;
-					this.errorSource.next(msg);
-				});
+					});
+				}else{
+					this.actuallySubmitForm(data.form.name, submission, obs);
+				}
 			}, (err) => {
 				obs.error(err);
 				let msg = "Could not process submission for form " + data.form.name;
 				this.errorSource.next(msg);
 			});
 
+		});
+	}
+
+	private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>){
+		this.rest.submitForm(submission).subscribe((d) => {
+			if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
+				let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
+				submission.invalid_fields = 1;
+				submission.activity_id = submission.id;
+				submission.hold_request_id = 0;
+				this.db.updateSubmissionId(submission).subscribe((ok) => {
+					obs.error(msg);
+					this.errorSource.next(msg);
+				}, err => {
+					obs.error(err);
+					let msg = "Could not process submission for form " + formName;
+					this.errorSource.next(msg);
+				});
+				return;
+			}
+			if(d.id > 0){
+				submission.activity_id = d.id;
+				submission.status = SubmissionStatus.Submitted;
+			}else{
+				submission.activity_id = submission.id;
+				submission.hold_request_id = d.hold_request_id;
+				submission.status = SubmissionStatus.OnHold;
+			}
+
+			this.db.updateSubmissionId(submission).subscribe((ok) => {
+				if(d.id > 0){
+					submission.id = submission.activity_id;
+				}
+				obs.next(submission);
+				obs.complete();
+			}, err => {
+				obs.error(err);
+				let msg = "Could not process submission for form " + formName;
+				this.errorSource.next(msg);
+			})
+		}, err => {
+			obs.error(err);
+			let msg = "Could not process submission for form " + formName;
+			this.errorSource.next(msg);
 		});
 	}
 

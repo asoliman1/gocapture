@@ -32,6 +32,14 @@ export class FormView {
 
 	data: any;
 
+	barcodeStatusMap = {
+		undefined: "",
+		null: "",
+		0 : "",
+		1 : "",
+		2 : "queued"
+	}
+
 	constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
 	}
 

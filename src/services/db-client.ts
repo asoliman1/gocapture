@@ -3,6 +3,7 @@ import { Platform } from 'ionic-angular';
 import { Observable, Observer } from "rxjs/Rx";
 import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
 import { Migrator, Manager, Table } from "./db";
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
 let MASTER = "master";
 let WORK = "work";
@@ -65,14 +66,15 @@ export class DBClient {
 				{ name: 'lastName', type: 'text' },
 				{ name: 'email', type: 'text' },
 				{ name: 'dispatchId', type: 'integer' },
-				{ name: 'isDispatch', type: 'integer' }
+				{ name: 'isDispatch', type: 'integer' },
+				{ name: 'barcode_processed', type: 'integer'}
 			],
 			queries: {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status=4",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
@@ -107,11 +109,27 @@ export class DBClient {
 				{ name: 'searchTerm', type: 'text' },
 			],
 			queries: {
-				"selectAll": "select * from contacts where formId=?",
+				"selectAll": "select * from contacts inner join contact_forms on contacts.id = contact_forms.contactId where contact_forms.formId=?",
 				"select": "select * from contacts where formId=? and prospectId=?",
 				"update": "INSERT OR REPLACE INTO contacts (id, data, formId, membershipId, prospectId, added, searchTerm) VALUES (?, ?, ?, ?, ?, ?, ?)",
 				"delete": "delete from contacts where id=?",
 				"deleteIn": "delete from contacts where formId in (?)"
+			}
+		},
+		{
+			name: 'contact_forms',
+			master: false,
+			columns: [
+				{ name: 'formId', type: 'integer' },
+				{ name: 'contactId', type: 'integer' },
+				{ name: "primary key", type: "(formId, contactId)" }
+			],
+			queries: {
+				"selectAll": "select * from contact_forms where formId=?",
+				"update": "INSERT OR REPLACE INTO contact_forms (formId, contactId) VALUES (?, ?)",
+				"delete": "delete from contact_forms where formId=?",
+				"deleteIn": "delete from contact_forms where formId in (?)",
+				"getAll": "select id, formId from contacts where formId is not NULL"
 			}
 		},
 		{
@@ -174,26 +192,21 @@ export class DBClient {
 						]
 					}
 				],
-				queries: [
-					"INSERT INTO versions(version, updated_at) values (2, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
-				]
+				queries: []
 			},
 			3: {
 				queries: [
-					"ALTER TABLE org_master add column pushRegistered integer default 0",
-					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"ALTER TABLE org_master add column pushRegistered integer default 0"
 				]
 			},
 			4: {
 				queries: [
-					"ALTER TABLE org_master add column registrationId text",
-					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"ALTER TABLE org_master add column registrationId text"
 				]
 			},
 			5: {
 				queries: [
-					"ALTER TABLE org_master add column isProduction integer default 1",
-					"INSERT INTO versions(version, updated_at) values (5, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"ALTER TABLE org_master add column isProduction integer default 1"
 				]
 			}
 		},
@@ -209,40 +222,59 @@ export class DBClient {
 					}
 				],
 				queries: [
-					"ALTER TABLE submissions add column activityId VARCHAR(50)",
-					"INSERT INTO versions(version, updated_at) values (1, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"ALTER TABLE submissions add column activityId VARCHAR(50)"
 				]
 			},
 			2: {
 				queries: [
-					"ALTER table forms add column archive_date VARCHAR(50)",
-					"INSERT INTO versions(version, updated_at) values (2, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"ALTER table forms add column archive_date VARCHAR(50)"
 				]
 			},
 			3: {
 				queries: [
-					"alter table submissions add column hold_request_id integer",
-					"INSERT INTO versions(version, updated_at) values (3, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"alter table submissions add column hold_request_id integer"
 				]
 			},
 			4: {
 				queries: [
-					"alter table forms add column is_mobile_kiosk_mode integer default 0",
-					"INSERT INTO versions(version, updated_at) values (4, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"alter table forms add column is_mobile_kiosk_mode integer default 0"
 				]
 			},
 			5: {
 				queries: [
-					"INSERT OR REPLACE INTO configuration (key, value) VALUES ('autoUpload','true')",
-					"INSERT INTO versions(version, updated_at) values (5, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"INSERT OR REPLACE INTO configuration (key, value) VALUES ('autoUpload','true')"
 				]
 			},
 			6: {
 				queries: [
-					"alter table submissions add column invalid_fields integer default 0",
-					"INSERT INTO versions(version, updated_at) values (6, strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+					"alter table submissions add column invalid_fields integer default 0"
 				]
-			}
+			},
+			7: {
+				custom: (db: SQLiteObject, callback) => {
+					let t = this;
+					db.executeSql("select id, formId from contacts where formId is not NULL", []).then(data => {
+						console.log(data.rows.length);
+
+						t.internalSaveAll<any>(db, data.rows, "FormContact", 50).subscribe(()=>{
+							db.executeSql("update contacts set formId=NULL", []).then(()=>{
+								callback();
+							}).catch(err => {
+								console.error(err);
+							});
+						}, err => {
+							console.error(err);
+						});
+						
+					});
+				},
+				queries: []
+			},
+			8: {
+				queries: [
+					"alter table submissions add column barcode_processed integer default 0"
+				]
+			},
 		}
 	};
 	/**
@@ -301,21 +333,7 @@ export class DBClient {
 	}
 
 	public updateRegistration(registrationid: string): Observable<boolean> {
-		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
-			this.manager.db(MASTER).subscribe((db) => {
-				db.executeSql(this.getQuery('org_master', "updateRegistration"), [registrationid])
-					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
-						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-						}
-					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
-					});
-			});
-		});
+		return this.doUpdate(MASTER, "updateRegistration", 'org_master', [registrationid]);
 	}
 
 	private parseForm(dbForm): Form {
@@ -542,7 +560,36 @@ export class DBClient {
 	}
 
 	public saveMemberships(forms: DeviceFormMembership[]): Observable<boolean> {
-		return this.saveAll<DeviceFormMembership>(forms, "Membership");
+		return new Observable<boolean>(obs => {
+			this.saveAll<DeviceFormMembership>(forms, "Membership").subscribe(d => {
+				this.manager.db(WORK).subscribe((db) => {
+					let data = [];
+					forms.forEach(form => {
+						data.push({id: form.membership_id, formId: form.form_id});
+					});
+					this.saveAll<any>(data, "FormContact").subscribe(()=>{
+						db.executeSql("update contacts set formId=NULL", []).then(()=>{
+							obs.next(true);
+							obs.complete();
+						}).catch(err => {
+							obs.error(err);
+						});
+					}, err => {
+						obs.error(err);
+					});
+				});
+			}, err => {
+				obs.error(err);
+			})
+		});
+	}
+
+	public saveFormContact(data: any): Observable<boolean>{
+		return this.save(WORK, "contact_forms", [data.formId, data.id]);
+	}
+
+	public saveContactForms(forms: any[]): Observable<boolean> {
+		return this.saveAll<any>(forms, "FormContact");
 	}
 
 	public getSubmissions(formId: number, isDispatch): Observable<FormSubmission[]> {
@@ -560,6 +607,7 @@ export class DBClient {
 					form.email = dbForm.email;
 					form.activity_id = dbForm.activityId;
 					form.invalid_fields = dbForm.invalid_fields;
+					form.barcode_processed = dbForm.barcode_processed;
 					forms.push(form);
 				});
 				return forms;
@@ -632,7 +680,7 @@ export class DBClient {
 							return;
 						}
 
-						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]).subscribe(
+						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed]).subscribe(
 							(d) => {
 								obs.next(true);
 								obs.complete();
@@ -648,12 +696,16 @@ export class DBClient {
 			});
 		}
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id]);
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed]);
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
 		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
+	}
+
+	public updateSubmissionFields(form: FormSubmission): Observable<boolean> {
+		return this.updateById(WORK, "submissions", [JSON.stringify(form.fields), form.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
@@ -710,21 +762,7 @@ export class DBClient {
 	}
 
 	private remove(type: string, table: string, parameters: any[], key = "delete"): Observable<boolean> {
-		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
-			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, key), parameters)
-					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
-						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-						}
-					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
-					});
-			});
-		});
+		return this.doUpdate(type, key, table, parameters);
 	}
 
 	private saveAll<T>(items: T[], type: string, pageSize?: number): Observable<boolean> {
@@ -736,9 +774,32 @@ export class DBClient {
 				});
 				return;
 			}
+			this.manager.db(WORK).subscribe((db) => {
+				this.internalSaveAll(db, items, type, pageSize).subscribe(d => {
+					obs.next(true);
+					obs.complete();
+				}, err => {
+					this.saveAllEnabled = false;
+					this.saveAllData = [];
+					obs.error(err);
+				});
+			}, (err) => {
+				this.saveAllEnabled = false;
+				this.saveAllData = [];
+				obs.error(err);
+			});
+		});
+	}
+
+	private internalSaveAll<T>(db: SQLiteObject, items: T[], type: string, pageSize: number): Observable<boolean>{
+		return new Observable<boolean>((obs: Observer<boolean>) => {
+			if(!items || items.length == 0){
+				obs.next(true);
+				obs.complete();
+				return;
+			}
 			this.saveAllEnabled = true;
 			let index = 0;
-			//console.log(new Date().getTime());
 			let name = "save" + type;
 			console.log("Start save all " + type + " " + items.length);
 			let exec = (done: boolean) => {
@@ -755,33 +816,29 @@ export class DBClient {
 					params.push.apply(params, this.saveAllData[i].parameters);
 				}
 				let isDone = done;
-				this.manager.db(this.saveAllData[0].type).subscribe((db) => {
-					db.executeSql(query, params)
-						.then((data) => {
-							this.saveAllData = [];
-							if (data.rowsAffected > 0) {
-								if (isDone) {
-									this.saveAllEnabled = false;
-									obs.next(true);
-									obs.complete();
-									//console.log(new Date().getTime());
-								} else {
-									handler(true);
-								}
-							} else {
+	
+				db.executeSql(query, params)
+					.then((data) => {
+						this.saveAllData = [];
+						if (data.rowsAffected > 0) {
+							if (isDone) {
 								this.saveAllEnabled = false;
-								obs.error("Wrong number of affected rows: " + data.rowsAffected);
+								obs.next(true);
+								obs.complete();
+								//console.log(new Date().getTime());
+							} else {
+								handler(true);
 							}
-						}, (err) => {
+						} else {
 							this.saveAllEnabled = false;
-							this.saveAllData = [];
-							obs.error(err);
-						});
-				}, (err) => {
-					this.saveAllEnabled = false;
-					this.saveAllData = [];
-					obs.error(err);
-				});
+							obs.error("Wrong number of affected rows: " + data.rowsAffected);
+						}
+					}, (err) => {
+						this.saveAllEnabled = false;
+						this.saveAllData = [];
+						obs.error(err);
+					});
+				
 			};
 			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
@@ -815,38 +872,17 @@ export class DBClient {
 				});
 				return;
 			}
-			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, "update"), parameters)
-					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
-						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-						}
-					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
-					});
+			this.doUpdate(type, "update", table, parameters).subscribe((value) => {
+				responseObserver.next(value);
+				responseObserver.complete();
+			}, err => {
+				responseObserver.error(err);
 			});
 		});
 	}
 
 	private updateById(type: string, table: string, parameters: any[]): Observable<boolean> {
-		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
-			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, "updateById"), parameters)
-					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
-						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
-						}
-					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
-					});
-			});
-		});
+		return this.doUpdate(type, "updateById", table, parameters);
 	}
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {
@@ -901,9 +937,17 @@ export class DBClient {
 	}
 
 	private getMultiple<T>(type: string, table: string, parameters: any[]): Observable<T[]> {
+		return this.doGet<T>(type, "select", table, parameters);
+	}
+	
+	private getAll<T>(type: string, table: string, params?: any[]): Observable<T[]> {
+		return this.doGet<T>(type, "selectAll", table, params);
+	}
+
+	private doGet<T>(type: string, queryId: string, table: string, params?: any[]): Observable<T[]>{
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
 			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, "select"), parameters)
+				db.executeSql(this.getQuery(table, queryId), params)
 					.then((data) => {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {
@@ -918,17 +962,17 @@ export class DBClient {
 		});
 	}
 
-	private getAll<T>(type: string, table: string, params?: any[]): Observable<T[]> {
-		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
+	private doUpdate(type: string, queryId: string, table: string, params?: any[]): Observable<boolean>{
+		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			this.manager.db(type).subscribe((db) => {
-				db.executeSql(this.getQuery(table, "selectAll"), params)
+				db.executeSql(this.getQuery(table, queryId), params)
 					.then((data) => {
-						var resp = [];
-						for (let i = 0; i < data.rows.length; i++) {
-							resp.push(data.rows.item(i));
+						if (data.rowsAffected == 1) {
+							responseObserver.next(true);
+							responseObserver.complete();
+						} else {
+							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						}
-						responseObserver.next(resp);
-						responseObserver.complete();
 					}, (err) => {
 						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});

@@ -105,4 +105,18 @@ form-view, .form-view{
 	.radio-disabled, .item-radio-disabled ion-label {
 		opacity: .8 !important;
 	}
+
+	&.queued .from-barcode{
+		background-color: #f0f0f0;
+		
+		& * {
+			border: none !important;
+			box-shadow: none !important;
+		}
+
+		&  .input {
+			color: grey;
+			font-style: italic;
+		}
+	}
 }

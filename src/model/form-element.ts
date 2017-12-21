@@ -11,6 +11,7 @@ export class FormElement{
 	is_scan_cards_and_prefill_form: 0 | 1;
 	is_hidden : boolean;
 	is_readonly : boolean;
+	is_filled_from_barcode: boolean;
 	type : string;
 	position : number;
 	default_value : string;
@@ -19,7 +20,8 @@ export class FormElement{
 	mapping : ElementMapping[];
 	barcode_provider_id: string;
 	barcode_provider_name: string;
-
+	identifier?: string;
+	placeholder: string = "";
 }
 
 export class ElementMapping{

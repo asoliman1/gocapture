@@ -29,7 +29,7 @@ export class Migrator{
 				Object.keys(this.migrations[type]).forEach((key) => {
 					let k = parseInt(key);
 					if(k > version){
-						promise = promise.then(() => this.executeMigration(db, type, this.migrations[type][key]));
+						promise = promise.then(() => this.executeMigration(db, type, this.migrations[type][key], k));
 						hasMigrations = true;
 					}
 				});
@@ -46,7 +46,7 @@ export class Migrator{
 		});
 	}
 
-	private executeMigration(db: SQLiteObject, type, migration) : Promise<any>{
+	private executeMigration(db: SQLiteObject, type: string, migration, migrationNo: number) : Promise<any>{
 		return new Promise<any>((resolve, reject) => {
 			var toExecute = [];
 			migration.tables && migration.tables.forEach(table => {
@@ -54,7 +54,7 @@ export class Migrator{
 			});
 			toExecute = toExecute.concat(migration.queries);
 			if(toExecute.length == 0){
-				resolve({});
+				this.finishMigration(migration, migrationNo, db, resolve);
 				return;
 			}
 			var index = 0;
@@ -65,13 +65,30 @@ export class Migrator{
 					if(index < toExecute.length){
 						handler();
 					}else{
-						console.log("Done");
-						resolve({});
+						this.finishMigration(migration, migrationNo, db, resolve);
 					}
 				});
 			};
 			handler();
 		});
+	}
+
+	private finishMigration(migration, index, db, resolve){
+		let statement = "INSERT INTO versions(version, updated_at) values (" + index + ", strftime('%Y-%m-%d %H:%M:%S', 'now'))"
+		if(migration.custom){
+			migration.custom(db, ()=>{
+				console.log("Done 1");
+				db.executeSql(statement, {}).then(result => {
+					console.log("Done");
+					resolve({});
+				});
+			})
+		}else{
+			db.executeSql(statement, {}).then(result => {
+				console.log("Done");
+				resolve({});
+			});
+		}
 	}
 
 	private getDbMigrationVersion(db: SQLiteObject, type: string): Observable<number>{

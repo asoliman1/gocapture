@@ -1,8 +1,9 @@
 import { RESTClient } from '../../../../services/rest-client';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { ToastController } from "ionic-angular";
 import { Component, Input, forwardRef } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission } from "../../../../model";
-import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
+import { Form, FormElement, DeviceFormMembership, FormSubmission, BarcodeStatus } from "../../../../model";
+import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from "@angular/forms";
 import { BaseElement } from "../base-element";
 
 @Component({
@@ -17,9 +18,12 @@ export class Barcoder extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
 	@Input() form: Form;	
+	@Input() submission: FormSubmission;
 	@Input() readonly: boolean = false;
 
-	constructor(private barcodeScanner: BarcodeScanner, private client: RESTClient) {
+	statusMessage: string = "Scan bar code";
+
+	constructor(private barcodeScanner: BarcodeScanner, private client: RESTClient, private toast: ToastController) {
 		super();
 	}
 
@@ -28,12 +32,25 @@ export class Barcoder extends BaseElement {
 	}
 
 	scan(){
+		this.form["barcode_processed"] = BarcodeStatus.Queued;
+		this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+		this.statusMessage = "Scanning...";
 		this.barcodeScanner.scan().then((scannedData) => {
 			this.writeValue(scannedData.text);
+			this.toast.create({
+				message: "Barcode scanned successfully",
+				duration: 5000,
+				position: "top",
+				cssClass: "success"
+			}).present();
+			this.statusMessage = "Processing...";
 			this.client.fetchBarcodeData(scannedData.text, this.element.barcode_provider_id).subscribe( data => {
+				this.statusMessage = "Scan another barcode";
 				if(!data || data.length == 0){
 					return;
 				}
+				this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
+				this.form["barcode_processed"] = BarcodeStatus.Queued;
 				var vals = {};
 				for(let id in this.formGroup.controls){
 					if(this.formGroup.controls[id]["controls"]){
@@ -68,10 +85,32 @@ export class Barcoder extends BaseElement {
 					}
 				});
 				this.formGroup.setValue(vals);
+				
 			});
 		}).catch(err => {
-
+			this.statusMessage = "Scan another barcode";
+			this.form.elements.forEach((element) => {
+				if(element.is_filled_from_barcode){
+					let control = this.getControl(this.formGroup, element["identifier"]);
+					if(control){
+						control.setValue("Scanned");
+					}
+				}
+			});
 		});
+	}
+
+	private getControl(formGroup: FormGroup, id: string): FormControl{
+		let control = null;
+		if(id){
+			let match = /(\w+\_\d+)\_\d+/g.exec(id);
+			if(match && match.length > 0){
+				control = <FormControl>this.formGroup.get(match[1]).get(id);
+			}else{
+				control = <FormControl>this.formGroup.get(id);
+			}
+		}
+		return control;
 	}
 
 }
