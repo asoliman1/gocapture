@@ -66,8 +66,7 @@ export class DBClient {
 				{ name: 'lastName', type: 'text' },
 				{ name: 'email', type: 'text' },
 				{ name: 'dispatchId', type: 'integer' },
-				{ name: 'isDispatch', type: 'integer' },
-				{ name: 'barcode_processed', type: 'integer'}
+				{ name: 'isDispatch', type: 'integer' }
 			],
 			queries: {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
