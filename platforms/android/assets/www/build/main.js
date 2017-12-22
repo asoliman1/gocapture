@@ -8941,7 +8941,12 @@ var DBClient = /** @class */ (function () {
                         var t = _this;
                         db.executeSql("select id, formId from contacts where formId is not NULL", []).then(function (data) {
                             console.log(data.rows.length);
-                            t.internalSaveAll(db, data.rows, "FormContact", 50).subscribe(function () {
+                            var list = [];
+                            var index = 0;
+                            while (index < data.rows.length) {
+                                list.push(data.rows.item(index++));
+                            }
+                            t.internalSaveAll(db, list, "FormContact", 50).subscribe(function () {
                                 db.executeSql("update contacts set formId=NULL", []).then(function () {
                                     callback();
                                 }).catch(function (err) {

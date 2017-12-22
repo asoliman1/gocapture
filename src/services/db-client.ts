@@ -255,8 +255,13 @@ export class DBClient {
 					let t = this;
 					db.executeSql("select id, formId from contacts where formId is not NULL", []).then(data => {
 						console.log(data.rows.length);
-
-						t.internalSaveAll<any>(db, data.rows, "FormContact", 50).subscribe(()=>{
+						let list = [];
+						let index = 0;
+						while(index < data.rows.length){
+							list.push(data.rows.item(index));
+							index++;
+						}
+						t.internalSaveAll<any>(db, list, "FormContact", 50).subscribe(()=>{
 							db.executeSql("update contacts set formId=NULL", []).then(()=>{
 								callback();
 							}).catch(err => {
