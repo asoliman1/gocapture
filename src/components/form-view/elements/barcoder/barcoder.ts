@@ -50,7 +50,7 @@ export class Barcoder extends BaseElement {
 					return;
 				}
 				this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
-				this.form["barcode_processed"] = BarcodeStatus.Queued;
+				this.form["barcode_processed"] = BarcodeStatus.Processed;
 				var vals = {};
 				for(let id in this.formGroup.controls){
 					if(this.formGroup.controls[id]["controls"]){
@@ -86,17 +86,21 @@ export class Barcoder extends BaseElement {
 				});
 				this.formGroup.setValue(vals);
 				
+			}, err => {
+				this.statusMessage = "Scan another barcode";
+				this.form.elements.forEach((element) => {
+					if(element.is_filled_from_barcode){
+						let control = this.getControl(this.formGroup, element["identifier"]);
+						if(control){
+							control.setValue("Scanned");
+						}
+					}
+				});
 			});
 		}).catch(err => {
-			this.statusMessage = "Scan another barcode";
-			this.form.elements.forEach((element) => {
-				if(element.is_filled_from_barcode){
-					let control = this.getControl(this.formGroup, element["identifier"]);
-					if(control){
-						control.setValue("Scanned");
-					}
-				}
-			});
+			this.statusMessage = "Could not scan barcode";
+			this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
+			this.form["barcode_processed"] = BarcodeStatus.None;
 		});
 	}
 
