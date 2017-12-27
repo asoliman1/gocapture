@@ -84,9 +84,9 @@ export class Settings {
 					text: 'Unauthenticate',
 					handler: () => {
 						this.client.unregister(this.user).subscribe(()=>{
-							this.user = <any>{};
+							//this.user = <any>{};
 							setTimeout(()=>{
-								this.navCtrl.setRoot(Login);
+								this.navCtrl.setRoot(Login, {unauthenticated: true});
 							}, 300);
 						});
 					}

@@ -1,6 +1,6 @@
 import { FormUtils } from '../../util/form';
-import { FormElement, FormSubmission } from '../../../.tmp/model/index';
-import { FormElementType } from '../../model/index';
+import { FormElement, FormSubmission } from '../../model';
+import { FormElementType } from '../../model';
 import { Component, ElementRef, ViewChild, NgZone, HostListener } from '@angular/core';
 import {
   trigger,

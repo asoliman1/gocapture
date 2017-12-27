@@ -28,6 +28,10 @@ export class Login {
 	}
 
 	ngOnInit() {
+		if(this.navParams.get("unauthenticated") == true){
+			this.doAuth = true;
+			return;
+		}
 		if(this.navParams.data.unauthorized == true){
 			this.doAuth = true;
 			let toaster = this.toast.create({
