@@ -21,7 +21,7 @@ export class Barcoder extends BaseElement {
 	@Input() submission: FormSubmission;
 	@Input() readonly: boolean = false;
 
-	statusMessage: string = "Scan bar code";
+	statusMessage: string = "Scan barcode";
 
 	constructor(private barcodeScanner: BarcodeScanner, private client: RESTClient, private toast: ToastController) {
 		super();
@@ -98,6 +98,7 @@ export class Barcoder extends BaseElement {
 				});
 			});
 		}).catch(err => {
+			console.error("Could not scan barcode: " + (typeof err == "string" ? err : JSON.stringify(err)));
 			this.statusMessage = "Could not scan barcode";
 			this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
 			this.form["barcode_processed"] = BarcodeStatus.None;
