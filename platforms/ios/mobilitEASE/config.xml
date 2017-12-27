@@ -71,6 +71,9 @@
     <feature name="PushNotification">
         <param name="ios-package" value="PushPlugin" />
     </feature>
+	<feature name="BarcodeScanner">
+        <param name="ios-package" value="CDVBarcodeScanner" />
+    </feature>
     <name>mobilitEASE</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
