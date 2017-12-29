@@ -37,6 +37,8 @@ export class BussinessClient {
 	private setup: boolean = false;
 
 	private errorSource: BehaviorSubject<any>;
+
+	private pushSubs : Subscription[] = [];
     /**
      * Error event
      */
@@ -92,11 +94,11 @@ export class BussinessClient {
 	public setupNotifications() {
 		if (!this.setup) {
 			this.setup = true;
-			this.push.error.subscribe((err) => {
+			this.pushSubs.push(this.push.error.subscribe((err) => {
 				console.error("notification", err);
 				console.error(JSON.stringify(err));
-			});
-			this.push.notification.subscribe((note) => {
+			}));
+			this.pushSubs.push(this.push.notification.subscribe((note) => {
 				if(!note){
 					return;
 				}
@@ -117,8 +119,8 @@ export class BussinessClient {
 							});
 						});
 				});
-			});
-			this.push.registration.subscribe((regId)=>{
+			}));
+			this.pushSubs.push(this.push.registration.subscribe((regId)=>{
 				if(!regId){
 					return;
 				}
@@ -132,7 +134,7 @@ export class BussinessClient {
 						}
 					});
 				});				
-			});
+			}));
 			this.push.initialize();
 		}
 	}
@@ -245,6 +247,11 @@ export class BussinessClient {
 				if (done) {
 					this.db.deleteRegistration(user.id + "").subscribe(() => {
 						this.push.shutdown();
+						this.pushSubs.forEach(sub => {
+							sub.unsubscribe();
+						});
+						this.pushSubs = [];
+						this.setup = false;
 						obs.next(user);
 						obs.complete();
 					}, err => {

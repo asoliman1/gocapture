@@ -21,7 +21,7 @@
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 				<radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
 			</ion-item>
-			<simple-name *ngSwitchCase="'simple_name'" [element]="element" [rootGroup]="theForm"></simple-name>
+			<simple-name *ngSwitchCase="'simple_name'" [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm"></simple-name>
 			<ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 				<ion-textarea [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>

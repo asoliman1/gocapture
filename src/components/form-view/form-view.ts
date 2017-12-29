@@ -1,8 +1,8 @@
 import { OcrSelector } from '../ocr-selector/index';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
-import { Form, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
+import { Form, BarcodeStatus, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
 import { DateTime, ModalController } from "ionic-angular";
-import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
+import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs";
 
@@ -176,16 +176,16 @@ export class FormView {
 		}
 		switch (element.type) {
 			case "email":
-				validators.push(CustomValidators.email);
+				validators.push(this.wrapValidator(this.form, element, this.submission, CustomValidators.email));
 				break;
 			case "url":
-				validators.push(CustomValidators.url);
+				validators.push(this.wrapValidator(this.form, element, this.submission, CustomValidators.url));
 				break;
 			case "text":
-				validators.push(Validators.maxLength(255));
+				validators.push(this.wrapValidator(this.form, element, this.submission, Validators.maxLength(255)));
 				break;				
 			case "phone":
-				validators.push(CustomValidators.phone());
+				validators.push(this.wrapValidator(this.form, element, this.submission, CustomValidators.phone()));
 				break;
 		}
 		return validators;
@@ -201,5 +201,14 @@ export class FormView {
 
 	setDate(event) {
 		//console.log(event);
+	}
+
+	private wrapValidator(form: Form, element: FormElement, submission: FormSubmission, validator: ValidatorFn) : ValidatorFn{
+		return (control: AbstractControl): {[key: string]: any} => {
+			if(form.barcode_processed == BarcodeStatus.Queued && element.is_filled_from_barcode){
+				return null;
+			}
+			return validator(control);
+		};
 	}
 }

@@ -32,8 +32,6 @@ export class Barcoder extends BaseElement {
 	}
 
 	scan(){
-		this.form["barcode_processed"] = BarcodeStatus.Queued;
-		this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
 		this.statusMessage = "Scanning...";
 		this.barcodeScanner.scan().then((scannedData) => {
 			this.writeValue(scannedData.text);
@@ -87,6 +85,8 @@ export class Barcoder extends BaseElement {
 				this.formGroup.setValue(vals);
 				
 			}, err => {
+				this.form["barcode_processed"] = BarcodeStatus.Queued;
+				this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
 				this.statusMessage = "Scan another barcode";
 				this.form.elements.forEach((element) => {
 					if(element.is_filled_from_barcode){
@@ -100,19 +100,36 @@ export class Barcoder extends BaseElement {
 		}).catch(err => {
 			console.error("Could not scan barcode: " + (typeof err == "string" ? err : JSON.stringify(err)));
 			this.statusMessage = "Could not scan barcode";
-			this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
-			this.form["barcode_processed"] = BarcodeStatus.None;
+			this.form["barcode_processed"] = BarcodeStatus.Queued;
+			this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+			//this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
+			//this.form["barcode_processed"] = BarcodeStatus.None;
+			this.form.elements.forEach((element) => {
+				if(element.is_filled_from_barcode){
+					let control = this.getControl(this.formGroup, element["identifier"]);
+					if(control){
+						if (element.mapping.length > 1) {
+							element.mapping.forEach(mapping => {
+								let c = control.get(mapping["identifier"]);
+								c.setValue("Scanned");
+							});
+						} else {
+							control.setValue("Scanned");
+						}
+					}
+				}
+			});
 		});
 	}
 
-	private getControl(formGroup: FormGroup, id: string): FormControl{
+	private getControl(formGroup: FormGroup, id: string): AbstractControl{
 		let control = null;
 		if(id){
 			let match = /(\w+\_\d+)\_\d+/g.exec(id);
 			if(match && match.length > 0){
-				control = <FormControl>this.formGroup.get(match[1]).get(id);
+				control = this.formGroup.get(match[1]);
 			}else{
-				control = <FormControl>this.formGroup.get(id);
+				control = this.formGroup.get(id);
 			}
 		}
 		return control;

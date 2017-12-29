@@ -106,7 +106,8 @@ form-view, .form-view{
 		opacity: .8 !important;
 	}
 
-	&.queued .from-barcode{
+	&.queued .from-barcode, 
+	&.queued simple-name.from-barcode ion-row{
 		background-color: #f0f0f0;
 		
 		& * {
@@ -118,5 +119,9 @@ form-view, .form-view{
 			color: grey;
 			font-style: italic;
 		}
+	}
+
+	&.queued simple-name.from-barcode ion-row ion-item{
+		background-color: #f0f0f0;
 	}
 }

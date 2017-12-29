@@ -636,6 +636,7 @@ export class DBClient {
 							form.email = dbForm.email;
 							form.invalid_fields = dbForm.invalid_fields;
 							form.activity_id = dbForm.activityId;
+							form.barcode_processed = dbForm.barcode_processed;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
