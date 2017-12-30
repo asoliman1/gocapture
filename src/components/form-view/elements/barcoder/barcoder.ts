@@ -33,7 +33,9 @@ export class Barcoder extends BaseElement {
 
 	scan(){
 		this.statusMessage = "Scanning...";
+		console.log("Barcode scan started");
 		this.barcodeScanner.scan().then((scannedData) => {
+			console.log("Barcode scan finished: " + scannedData.text);
 			this.writeValue(scannedData.text);
 			this.toast.create({
 				message: "Barcode scanned successfully",
@@ -42,8 +44,10 @@ export class Barcoder extends BaseElement {
 				cssClass: "success"
 			}).present();
 			this.statusMessage = "Processing...";
+			console.log("Fetching barcode data...");
 			this.client.fetchBarcodeData(scannedData.text, this.element.barcode_provider_id).subscribe( data => {
 				this.statusMessage = "Scan another barcode";
+				console.log("Fetched barcode data: " + JSON.stringify(data));
 				if(!data || data.length == 0){
 					return;
 				}
@@ -85,6 +89,7 @@ export class Barcoder extends BaseElement {
 				this.formGroup.setValue(vals);
 				
 			}, err => {
+				console.error("Could not fetch barcode data: " + (typeof err == "string" ? err : JSON.stringify(err)));
 				this.form["barcode_processed"] = BarcodeStatus.Queued;
 				this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
 				this.statusMessage = "Scan another barcode";
@@ -92,7 +97,14 @@ export class Barcoder extends BaseElement {
 					if(element.is_filled_from_barcode){
 						let control = this.getControl(this.formGroup, element["identifier"]);
 						if(control){
-							control.setValue("Scanned");
+							if (element.mapping.length > 1) {
+								element.mapping.forEach(mapping => {
+									let c = control.get(mapping["identifier"]);
+									c.setValue("Scanned");
+								});
+							} else {
+								control.setValue("Scanned");
+							}
 						}
 					}
 				});
@@ -100,25 +112,9 @@ export class Barcoder extends BaseElement {
 		}).catch(err => {
 			console.error("Could not scan barcode: " + (typeof err == "string" ? err : JSON.stringify(err)));
 			this.statusMessage = "Could not scan barcode";
-			this.form["barcode_processed"] = BarcodeStatus.Queued;
-			this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
 			//this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
 			//this.form["barcode_processed"] = BarcodeStatus.None;
-			this.form.elements.forEach((element) => {
-				if(element.is_filled_from_barcode){
-					let control = this.getControl(this.formGroup, element["identifier"]);
-					if(control){
-						if (element.mapping.length > 1) {
-							element.mapping.forEach(mapping => {
-								let c = control.get(mapping["identifier"]);
-								c.setValue("Scanned");
-							});
-						} else {
-							control.setValue("Scanned");
-						}
-					}
-				}
-			});
+			
 		});
 	}
 

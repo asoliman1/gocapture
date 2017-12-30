@@ -44,6 +44,22 @@ export class Settings {
 
 	}
 
+	getName(user: User){
+		let name = "";
+		if(user){
+			if(user.first_name){
+				name += user.first_name;
+			}			
+			if(user.last_name){
+				if(name.length > 0){
+					name += " ";
+				}
+				name += user.last_name;
+			}
+		}
+		return name;
+	}
+
 	showLogs(){
 		let modal = this.modalCtrl.create(LogView);
 		modal.present();
