@@ -16,12 +16,20 @@ export class FormElement{
 	position : number;
 	default_value : string;
 	total_child : number;
-	options : any[];
+	options : Option[];
 	mapping : ElementMapping[];
 	barcode_provider_id: string;
 	barcode_provider_name: string;
 	identifier?: string;
 	placeholder: string = "";
+}
+
+export class Option{
+	option: string;
+	option_label: string;
+	position: number;
+	is_default: number;
+
 }
 
 export class ElementMapping{

@@ -127,7 +127,7 @@ export class FormSelectionView {
 			case FormElementType.checkbox:
 				let data = [];
 				element.options.forEach((opt) => {
-					if(opt.is_default == "1"){
+					if(opt.is_default == 1){
 						data.push(opt.option);
 					}
 				});
@@ -136,7 +136,7 @@ export class FormSelectionView {
 			case FormElementType.radio:
 				let d = "";
 				element.options.forEach((opt) => {
-					if(opt.is_default == "1"){
+					if(opt.is_default == 1){
 						d = opt.option;
 					}
 				});
