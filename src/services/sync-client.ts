@@ -263,7 +263,8 @@ export class SyncClient {
 							}
 							submission.fields[id] = entry.value;
 						});
-						this.db.updateSubmissionFields(submission).subscribe((done) => {
+						
+						this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
 							this.actuallySubmitForm(data.form.name, submission, obs);
 						}, (err) => {
 							obs.error(err);

@@ -36,7 +36,7 @@ export class Barcoder extends BaseElement {
 		console.log("Barcode scan started");
 		this.barcodeScanner.scan().then((scannedData) => {
 			console.log("Barcode scan finished: " + scannedData.text);
-			this.writeValue(scannedData.text);
+			this.onChange(scannedData.text);
 			this.toast.create({
 				message: "Barcode scanned successfully",
 				duration: 5000,
@@ -114,6 +114,25 @@ export class Barcoder extends BaseElement {
 			this.statusMessage = "Could not scan barcode";
 			//this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
 			//this.form["barcode_processed"] = BarcodeStatus.None;
+			/*this.onChange("HTTPS://L4E.US/589/1001/ATTENDEE-1001/DEMO-1001/DEMOCOMPANY");
+			this.form["barcode_processed"] = BarcodeStatus.Queued;
+			this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+			this.statusMessage = "Scan another barcode";
+			this.form.elements.forEach((element) => {
+				if(element.is_filled_from_barcode){
+					let control = this.getControl(this.formGroup, element["identifier"]);
+					if(control){
+						if (element.mapping.length > 1) {
+							element.mapping.forEach(mapping => {
+								let c = control.get(mapping["identifier"]);
+								c.setValue("Scanned");
+							});
+						} else {
+							control.setValue("Scanned");
+						}
+					}
+				}
+			});*/
 			
 		});
 	}
