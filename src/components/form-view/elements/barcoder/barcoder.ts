@@ -14,10 +14,10 @@ import { BaseElement } from "../base-element";
 	]
 })
 export class Barcoder extends BaseElement {
-	
+
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
-	@Input() form: Form;	
+	@Input() form: Form;
 	@Input() submission: FormSubmission;
 	@Input() readonly: boolean = false;
 
@@ -28,7 +28,7 @@ export class Barcoder extends BaseElement {
 	}
 
 	ngOnInit(){
-		
+
 	}
 
 	scan(){
@@ -36,6 +36,12 @@ export class Barcoder extends BaseElement {
 		console.log("Barcode scan started");
 		this.barcodeScanner.scan().then((scannedData) => {
 			console.log("Barcode scan finished: " + scannedData.text);
+
+			if (scannedData.cancelled) {
+			  this.statusMessage = "Scan barcode";
+			  return;
+      }
+
 			this.onChange(scannedData.text);
 			this.toast.create({
 				message: "Barcode scanned successfully",
@@ -87,7 +93,7 @@ export class Barcoder extends BaseElement {
 					}
 				});
 				this.formGroup.setValue(vals);
-				
+
 			}, err => {
 				console.error("Could not fetch barcode data: " + (typeof err == "string" ? err : JSON.stringify(err)));
 				this.form["barcode_processed"] = BarcodeStatus.Queued;
@@ -133,7 +139,7 @@ export class Barcoder extends BaseElement {
 					}
 				}
 			});*/
-			
+
 		});
 	}
 

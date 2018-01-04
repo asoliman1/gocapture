@@ -22,17 +22,17 @@ declare var screen;
 })
 export class BusinessCard extends BaseElement {
 
-	@ViewChild("frontImage")
+	@ViewChild("frontImage") 
 	private frontImage:any;
 
-	@ViewChild("backImage")
+	@ViewChild("backImage") 
 	private backImage:any;
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
-
-	@Input() form: Form;
+	
+	@Input() form: Form;	
 	@Input() submission: FormSubmission;
 
 	front: string = "assets/images/business-card-front.svg";
@@ -89,9 +89,9 @@ export class BusinessCard extends BaseElement {
 						handler: () => {
 							this.zone.run(() =>{
 								this.setValue(type, type == this.FRONT ? this.front : this.back);
-
+		
 							});
-
+							
 						}
 					},
 					{
@@ -130,7 +130,7 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-	private doCapture(type: number, captureType: number = 1) {
+	private doCapture(type: number, captureType: number = 1) {		
 		//screen.orientation.lock && screen.orientation.lock("landscape");
 		this.camera.getPicture({
 			sourceType: this.device.isVirtual && this.platform.is("ios") ? 2 : captureType,
@@ -144,7 +144,7 @@ export class BusinessCard extends BaseElement {
 			}else{
 				this.backLoading = true;
 			}
-			this.imageProc.ensureLandscape(imageData, this.element.is_scan_cards_and_prefill_form != 1).subscribe((info) => {
+			this.imageProc.ensureLandscape(imageData, this.element.is_scan_cards_and_prefill_form == 1).subscribe((info) => {
 				let newFolder = cordova.file.dataDirectory + "leadliaison/images";
 				let name = imageData.substr(imageData.lastIndexOf("/") + 1);
 				let newName = new Date().getTime() + name.substring(name.lastIndexOf("."));
@@ -155,7 +155,7 @@ export class BusinessCard extends BaseElement {
 				}else{
 					promise = this.file.moveFile(folder, name, newFolder, newName);
 				}
-
+				
 				promise.then((entry)=>{
 					this.zone.run(()=>{
 						this.setValue(type, newFolder + "/" + newName);
@@ -167,7 +167,7 @@ export class BusinessCard extends BaseElement {
 						}/*else{
 							screen.orientation.unlock && screen.orientation.unlock();
 						}*/
-					});
+					});					
 				},
 				(err) => {
 					console.error(err);
@@ -218,7 +218,7 @@ export class BusinessCard extends BaseElement {
 				this.formGroup.setValue(vals);
 			}
 		});
-		modal.present();
+		modal.present();		
 		//screen.orientation.lock && screen.orientation.lock("landscape");
 	}
 
@@ -272,7 +272,7 @@ export class BusinessCard extends BaseElement {
 						this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 					}
 				});
-			});
+			});			
 		});
 	}
 
