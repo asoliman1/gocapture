@@ -36,6 +36,10 @@ export class Barcoder extends BaseElement {
 		console.log("Barcode scan started");
 		this.barcodeScanner.scan().then((scannedData) => {
 			console.log("Barcode scan finished: " + scannedData.text);
+			if (scannedData.cancelled) {
+			  this.statusMessage = "Scan barcode";
+			  return;
+      }
 			this.writeValue(scannedData.text);
 			this.toast.create({
 				message: "Barcode scanned successfully",
