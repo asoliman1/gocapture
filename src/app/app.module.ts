@@ -47,6 +47,7 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { IonicImageViewerModule } from 'ionic-img-viewer';
+import { StatusBar } from "@ionic-native/status-bar";
 
 @NgModule({
   declarations: [
@@ -62,23 +63,23 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
     FormReview,
     FormCapture,
     ArrayFilterPipe,
-	FormControlPipe,
-	FormView,
-	LogView,
-	SignaturePad,
-	FormSelectionView,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
-	ProspectSearch,
-	OcrSelector,
-	MyCurrencyDirective
+    FormControlPipe,
+    FormView,
+    LogView,
+    SignaturePad,
+    FormSelectionView,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    ProspectSearch,
+    OcrSelector,
+    MyCurrencyDirective
   ],
   imports: [
-	BrowserModule,
-	HttpModule,
-	BrowserAnimationsModule,
+    BrowserModule,
+    HttpModule,
+    BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
-	IonicImageViewerModule,
-	TextMaskModule
+    IonicImageViewerModule,
+    TextMaskModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -93,36 +94,38 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
     FormSummary,
     FormReview,
     FormCapture,
-	FormView,	
-	LogView,
-	SignaturePad,
-	FormSelectionView,
-	BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
-	ProspectSearch,
-	OcrSelector
+    FormView,
+    LogView,
+    SignaturePad,
+    FormSelectionView,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    ProspectSearch,
+    OcrSelector
   ],
   providers: [
     DBClient,
     RESTClient,
     PushClient,
     SyncClient,
-	LogClient,
-	BussinessClient,
-	ImageProcessor,
-	Transfer,
-	File,
-	Device,
-	Push,
-	Network,
-	Camera,
-	ImagePicker,
-	SQLite,
-	Clipboard,
-	AppVersion,
-	Geolocation,
-	BarcodeScanner,
-	ScreenOrientation,
-	{ provide: Http,
+    LogClient,
+    BussinessClient,
+    ImageProcessor,
+    Transfer,
+    File,
+    Device,
+    Push,
+    Network,
+    Camera,
+    ImagePicker,
+    SQLite,
+    Clipboard,
+    AppVersion,
+    Geolocation,
+    BarcodeScanner,
+    StatusBar,
+    ScreenOrientation,
+    {
+      provide: Http,
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]
     }
@@ -131,5 +134,5 @@ import { IonicImageViewerModule } from 'ionic-img-viewer';
 export class AppModule { }
 
 export function httpFactory(backend: XHRBackend, options: RequestOptions) {
-	return new HttpService(backend, options);
+  return new HttpService(backend, options);
 }
