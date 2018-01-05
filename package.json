@@ -64,7 +64,8 @@
         "rxjs": "^5.4.3",
         "signature_pad": "^2.2.0",
         "sw-toolbox": "3.6.0",
-        "zone.js": "^0.8.18"
+        "zone.js": "^0.8.18",
+        "cordova-plugin-statusbar": "~2.4.0"
     },
     "devDependencies": {
         "@ionic/app-scripts": "^3.0.0",
@@ -97,7 +98,10 @@
             "phonegap-plugin-push": {
                 "SENDER_ID": "56276941492"
             },
-            "phonegap-plugin-barcodescanner": {}
+            "phonegap-plugin-barcodescanner": {
+                "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera"
+            },
+            "cordova-plugin-statusbar": {}
         },
         "platforms": [
             "android"
