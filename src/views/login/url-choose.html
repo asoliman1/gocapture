@@ -1,11 +1,11 @@
 <ion-list class="url-choose">
-      <ion-list-header>Connection mode</ion-list-header>
-      <ion-item (click)="onClick(true)" class="connMode" [class.on]="isProd">
-		  <ion-icon item-start name="checkmark"></ion-icon>
-		  Normal
-	  </ion-item>
-      <ion-item (click)="onClick(false)" class="connMode" [class.on]="!isProd">
-		  <ion-icon item-start name="checkmark"></ion-icon>
-		  Demo
-	  </ion-item>
+  <ion-list-header>Connection mode</ion-list-header>
+  <ion-item (click)="onClick(true)" tappable class="connMode" [class.on]="isProd">
+    <ion-icon item-start name="checkmark"></ion-icon>
+    Normal
+  </ion-item>
+  <ion-item (click)="onClick(false)" tappable class="connMode" [class.on]="!isProd">
+    <ion-icon item-start name="checkmark"></ion-icon>
+    Demo
+  </ion-item>
 </ion-list>
