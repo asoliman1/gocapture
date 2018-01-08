@@ -1,6 +1,7 @@
 .sidemenu{
 	background-color: color($colors, dark, base);
-	.profile{
+
+  .profile{
 		padding-top: 5rem;
 		padding-bottom: 3rem;
 		ion-item{
@@ -19,7 +20,7 @@
 					border-radius: 5rem;
 				}
 			}
-			
+
 		}
 	}
 	ion-list{
