@@ -32,7 +32,7 @@ export class RESTClient {
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public authenticate(req: AuthenticationRequest): Observable<User> {
@@ -51,7 +51,7 @@ export class RESTClient {
 		});
 	}
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public getForms(offset: number = 0, name?: string, updatedAt?: Date, createdAt?: Date): Observable<RecordsResponse<Form>> {
@@ -109,7 +109,7 @@ export class RESTClient {
 		});
 	}
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
@@ -187,7 +187,7 @@ export class RESTClient {
 							}
 							let fieldName = "element_" + dataItem.element_id;
 							let field = form.getFieldById(dataItem.element_id);
-	
+
 							switch(field.type){
 								case "simple_name":
 								case "address":
@@ -229,7 +229,7 @@ export class RESTClient {
 									break;
 								default:
 									entry.fields[fieldName] = dataItem.value;
-							}							
+							}
 						});
 						entry.first_name = "";
 						entry.last_name = "";
@@ -292,13 +292,14 @@ export class RESTClient {
 		});
 	}
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public registerDeviceToPush(device_token: string, receiveNotifications: boolean = true): Observable<boolean> {
 		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json', {
-			device_token: device_token,
-			is_allow_to_receive_notification: receiveNotifications
+		  device_token: device_token,
+      is_allow_to_receive_notification: receiveNotifications,
+      is_dev: Config.isProd == false
 		})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
@@ -320,7 +321,7 @@ export class RESTClient {
 			});
 	}
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public getDeviceFormMemberships(form_id: number, lastSync?: Date): Observable<RecordsResponse<DeviceFormMembership>> {
@@ -378,7 +379,7 @@ export class RESTClient {
 		});
 	}
 	/**
-	 * 
+	 *
 	 * @returns Observable
 	 */
 	public submitForm(data: FormSubmission): Observable<{id:number,message:string, hold_request_id:number}> {
@@ -451,7 +452,7 @@ export class RESTClient {
 			let handler = (data: RecordsResponse<T>)=>{
 				var records = [];
 				if(!data.records){
-					
+
 				}else if(Array.isArray(data.records)){
 					records = data.records;
 				}else{
@@ -474,7 +475,7 @@ export class RESTClient {
 				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
 			}
 			doTheCall();
-			
+
 		});
 		return response;
 	}
@@ -504,7 +505,7 @@ export class RESTClient {
 				case "POST":
 					sub = this.http.post(url, JSON.stringify(content), opts);
 					break;
-				case "DELETE":					
+				case "DELETE":
 					for(let field in content){
 						opts.search.set(field, content[field]);
 					}
