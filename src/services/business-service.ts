@@ -15,9 +15,9 @@ declare var cordova: any;
 /**
  * The client to rule them all. The BussinessClient connects all the separate cients and creates
  * usable action flows. For example, authentication is a complex flow consisting of the actual auth
- * profile photos download, saving the registration response to the local database and starting up 
- * the initial sync. 
- * 
+ * profile photos download, saving the registration response to the local database and starting up
+ * the initial sync.
+ *
  */
 export class BussinessClient {
 
@@ -44,9 +44,9 @@ export class BussinessClient {
      */
 	error: Observable<any>;
 
-	constructor(private db: DBClient, 
-				private rest: RESTClient, 
-				private sync: SyncClient, 
+	constructor(private db: DBClient,
+				private rest: RESTClient,
+				private sync: SyncClient,
 				private push: PushClient,
 				private net: Network,
 				private fileTransfer: Transfer) {
@@ -98,28 +98,32 @@ export class BussinessClient {
 				console.error("notification", err);
 				console.error(JSON.stringify(err));
 			}));
+
 			this.pushSubs.push(this.push.notification.subscribe((note) => {
 				if(!note){
 					return;
 				}
-				this.db.getConfig("lastSyncDate").subscribe(time => {
-					let d = new Date();
-					if (time) {
-						d.setTime(parseInt(time));
-					}
-					this.sync.download(time ? d : null,).subscribe(data => {
-					},
-						(err) => {
-							//obs.error(err);
-						},
-						() => {
-							console.log("sync-ed");
-							this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
 
-							});
-						});
-				});
+				if (note.action == 'sync') {
+				  this.db.getConfig("lastSyncDate").subscribe(time => {
+				    let d = new Date();
+				    if (time) {
+				      d.setTime(parseInt(time));
+				    }
+				    this.sync.download(time ? d : null,).subscribe(data => {
+				      //
+              }, (err) => {
+                //obs.error(err);
+              }, () => {
+				      console.log("sync-ed");
+				      this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+				        //
+              });
+				    });
+          });
+        }
 			}));
+
 			this.pushSubs.push(this.push.registration.subscribe((regId)=>{
 				if(!regId){
 					return;
@@ -133,7 +137,7 @@ export class BussinessClient {
 							});
 						}
 					});
-				});				
+				});
 			}));
 			this.push.initialize();
 		}
@@ -166,7 +170,7 @@ export class BussinessClient {
 			});
 		});
 	}
-	
+
 	public setKioskPassword(password: string): Observable<boolean>{
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.saveConfig("kioskModePassword", password).subscribe((done) => {
@@ -226,7 +230,7 @@ export class BussinessClient {
 											})
 										});
 									});
-								});								
+								});
 							})
 							.catch((err) => {
 								obs.error("There was an error retrieving the profile picture");

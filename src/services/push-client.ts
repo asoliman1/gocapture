@@ -7,18 +7,18 @@ import { Util } from "../util/util";
 
 @Injectable()
 export class PushClient {
-	
+
 	private errorSource: BehaviorSubject<any>;
     /**
      * Error event
      */
 	error: Observable<any>;
 
-	private notificationSource: BehaviorSubject<{id: number, action: number}>;
+	private notificationSource: BehaviorSubject<{id: number, action: string}>;
     /**
      * Error event
      */
-	notification: Observable<{id: number, action: number}>;
+	notification: Observable<{id: number, action: string}>;
 
 	private registrationSource: BehaviorSubject<string>;
     /**
@@ -27,7 +27,7 @@ export class PushClient {
 	registration: Observable<string>;
 
 	private pushObj: PushObject;
-	
+
 	/**{
 		on: (event: "registration" | "notification" | "error", callback: (data: PushResponse) => void) => void,
 		off: (event: "registration" | "notification" | "error", callback: (err: any) => void) => void,
@@ -37,14 +37,14 @@ export class PushClient {
 
 	private refs: any = {};
 
-	constructor(private push: Push) {		
+	constructor(private push: Push) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
-		
+
 		this.registrationSource = new BehaviorSubject<string>(null);
 		this.registration = this.registrationSource.asObservable();
-		
-		this.notificationSource = new BehaviorSubject<{id: number, action: number}>(null);
+
+		this.notificationSource = new BehaviorSubject<{id: number, action: string}>(null);
 		this.notification = this.notificationSource.asObservable();
 	}
 
