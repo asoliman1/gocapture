@@ -109,7 +109,7 @@ export class FormCapture {
 		this.navbar.backButtonClick = this["oldClick"];
 	}
 
-	ionViewDidLeave(){		
+	ionViewDidLeave(){
 		this.menuCtrl.enable(true);
 	}
 
@@ -185,6 +185,7 @@ export class FormCapture {
 	}
 
 	doSave() {
+
 		if (!this.valid) {
 			return;
 		}
@@ -192,17 +193,11 @@ export class FormCapture {
 		if (!this.submission.id) {
 			this.submission.id = new Date().getTime();
 		}
-		var valid = true;
-		this.form.elements.forEach((element: any) => {
-			if (element.is_required && !this.submission.fields[element.identifier]) {
-				valid = false;
-			}
-		});
-		if (!valid) {
-			this.submission.status = SubmissionStatus.InvalidFields;
-		} else if (this.submission.status != SubmissionStatus.Blocked) {
-			this.submission.status = SubmissionStatus.ToSubmit;
+
+		if (this.submission.status != SubmissionStatus.Blocked) {
+		  this.submission.status = SubmissionStatus.ToSubmit;
 		}
+
 		this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
 			if(this.form.is_mobile_kiosk_mode){
 				this.submission = null;
@@ -226,7 +221,7 @@ export class FormCapture {
 	}
 
 	searchProspect() {
-		let search = this.modal.create(ProspectSearch, { form: this.form })
+		let search = this.modal.create(ProspectSearch, { form: this.form });
 		search.onDidDismiss((data: DeviceFormMembership) => {
 			if (data) {
 				this.prospect = data;
@@ -236,7 +231,7 @@ export class FormCapture {
 				this.submission.last_name = data.fields["LastName"];
 				let id = null;
 				for (let field in data.fields) {
-					id = this.form.getIdByUniqueFieldName(field)
+					id = this.form.getIdByUniqueFieldName(field);
 					if (id) {
 						this.submission.fields[id] = data.fields[field];
 					}
