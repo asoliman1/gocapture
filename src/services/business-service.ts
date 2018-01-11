@@ -270,6 +270,12 @@ export class BussinessClient {
 		});
 	}
 
+	public validateAccessToken(user: User) {
+    this.rest.validateAccessToken(user.access_token).subscribe((done) => {
+      console.log('validateAccessToken - ' + JSON.stringify(done));
+    })
+  }
+
 	public getUpdates(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.getConfig("lastSyncDate").subscribe(time => {

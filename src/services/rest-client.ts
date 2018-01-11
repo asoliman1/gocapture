@@ -320,6 +320,20 @@ export class RESTClient {
 				return false;
 			});
 	}
+
+  public validateAccessToken(access_token: string): Observable<boolean> {
+    return this.call<BaseResponse>("POST", '/validate_access_token.json', {
+      access_token: access_token,
+    })
+      .map((resp: BaseResponse) => {
+        console.log(JSON.stringify(resp));
+        if (resp.status == "200") {
+          return true;
+        }
+        this.errorSource.next(resp);
+        return false;
+      });
+  }
 	/**
 	 *
 	 * @returns Observable
@@ -329,7 +343,7 @@ export class RESTClient {
 			form_id: form_id
 		};
 		if (lastSync) {
-			opts.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";;
+			opts.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";
 		}
 		return this.call<RecordsResponse<DeviceFormMembership>>("GET", "/forms/memberships.json", opts).map(resp => {
 			if (resp.status != "200") {
@@ -423,7 +437,7 @@ export class RESTClient {
 				setTimeout(()=>{
 					this.submitForm(data[index]).subscribe(handler, handler);
 				}, 150);
-			}
+			};
 			this.submitForm(data[index]).subscribe(handler, handler);
 		});
 	}
