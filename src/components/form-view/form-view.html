@@ -43,7 +43,7 @@
 
       <ion-item *ngSwitchCase="'time'" [class.hidden]="element.is_hidden">
         <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-        <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+        <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm A"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
       </ion-item>
 
       <address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm" [class.hidden]="element.is_hidden"></address>
