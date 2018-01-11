@@ -6,6 +6,7 @@ import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
 import { Device } from "@ionic-native/device";
+import {StatusResponse} from "../model/protocol/status-response";
 
 @Injectable()
 export class RESTClient {
@@ -321,17 +322,15 @@ export class RESTClient {
 			});
 	}
 
-  public validateAccessToken(access_token: string): Observable<boolean> {
-    return this.call<BaseResponse>("POST", '/validate_access_token.json', {
+  public validateAccessToken(access_token: string): Observable<string> {
+    return this.call<StatusResponse<string>>("POST", '/validate_access_token.json', {
       access_token: access_token,
     })
-      .map((resp: BaseResponse) => {
-        console.log(JSON.stringify(resp));
-        if (resp.status == "200") {
-          return true;
+      .map(resp => {
+        if (resp.status != "200") {
+          this.errorSource.next(resp);
         }
-        this.errorSource.next(resp);
-        return false;
+        return resp.check_status;
       });
   }
 	/**

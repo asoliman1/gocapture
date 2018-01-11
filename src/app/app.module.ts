@@ -48,6 +48,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { StatusBar } from "@ionic-native/status-bar";
+import { Popup } from '../providers/popup/popup';
 
 @NgModule({
   declarations: [
@@ -128,7 +129,8 @@ import { StatusBar } from "@ionic-native/status-bar";
       provide: Http,
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]
-    }
+    },
+    Popup
   ]
 })
 export class AppModule { }

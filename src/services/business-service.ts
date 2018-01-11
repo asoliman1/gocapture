@@ -271,9 +271,12 @@ export class BussinessClient {
 	}
 
 	public validateAccessToken(user: User) {
-    this.rest.validateAccessToken(user.access_token).subscribe((done) => {
-      console.log('validateAccessToken - ' + JSON.stringify(done));
-    })
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+        obs.next(status == 'ACTIVE_ACCESS_TOKEN');
+        obs.complete();
+      })
+    });
   }
 
 	public getUpdates(): Observable<boolean> {

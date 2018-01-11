@@ -15,6 +15,7 @@ import { BussinessClient } from "../services/business-service";
 import { ToastController }  from "ionic-angular";
 import { Config } from "../config";
 import {StatusBar} from "@ionic-native/status-bar";
+import {Popup} from "../providers/popup/popup";
 
 declare var cordova;
 
@@ -36,13 +37,15 @@ export class MyApp {
     private logClient: LogClient,
     private file: File,
     private toast: ToastController,
-    public statusBar: StatusBar) {
+    public statusBar: StatusBar,
+    private popup: Popup) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
       console.log("ready!");
+
       this.client.getRegistration(true).subscribe((user) => {
         if(user) {
           Config.isProd = user.is_production == 1;
@@ -53,7 +56,38 @@ export class MyApp {
 
         this.platform.resume.subscribe(() => {
           if (this.platform.is('cordova')) {
-            this.client.validateAccessToken(user);
+            this.client.validateAccessToken(user).subscribe((isValid) => {
+
+              const buttons = [
+                {
+                  text: 'Ok',
+                  handler: () => {
+                    this.nav.setRoot(Login, {unauthenticated: true});
+                  }
+                }
+              ];
+
+              this.popup.showAlert('Your device was unauthenticated', 'Please obtain new auth code', buttons);
+
+              /*
+              if (!isValid) {
+                this.client.unregister(user).subscribe(()=>{
+                  const buttons = [
+                    {
+                      text: 'Ok',
+                      handler: () => {
+                        this.nav.setRoot(Login, {"unauthorized": true});
+                      }
+                    }
+                  ];
+
+                  this.popup.showAlert('Your device was unauthenticated', 'Please obtain new auth code', buttons);
+
+                });
+
+              }
+              */
+            });
           }
         });
 

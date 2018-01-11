@@ -86,7 +86,7 @@ export class FormView {
 				this.readOnly = this.submission.isSubmitted();
 				setTimeout(()=> {
 					this.setupFormGroup();
-				}, 1);				
+				}, 1);
 			} else {
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
@@ -106,7 +106,7 @@ export class FormView {
 			}
 		}
 	}
-	
+
 	private setupFormGroup() {
 		if (this.sub) {
 			this.sub.unsubscribe();
@@ -124,11 +124,17 @@ export class FormView {
 				var opts = {};
 				element.mapping.forEach((entry, index) => {
 					entry["identifier"] = identifier + "_" + (index + 1);
-					opts[entry["identifier"]] = new FormControl({ value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
-				})
+					opts[entry["identifier"]] = new FormControl({
+					  value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element),
+            disabled: element.is_readonly || this.readOnly
+					}, this.makeValidators(element));
+				});
 				control = this.fb.group(opts);
 			} else {
-				control = this.fb.control({ value: this.data[identifier] || this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly });
+				control = this.fb.control({
+				  value: this.data[identifier] || this.getDefaultValue(element),
+          disabled: element.is_readonly || this.readOnly,
+				});
 				control.setValidators(this.makeValidators(element));
 			}
 			f.addControl(identifier, control);
@@ -183,7 +189,7 @@ export class FormView {
 				break;
 			case "text":
 				validators.push(this.wrapValidator(this.form, element, this.submission, Validators.maxLength(255)));
-				break;				
+				break;
 			case "phone":
 				validators.push(this.wrapValidator(this.form, element, this.submission, CustomValidators.phone()));
 				break;

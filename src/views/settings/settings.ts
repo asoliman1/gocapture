@@ -112,7 +112,4 @@ export class Settings {
 		confirm.present();
 	}
 
-  validateAccessToken() {
-	  this.client.validateAccessToken(this.user);
-  }
 }
