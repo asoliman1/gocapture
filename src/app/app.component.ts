@@ -44,12 +44,19 @@ export class MyApp {
     this.platform.ready().then(() => {
       console.log("ready!");
       this.client.getRegistration(true).subscribe((user) => {
-        if(user){
+        if(user) {
           Config.isProd = user.is_production == 1;
           this.nav.setRoot(Main);
-        }else{
+        } else {
           this.nav.setRoot(Login);
         }
+
+        this.platform.resume.subscribe(() => {
+          if (this.platform.is('cordova')) {
+            this.client.validateAccessToken(user);
+          }
+        });
+
       });
 
       if (this.platform.is('android')) {
@@ -91,7 +98,7 @@ export class MyApp {
     });
 
     this.rest.error.subscribe((resp)=>{
-      if(resp && resp.status == 401){
+      if(resp && resp.status == 401) {
         this.nav.setRoot(Login, {"unauthorized": true});
       }
     });
