@@ -1,76 +1,107 @@
 <div class="form-view {{barcodeStatusMap[submission ? submission.barcode_processed : displayForm.barcode_processed ]}}">
-	<!--button ion-button (click)="showSelection()"></button-->
-	<form [formGroup]="theForm" style="width:100%;" novalidate>
-		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
-			<ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<div *ngSwitchCase="'page_break'"></div>
-			<div *ngSwitchCase="'section'"></div>
-			<ion-item *ngSwitchCase="'url'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [class.from-barcode]="element.is_filled_from_barcode"></dropdown>
-			<ion-item *ngSwitchCase="'radio'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
-			</ion-item>
-			<simple-name *ngSwitchCase="'simple_name'" [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm"></simple-name>
-			<ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-textarea [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
-			</ion-item>
-			<ion-item *ngSwitchCase="'time'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
-			</ion-item>
-			<address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"></address>
-			<ion-item *ngSwitchCase="'money'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
-			</ion-item>
-			<ion-item *ngSwitchCase="'number'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<ion-item *ngSwitchCase="'date'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
-			</ion-item>
-			<ion-item *ngSwitchCase="'phone'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<ion-item *ngSwitchCase="'simple_phone'" [class.from-barcode]="element.is_filled_from_barcode">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
-			</ion-item>
-			<ion-item *ngSwitchCase="'checkbox'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
-  			</ion-item>
-			<ion-item *ngSwitchCase="'image'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<image [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
-			</ion-item>
-			<ion-item *ngSwitchCase="'business_card'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"></business-card>
-			</ion-item>
-			<ion-item *ngSwitchCase="'signature'">
-				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-				<signature [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
-			</ion-item>
-			<barcoder padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"></barcoder>
-			<ion-item *ngSwitchDefault>
-				<ion-label>Coming soon! A component for {{element.type}}</ion-label>
-			</ion-item>
-		</div>
-	</form>
+  <!--button ion-button (click)="showSelection()"></button-->
+  <form [formGroup]="theForm" style="width:100%;" novalidate>
+    <div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
+
+      <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <div *ngSwitchCase="'page_break'" [class.hidden]="element.is_hidden"></div>
+
+      <div *ngSwitchCase="'section'" [class.hidden]="element.is_hidden"></div>
+
+      <ion-item *ngSwitchCase="'url'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm"
+                [formControlName]="element.identifier" [class.from-barcode]="element.is_filled_from_barcode"
+                [class.hidden]="element.is_hidden">
+      </dropdown>
+
+      <ion-item *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
+      </ion-item>
+
+      <simple-name *ngSwitchCase="'simple_name'" [class.from-barcode]="element.is_filled_from_barcode" [element]="element"
+                   [rootGroup]="theForm" [class.hidden]="element.is_hidden">
+      </simple-name>
+
+      <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-textarea [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'time'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+      </ion-item>
+
+      <address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm" [class.hidden]="element.is_hidden"></address>
+
+      <ion-item *ngSwitchCase="'money'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'number'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'date'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"  [attr.name]="element.id" [formControlName]="element.identifier"></ion-datetime>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'phone'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'simple_phone'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <image [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"></business-card>
+      </ion-item>
+
+      <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden">
+        <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+        <signature [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></signature>
+      </ion-item>
+
+      <barcoder padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
+                [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
+                [class.hidden]="element.is_hidden">
+      </barcoder>
+
+      <ion-item *ngSwitchDefault>
+        <ion-label>Coming soon! A component for {{element.type}}</ion-label>
+      </ion-item>
+
+    </div>
+  </form>
 </div>
