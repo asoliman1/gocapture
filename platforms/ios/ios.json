@@ -609,7 +609,7 @@
         }
     ],
     "plugin_metadata": {
-        "cordova-plugin-splashscreen": "4.0.0",
+        "cordova-plugin-splashscreen": "4.1.0",
         "cordova-plugin-tesseract": "0.0.1",
         "cordova-sqlite-storage": "1.4.7",
         "cordova-plugin-compat": "1.0.0",
