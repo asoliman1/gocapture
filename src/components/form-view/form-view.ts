@@ -86,7 +86,7 @@ export class FormView {
 				this.readOnly = this.submission.isSubmitted();
 				setTimeout(()=> {
 					this.setupFormGroup();
-				}, 1);				
+				}, 1);
 			} else {
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
@@ -106,7 +106,7 @@ export class FormView {
 			}
 		}
 	}
-	
+
 	private setupFormGroup() {
 		if (this.sub) {
 			this.sub.unsubscribe();
@@ -183,7 +183,7 @@ export class FormView {
 				break;
 			case "text":
 				validators.push(this.wrapValidator(this.form, element, this.submission, Validators.maxLength(255)));
-				break;				
+				break;
 			case "phone":
 				validators.push(this.wrapValidator(this.form, element, this.submission, CustomValidators.phone()));
 				break;

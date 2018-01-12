@@ -6,6 +6,7 @@ import { Observable, Observer, BehaviorSubject } from "rxjs/Rx";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
 import { Device } from "@ionic-native/device";
+import {StatusResponse} from "../model/protocol/status-response";
 
 @Injectable()
 export class RESTClient {
@@ -320,6 +321,18 @@ export class RESTClient {
 				return false;
 			});
 	}
+
+  public validateAccessToken(access_token: string): Observable<StatusResponse<string>> {
+    return this.call<StatusResponse<string>>("POST", '/validate_access_token.json', {
+      access_token: access_token,
+    })
+      .map(resp => {
+        if (resp.status != "200") {
+          this.errorSource.next(resp);
+        }
+        return resp;
+      });
+  }
 	/**
 	 *
 	 * @returns Observable
@@ -329,7 +342,7 @@ export class RESTClient {
 			form_id: form_id
 		};
 		if (lastSync) {
-			opts.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";;
+			opts.last_sync_date = lastSync.toISOString().split(".")[0] + "+00:00";
 		}
 		return this.call<RecordsResponse<DeviceFormMembership>>("GET", "/forms/memberships.json", opts).map(resp => {
 			if (resp.status != "200") {
@@ -423,7 +436,7 @@ export class RESTClient {
 				setTimeout(()=>{
 					this.submitForm(data[index]).subscribe(handler, handler);
 				}, 150);
-			}
+			};
 			this.submitForm(data[index]).subscribe(handler, handler);
 		});
 	}

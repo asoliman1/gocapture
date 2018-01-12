@@ -9,6 +9,7 @@ import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
 import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
+import {StatusResponse} from "../model/protocol/status-response";
 declare var cordova: any;
 
 @Injectable()
@@ -269,6 +270,15 @@ export class BussinessClient {
 			});
 		});
 	}
+
+	public getDeviceStatus(user: User) {
+    return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
+      this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+        obs.next(status);
+        obs.complete();
+      })
+    });
+  }
 
 	public getUpdates(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {

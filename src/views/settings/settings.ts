@@ -49,7 +49,7 @@ export class Settings {
 		if(user){
 			if(user.first_name){
 				name += user.first_name;
-			}			
+			}
 			if(user.last_name){
 				if(name.length > 0){
 					name += " ";
@@ -111,4 +111,5 @@ export class Settings {
 		});
 		confirm.present();
 	}
+
 }

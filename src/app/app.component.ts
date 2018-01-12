@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import { Nav } from 'ionic-angular';
+import {Nav, LoadingController} from 'ionic-angular';
 import { Platform } from 'ionic-angular';
 import { File } from "@ionic-native/file";
 
@@ -15,6 +15,7 @@ import { BussinessClient } from "../services/business-service";
 import { ToastController }  from "ionic-angular";
 import { Config } from "../config";
 import {StatusBar} from "@ionic-native/status-bar";
+import {Popup} from "../providers/popup/popup";
 
 declare var cordova;
 
@@ -36,20 +37,31 @@ export class MyApp {
     private logClient: LogClient,
     private file: File,
     private toast: ToastController,
-    public statusBar: StatusBar) {
+    public statusBar: StatusBar,
+    private popup: Popup,
+    private loading: LoadingController) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
       console.log("ready!");
+
       this.client.getRegistration(true).subscribe((user) => {
-        if(user){
+        if(user) {
           Config.isProd = user.is_production == 1;
           this.nav.setRoot(Main);
-        }else{
+        } else {
           this.nav.setRoot(Login);
         }
+
+        this.platform.resume.subscribe(() => {
+          if (this.platform.is('cordova')) {
+            this.client.getDeviceStatus(user).subscribe((status) => {
+              this.handleAccessTokenValidationResult(status, user);
+            });
+          }
+        });
       });
 
       if (this.platform.is('android')) {
@@ -91,7 +103,7 @@ export class MyApp {
     });
 
     this.rest.error.subscribe((resp)=>{
-      if(resp && resp.status == 401){
+      if(resp && resp.status == 401) {
         this.nav.setRoot(Login, {"unauthorized": true});
       }
     });
@@ -123,6 +135,30 @@ export class MyApp {
       setTimeout(() => {
         navigator["splashscreen"].hide();
       }, 200);
+    }
+  }
+
+  handleAccessTokenValidationResult(status, user) {
+
+    if (status.check_status != "ACTIVE_ACCESS_TOKEN") {
+
+      const buttons = [
+        {
+          text: 'Unauthenticate',
+          handler: () => {
+            let loader = this.loading.create();
+            loader.present();
+            this.client.unregister(user).subscribe(() => {
+              this.nav.setRoot(Login, {unauthenticated: true});
+              loader.dismiss();
+            }, err => {
+              loader.dismiss();
+            });
+          }
+        }
+      ];
+
+      this.popup.showAlert('Warning', status.message, buttons);
     }
   }
 }
