@@ -1,30 +1,42 @@
 import { Injectable } from '@angular/core';
-import {AlertController} from "ionic-angular";
+import {AlertController, Alert} from "ionic-angular";
 
 
 @Injectable()
 export class Popup {
+
+  private alert: Alert;
 
   constructor(public alertCtrl: AlertController) {
     //
   }
 
   showAlert(title, message, buttons) {
-    this.alertCtrl.create({
+    if (this.alert) {
+      this.alert.dismiss();
+    }
+    this.alert = this.alertCtrl.create({
       title: title,
       message: message,
       buttons: buttons,
       enableBackdropDismiss: false
-    }).present();
+    });
+
+    this.alert.present();
   }
 
   showPrompt(title, message, inputs, buttons) {
-    this.alertCtrl.create({
+
+    if (this.alert) {
+      this.alert.dismiss();
+    }
+
+    this.alert = this.alertCtrl.create({
       title: title,
       message: message,
       inputs: inputs,
       buttons: buttons,
-    }).present();
+    });
+    this.alert.present();
   }
-
 }

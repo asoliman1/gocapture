@@ -322,7 +322,7 @@ export class RESTClient {
 			});
 	}
 
-  public validateAccessToken(access_token: string): Observable<string> {
+  public validateAccessToken(access_token: string): Observable<StatusResponse<string>> {
     return this.call<StatusResponse<string>>("POST", '/validate_access_token.json', {
       access_token: access_token,
     })
@@ -330,7 +330,7 @@ export class RESTClient {
         if (resp.status != "200") {
           this.errorSource.next(resp);
         }
-        return resp.check_status;
+        return resp;
       });
   }
 	/**

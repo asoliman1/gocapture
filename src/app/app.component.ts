@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import { Nav } from 'ionic-angular';
+import {Nav, LoadingController} from 'ionic-angular';
 import { Platform } from 'ionic-angular';
 import { File } from "@ionic-native/file";
 
@@ -38,7 +38,8 @@ export class MyApp {
     private file: File,
     private toast: ToastController,
     public statusBar: StatusBar,
-    private popup: Popup) {
+    private popup: Popup,
+    private loading: LoadingController) {
     this.initializeApp();
   }
 
@@ -56,41 +57,11 @@ export class MyApp {
 
         this.platform.resume.subscribe(() => {
           if (this.platform.is('cordova')) {
-            this.client.validateAccessToken(user).subscribe((isValid) => {
-
-              const buttons = [
-                {
-                  text: 'Ok',
-                  handler: () => {
-                    this.nav.setRoot(Login, {unauthenticated: true});
-                  }
-                }
-              ];
-
-              this.popup.showAlert('Your device was unauthenticated', 'Please obtain new auth code', buttons);
-
-              /*
-              if (!isValid) {
-                this.client.unregister(user).subscribe(()=>{
-                  const buttons = [
-                    {
-                      text: 'Ok',
-                      handler: () => {
-                        this.nav.setRoot(Login, {"unauthorized": true});
-                      }
-                    }
-                  ];
-
-                  this.popup.showAlert('Your device was unauthenticated', 'Please obtain new auth code', buttons);
-
-                });
-
-              }
-              */
+            this.client.getDeviceStatus(user).subscribe((status) => {
+              this.handleAccessTokenValidationResult(status, user);
             });
           }
         });
-
       });
 
       if (this.platform.is('android')) {
@@ -132,6 +103,7 @@ export class MyApp {
     });
 
     this.rest.error.subscribe((resp)=>{
+      console.log('ERROR - ' + JSON.stringify(resp));
       if(resp && resp.status == 401) {
         this.nav.setRoot(Login, {"unauthorized": true});
       }
@@ -164,6 +136,30 @@ export class MyApp {
       setTimeout(() => {
         navigator["splashscreen"].hide();
       }, 200);
+    }
+  }
+
+  handleAccessTokenValidationResult(status, user) {
+
+    if (status.check_status != "ACTIVE_ACCESS_TOKEN") {
+
+      const buttons = [
+        {
+          text: 'Unauthenticate',
+          handler: () => {
+            let loader = this.loading.create();
+            loader.present();
+            this.client.unregister(user).subscribe(() => {
+              this.nav.setRoot(Login, {unauthenticated: true});
+              loader.dismiss();
+            }, err => {
+              loader.dismiss();
+            });
+          }
+        }
+      ];
+
+      this.popup.showAlert('Warning', status.message, buttons);
     }
   }
 }
