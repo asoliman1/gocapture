@@ -39,4 +39,10 @@ export class Popup {
     });
     this.alert.present();
   }
+
+  dismissAll() {
+    if (this.alert) {
+      this.alert.dismiss();
+    }
+  }
 }

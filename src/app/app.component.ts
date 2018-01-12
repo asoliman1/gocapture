@@ -140,6 +140,10 @@ export class MyApp {
 
   handleAccessTokenValidationResult(status, user) {
 
+    console.log('Device status - ' + JSON.stringify(status));
+
+    this.popup.dismissAll();
+
     if (status.check_status != "ACTIVE_ACCESS_TOKEN") {
 
       const buttons = [
