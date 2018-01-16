@@ -1,56 +1,55 @@
-.login{  
-    background-color: #f4f4f4;
+.login{
+  background-color: #f4f4f4;
 }
 
 .top-content{
-    position: relative;
-    height: 45vh;
-    background-color: #f4f4f4;
-  }
+  position: relative;
+  height: 45vh;
+  background-color: #f4f4f4;
+}
 
-  .user-background-image {
-    opacity: 0.5;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    z-index: -1;
-    background-size: cover !important;
-  }
+.user-background-image {
+  opacity: 0.5;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-size: cover !important;
+}
 
-  .bottom-content{
-    padding:0px;
-    background-color: color($colors, light, base);
-    min-height:55vh;
-    position: relative;
-  }
+.bottom-content{
+  padding:0px;
+  background-color: color($colors, light, base);
+  min-height:55vh;
+  position: relative;
+}
 
 .col-center{
-    text-align: center !important;
+  text-align: center !important;
 }
 
 .padding{
-    padding: 1em !important;
+  padding: 1em !important;
 }
 
 .tagline{
-	white-space: inherit !important;
-    line-height: 1.4em;
-    text-align: justify;
+  white-space: inherit !important;
+  line-height: 1.4em;
 }
 
 .connMode{
-	& ion-icon{
-		opacity: 0;
-	}
-	&.on{
-		font-weight: bold;
-		& *{
-			color: #fb8f04;
-		}
-		& ion-icon{
-			opacity: 1;
-		}
-	}
+  & ion-icon{
+    opacity: 0;
+  }
+  &.on{
+    font-weight: bold;
+    & *{
+      color: #fb8f04;
+    }
+    & ion-icon{
+      opacity: 1;
+    }
+  }
 }

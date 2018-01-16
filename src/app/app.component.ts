@@ -54,14 +54,18 @@ export class MyApp {
         } else {
           this.nav.setRoot(Login);
         }
+      });
 
-        this.platform.resume.subscribe(() => {
-          if (this.platform.is('cordova')) {
-            this.client.getDeviceStatus(user).subscribe((status) => {
-              this.handleAccessTokenValidationResult(status, user);
-            });
-          }
-        });
+      this.platform.resume.subscribe(() => {
+        if (this.platform.is('cordova')) {
+          this.client.getRegistration(true).subscribe((user) => {
+            if(user) {
+              this.client.getDeviceStatus(user).subscribe((status) => {
+                this.handleAccessTokenValidationResult(status, user);
+              });
+            }
+          });
+        }
       });
 
       if (this.platform.is('android')) {
