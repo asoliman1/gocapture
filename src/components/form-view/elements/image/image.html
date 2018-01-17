@@ -7,7 +7,7 @@
 		</ion-col>
 		<ion-col col-9>
 			<ion-scroll scrollX="true">
-				<div class="img" (click)="toggleSelection(i)" *ngFor="let image of currentVal; let i = index">
+				<div class="img" (click)="toggleSelection(i)" *ngFor="let image of currentVal; let i = index" tappable>
 					<img [src]="image"/>
 					<div class="overlay" *ngIf="selection[i]">
 						<ion-icon name="checkmark"></ion-icon>
