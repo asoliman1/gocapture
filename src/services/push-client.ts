@@ -79,6 +79,7 @@ export class PushClient {
 
 	shutdown(){
 		this.pushObj.unregister();
+		this.refs = {};
 	}
 
 	private on(event: "registration" | "notification" | "error", cb: Function){
