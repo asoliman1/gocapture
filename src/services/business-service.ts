@@ -200,7 +200,6 @@ export class BussinessClient {
 			req.invitation_code = authCode;
 			req.device_name = authCode;
 			this.rest.authenticate(req).subscribe(reply => {
-				let fileTransfer = new Transfer();
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 				this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})

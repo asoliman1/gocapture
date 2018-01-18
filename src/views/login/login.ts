@@ -63,7 +63,7 @@ export class Login {
 				content: "Authenticating..."
 			});
 			loader.present();
-			Config["isProd"] = this.useProd;
+			Config.isProd = this.useProd;
 			this.client.authenticate(this.authCode).subscribe(
 				data => {
 					loader.setContent(data.message);

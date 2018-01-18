@@ -3,7 +3,7 @@ import { Platform } from 'ionic-angular';
 import { Observable, Observer } from "rxjs/Rx";
 import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
 import { Migrator, Manager, Table } from "./db";
-import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import { SQLiteObject } from '@ionic-native/sqlite';
 
 let MASTER = "master";
 let WORK = "work";
@@ -49,7 +49,8 @@ export class DBClient {
 				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
 				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
-				"deleteIn": "delete FROM forms where formId in (?)"
+				"deleteIn": "delete FROM forms where formId in (?)",
+				"deleteAll": "delete from forms"
 			}
 		},
 		{
@@ -79,7 +80,8 @@ export class DBClient {
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
-				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?"
+				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
+				"deleteAll": "delete from submissions"
 			}
 		},
 		{
@@ -113,7 +115,8 @@ export class DBClient {
 				"select": "select * from contacts where formId=? and prospectId=?",
 				"update": "INSERT OR REPLACE INTO contacts (id, data, formId, membershipId, prospectId, added, searchTerm) VALUES (?, ?, ?, ?, ?, ?, ?)",
 				"delete": "delete from contacts where id=?",
-				"deleteIn": "delete from contacts where formId in (?)"
+				"deleteIn": "delete from contacts where formId in (?)",
+				"deleteAll": "delete from contacts"
 			}
 		},
 		{
@@ -129,7 +132,8 @@ export class DBClient {
 				"update": "INSERT OR REPLACE INTO contact_forms (formId, contactId) VALUES (?, ?)",
 				"delete": "delete from contact_forms where formId=?",
 				"deleteIn": "delete from contact_forms where formId in (?)",
-				"getAll": "select id, formId from contacts where formId is not NULL"
+				"getAll": "select id, formId from contacts where formId is not NULL",
+				"deleteAll": "delete from contact_forms"				
 			}
 		},
 		{
@@ -723,7 +727,7 @@ export class DBClient {
 	 * 
 	 */
 	public saveRegistration(user: User): Observable<boolean> {
-		user.db = user.customer_name.replace(/\s*/g, '');
+		user.db = user.customer_account_name.replace(/\s*/g, '') + (user.is_production == 1 ? "_prod" : "_dev");
 		return this.save(MASTER, "org_master", [
 			user.id,
 			user.customer_name,
