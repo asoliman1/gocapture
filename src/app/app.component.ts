@@ -47,6 +47,10 @@ export class MyApp {
     this.platform.ready().then(() => {
       console.log("ready!");
 
+      if (this.platform.is('android')) {
+        this.statusBar.backgroundColorByHexString('#c26100');
+      }
+
       this.client.getRegistration(true).subscribe((user) => {
         if(user) {
           Config.isProd = user.is_production == 1;
@@ -67,10 +71,6 @@ export class MyApp {
           });
         }
       });
-
-      if (this.platform.is('android')) {
-        this.statusBar.backgroundColorByHexString('#c26100');
-      }
 
       this.hideSplashScreen();
       //StatusBar.hide();
