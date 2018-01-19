@@ -12,7 +12,7 @@ export class LogClient{
 	log: Observable<LogEntry>;
 
 	private logs : LogEntry[] = [];
-	
+
 	private consoleHandler: any;
 
 	constructor(){
@@ -21,12 +21,16 @@ export class LogClient{
 		window[c] = this.makeConsole();
 
 		this.logSource = new BehaviorSubject<LogEntry>(null);
-		this.log = this.logSource.asObservable();		
+		this.log = this.logSource.asObservable();
 	}
 
 	public getLogs(): LogEntry[]{
 		return this.logs;
 	}
+
+	public clearLogs() {
+	  this.logs = [];
+  }
 
 	private makeConsole() : any{
 		return {
@@ -65,7 +69,7 @@ export class LogClient{
 				}
 				return value;
 			}, 2);
-			cache = null; 
+			cache = null;
 		}
 		this.logs.push(new LogEntry(message, severity));
 		this.logSource.next(this.logs[this.logs.length - 1]);

@@ -9,13 +9,13 @@ import { Clipboard } from '@ionic-native/clipboard';
 	templateUrl: 'log.html'
 })
 export class LogView{
-	
+
 	private sub: Subscription;
 
 	logs: LogEntry[];
 
-	constructor(private logClient: LogClient, 
-				private zone: NgZone, 
+	constructor(private logClient: LogClient,
+				private zone: NgZone,
 				private viewCtrl: ViewController,
 				private clipboard: Clipboard) {
 
@@ -23,7 +23,7 @@ export class LogView{
 
 	ionViewDidEnter() {
 		this.sub = this.logClient.log.subscribe((logEntry) => {
-			this.logs = this.logClient.getLogs();
+			this.logs = this.logClient.getLogs().reverse();
 		});
 	}
 
@@ -65,6 +65,11 @@ export class LogView{
 	done() {
 		this.viewCtrl.dismiss(null);
 	}
+
+	clearLogs() {
+	  this.logClient.clearLogs();
+	  this.logs = [];
+  }
 
 	copy(){
 		let result = "";
