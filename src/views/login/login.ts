@@ -14,6 +14,7 @@ export class Login {
 
 	doAuth: boolean = null;
 	authCode: string;
+	email: string;
 	user: User = <any>{};
 
 	useProd: boolean = true;
@@ -56,7 +57,7 @@ export class Login {
 
 	onClick() {
 		if (this.doAuth) {
-			if (!this.authCode) {
+			if (!this.authCode || !this.email) {
 				return;
 			}
 			let loader = this.loading.create({
@@ -64,7 +65,7 @@ export class Login {
 			});
 			loader.present();
 			Config.isProd = this.useProd;
-			this.client.authenticate(this.authCode).subscribe(
+			this.client.authenticate(this.email, this.authCode).subscribe(
 				data => {
 					loader.setContent(data.message);
 				},

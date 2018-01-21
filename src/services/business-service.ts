@@ -194,11 +194,11 @@ export class BussinessClient {
 		});
 	}
 
-	public authenticate(authCode): Observable<{ user: User, message: string }> {
+	public authenticate(email, authCode): Observable<{ user: User, message: string }> {
 		return new Observable<{ user: User, message: string }>((obs: Observer<{ user: User, message: string }>) => {
 			let req = new AuthenticationRequest();
 			req.invitation_code = authCode;
-			req.device_name = authCode;
+			req.device_name = email;
 			this.rest.authenticate(req).subscribe(reply => {
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
