@@ -35,7 +35,7 @@ export class Image extends BaseElement {
 
 	constructor(private fb: FormBuilder,
 				private actionCtrl: ActionSheetController,
-				private camera: Camera, 
+				private camera: Camera,
 				private zone: NgZone) {
 		super();
 		this.currentVal = [];
@@ -87,10 +87,15 @@ export class Image extends BaseElement {
 							console.log((<any>event.target).result);
 							let blob = new Blob([(<any>event.target).result], {type: file.type});
 							t.writeFile(cordova.file.dataDirectory + "leadliaison/images", file.name, blob).subscribe((newPath) => {
-								t.zone.run(()=>{
-									t.currentVal.unshift(newPath);
-									t.propagateChange(t.currentVal);
-								});
+							  if (t.checkFileExistAtPath(newPath)) {
+							    console.log('File at path - ' + newPath + ' exists');
+                  t.zone.run(()=>{
+                    t.currentVal.unshift(newPath);
+                    t.propagateChange(t.currentVal);
+                  });
+                } else {
+                  console.error('File doesn\'t exist at path - ' + newPath);
+                }
 							}, (err) => {
 								console.error(err);
 							});

@@ -105,6 +105,8 @@ export class BussinessClient {
 					return;
 				}
 
+				console.log('Push received - ' + JSON.stringify(note));
+
 				if (note.action == 'sync') {
 				  this.db.getConfig("lastSyncDate").subscribe(time => {
 				    let d = new Date();
