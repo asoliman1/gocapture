@@ -60,7 +60,7 @@ export class MyApp {
         }
       });
 
-      this.platform.resume.subscribe(() => {
+      let checkDeviceStatus = () => {
         if (this.platform.is('cordova')) {
           this.client.getRegistration(true).subscribe((user) => {
             if(user) {
@@ -70,6 +70,15 @@ export class MyApp {
             }
           });
         }
+      };
+
+      //check device status at the app launch
+      checkDeviceStatus();
+
+      this.platform.resume.subscribe(() => {
+
+        //check device status when app resumes
+        checkDeviceStatus();
       });
 
       this.hideSplashScreen();
