@@ -24,8 +24,8 @@ export class LogClient{
 		this.log = this.logSource.asObservable();
 	}
 
-	public getLogs(): LogEntry[]{
-		return this.logs;
+	public getLogs(offset: number, limit: number): LogEntry[]{
+		return this.logs.slice(offset, offset + limit);
 	}
 
 	public clearLogs() {
@@ -71,8 +71,9 @@ export class LogClient{
 			}, 2);
 			cache = null;
 		}
-		this.logs.push(new LogEntry(message, severity));
-		this.logSource.next(this.logs[this.logs.length - 1]);
+		//add logs at the beginning
+		this.logs.unshift(new LogEntry(message, severity));
+		this.logSource.next(this.logs[0]);
 	}
 }
 

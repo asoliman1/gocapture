@@ -80,7 +80,8 @@ export class BussinessClient {
 		this.doAutoSync();
 	}
 
-	public doAutoSync(){
+	public doAutoSync() {
+	  console.log('doAutoSync');
 		if(this.isOnline()){
 			this.db.getConfig("autoUpload").subscribe((val) => {
 				if (val+"" == "true") {

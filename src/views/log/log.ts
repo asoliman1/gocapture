@@ -14,6 +14,11 @@ export class LogView{
 
 	logs: LogEntry[];
 
+	//offset and limit for logs for pagination
+	offset: number = 0;
+	limit: number = 10;
+	isMore: boolean = false;
+
 	constructor(private logClient: LogClient,
 				private zone: NgZone,
 				private viewCtrl: ViewController,
@@ -22,15 +27,24 @@ export class LogView{
 	}
 
 	ionViewDidEnter() {
-		this.sub = this.logClient.log.subscribe((logEntry) => {
-			this.logs = this.logClient.getLogs().reverse();
-		});
+    this.logs = this.logClient.getLogs(this.offset, this.limit);
+    this.isMore = this.logs.length == this.limit;
+		// this.sub = this.logClient.log.subscribe((logEntry) => {
+		//   this.logs.unshift(logEntry);
+		// });
 	}
 
 	ionViewDidLeave() {
 		this.sub.unsubscribe();
 		this.sub = null;
 	}
+
+	showMore() {
+	  this.offset = this.logs.length;
+	  let logs = this.logClient.getLogs(this.offset, this.limit);
+	  this.isMore = logs.length == this.limit;
+	  this.logs = this.logs.concat(logs);
+  }
 
 	getColor(log: LogEntry): string{
 		if(log.severity == LogSeverity.ERROR){
