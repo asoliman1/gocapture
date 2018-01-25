@@ -45,8 +45,8 @@ export class Barcoder extends BaseElement {
 			this.onChange(scannedData.text);
 			this.toast.create({
 				message: "Barcode scanned successfully",
-				duration: 5000,
-				position: "top",
+				duration: 1500,
+				position: "bottom",
 				cssClass: "success"
 			}).present();
 			this.statusMessage = "Processing...";
