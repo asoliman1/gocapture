@@ -115,9 +115,32 @@ export class MyApp {
       });
     });
 
+    let unregisterUserWithCallback = (callback) => {
+      this.client.getRegistration(true).subscribe((user) => {
+        if(user) {
+          this.client.unregister(user).subscribe(() => {
+            callback();
+          });
+        }
+      });
+    };
+
     this.rest.error.subscribe((resp)=>{
+
+      //token is invalid => unregister current user;
       if(resp && resp.status == 401) {
-        this.nav.setRoot(Login, {"unauthorized": true});
+        unregisterUserWithCallback(() => {
+          this.nav.setRoot(Login, {
+            unauthorized: true
+          });
+        })
+      }
+
+      if(resp && resp.status == 403) {
+        this.nav.setRoot(Login, {
+          unauthorized: true,
+          errorMessage: resp['_body'].message
+        })
       }
     });
 

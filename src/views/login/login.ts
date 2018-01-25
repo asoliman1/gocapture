@@ -29,14 +29,22 @@ export class Login {
 	}
 
 	ngOnInit() {
-		if(this.navParams.get("unauthenticated") == true){
+
+		if(this.navParams.get("unauthenticated") == true) {
 			this.doAuth = true;
 			return;
 		}
-		if(this.navParams.data.unauthorized == true){
+
+		if(this.navParams.get('unauthorized') == true) {
 			this.doAuth = true;
+
+			let errorMessage = this.navParams.get('errorMessage');
+			if (!errorMessage) {
+			  errorMessage = "Authorization failed. Please obtain a new Authentication Code";
+      }
+
 			let toaster = this.toast.create({
-				message: "Authorization failed. Please obtain a new Authentication Code",
+				message: errorMessage,
 				duration: 5000,
 				position: "top",
 				cssClass: "error"
