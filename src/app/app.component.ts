@@ -139,7 +139,7 @@ export class MyApp {
       if(resp && resp.status == 403) {
         this.nav.setRoot(Login, {
           unauthorized: true,
-          errorMessage: resp['_body'].message
+          errorMessage: resp.message
         })
       }
     });

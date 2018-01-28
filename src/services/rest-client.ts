@@ -545,8 +545,9 @@ export class RESTClient {
 					responseObserver.complete();
 				},
 				(err) => {
-					this.errorSource.next(err);
-					responseObserver.error(err);
+				  let error = err.json();
+					this.errorSource.next(error);
+					responseObserver.error(error);
 				}
 				);
 		});
