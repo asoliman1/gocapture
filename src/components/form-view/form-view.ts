@@ -38,7 +38,7 @@ export class FormView {
 		0 : "",
 		1 : "",
 		2 : "queued"
-	}
+	};
 
 	constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
 	}
@@ -122,10 +122,13 @@ export class FormView {
 			var control: AbstractControl = null;
 			if (element.mapping.length > 1) {
 				var opts = {};
+				//For sub elements we have standalone is_required property, so we use this one in the validator
 				element.mapping.forEach((entry, index) => {
 					entry["identifier"] = identifier + "_" + (index + 1);
-					opts[entry["identifier"]] = new FormControl({ value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly }, this.makeValidators(element));
-				})
+					opts[entry["identifier"]] = new FormControl({
+					  value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element),
+            disabled: element.is_readonly || this.readOnly }, this.makeValidators(element['sub_elements'][index]));
+				});
 				control = this.fb.group(opts);
 			} else {
 				control = this.fb.control({ value: this.data[identifier] || this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly });
