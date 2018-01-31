@@ -1,5 +1,8 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar } from 'ionic-angular';
+import {
+  NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar,
+  ToastController
+} from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
 import { FormView } from "../../components/form-view";
@@ -33,7 +36,8 @@ export class FormCapture {
 		private modal: ModalController,
 		private menuCtrl: MenuController,
 		private alertCtrl: AlertController,
-		private platform: Platform) {
+		private platform: Platform,
+    private toast: ToastController) {
 		console.log("FormCapture");
 	}
 
@@ -187,7 +191,14 @@ export class FormCapture {
 	doSave() {
 
 		if (!this.valid) {
-			return;
+      this.toast.create({
+        message: "Invalid fields: please check your submission",
+        duration: 2000,
+        position: "bottom",
+        cssClass: "error"
+      }).present();
+
+      return;
 		}
 		this.submission.fields = this.formView.getValues();
 		if (!this.submission.id) {
