@@ -36,8 +36,7 @@ export class FormCapture {
 		private modal: ModalController,
 		private menuCtrl: MenuController,
 		private alertCtrl: AlertController,
-		private platform: Platform,
-    private toast: ToastController) {
+		private platform: Platform) {
 		console.log("FormCapture");
 	}
 
@@ -191,13 +190,6 @@ export class FormCapture {
 	doSave() {
 
 		if (!this.valid) {
-      this.toast.create({
-        message: "Invalid fields: please check your submission",
-        duration: 2000,
-        position: "bottom",
-        cssClass: "error"
-      }).present();
-
       return;
 		}
 		this.submission.fields = this.formView.getValues();
