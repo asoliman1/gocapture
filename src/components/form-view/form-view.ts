@@ -20,6 +20,8 @@ export class FormView {
 
 	@Input() readOnly: boolean = false;
 
+  @Input() submitAttempt: boolean = false;
+
 	@ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
 
 	theForm: FormGroup = null;

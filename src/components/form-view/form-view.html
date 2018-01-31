@@ -5,8 +5,14 @@
 
       <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden">
         <ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-        <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+        <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"
+        [class.invalid]="!theForm.controls[element.identifier].valid && (theForm.controls[element.identifier].dirty || submitAttempt)"></ion-input>
+        <p *ngIf="!theForm.controls[element.identifier].valid && (theForm.controls[element.identifier].dirty || submitAttempt)">Please enter a valid email address</p>
       </ion-item>
+
+      <ng-container *ngSwitchCase="'email'">
+        <p  *ngIf="!theForm.controls[element.identifier].valid && (theForm.controls[element.identifier].dirty || submitAttempt)">Please enter a valid email.</p>
+      </ng-container>
 
       <div *ngSwitchCase="'page_break'" [class.hidden]="element.is_hidden"></div>
 

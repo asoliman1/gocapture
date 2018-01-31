@@ -17,12 +17,13 @@
 			</ion-col>
 		</ion-row>
 		<ion-row>
-			<form-view #formView 
+			<form-view #formView
 						[form]="form"
-						[prospect]="prospect" 
+						[prospect]="prospect"
 						[submission]="submission"
 						(onValidationChange)="onValidationChange($event)"
-						[readOnly]="isReadOnly(submission)"></form-view>
+						[readOnly]="isReadOnly(submission)"
+            [submitAttempt]="submitAttempt"></form-view>
 		</ion-row>
 	</ion-grid>
 </ion-content>
