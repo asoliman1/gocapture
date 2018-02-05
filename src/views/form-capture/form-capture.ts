@@ -1,7 +1,7 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
 import {
   NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar,
-  ToastController
+  ToastController, Content
 } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
@@ -22,8 +22,10 @@ export class FormCapture {
 
   @ViewChild("formView") formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
+  @ViewChild(Content) content: Content;
 
   valid: boolean;
+  errorMessage: String;
 
   submitAttempt: boolean = false;
 
@@ -192,15 +194,9 @@ export class FormCapture {
 
   doSave() {
     this.submitAttempt = true;
-
     if (!this.valid) {
-      this.toast.create({
-        message: "Please fill out all details accurately.",
-        duration: 2000,
-        position: "bottom",
-        cssClass: "error"
-      }).present();
-
+      this.errorMessage = this.formView.getError();
+      this.content.resize();
       return;
     }
     this.submission.fields = this.formView.getValues();
