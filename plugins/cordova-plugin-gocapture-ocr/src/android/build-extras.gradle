@@ -1,0 +1,77 @@
+buildscript {
+    repositories {
+        jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.3.0'
+		classpath 'org.ajoberstar:grgit:2.1.0'
+    }
+}
+
+apply plugin: 'de.undercouch.download'
+
+import de.undercouch.gradle.tasks.download.Download
+import org.ajoberstar.grgit.Grgit
+import org.apache.tools.ant.taskdefs.condition.Os
+
+String sdk = ""
+String ndk = ""
+
+task doClean {
+    delete rootProject.buildDir
+}
+
+task downloadTessTwoProject(dependsOn: doClean, type: Download) {
+    src 'https://github.com/rmtheis/tess-two/archive/master.zip'
+    dest new File(buildDir, 'tess-two.zip')
+}
+
+task retrieveTessTwoProject(dependsOn: downloadTessTwoProject, type: Copy) {
+    from zipTree(downloadTessTwoProject.dest)
+    into new File(buildDir, "")
+}
+
+task setupTessTwoProject(dependsOn:retrieveTessTwoProject, type: Copy) {
+    from new File(buildDir, "tess-two-master/tess-two")
+    into new File(rootDir, "tess-two")
+}
+
+task writeLocalProperties(dependsOn: setupTessTwoProject){
+	doLast{
+		sdk = "$System.env.ANDROID_HOME".replaceAll(~/\\+/, "/")
+		ndk = "$System.env.ANDROID_NDK_HOME".replaceAll(~/\\+/, "/")
+		new File("$rootDir/tess-two/local.properties").text = """sdk.dir=${sdk}
+ndk.dir=${ndk}
+"""
+	}
+}
+
+task buildTessTwo(dependsOn: writeLocalProperties){
+	doLast{
+		exec {
+			workingDir "$buildDir/tess-two"
+			commandLine "gradle wrapper --gradle-version 2.1 --distribution-type all"
+     	}
+	}
+}
+
+task ndkBuild(dependsOn: writeLocalProperties) {
+	doLast{
+		Properties properties = new Properties()
+		properties.load(project.rootProject.file("$rootDir/tess-two/local.properties").newDataInputStream())
+		def ndkDirProperty = properties.getProperty('ndk.dir')
+		def ndkDirPrefix = ndkDirProperty != null ? ndkDirProperty + '/' : ''
+
+		def ndkBuildExt = Os.isFamily(Os.FAMILY_WINDOWS) ? ".cmd" : ""
+		println "${ndkDirPrefix}ndk-build${ndkBuildExt}" +  ' -C ' + file("$rootDir/tess-two").absolutePath + ' -j ' + Runtime.runtime.availableProcessors()
+		exec{
+			commandLine "${ndkDirPrefix}ndk-build${ndkBuildExt}", '-C', file("$rootDir/tess-two").absolutePath,
+					'-j', Runtime.runtime.availableProcessors()
+		}
+	}
+}
+
+defaultTasks 'ndkBuild'

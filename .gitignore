@@ -11,23 +11,30 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
+
 .idea/
-.gradle/
+.sourcemaps/
 .sass-cache/
 .tmp/
 .versions/
 coverage/
 dist/
 node_modules/
-platforms/android/build/
-platforms/android/CordovaLib/build/
-platforms/android/tess-two/build/
 tmp/
 temp/
 hooks/
+# platforms/
+# plugins/
+# plugins/android.json
+# plugins/ios.json
+# www/
+platforms/android/build/
+platforms/android/app/build/
+platforms/android/CordovaLib/build/
+platforms/android/tess-two/build/
+
 $RECYCLE.BIN/
 
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-platforms/android/platform_www/

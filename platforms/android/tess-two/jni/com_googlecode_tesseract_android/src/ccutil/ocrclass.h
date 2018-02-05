@@ -1,7 +1,7 @@
 /**********************************************************************
  * File:        ocrclass.h
  * Description: Class definitions and constants for the OCR API.
- * Author:					Hewlett-Packard Co
+ * Author:          Hewlett-Packard Co
  *
  * (C) Copyright 1996, Hewlett-Packard Co.
  ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,6 @@
 
 #ifndef __GNUC__
 #ifdef _WIN32
-#include          <windows.h>
 #include          "gettimeofday.h"
 #endif
 #else

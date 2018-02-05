@@ -38,7 +38,6 @@ import { Device } from "@ionic-native/device";
 import { Push } from '@ionic-native/push';
 import { Network } from '@ionic-native/network';
 import { Camera } from '@ionic-native/camera';
-import { ImagePicker } from '@ionic-native/image-picker';
 import { SQLite } from '@ionic-native/sqlite';
 import { Clipboard } from '@ionic-native/clipboard';
 import { AppVersion } from '@ionic-native/app-version';
@@ -117,7 +116,6 @@ import { Popup } from '../providers/popup/popup';
     Push,
     Network,
     Camera,
-    ImagePicker,
     SQLite,
     Clipboard,
     AppVersion,

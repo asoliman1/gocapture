@@ -4,9 +4,9 @@ This is a [Cordova](http://cordova.apache.org/) plugin for [Fabric.io](https://w
 
 It requires Cordova 3.x or newer (tested on 5.4.0) and has APIs for iOS and Android.
 
-The iOS version uses Fabric SDK 1.6.9 and Crashlytics SDK 3.8.2 framework bundles which are located in `lib/ios`.
+The iOS version uses Fabric SDK 1.6.12 and Crashlytics SDK 3.8.5 framework bundles which are located in `lib/ios`.
 
-The Android version uses Gradle to get the Fabric SDK (`io.fabric.tools:gradle:1.+`) and the Crashlytics SDK (`com.crashlytics.sdk.android:crashlytics:2.5.5`) from Maven repositories when the plugin is added.
+The Android version uses Gradle to get the Fabric SDK (`io.fabric.tools:gradle:1.+`) and the Crashlytics SDK (`com.crashlytics.sdk.android:crashlytics:2.6.8`) from Maven repositories when the plugin is added.
 
 # Install
 
@@ -110,6 +110,26 @@ The Fabric SDK comes with a command line tool that takes care of uploading debug
 For iOS, our build hook adds a build script phase block to execute Fabric's uploader command line tool.
 
 For Android, our build hook modifies the `build.gradle` file to delegate to Fabric's uploader Gradle task.
+
+## Updating Fabric and Crashlytics
+
+Fabric and Crashlytics can be udpated via [scripts/add-packages.sh](./scripts/add-packages.sh). This script creates a temporary directory, obtains packages from their cocoapods download locations, and overwrites the frameworks in [lib/ios](./lib/ios).
+
+To run the package update script:
+
+```sh
+npm run add-packages
+```
+
+
+The desired package versions are pulled from [package.json](./package.json):
+
+```json
+"packages": {
+    "fabric": "1.7.2",
+    "crashlytics": "3.9.3"
+}
+```
 
 # Contributing
 
