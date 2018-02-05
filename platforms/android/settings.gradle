@@ -1,5 +1,0 @@
-// GENERATED FILE - DO NOT EDIT
-include ":"
-include ":CordovaLib"
-include ":app"
-include ":tess-two"
