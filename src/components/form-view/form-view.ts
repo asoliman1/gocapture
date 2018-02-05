@@ -20,6 +20,8 @@ export class FormView {
 
 	@Input() readOnly: boolean = false;
 
+  @Input() submitAttempt: boolean = false;
+
 	@ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
 
 	theForm: FormGroup = null;
@@ -63,6 +65,10 @@ export class FormView {
 	public hasChanges(): boolean {
 		return this.theForm.dirty;
 	}
+
+	public getError(): String {
+	  return this.composeErrorMessage();
+  }
 
 	public getValues(): { [key: string]: string } {
 		var data = {};
@@ -205,6 +211,30 @@ export class FormView {
 	setDate(event) {
 		//console.log(event);
 	}
+
+  isControlInvalid(element) {
+    return !this.theForm.controls[element.identifier].valid && this.submitAttempt;
+  }
+
+  private composeErrorMessage() {
+	  let invalidControls = [];
+	  for (let key in this.theForm.controls) {
+	    if (this.theForm.controls[key].invalid) {
+	      let controlId = key.split('_')[1];
+	      invalidControls.push(this.getNameForElementWithId(controlId));
+      }
+    }
+    return invalidControls.length > 0 ? ("please check the following fields: " + invalidControls.join(', ')) : "";
+  }
+
+  private getNameForElementWithId(id) {
+	  for (let i = 0; i < this.displayForm.elements.length; i++) {
+	    let element = this.displayForm.elements[i];
+	    if (element.id == id) {
+	      return element.title;
+      }
+    }
+  }
 
 	private wrapValidator(form: Form, element: FormElement, submission: FormSubmission, validator: ValidatorFn) : ValidatorFn{
 		return (control: AbstractControl): {[key: string]: any} => {

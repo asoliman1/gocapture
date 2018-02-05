@@ -7,9 +7,13 @@
 			</button>
 		</ion-buttons>
 	</ion-navbar>
+  <ion-toolbar *ngIf="!valid && errorMessage && errorMessage.length > 0">
+    <div class="error-message" >{{errorMessage}}</div>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="form-summary">
+
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
@@ -17,12 +21,13 @@
 			</ion-col>
 		</ion-row>
 		<ion-row>
-			<form-view #formView 
+			<form-view #formView
 						[form]="form"
-						[prospect]="prospect" 
+						[prospect]="prospect"
 						[submission]="submission"
 						(onValidationChange)="onValidationChange($event)"
-						[readOnly]="isReadOnly(submission)"></form-view>
+						[readOnly]="isReadOnly(submission)"
+            [submitAttempt]="submitAttempt"></form-view>
 		</ion-row>
 	</ion-grid>
 </ion-content>

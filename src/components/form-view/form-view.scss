@@ -73,6 +73,12 @@ form-view, .form-view{
 		color: #eb7f00;
 	}
 
+  .invalid {
+    ion-label.element-name {
+      color: red !important;
+    }
+  }
+
 	.text-input[disabled] {
 		opacity: .8;
 	}
