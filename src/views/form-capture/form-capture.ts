@@ -194,7 +194,15 @@ export class FormCapture {
 
   doSave() {
     this.submitAttempt = true;
+
+    if (!this.isEmailOrNameInputted()) {
+      this.errorMessage = "email or name is required";
+      this.content.resize();
+      return;
+    }
+
     if (!this.valid) {
+
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
@@ -249,5 +257,26 @@ export class FormCapture {
       }
     });
     search.present();
+  }
+
+  isEmailOrNameInputted() {
+    let firstName;
+    let lastName;
+    let email;
+
+    let fields = this.formView.getValues();
+    this.form.elements.forEach(element => {
+      switch(element.type){
+        case "simple_name":
+          firstName = <any>fields[element["identifier"] + "_1"] || "";
+          lastName = <any>fields[element["identifier"] + "_2"] || "";
+          break;
+        case "email":
+          email = <any>this.submission.fields[element["identifier"]] || "";
+          break;
+      }
+    });
+
+    return (firstName.length > 0 && lastName.length > 0) || email.length > 0;
   }
 }
