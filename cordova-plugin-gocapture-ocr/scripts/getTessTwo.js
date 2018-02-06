@@ -105,6 +105,7 @@ dependencies {
 									console.error(err);
 									return;
 								}
+								deferral.resolve();
 							});
 						});
 					});

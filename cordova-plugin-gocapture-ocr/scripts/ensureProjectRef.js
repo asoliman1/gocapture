@@ -8,6 +8,8 @@ module.exports = function(context) {
 	child = require("child_process");
 	
 	var data = fs.readFileSync(path.join("platforms", "android", 'project.properties'), 'utf8');
+	data = data.replace(/26\.\+/g, "25.+");
+	fs.writeFileSync(path.join("platforms", "android", 'project.properties'), data, "utf8");
 	if(data.indexOf("tess-two") == -1){
 		var matches = data.match(/android\.library\.reference.(\d+)/igm);
 		fs.appendFileSync(path.join("platforms", "android", 'project.properties'), "\r\nandroid.library.reference." + (matches.length + 1) + "=tess-two")
