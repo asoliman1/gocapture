@@ -1,19 +1,46 @@
 {
 	"project_info": {
-		"project_number": "716813832888"
+	  "project_number": "716813832888",
+	  "firebase_url": "https://leadliaison-com-api-project-716813832888.firebaseio.com",
+	  "project_id": "leadliaison.com:api-project-716813832888",
+	  "storage_bucket": "leadliaison.com:api-project-716813832888.appspot.com"
 	},
 	"client": [
-		{
-			"client_info": {
-				"android_client_info": {
-					"package_name": "com.leadliaison.mobilitease"
-				}
-			},
-			"api_key": [
-				{
-				  "current_key": "xxxxxxxxxxx"
-				}
-			]
+	  {
+		"client_info": {
+		  "mobilesdk_app_id": "1:716813832888:android:24ff4e63c91feafd",
+		  "android_client_info": {
+			"package_name": "com.leadliaison.mobilitease"
+		  }
+		},
+		"oauth_client": [
+		  {
+			"client_id": "716813832888-gnvg5lsc2sufs8itk644a9oo469kbmfn.apps.googleusercontent.com",
+			"client_type": 3
+		  },
+		  {
+			"client_id": "716813832888-o143vh6tntdfks7dc5sn530okmvaara9.apps.googleusercontent.com",
+			"client_type": 3
+		  }
+		],
+		"api_key": [
+		  {
+			"current_key": "AIzaSyAgykm-vkYmRwFe2Soq1dFs2AseDRi4eKs"
+		  }
+		],
+		"services": {
+		  "analytics_service": {
+			"status": 1
+		  },
+		  "appinvite_service": {
+			"status": 1,
+			"other_platform_oauth_client": []
+		  },
+		  "ads_service": {
+			"status": 2
+		  }
 		}
-	]
-}
+	  }
+	],
+	"configuration_version": "1"
+  }
