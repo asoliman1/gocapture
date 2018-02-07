@@ -79,6 +79,8 @@ export class MyApp {
 
         //check device status when app resumes
         checkDeviceStatus();
+        
+        this.client.getUpdates().subscribe(()=> {});
       });
 
       this.hideSplashScreen();
