@@ -17,7 +17,6 @@
 	</js-module>
 	<hook src="scripts/npmInstall.js" type="before_plugin_install" />
 	<platform name="ios">
-		<hook src="scripts/podify.js" type="after_prepare" />
 		<config-file target="config.xml" parent="/*">
 		    <feature name="cordova-plugin-gocapture-ocr">
 			    <param name="ios-package" value="TesseractPlugin"/>
@@ -31,8 +30,7 @@
         <source-file src="src/ios/TesseractPlugin.m" />
         <!-- set the tessdata directory as a resource so it can go with the app -->
         <resource-file src="tessdata" />
-		<pods-config ios-min-version="9.0" use-frameworks="true" />
-		<pod git="https://github.com/gali8/Tesseract-OCR-iOS.git" name="TesseractOCRiOS" />
+		<framework src="TesseractOCRiOS" type="podspec" spec=":git => 'https://github.com/gali8/Tesseract-OCR-iOS.git' "/>
 	</platform>
 	<platform name="android">
 		<hook src="scripts/getTessTwo.js" type="after_plugin_install" />
