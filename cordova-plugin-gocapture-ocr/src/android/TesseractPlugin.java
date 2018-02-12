@@ -1,12 +1,18 @@
-package com.gmazzoni.cordova;
+package com.leadliaison.mobilitease.ocr;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -15,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.googlecode.tesseract.android.ResultIterator;
+import com.googlecode.tesseract.android.TessBaseAPI.PageIteratorLevel;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,11 +30,17 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.ColorMatrix;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
+import android.net.Uri;
 
 import android.content.Context;
 
@@ -46,7 +60,13 @@ public class TesseractPlugin extends CordovaPlugin {
             if (action.equals("recognizeText")) {
                 String imageData = args.getString(1);
                 result = recognizeText(imageData, language);
-            } else {
+            } else if(action.equals("recognizeWords")) {
+				String imageData = args.getString(1);
+                result = recognizeWords(imageData, language);
+			} else if(action.equals("recognizeWordsFromPath")) {
+				String imageData = args.getString(1);
+                result = recognizeWordsFromPath(imageData, language);
+			}else {
                 result = loadLanguage(language);
             }
 
@@ -90,6 +110,103 @@ public class TesseractPlugin extends CordovaPlugin {
         // You now have the text in recognizedText var, you can do anything with it.
         Log.v(TAG, "Recognized Text: " + recognizedText);
         return recognizedText;
+    }
+
+	public String recognizeWordsFromPath(String imagePath, String language) throws JSONException, IOException{
+        Log.v(TAG, "Starting process to recognize text in photo.");
+		Log.v(TAG, imagePath);
+		File file = new File(Uri.parse(imagePath).getPath());
+		Log.v(TAG, Uri.parse(imagePath).getPath());
+		if(!file.exists()){
+			return "{}";
+		}
+
+		byte[] bytes = new byte[(int) file.length()];
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+		DataInputStream dis = new DataInputStream(bis);
+		dis.readFully(bytes);
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+		Bitmap bmpGrayscale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bitmap, 0, 0, paint);
+
+        Log.v(TAG, "Before baseApi");
+
+        TessBaseAPI baseApi = new TessBaseAPI();
+        baseApi.setDebug(true);
+        baseApi.init(DATA_PATH, language);
+        baseApi.setImage(bmpGrayscale);
+
+        String recognizedText = "";
+        recognizedText = baseApi.getUTF8Text();
+
+		JSONObject obj = new JSONObject();
+		obj.put("recognizedText", recognizedText);
+		JSONArray words = new JSONArray();
+		obj = obj.put("words", words);
+
+		ResultIterator iterator = baseApi.getResultIterator();
+		iterator.begin();
+        do {
+			Rect r = iterator.getBoundingRect(PageIteratorLevel.RIL_WORD);
+			words.put(
+				new JSONObject()
+					.put("word", iterator.getUTF8Text(PageIteratorLevel.RIL_WORD))
+					.put("box", r.left + " " + r.top + " " + r.width() + " " + r.height())
+					.put("confidence", iterator.confidence(PageIteratorLevel.RIL_WORD))
+			);
+        } while (iterator.next(PageIteratorLevel.RIL_WORD));
+        baseApi.end();
+		iterator = null;
+        // You now have the text in recognizedText var, you can do anything with it.
+        Log.v(TAG, "Recognized Text: " + recognizedText);
+        return obj.toString();
+    }
+
+	public String recognizeWords(String imageData, String language) throws JSONException{
+        Log.v(TAG, "Starting process to recognize text in photo.");
+
+        byte[] decodedString = Base64.decode(imageData, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+        Log.v(TAG, "Before baseApi");
+
+        TessBaseAPI baseApi = new TessBaseAPI();
+        baseApi.setDebug(true);
+        baseApi.init(DATA_PATH, language);
+        baseApi.setImage(bitmap);
+
+        String recognizedText = "";
+        recognizedText = baseApi.getUTF8Text();
+
+		JSONObject obj = new JSONObject();
+		obj.put("recognizedText", recognizedText);
+		JSONArray words = new JSONArray();
+		obj = obj.put("words", words);
+
+		ResultIterator iterator = baseApi.getResultIterator();
+		iterator.begin();
+        do {
+			Rect r = iterator.getBoundingRect(PageIteratorLevel.RIL_WORD);
+			words.put(
+				new JSONObject()
+					.put("word", iterator.getUTF8Text(PageIteratorLevel.RIL_WORD))
+					.put("box", r.left + " " + r.top + " " + r.width() + " " + r.height())
+					.put("confidence", iterator.confidence(PageIteratorLevel.RIL_WORD))
+			);
+        } while (iterator.next(PageIteratorLevel.RIL_WORD));
+        baseApi.end();
+		iterator = null;
+        // You now have the text in recognizedText var, you can do anything with it.
+        Log.v(TAG, "Recognized Text: " + recognizedText);
+        return obj.toString();
     }
 
     public String loadLanguage(String language) {

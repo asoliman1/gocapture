@@ -37,13 +37,14 @@
 	<platform name="android">
 		<hook src="scripts/getTessTwo.js" type="after_plugin_install" />
 		<hook src="scripts/ensureProjectRef.js" type="before_build" />
+		<hook src="scripts/ensureProjectRef.js" type="before_emulate" />
 		<config-file parent="/*" target="res/xml/config.xml">
 			<feature name="cordova-plugin-gocapture-ocr">
-				<param name="android-package" value="com.leadliaison.mobilitease.ocr.cordova-plugin-gocapture-ocr" />
+				<param name="android-package" value="com.leadliaison.mobilitease.ocr.TesseractPlugin" />
 			</feature>
 		</config-file>
 		<config-file parent="/*" target="AndroidManifest.xml"></config-file>
-		<source-file src="src/android/TesseractPlugin.java" target-dir="src/com/leadliaison/mobilitease/ocr/TesseractPlugin" />
+		<source-file src="src/android/TesseractPlugin.java" target-dir="src/com/leadliaison/mobilitease/ocr" />
 		<!--framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" /-->
 	</platform>
 </plugin>

@@ -66,12 +66,10 @@ module.exports = function(context) {
 	}
 	dependencies {
 		classpath 'com.android.tools.build:gradle:3.0.0'
-		classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
 	}
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
 
 android {
 	compileSdkVersion project.ext.defaultCompileSdkVersion
@@ -80,25 +78,18 @@ android {
 	defaultConfig {
 		minSdkVersion 22
 		targetSdkVersion 22
-		versionCode 1
-		versionName '1.0'
 	}
 
 	sourceSets {
 		main {
 			manifest.srcFile 'AndroidManifest.xml'
 			java.srcDirs = ['src']
+			resources.srcDirs = ['src']
 			res.srcDirs = ['res']
-			jni.srcDirs = []
 			jniLibs.srcDirs = ['libs']
 		}
 	}
-}
-
-dependencies {
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	implementation "com.android.support:support-annotations:25.4.0"
-}							
+}						
 `, 							function(err){
 								if(err) {
 									deferral.reject("Could not write build.gradle");

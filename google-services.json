@@ -1,31 +1,58 @@
 {
 	"project_info": {
-	  "project_number": "716813832888",
-	  "firebase_url": "https://leadliaison-com-api-project-716813832888.firebaseio.com",
-	  "project_id": "leadliaison.com:api-project-716813832888",
-	  "storage_bucket": "leadliaison.com:api-project-716813832888.appspot.com"
+	  "project_number": "56276941492",
+	  "firebase_url": "https://lead-liaison-app-project.firebaseio.com",
+	  "project_id": "lead-liaison-app-project",
+	  "storage_bucket": "lead-liaison-app-project.appspot.com"
 	},
 	"client": [
 	  {
 		"client_info": {
-		  "mobilesdk_app_id": "1:716813832888:android:24ff4e63c91feafd",
+		  "mobilesdk_app_id": "1:56276941492:android:670994d1f39d0ef9",
+		  "android_client_info": {
+			"package_name": "tradeshow.app"
+		  }
+		},
+		"oauth_client": [
+		  {
+			"client_id": "56276941492-iia8rsqrsc56lfvqlpp40k2plaqfhl36.apps.googleusercontent.com",
+			"client_type": 3
+		  }
+		],
+		"api_key": [
+		  {
+			"current_key": "AIzaSyAhC2prkwr5c6NI-SndMBFPLib1JSY9cmo"
+		  }
+		],
+		"services": {
+		  "analytics_service": {
+			"status": 1
+		  },
+		  "appinvite_service": {
+			"status": 1,
+			"other_platform_oauth_client": []
+		  },
+		  "ads_service": {
+			"status": 2
+		  }
+		}
+	  },
+	  {
+		"client_info": {
+		  "mobilesdk_app_id": "1:56276941492:android:24ff4e63c91feafd",
 		  "android_client_info": {
 			"package_name": "com.leadliaison.mobilitease"
 		  }
 		},
 		"oauth_client": [
 		  {
-			"client_id": "716813832888-gnvg5lsc2sufs8itk644a9oo469kbmfn.apps.googleusercontent.com",
-			"client_type": 3
-		  },
-		  {
-			"client_id": "716813832888-o143vh6tntdfks7dc5sn530okmvaara9.apps.googleusercontent.com",
+			"client_id": "56276941492-iia8rsqrsc56lfvqlpp40k2plaqfhl36.apps.googleusercontent.com",
 			"client_type": 3
 		  }
 		],
 		"api_key": [
 		  {
-			"current_key": "AIzaSyAgykm-vkYmRwFe2Soq1dFs2AseDRi4eKs"
+			"current_key": "AIzaSyAhC2prkwr5c6NI-SndMBFPLib1JSY9cmo"
 		  }
 		],
 		"services": {

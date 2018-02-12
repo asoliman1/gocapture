@@ -17,7 +17,7 @@ module.exports = function(context) {
 	var ndk = process.env.ANDROID_NDK_HOME.replace(/\\+/g, "/");
 	var ndkBuild = ndk + "/ndk-build" + (isWindows() ? ".cmd" : "");
 	console.log("Building native Tesseract")
-	var proc = child.spawn(ndkBuild, ["-C", context.opts.projectRoot + "/platforms/android/tess-two", "-j", os.cpus().length]);
+	var proc = child.spawn(ndkBuild, ["-C", context.opts.projectRoot + "/platforms/android/tess-two", "-j", os.cpus().length, "APP_ABI=\"armeabi armeabi-v7a x86 mips arm64-v8a x86_64 mips64\""]);
 	proc.on('exit', (code) => {
 		console.log('Native build finished with code ' + code);
 		deferral.resolve();

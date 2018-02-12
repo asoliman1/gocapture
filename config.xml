@@ -116,5 +116,6 @@
         <variable name="FABRIC_API_SECRET" value="1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7" />
     </plugin>
     <plugin name="cordova-support-google-services" spec="^1.0.0" />
+    <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <engine name="android" spec="~7.0.0" />
 </widget>
