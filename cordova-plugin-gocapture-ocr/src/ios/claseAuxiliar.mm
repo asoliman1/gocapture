@@ -68,6 +68,52 @@ static inline double radians (double degrees) {return degrees * M_PI/180;}
     return [tesseract recognizedText];
 }
 
+- (NSString *) ocrWords: (UIImage *) uiImage withLanguage: (NSString *) language
+{
+    //### Using Tesseract OCR iOS ###
+    //@see @source https://github.com/gali8/Tesseract-OCR-iOS
+    //@see wiki https://github.com/gali8/Tesseract-OCR-iOS/wiki/Using-Tesseract-OCR-iOS
+    
+    // Create your G8Tesseract object using the initWithLanguage method:
+    tesseract = [[G8Tesseract alloc] initWithLanguage:language];
+    
+    // Set up the delegate to receive Tesseract's callbacks.
+    // self should respond to TesseractDelegate and implement a
+    // "- (BOOL)shouldCancelImageRecognitionForTesseract:(G8Tesseract *)tesseract"
+    // method to receive a callback to decide whether or not to interrupt
+    // Tesseract before it finishes a recognition.
+    tesseract.delegate = self;
+    
+    // Specify the image Tesseract should recognize on
+    tesseract.image = [uiImage g8_blackAndWhite];
+    
+    // Start the recognition
+    NSLog(@"Recognizing text...");
+    [tesseract recognize];
+	NSError *error;
+	NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
+	NSMutableArray *wordsArray = [[NSMutableArray alloc] init];
+	[json setObject:[tesseract recognizedText] forKey:@"recognizedText"];
+
+	NSArray *words = [tesseract recognizedBlocksByIteratorLevel:G8PageIteratorLevelWord];
+
+	for(G8RecognizedBlock *block in words){
+        CGRect r = [block boundingBoxAtImageOfSize:uiImage.size];
+        NSMutableDictionary *word = [[NSMutableDictionary alloc] init];
+        [word setObject:block.text forKey:@"word"];
+        [word setValue:[NSNumber numberWithDouble:block.confidence] forKey:@"confidence"];
+        [word setObject:[NSString stringWithFormat:@"%f %f %f %f", r.origin.x, r.origin.y, r.size.width, r.size.height] forKey:@"box"];
+        [wordsArray addObject:word];
+	}
+	
+	[json setObject:wordsArray forKey:@"words"];    
+	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:json options:NSJSONWritingPrettyPrinted error:&error];
+	NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    jsonData = nil;
+    wordsArray = nil;
+    return jsonString;
+}
+
 
 // *** Method not used!
 //http://www.iphonedevsdk.com/forum/iphone-sdk-development/7307-resizing-photo-new-uiimage.html#post33912

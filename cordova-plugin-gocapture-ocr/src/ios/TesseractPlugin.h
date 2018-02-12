@@ -12,5 +12,7 @@
 @property (nonatomic, copy) NSString* callbackID;
 
 - (void) recognizeText:(CDVInvokedUrlCommand*)command;
+- (void) recognizeWords:(CDVInvokedUrlCommand*)command;
+- (void) recognizeWordsFromPath:(CDVInvokedUrlCommand*)command;
 
 @end
