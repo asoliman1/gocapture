@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { ViewController } from 'ionic-angular';
 import { LogClient, LogEntry, LogSeverity } from "../../services/log-client";
-import { Subscription } from "rxjs";
+import { Subscription } from "rxjs/Subscription";
 import { Clipboard } from '@ionic-native/clipboard';
 
 @Component({

@@ -3,7 +3,7 @@ import { Form, FormElement, DeviceFormMembership, FormSubmission, FormElementTyp
 import { DateTime } from "ionic-angular";
 import { FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
-import { Subscription } from "rxjs";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
 	selector: 'selection-view',

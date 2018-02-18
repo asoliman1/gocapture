@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
-import { Observable, BehaviorSubject, Observer } from "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
+import { Observer } from "rxjs/Observer";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
 import { Transfer } from '@ionic-native/transfer';

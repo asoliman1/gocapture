@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Platform } from 'ionic-angular';
-import { Observable, Observer } from "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
+import { Observer } from "rxjs/Observer";
 import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
 import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';

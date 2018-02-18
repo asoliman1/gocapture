@@ -1,5 +1,6 @@
 import { Push, PushObject, NotificationEventResponse } from '@ionic-native/push';
-import { Observable, BehaviorSubject } from "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Injectable } from "@angular/core";
 import { Config } from "../config";
 import { PushResponse } from "../model/protocol";

@@ -5,7 +5,7 @@ import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
-import { Subscription } from "rxjs";
+import { Subscription } from "rxjs/Subscription";
 import { SyncClient } from "../../services/sync-client";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 

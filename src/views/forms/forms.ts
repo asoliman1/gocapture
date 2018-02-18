@@ -10,7 +10,7 @@ import {
 	animate
 } from '@angular/animations';
 
-import { Subscription } from "rxjs";
+import { Subscription } from "rxjs/Subscription";
 
 import { NavController, NavParams, InfiniteScroll, ActionSheetController, Searchbar } from 'ionic-angular';
 import { SyncClient } from "../../services/sync-client";
