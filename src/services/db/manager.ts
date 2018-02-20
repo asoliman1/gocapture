@@ -1,5 +1,5 @@
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
-import { Platform } from 'ionic-angular';
+import { Platform } from 'ionic-angular/platform/platform';
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
 import { Utils } from "./utils";

@@ -1,10 +1,11 @@
 import { OcrSelector } from '../ocr-selector/index';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Form, BarcodeStatus, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
-import { DateTime, ModalController } from "ionic-angular";
 import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
+import { DateTime } from 'ionic-angular/components/datetime/datetime';
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 
 @Component({
 	selector: 'form-view',

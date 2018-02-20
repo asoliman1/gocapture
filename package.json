@@ -89,7 +89,9 @@
             },
             "cordova-plugin-device": {},
             "cordova-plugin-filepath": {},
-            "cordova-plugin-geolocation": {},
+            "cordova-plugin-geolocation": {
+                "LOCATION_USAGE_DESCRIPTION": "GoCapture! will need to access yor location"
+            },
             "cordova-plugin-globalization": {},
             "cordova-plugin-network-information": {},
             "cordova-plugin-screen-orientation": {},

@@ -2,8 +2,10 @@ import { Component, Input, forwardRef, NgZone } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
-import { ActionSheetController } from "ionic-angular";
 import { Camera } from '@ionic-native/camera';
+import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
+import { normalizeURL } from 'ionic-angular/util/util';
+import { Platform } from 'ionic-angular/platform/platform';
 declare var cordova: any;
 
 @Component({
@@ -36,6 +38,7 @@ export class Image extends BaseElement {
 	constructor(private fb: FormBuilder,
 				private actionCtrl: ActionSheetController,
 				private camera: Camera,
+				private platform: Platform,
 				private zone: NgZone) {
 		super();
 		this.currentVal = [];
@@ -175,5 +178,9 @@ export class Image extends BaseElement {
 		}else{
 			this.currentVal = obj;
 		}
+	}
+
+	public normalizeURL(url: string): string{
+		return this.platform.is('ios') ? normalizeURL(url) : url;
 	}
 }

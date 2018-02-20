@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import {Nav, LoadingController} from 'ionic-angular';
-import { Platform } from 'ionic-angular';
 import { File } from "@ionic-native/file";
 
 import { Login } from '../views/login';
@@ -12,10 +10,13 @@ import { LogClient } from "../services/log-client";
 import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
-import { ToastController }  from "ionic-angular";
 import { Config } from "../config";
 import {StatusBar} from "@ionic-native/status-bar";
 import {Popup} from "../providers/popup/popup";
+import { Platform } from 'ionic-angular/platform/platform';
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
+import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
+import { Nav } from 'ionic-angular/components/nav/nav';
 
 declare var cordova;
 

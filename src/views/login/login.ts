@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import { LoadingController, NavController, NavParams, PopoverController, ToastController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
 import { UrlChoose } from "./url-choose";
 import { Config } from "../../config";
+import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
+import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
 @Component({
 	selector: 'login',

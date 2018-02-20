@@ -9,10 +9,15 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { NavParams, ActionSheetController, AlertController, ViewController, Content } from "ionic-angular";
+
 import { Form } from "../../model";
 import { ImageProcessor, Info, RecognitionResult } from "../../services/image-processor";
 import { File } from '@ionic-native/file';
+import { Content } from 'ionic-angular/components/content/content';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
+import { ViewController } from 'ionic-angular/navigation/view-controller';
+import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 
 @Component({
 	selector: 'ocr-selector',

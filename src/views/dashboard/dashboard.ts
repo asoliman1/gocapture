@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
-import { NavController, NavParams } from 'ionic-angular';
 
 @Component({
   selector: 'dashboard',

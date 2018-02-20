@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { LoadingController, ViewController, NavParams, PopoverController, ToastController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
+import { ViewController } from 'ionic-angular/navigation/view-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
 @Component({
 	selector: 'url-choose',

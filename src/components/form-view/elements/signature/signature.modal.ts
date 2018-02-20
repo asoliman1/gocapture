@@ -1,6 +1,7 @@
 import { Component, NgZone, ViewChild, HostListener } from '@angular/core';
 import { SignaturePad } from "./signature-pad";
-import { ViewController, Content } from "ionic-angular";
+import { Content } from 'ionic-angular/components/content/content';
+import { ViewController } from 'ionic-angular/navigation/view-controller';
 
 @Component({
 	selector: 'signature-modal',

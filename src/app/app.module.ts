@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { Login, UrlChoose } from "../views/login";
 import { Main } from "../views/main";
@@ -48,6 +47,8 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
+import { IonicApp } from 'ionic-angular/components/app/app-root';
+import { IonicModule } from 'ionic-angular/module';
 
 @NgModule({
   declarations: [

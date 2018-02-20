@@ -15,7 +15,7 @@ limitations under the License.
 
 import { ChangeDetectionStrategy, Component, SimpleChange, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input } from '@angular/core';
 import { Gesture } from 'ionic-angular/gestures/gesture';
-import { Platform } from 'ionic-angular';
+import { Platform } from 'ionic-angular/platform/platform';
 
 export interface FooterMetadata {
   height: number;

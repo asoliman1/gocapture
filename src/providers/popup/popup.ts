@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import {AlertController, Alert} from "ionic-angular";
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { Alert } from 'ionic-angular/components/alert/alert';
 
 
 @Injectable()

@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Nav } from 'ionic-angular';
 import { Forms } from "../forms";
 import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
@@ -8,6 +7,9 @@ import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs/Subscription";
 import { SyncClient } from "../../services/sync-client";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
+import { Nav } from 'ionic-angular/components/nav/nav';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
+import { NavController } from 'ionic-angular/navigation/nav-controller';
 
 @Component({
 	selector: 'main',

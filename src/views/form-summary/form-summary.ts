@@ -1,7 +1,8 @@
 import { Component, NgZone } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
 import { RESTClient } from "../../services/rest-client";
 import { Form } from "../../model";
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
 @Component({
   selector: 'form-summary',

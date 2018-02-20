@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { User } from "../../model";
-import { NavController, NavParams, AlertController, ModalController } from 'ionic-angular';
 import { DBClient } from "../../services/db-client";
 import { BussinessClient } from "../../services/business-service";
 import { AppVersion } from '@ionic-native/app-version';
 import { Login } from "../login";
 import { OcrSelector } from "../../components/ocr-selector";
 import { LogView } from "../log";
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 //import { OcrSelector } from "../../components/ocr-selector";
 declare var screen;
 

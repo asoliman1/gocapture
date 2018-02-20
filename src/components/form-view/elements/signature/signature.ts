@@ -1,10 +1,10 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { SignatureModal} from "./signature.modal";
-import { ModalController} from "ionic-angular"
 import { BaseElement } from "../base-element";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 declare var screen;
 
 @Component({

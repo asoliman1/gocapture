@@ -1,10 +1,10 @@
 import { RESTClient } from '../../../../services/rest-client';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { ToastController } from "ionic-angular";
 import { Component, Input, forwardRef } from '@angular/core';
 import { Form, FormElement, DeviceFormMembership, FormSubmission, BarcodeStatus } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR, AbstractControl, FormControl } from "@angular/forms";
 import { BaseElement } from "../base-element";
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 
 @Component({
 	selector: 'barcoder',

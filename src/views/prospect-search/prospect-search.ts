@@ -1,7 +1,9 @@
 import { Component, NgZone } from '@angular/core';
 import { DeviceFormMembership, Form } from "../../model";
-import { NavController, NavParams, ViewController } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { ViewController } from 'ionic-angular/navigation/view-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
 @Component({
 	selector: 'prospect-search',

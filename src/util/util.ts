@@ -1,3 +1,5 @@
+import { Platform } from "ionic-angular/platform/platform";
+
 /**
  * Jquery clone  
  */
@@ -142,6 +144,6 @@ export class Util{
 
         return type === "array" || length === 0 ||
             typeof length === "number" && length > 0 && ( length - 1 ) in obj;
-    }
+	}
     
 }

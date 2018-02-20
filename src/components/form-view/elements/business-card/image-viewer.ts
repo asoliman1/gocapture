@@ -1,5 +1,6 @@
 import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
-import { ViewController, NavParams } from "ionic-angular";
+import { ViewController } from 'ionic-angular/navigation/view-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
 
 declare var cordova: any;
 declare var screen;

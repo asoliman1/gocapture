@@ -1,6 +1,5 @@
 import { Device } from '@ionic-native/device';
 import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
-import { ActionSheetController, AlertController, ModalController, Platform } from 'ionic-angular';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
@@ -10,6 +9,11 @@ import { Camera } from "@ionic-native/camera";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
 import { ImageViewerController } from 'ionic-img-viewer';
 import { ImageViewer } from "./image-viewer";
+import { normalizeURL } from 'ionic-angular/util/util';
+import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { Platform } from 'ionic-angular/platform/platform';
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 declare var cordova: any;
 declare var screen;
 
@@ -62,15 +66,15 @@ export class BusinessCard extends BaseElement {
 		};
 
 		this.theVal = {
-			front: this.front,
-			back: this.back
+			front: this.normalizeURL(this.front),
+			back: this.normalizeURL(this.back)
 		};
 	}
 
 	ngAfterContentInit(){
 		this.theVal = {
-			front: this.currentVal.front,
-			back: this.currentVal.back
+			front: this.normalizeURL(this.currentVal.front),
+			back: this.normalizeURL(this.currentVal.back)
 		};
 	}
 
@@ -225,10 +229,10 @@ export class BusinessCard extends BaseElement {
 	setValue(type, newPath){
 		if (type == this.FRONT) {
 			this.currentVal.front = newPath;
-			this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+			this.theVal.front = this.normalizeURL(this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + ""));
 		} else {
 			this.currentVal.back = newPath;
-			this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+			this.theVal.back = this.normalizeURL(this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + ""));
 		}
 		var v = {
 			front: null,
@@ -296,6 +300,10 @@ export class BusinessCard extends BaseElement {
 	private viewImage(type){
 		//const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
     	//imageViewer.present();
-		this.modalCtrl.create(ImageViewer, {image: type == this.FRONT ? this.currentVal.front : this.currentVal.back}).present();
+		this.modalCtrl.create(ImageViewer, {image: this.normalizeURL(type == this.FRONT ? this.currentVal.front : this.currentVal.back)}).present();
+	}
+
+	private normalizeURL(url: string): string{
+		return this.platform.is('ios') ? normalizeURL(url) : url;
 	}
 }
