@@ -6,6 +6,7 @@ var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlug
 
 webpackConfig.dev.plugins.push(new BundleAnalyzerPlugin({
 	generateStatsFile: true,
+	openAnalyzer: false,
 	analyzerMode: 'static',
 	reportFilename: "../../.analysis/report3524.html",
 	statsFilename: "../../.analysis/stats3524.json"
@@ -13,6 +14,7 @@ webpackConfig.dev.plugins.push(new BundleAnalyzerPlugin({
 webpackConfig.prod.plugins.push(new BundleAnalyzerPlugin({
 	generateStatsFile: true,
 	analyzerMode: 'static',
+	openAnalyzer: false,
 	reportFilename: "../../.analysis/report3524.html",
 	statsFilename: "../../.analysis/stats3524.json"
 }));

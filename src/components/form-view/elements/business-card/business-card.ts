@@ -66,15 +66,15 @@ export class BusinessCard extends BaseElement {
 		};
 
 		this.theVal = {
-			front: this.normalizeURL(this.front),
-			back: this.normalizeURL(this.back)
+			front: this.front,
+			back: this.back
 		};
 	}
 
 	ngAfterContentInit(){
 		this.theVal = {
-			front: this.normalizeURL(this.currentVal.front),
-			back: this.normalizeURL(this.currentVal.back)
+			front: this.currentVal.front,
+			back: this.currentVal.back
 		};
 	}
 
@@ -229,10 +229,10 @@ export class BusinessCard extends BaseElement {
 	setValue(type, newPath){
 		if (type == this.FRONT) {
 			this.currentVal.front = newPath;
-			this.theVal.front = this.normalizeURL(this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + ""));
+			this.theVal.front = this.currentVal.front.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		} else {
 			this.currentVal.back = newPath;
-			this.theVal.back = this.normalizeURL(this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + ""));
+			this.theVal.back = this.currentVal.back.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
 		}
 		var v = {
 			front: null,
