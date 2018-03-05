@@ -29,6 +29,7 @@ plugins/android.json
 plugins/ios.json
 www/
 .analysis/
+!3rdParty/**/*
 
 $RECYCLE.BIN/
 

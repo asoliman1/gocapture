@@ -52,7 +52,7 @@ export class Barcoder extends BaseElement {
 			this.statusMessage = "Processing...";
 			console.log("Fetching barcode data...");
 			this.client.fetchBarcodeData(scannedData.text, this.element.barcode_provider_id).subscribe( data => {
-				this.statusMessage = "Scan another barcode";
+				this.statusMessage = "Rescan Barcode";
 				console.log("Fetched barcode data: " + JSON.stringify(data));
 				if(!data || data.length == 0){
 					return;
@@ -98,7 +98,7 @@ export class Barcoder extends BaseElement {
 				console.error("Could not fetch barcode data: " + (typeof err == "string" ? err : JSON.stringify(err)));
 				this.form["barcode_processed"] = BarcodeStatus.Queued;
 				this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
-				this.statusMessage = "Scan another barcode";
+				this.statusMessage = "Rescan Barcode";
 				this.form.elements.forEach((element) => {
 					if(element.is_filled_from_barcode){
 						let control = this.getControl(this.formGroup, element["identifier"]);

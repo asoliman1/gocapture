@@ -1,16 +1,16 @@
-{
-    "name": "gocapture",
-    "author": "LeadLiaison",
-    "homepage": "http://leadliaison.com/",
-    "private": true,
-    "scripts": {
+    {
+      "name": "gocapture",
+      "author": "LeadLiaison",
+      "homepage": "http://leadliaison.com/",
+      "private": true,
+      "scripts": {
         "clean": "ionic-app-scripts clean",
         "build": "ionic-app-scripts build",
         "lint": "ionic-app-scripts lint",
         "ionic:build": "ionic-app-scripts build",
         "ionic:serve": "ionic-app-scripts serve"
-    },
-    "dependencies": {
+      },
+      "dependencies": {
         "@angular/animations": "^5.2.2",
         "@angular/common": "5.0.3",
         "@angular/compiler": "5.0.3",
@@ -51,7 +51,7 @@
         "cordova-plugin-filepath": "^1.1.0",
         "cordova-plugin-geolocation": "^4.0.1",
         "cordova-plugin-globalization": "^1.0.9",
-        "cordova-plugin-gocapture-ocr": "file:cordova-plugin-gocapture-ocr",
+        "cordova-plugin-gocapture-ocr": "file:3rdParty/cordova-plugin-gocapture-ocr",
         "cordova-plugin-ionic-keyboard": "^2.0.5",
         "cordova-plugin-ionic-webview": "^1.1.11",
         "cordova-plugin-network-information": "^2.0.1",
@@ -73,55 +73,55 @@
         "signature_pad": "^2.3.2",
         "sw-toolbox": "3.6.0",
         "zone.js": "0.8.18"
-    },
-    "devDependencies": {
+      },
+      "devDependencies": {
         "@ionic/app-scripts": "3.1.8",
         "cordova-android": "7.0.0",
         "typescript": "2.4.2",
         "webpack-bundle-analyzer": "^2.10.0"
-    },
-    "description": "An Ionic project",
-    "cordova": {
+      },
+      "description": "An Ionic project",
+      "cordova": {
         "plugins": {
-            "cordova-plugin-camera": {
-                "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera",
-                "PHOTOLIBRARY_USAGE_DESCRIPTION": "GoCapture! will need to access your photo library"
-            },
-            "cordova-plugin-device": {},
-            "cordova-plugin-filepath": {},
-            "cordova-plugin-geolocation": {
-                "LOCATION_USAGE_DESCRIPTION": "GoCapture! will need to access yor location"
-            },
-            "cordova-plugin-globalization": {},
-            "cordova-plugin-network-information": {},
-            "cordova-plugin-screen-orientation": {},
-            "cordova-plugin-splashscreen": {},
-            "cordova-plugin-statusbar": {},
-            "cordova-sqlite-storage": {},
-            "phonegap-plugin-barcodescanner": {
-                "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera"
-            },
-            "cordova-plugin-file-transfer": {},
-            "phonegap-plugin-push": {
-                "SENDER_ID": "56276941492"
-            },
-            "cordova-plugin-gocapture-ocr": {},
-            "cordova-plugin-ionic-keyboard": {},
-            "cordova-plugin-ionic-webview": {},
-            "cordova-plugin-whitelist": {},
-            "cordova-fabric-plugin": {
-                "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
-                "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
-            },
-            "cordova-support-google-services": {},
-            "cordova-plugin-app-version": {}
+          "cordova-plugin-camera": {
+            "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera",
+            "PHOTOLIBRARY_USAGE_DESCRIPTION": "GoCapture! will need to access your photo library"
+          },
+          "cordova-plugin-device": {},
+          "cordova-plugin-filepath": {},
+          "cordova-plugin-geolocation": {
+            "LOCATION_USAGE_DESCRIPTION": "GoCapture! will need to access yor location"
+          },
+          "cordova-plugin-globalization": {},
+          "cordova-plugin-network-information": {},
+          "cordova-plugin-screen-orientation": {},
+          "cordova-plugin-splashscreen": {},
+          "cordova-plugin-statusbar": {},
+          "cordova-sqlite-storage": {},
+          "phonegap-plugin-barcodescanner": {
+            "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera"
+          },
+          "cordova-plugin-file-transfer": {},
+          "phonegap-plugin-push": {
+            "SENDER_ID": "56276941492"
+          },
+          "cordova-plugin-gocapture-ocr": {},
+          "cordova-plugin-ionic-keyboard": {},
+          "cordova-plugin-ionic-webview": {},
+          "cordova-plugin-whitelist": {},
+          "cordova-fabric-plugin": {
+            "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
+            "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
+          },
+          "cordova-support-google-services": {},
+          "cordova-plugin-app-version": {}
         },
         "platforms": [
-            "android",
-            "ios"
+          "android",
+          "ios"
         ]
-    },
-    "config": {
+      },
+      "config": {
         "ionic_webpack": "./webpack.config.js"
+      }
     }
-}
