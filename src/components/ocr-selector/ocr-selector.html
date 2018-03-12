@@ -19,7 +19,7 @@
 <ion-content class="text-center">
 	<div class="ocr-layout">
 		<div class="holder">
-			<img #card [src]="image">
+			<img #card [src]="normalizeURL(image)">
 			<div class="words-wrapper" [class.overlay]="multiselect">
 				<div class="words" (press)="onPressStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onPressEnd($event)">
 					<div class="word" [class.assigned]="word.assigned" [class.selected]="word.selected" *ngFor="let word of wordElements; let i = index" [id]="i" (click)="wordClicked(word)" [style.width]="word.width"
@@ -33,9 +33,9 @@
 			<ion-spinner></ion-spinner>
 		</div>
 	</div>
-	<selection-view [form]="form" 
-					[submission]="submission" 
-					(select)="onSelect($event)" 
+	<selection-view [form]="form"
+					[submission]="submission"
+					(select)="onSelect($event)"
 					[outsideChanged]="valuesToPropagate"
 					(inputChange)="propagateDirectChanges($event)"></selection-view>
 </ion-content>

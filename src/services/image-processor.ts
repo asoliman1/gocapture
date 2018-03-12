@@ -19,7 +19,7 @@ export class ImageProcessor{
 		return new Observable<Info>((obs: Observer<Info>) => {
 			console.log("Ensure landscape started ");
 			let start = new Date().getTime();
-			var image: any = document.createElement("img");
+			let image: any = document.createElement("img");
 			let t = this;
 			image.onload = function (event: any) {
 				if (preserveCanvas || image.naturalWidth >= image.naturalHeight) {
@@ -30,11 +30,11 @@ export class ImageProcessor{
 						data: null,
 						isDataUrl: false
 					});
-					console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms")
+					console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms");
 					obs.complete();
 					return;
 				}
-				t.setupCanvas(image.naturalHeight, image.naturalWidth)
+				t.setupCanvas(image.naturalHeight, image.naturalWidth);
 				t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
 				t.ctx.rotate(Math.PI / 2);
 				t.ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
@@ -45,7 +45,7 @@ export class ImageProcessor{
 					data: null,
 					isDataUrl: true
 				});
-				console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms")
+				console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms");
 				obs.complete();
 				//if(!preserveCanvas){
 					t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
@@ -57,10 +57,10 @@ export class ImageProcessor{
 
 	public flip(url: string): Observable<Info> {
 		return new Observable<Info>((obs: Observer<Info>) => {
-			var image: any = document.createElement("img");
+			let image: any = document.createElement("img");
 			let t = this;
 			image.onload = function (event: any) {
-				t.setupCanvas(image.naturalWidth, image.naturalHeight)
+				t.setupCanvas(image.naturalWidth, image.naturalHeight);
 				t.ctx.translate(t.canvas.width / 2, t.canvas.height / 2);
 				t.ctx.rotate(Math.PI);
 				t.ctx.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
@@ -79,18 +79,17 @@ export class ImageProcessor{
 	}
 
 	public dataURItoBlob(dataURI: string): Blob {
-		var arr = dataURI.split(',');
-		var byteString = atob(arr[1]);
-		var mimeString = arr[0].split(':')[1].split(';')[0]
+		let arr = dataURI.split(',');
+    let byteString = atob(arr[1]);
+    let mimeString = arr[0].split(':')[1].split(';')[0];
 
-		var ab = new ArrayBuffer(byteString.length);
-		var ia = new Uint8Array(ab);
-		for (var i = 0; i < byteString.length; i++) {
+    let ab = new ArrayBuffer(byteString.length);
+    let ia = new Uint8Array(ab);
+		for (let i = 0; i < byteString.length; i++) {
 			ia[i] = byteString.charCodeAt(i);
 		}
 
-		var blob = new Blob([ab], { type: mimeString });
-		return blob;
+    return new Blob([ab], { type: mimeString });
 	}
 
 	public recognize(data: string): Observable<RecognitionResult>{
@@ -124,7 +123,7 @@ export class ImageProcessor{
 
 	private processCurrentImage(): string{
 		let pix = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-		for (var i = 0; i < pix.data.length; i+= 4) {
+		for (let i = 0; i < pix.data.length; i+= 4) {
 			let contrastF = 1.36;
 			let saturate = -1;
 			//up the contrast

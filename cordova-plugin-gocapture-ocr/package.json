@@ -14,12 +14,6 @@
     "ocr",
     "ecosystem:cordova"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=7.0.0"
-    }
-  ],
   "author": "",
   "license": "ISC",
   "dependencies": {

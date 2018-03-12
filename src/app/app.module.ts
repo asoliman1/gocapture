@@ -49,6 +49,7 @@ import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
 import { IonicModule } from 'ionic-angular/module';
+import { Util } from "../util/util";
 
 @NgModule({
   declarations: [
@@ -129,7 +130,8 @@ import { IonicModule } from 'ionic-angular/module';
       useFactory: httpFactory,
       deps: [XHRBackend, RequestOptions]
     },
-    Popup
+    Popup,
+    Util
   ]
 })
 export class AppModule { }
