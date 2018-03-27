@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, NgZone} from '@angular/core';
 import { User } from "../../model";
 import { DBClient } from "../../services/db-client";
 import { BussinessClient } from "../../services/business-service";
@@ -10,6 +10,7 @@ import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
+import {App} from "ionic-angular";
 //import { OcrSelector } from "../../components/ocr-selector";
 declare var screen;
 
@@ -30,7 +31,8 @@ export class Settings {
 		private client: BussinessClient,
 		private alertCtrl: AlertController,
 		private modalCtrl: ModalController,
-		private appVersion: AppVersion) {
+		private appVersion: AppVersion,
+    public app: App) {
 		this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
@@ -105,7 +107,7 @@ export class Settings {
 						this.client.unregister(this.user).subscribe(()=>{
 							//this.user = <any>{};
 							setTimeout(()=>{
-								this.navCtrl.setRoot(Login, {unauthenticated: true});
+                this.app.getRootNav().setRoot(Login, {unauthenticated: true});
 							}, 300);
 						});
 					}

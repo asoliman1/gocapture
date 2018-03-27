@@ -1,6 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild, NgZone} from '@angular/core';
 import { Forms } from "../forms";
-import { Dispatches } from "../dispatches";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
@@ -10,6 +9,7 @@ import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-p
 import { Nav } from 'ionic-angular/components/nav/nav';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
+import {Util} from "../../util/util";
 
 @Component({
 	selector: 'main',
@@ -21,9 +21,9 @@ export class Main {
 
 	rootPage: any = Forms;
 
-	user: User = new User();	
+	user: User = new User();
 
-	uploading: boolean = true;	
+	uploading: boolean = true;
 
 	loadingTrigger = false;
 
@@ -37,10 +37,12 @@ export class Main {
 
 	@ViewChild('pullup') pullup: IonPullUpComponent;
 
-	constructor(private navCtrl: NavController,
+	constructor(
+	  private navCtrl: NavController,
 		private navParams: NavParams,
-		private client: BussinessClient,
-		private syncClient: SyncClient) {
+		public client: BussinessClient,
+		private syncClient: SyncClient,
+    private util: Util) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Forms', component: Forms, icon: "document" },
@@ -80,7 +82,7 @@ export class Main {
 		}, function(reason) {
 			console.error(reason);
 		});
-		this.client.getUpdates().subscribe(done => {			
+		this.client.getUpdates().subscribe(done => {
 			setTimeout(()=>{
 				this.client.doAutoSync();
 			}, 350);
@@ -172,5 +174,4 @@ export class Main {
 		}
 		return formName;
 	}
-
 }

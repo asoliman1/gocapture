@@ -50,6 +50,7 @@ import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
 import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
+import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { Util } from "../util/util";
     FormCapture,
     ArrayFilterPipe,
     FormControlPipe,
+    AvatarPathUpdaterPipe,
     FormView,
     LogView,
     SignaturePad,

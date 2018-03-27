@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, NgZone} from '@angular/core';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
@@ -9,6 +9,7 @@ import { ToastController } from 'ionic-angular/components/toast/toast-controller
 import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
+import {App} from "ionic-angular";
 
 @Component({
 	selector: 'login',
@@ -28,8 +29,8 @@ export class Login {
 		private client: BussinessClient,
 		private loading: LoadingController,
 		private toast: ToastController,
-		private popoverCtrl: PopoverController) {
-
+		private popoverCtrl: PopoverController,
+    public app: App) {
 	}
 
 	ngOnInit() {
@@ -77,11 +78,10 @@ export class Login {
 			});
 			loader.present();
 			Config.isProd = this.useProd;
-			this.client.authenticate(this.email, this.authCode).subscribe(
-				data => {
+			this.client.authenticate(this.email, this.authCode)
+        .subscribe(data => {
 					loader.setContent(data.message);
-				},
-				err => {
+				}, err => {
 					loader.dismiss();
 					let toaster = this.toast.create({
 						message: err,
@@ -90,8 +90,7 @@ export class Login {
 						cssClass: "error"
 					});
 					toaster.present();
-				},
-				() => {
+				}, () => {
 					loader.dismiss();
 					this.navCtrl.setRoot(Main);
 				});

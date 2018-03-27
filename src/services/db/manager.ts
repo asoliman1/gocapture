@@ -32,9 +32,9 @@ export class Manager{
 				setTimeout(() => {
 					obs.next(this.map[type].db);
 					obs.complete();
-				})
+				});
 				return;
-			} 			
+			}
 			if(this.map[type] && this.map[type].obs){
 				this.doSubscribe(type, this.map[type].obs, obs);
 			}else if(this.map[type]){
