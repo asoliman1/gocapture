@@ -32,6 +32,11 @@ export class Barcoder extends BaseElement {
 	}
 
 	scan(){
+
+    if(this.readonly){
+      return;
+    }
+
 		this.statusMessage = "Scanning...";
 		console.log("Barcode scan started");
 		this.barcodeScanner.scan().then((scannedData) => {

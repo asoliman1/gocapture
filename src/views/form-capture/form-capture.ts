@@ -166,7 +166,8 @@ export class FormCapture {
   }
 
   private internalBack(){
-    if (!this.formView.hasChanges()) {
+
+    if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
       this.navCtrl.pop();
       return;
     }

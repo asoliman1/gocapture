@@ -1,12 +1,20 @@
 <ion-header>
 	<ion-navbar color="orange" #navbar>
-		<ion-title>{{form ? form.name : ''}}</ion-title>
-		<ion-buttons end>
+
+    <ion-title>{{form ? form.name : ''}}</ion-title>
+
+    <ion-buttons end>
 			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission)">
 				Submit
 			</button>
+
+      <button ion-button *ngIf="isReadOnly(submission)">
+        Is read only
+      </button>
+
 		</ion-buttons>
 	</ion-navbar>
+
   <ion-toolbar *ngIf="errorMessage && errorMessage.length > 0">
     <div class="error-message" >{{errorMessage}}</div>
   </ion-toolbar>
