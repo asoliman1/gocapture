@@ -157,7 +157,7 @@ export class BusinessCard extends BaseElement {
 
           let newFolder = this.file.dataDirectory + "leadliaison/images";
           let name = imageData.substr(imageData.lastIndexOf("/") + 1);
-          let newName = new Date().getTime() + name.substring(name.lastIndexOf("."));
+          let newName = new Date().getTime() + '.jpeg';
           let promise: Promise<any>;
 
           promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));

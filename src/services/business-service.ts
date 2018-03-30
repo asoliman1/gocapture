@@ -105,30 +105,13 @@ export class BussinessClient {
 			}));
 
 			this.pushSubs.push(this.push.notification.subscribe((note) => {
-				if(!note){
+
+			  if(!note){
 					return;
 				}
 
-				console.log('Push received - ' + JSON.stringify(note));
+				this.handlePush(note);
 
-				if (note.action == 'sync') {
-				  this.db.getConfig("lastSyncDate").subscribe(time => {
-				    let d = new Date();
-				    if (time) {
-				      d.setTime(parseInt(time));
-				    }
-				    this.sync.download(time ? d : null,).subscribe(data => {
-				      //
-              }, (err) => {
-                //obs.error(err);
-              }, () => {
-				      console.log("sync-ed");
-				      this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-				        //
-              });
-				    });
-          });
-        }
 			}));
 
 			this.pushSubs.push(this.push.registration.subscribe((regId)=>{
@@ -397,4 +380,38 @@ export class BussinessClient {
 			});
 		});
 	}
+
+	//MARK: Private
+
+  private handlePush(note) {
+    console.log('Push received - ' + JSON.stringify(note));
+
+    if (note.action == 'sync') {
+      this.db.getConfig("lastSyncDate").subscribe(time => {
+        let d = new Date();
+        if (time) {
+          d.setTime(parseInt(time));
+        }
+        this.sync.download(time ? d : null,).subscribe(data => {
+          //
+        }, (err) => {
+          //obs.error(err);
+        }, () => {
+          console.log("sync-ed");
+          this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+            //
+          });
+        });
+      });
+    } else if (note.action == 'resync') {
+      this.sync.download(null).subscribe(data => {
+        //
+      }, (err) => {
+        //obs.error(err);
+      }, () => {
+        console.log("resync-ed");
+        this.db.saveConfig("lastSyncDate", new Date().getTime() + "");
+      });
+    }
+  }
 }

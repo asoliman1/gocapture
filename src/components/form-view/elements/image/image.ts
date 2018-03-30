@@ -6,6 +6,8 @@ import { Camera } from '@ionic-native/camera';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { normalizeURL } from 'ionic-angular/util/util';
 import { Platform } from 'ionic-angular/platform/platform';
+import {Util} from "../../../../util/util";
+import {ImageProcessor} from "../../../../services/image-processor";
 declare var cordova: any;
 
 @Component({
@@ -39,7 +41,9 @@ export class Image extends BaseElement {
 				private actionCtrl: ActionSheetController,
 				private camera: Camera,
 				private platform: Platform,
-				private zone: NgZone) {
+				private zone: NgZone,
+        public util: Util,
+        private imageProc: ImageProcessor,) {
 		super();
 		this.currentVal = [];
 	}
@@ -64,58 +68,6 @@ export class Image extends BaseElement {
 			return;
 		}
 
-		let onImageReceived = (imageData) => {
-			if (!this.currentVal) {
-				this.currentVal = [];
-			}
-			let t = this;
-			//TODO find a more generic way of handling file move/copy
-			if(imageData.indexOf("content://") == 0 && window["FilePath"]){
-				window["FilePath"].resolveNativePath(imageData, (path) => {
-					t.moveFile(path, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-						t.currentVal.unshift(newPath);
-						t.propagateChange(t.currentVal);
-					}, (err) => {
-						console.error(err);
-					})
-				}, (err)=> {
-					console.error(err);
-				});
-			}else if(imageData.indexOf("assets-library://") == 0){
-				let t = this;
-				window["resolveLocalFileSystemURL"](imageData, (fileEntry) => {
-					fileEntry.file((file) => {
-						var reader = new FileReader();
-						reader.onloadend = (event) => {
-							console.log((<any>event.target).result);
-							let blob = new Blob([(<any>event.target).result], {type: file.type});
-							t.writeFile(cordova.file.dataDirectory + "leadliaison/images", file.name, blob).subscribe((newPath) => {
-							  if (t.checkFileExistAtPath(newPath)) {
-							    console.log('File at path - ' + newPath + ' exists');
-                  t.zone.run(()=>{
-                    t.currentVal.unshift(newPath);
-                    t.propagateChange(t.currentVal);
-                  });
-                } else {
-                  console.error('File doesn\'t exist at path - ' + newPath);
-                }
-							}, (err) => {
-								console.error(err);
-							});
-						};
-						console.log('Reading file: ' + file.name);
-						reader.readAsArrayBuffer(file);
-					});
-				});
-			}else{
-				this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
-					this.currentVal.unshift(newPath);
-					this.propagateChange(this.currentVal);
-				}, (err) => {
-					console.error(err);
-				})
-			}
-		};
 		let camera = this.camera;
 		let sheet = this.actionCtrl.create({
 			title: "",
@@ -127,8 +79,11 @@ export class Image extends BaseElement {
 							sourceType: 1,
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
-							targetHeight:1000
-						}).then(onImageReceived)
+							targetHeight:1000,
+              destinationType: this.camera.DestinationType.DATA_URL
+						}).then((imageData) => {
+						  this.onImageReceived(imageData);
+            })
 							.catch(err => {
 								console.error(err);
 							});
@@ -142,8 +97,10 @@ export class Image extends BaseElement {
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
 							targetHeight:1000,
-							destinationType: 2
-						}).then(onImageReceived)
+							destinationType: this.camera.DestinationType.DATA_URL
+						}).then((imageData) => {
+              this.onImageReceived(imageData);
+            })
 							.catch(err => {
 								console.error(err);
 							});
@@ -180,7 +137,34 @@ export class Image extends BaseElement {
 		}
 	}
 
-	public normalizeURL(url: string): string{
-		return this.platform.is('ios') ? normalizeURL(url) : url;
+	public  normalizeURL(url: string): string{
+		return this.util.normalizeURL(url);
 	}
+
+	private onImageReceived(imageData) {
+    if (!this.currentVal) {
+      this.currentVal = [];
+    }
+
+    let t = this;
+
+    imageData = 'data:image/jpeg;base64,' + imageData;
+
+    let newFolder = this.file.dataDirectory + "leadliaison/images";
+    let newName = new Date().getTime() + '.jpeg';
+
+    t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
+      if (t.checkFileExistAtPath(newPath)) {
+        console.log('File at path - ' + newPath + ' exists');
+        t.zone.run(()=>{
+          t.currentVal.unshift(newPath);
+          t.propagateChange(t.currentVal);
+        });
+      } else {
+        console.error('File doesn\'t exist at path - ' + newPath);
+      }
+    }, (err) => {
+      console.error(err);
+    });
+  }
 }
