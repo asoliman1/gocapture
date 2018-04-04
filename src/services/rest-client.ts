@@ -543,10 +543,12 @@ export class RESTClient {
 				})
 				.subscribe(
 				response => {
+          console.log('Response - ' + JSON.stringify(response));
 					responseObserver.next(response as T);
 					responseObserver.complete();
 				},
 				(err) => {
+          console.error('ERROR - ' + JSON.stringify(err));
 				  let error = err.json();
 					this.errorSource.next(error);
 					responseObserver.error(error);
