@@ -257,7 +257,7 @@ export class SyncClient {
 						if(!barcodeData || barcodeData.length == 0){
 							return;
 						}
-						submission.barcode_processed = BarcodeStatus.Processed;						
+						submission.barcode_processed = BarcodeStatus.Processed;
 						barcodeData.forEach(entry => {
 							let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
 							if(!id){
@@ -265,7 +265,7 @@ export class SyncClient {
 							}
 							submission.fields[id] = entry.value;
 						});
-						
+
 						this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
 							this.actuallySubmitForm(data.form.name, submission, obs);
 						}, (err) => {
@@ -342,13 +342,16 @@ export class SyncClient {
 			}
 			let index = 0;
 			let urls = Object.keys(urlMap);
-			let transfer = new Transfer();
-			let request = new FileUploadRequest();
+
+      let filesUploader = [];
+
 			let handler = () => {
+        let request = new FileUploadRequest();
 				if (index >= urls.length) {
-					this.rest.uploadFiles(request).subscribe((data) => {
+          Observable.zip(...filesUploader).subscribe((data) => {
 						urls.forEach((url, index) => {
-							urlMap[url] = data[index].url;
+						  let dataFile = data[index];
+							urlMap[url] = dataFile[0]['url'];
 						});
 						obs.next(data);
 						obs.complete();
@@ -358,13 +361,9 @@ export class SyncClient {
 				} else {
 					if (this.dataUrlRegexp.test(urls[index])) {
 						let data = urls[index];
-						let entry = new FileInfo();
-						let d = data.split(";base64,");
-						entry.mime_type = d[0].substr(5);
-						entry.data = d[1];
-						entry.name = "sig" + new Date().getTime();
-						entry.size = atob(entry.data).length;
+						let entry = this.createFile(data, "sig" + new Date().getTime(), 0);
 						request.files.push(entry);
+            filesUploader.push(this.rest.uploadFiles(request));
 						index++;
 						handler();
 						return;
@@ -376,13 +375,9 @@ export class SyncClient {
 							fileEntry.getMetadata((metadata) => {
 								//data:[<mediatype>][;base64],<data>
 								this.file.readAsDataURL(folder, file).then((data: string) => {
-									let entry = new FileInfo();
-									let d = data.split(";base64,");
-									entry.data = d[1];
-									entry.name = file;
-									entry.size = metadata.size;
-									entry.mime_type = d[0].substr(5);
+								  let entry = this.createFile(data, file, metadata.size);
 									request.files.push(entry);
+                  filesUploader.push(this.rest.uploadFiles(request));
 									index++;
 									handler();
 								}).catch((err) => {
@@ -398,10 +393,24 @@ export class SyncClient {
 						obs.error(err);
 					});
 				}
-			}
+			};
 			handler();
 		});
 	}
+
+	private createFile(data, name, size) {
+    let entry = new FileInfo();
+    let d = data.split(";base64,");
+    entry.data = d[1];
+    entry.name = name;
+    entry.size = size;
+
+    if (entry.size == 0) {
+      entry.size = atob(entry.data).length;
+    }
+    entry.mime_type = d[0].substr(5);
+    return entry;
+  }
 
 	private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<Form[]> {
 		return new Observable<any>(obs => {
@@ -448,10 +457,10 @@ export class SyncClient {
 						}, err => {
 							obs.error(err);
 						});
-					});				
+					});
 				});
 			});
-			
+
 		});
 	}
 
