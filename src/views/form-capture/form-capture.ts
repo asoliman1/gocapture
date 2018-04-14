@@ -203,7 +203,6 @@ export class FormCapture {
     }
 
     if (!this.valid) {
-
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
@@ -261,9 +260,9 @@ export class FormCapture {
   }
 
   isEmailOrNameInputted() {
-    let firstName;
-    let lastName;
-    let email;
+    let firstName = "";
+    let lastName = "";
+    let email = "";
 
     let fields = this.formView.getValues();
     this.form.elements.forEach(element => {
@@ -273,7 +272,7 @@ export class FormCapture {
           lastName = <any>fields[element["identifier"] + "_2"] || "";
           break;
         case "email":
-          email = <any>this.submission.fields[element["identifier"]] || "";
+          email = <any>fields[element["identifier"]] || "";
           break;
       }
     });
