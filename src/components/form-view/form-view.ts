@@ -98,20 +98,42 @@ export class FormView {
 				this.displayForm = <any>{};
 			}
 		} else if (changes['prospect'] && this.prospect) {
-			var foundEmail, foundName;
-			for (let i = 0; i < this.form.elements.length; i++) {
-				if (this.form.elements[i].type == "email" && !foundEmail) {
-					this.theForm.get("element_" + this.form.elements[i].id).setValue(this.prospect.fields["Email"]);
-					foundEmail = true;
-				} else if (this.form.elements[i].type == "simple_name" && !foundName) {
-					var id = "element_" + this.form.elements[i].id;
-					this.theForm.get(id).get(id + "_1").setValue(this.prospect.fields["FirstName"]);
-					this.theForm.get(id).get(id + "_2").setValue(this.prospect.fields["LastName"]);
-					foundName = true;
-				}
+		  let keys = Object.keys(this.prospect.fields);
+			for (let i = 0; i < keys.length; i ++) {
+        let key = keys[i];
+			  let element = this.getElementForProspectItemId(key);
+			  if (element) {
+			    let value = this.prospect.fields[key];
+			    if (value) {
+            element.setValue(value);
+          }
+        }
 			}
 		}
 	}
+
+	getElementForProspectItemId(identifier) {
+	  let el;
+    for (let i = 0; i < this.form.elements.length; i++) {
+      let element = this.form.elements[i];
+      let id = "element_" + element.id;
+      let hasSubelements = element["sub_elements"].length > 0;
+
+      for (let j = 0; j < element.mapping.length; j++) {
+        let subelement = element.mapping[j];
+        if (subelement["ll_field_unique_identifier"] == identifier) {
+          el = this.theForm.get(id);
+          if (hasSubelements) {
+            let subId = id + "_" + (j + 1);
+
+            el = this.theForm.get(id).get(subId);
+          }
+          return el;
+        }
+      }
+    }
+    return el;
+  }
 
 	private setupFormGroup() {
 		if (this.sub) {
