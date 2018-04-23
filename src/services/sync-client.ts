@@ -64,7 +64,7 @@ export class SyncClient {
 				contacts: new SyncStatus(false, false, 0, "Contacts", 0),
 				dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
 				submissions: new SyncStatus(false, false, 0, "Submissions", 0)
-			}
+			};
 			this._isSyncing = true;
 			this.lastSyncStatus = [
 				map["forms"],
@@ -90,7 +90,12 @@ export class SyncClient {
 						this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
 							obs.next(result);
 							console.log("Downloading contacts 1");
-							this.downloadContacts(filteredForms, shouldDownloadAllContacts ? null : lastSyncDate, map, result).subscribe(() => {
+
+							let formsWithList = filteredForms.filter((form) => {
+							  return form.list_id > 0;
+              });
+
+							this.downloadContacts(formsWithList, shouldDownloadAllContacts ? null : lastSyncDate, map, result).subscribe(() => {
 								obs.next(result);
 								obs.complete();
 								this.syncCleanup();

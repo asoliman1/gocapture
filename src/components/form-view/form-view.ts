@@ -247,7 +247,7 @@ export class FormView {
 	      invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
-    return invalidControls.length > 0 ? ("please check the following fields: " + invalidControls.join(', ')) : "";
+    return invalidControls.length > 0 ? ("Please check the following fields: " + invalidControls.join(', ')) : "";
   }
 
   private getNameForElementWithId(id) {

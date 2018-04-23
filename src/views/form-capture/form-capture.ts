@@ -197,7 +197,7 @@ export class FormCapture {
     this.submitAttempt = true;
 
     if (!this.isEmailOrNameInputted()) {
-      this.errorMessage = "email or name is required";
+      this.errorMessage = "Email or name is required";
       this.content.resize();
       return;
     }

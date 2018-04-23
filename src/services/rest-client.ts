@@ -383,13 +383,13 @@ export class RESTClient {
 			let doTheCall = ()=>{
 				let params = <any>{
 					form_id: forms[index].form_id
-				}
+				};
 				let syncDate =  newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 				if(syncDate){
 					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
-			}
+			};
 			doTheCall();
 		});
 	}
