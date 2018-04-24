@@ -6,6 +6,7 @@ export class Form extends BaseForm{
 	created_at : string;
 	updated_at : string;
 	archive_date : string;
+  members_last_sync_date: string;
 	list_id : number;
 	title : string;
 	success_message : string;

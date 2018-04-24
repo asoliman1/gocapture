@@ -95,10 +95,22 @@ export class SyncClient {
 							  return form.list_id > 0;
               });
 
-							this.downloadContacts(formsWithList, shouldDownloadAllContacts ? null : lastSyncDate, map, result).subscribe(() => {
-								obs.next(result);
-								obs.complete();
-								this.syncCleanup();
+							this.downloadContacts(formsWithList, map, result).subscribe(() => {
+
+							  formsWithList.forEach((form) => {
+							    form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
+                });
+
+							  this.db.saveForms(formsWithList).subscribe(result => {
+							    //
+                }, (err) => {
+							    console.error(err);
+                }, () => {
+                  obs.next(result);
+                  obs.complete();
+                  this.syncCleanup();
+                });
+
 							}, (err) => {
 								obs.error(err);
 								this.syncCleanup();
@@ -445,7 +457,7 @@ export class SyncClient {
 							result.forms = forms;
 							forms.forEach((form) => {
 								form.id = form.form_id + "";
-							})
+							});
 							mapEntry.percent = 50;
 							this.syncSource.next(this.lastSyncStatus);
 							this.db.saveForms(forms).subscribe(reply => {
@@ -469,13 +481,13 @@ export class SyncClient {
 		});
 	}
 
-	private downloadContacts(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
+	private downloadContacts(forms: Form[], map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
 		return new Observable<any>(obs => {
 			let mapEntry = map["contacts"];
 			mapEntry.loading = true;
 			mapEntry.percent = 10;
 			console.log("Downloading contacts 2");
-			this.rest.getAllDeviceFormMemberships(forms, lastSyncDate, result.newFormIds).subscribe((contacts) => {
+			this.rest.getAllDeviceFormMemberships(forms, result.newFormIds).subscribe((contacts) => {
 				console.log("Downloading contacts 3");
 				result.memberships.push.apply(result.memberships, contacts);
 				mapEntry.percent = 50;

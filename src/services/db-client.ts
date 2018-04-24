@@ -47,8 +47,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, members_last_sync_date, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)",
 				"deleteAll": "delete from forms"
@@ -134,7 +134,7 @@ export class DBClient {
 				"delete": "delete from contact_forms where formId=?",
 				"deleteIn": "delete from contact_forms where formId in (?)",
 				"getAll": "select id, formId from contacts where formId is not NULL",
-				"deleteAll": "delete from contact_forms"				
+				"deleteAll": "delete from contact_forms"
 			}
 		},
 		{
@@ -275,7 +275,7 @@ export class DBClient {
 						}, err => {
 							console.error(err);
 						});
-						
+
 					});
 				},
 				queries: []
@@ -285,10 +285,15 @@ export class DBClient {
 					"alter table submissions add column barcode_processed integer default 0"
 				]
 			},
+      9: {
+        queries: [
+          "alter table forms add column members_last_sync_date VARCHAR(50)"
+        ]
+      },
 		}
 	};
 	/**
-	 * 
+	 *
 	 */
 	constructor(private platform: Platform) {
 		this.migrator = new Migrator();
@@ -297,7 +302,7 @@ export class DBClient {
 		this.manager.registerDb("tradeshow.db", MASTER, true);
 	}
 	/**
-	 * 
+	 *
 	 */
 	public setupWorkDb(dbName) {
 		this.manager.registerDb(dbName + ".db", WORK, false);
@@ -307,7 +312,7 @@ export class DBClient {
 		return this.manager.isDbInited(WORK);
 	}
 	/**
-	 * 
+	 *
 	 */
 	public getConfig(key: string): Observable<string> {
 		return this.getSingle<any>(WORK, "configuration", [key])
@@ -317,7 +322,7 @@ export class DBClient {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public getAllConfig(): Observable<Object> {
 		return this.getAll<any[]>(WORK, "configuration", [])
@@ -330,13 +335,13 @@ export class DBClient {
 			});
 	}
 	/**
-	 * 
+	 *
 	 */
 	public saveConfig(key: string, value: string): Observable<boolean> {
 		return this.save(WORK, "configuration", [key, value]);
 	}
 	/**
-	 * 
+	 *
 	 */
 	public deleteConfig(key: string): Observable<boolean> {
 		return this.remove(WORK, "configuration", [key]);
@@ -355,6 +360,7 @@ export class DBClient {
 		form.list_id = parseInt(dbForm.listId + "");
 		form.name = dbForm.name;
 		form.archive_date = dbForm.archive_date;
+		form.members_last_sync_date = dbForm.members_last_sync_date;
 		form.created_at = dbForm.created_at;
 		form.updated_at = dbForm.updated_at;
 		form.success_message = dbForm.success_message;
@@ -371,7 +377,7 @@ export class DBClient {
 					return 1;
 				}
 				return 0;
-			})
+			});
 			form.elements.forEach((e) => {
 				if (e.options && e.options.length > 0) {
 					e.options.sort((o1, o2): number => {
@@ -424,8 +430,11 @@ export class DBClient {
 	}
 
 	public saveForm(form: Form): Observable<boolean> {
-		//id, name, list_id, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
-		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description, form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at, JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0]);
+		//id, name, list_id, title, description, success_message, submit_error_message, submit_button_text, created_at,
+    // updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
+		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
+      form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
+      JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -464,7 +473,7 @@ export class DBClient {
 		});
 	}
 	/**
-	 * 
+	 *
 	 */
 	public getRegistration(): Observable<User> {
 		return this.getSingleWithCleanup<any>(MASTER, "org_master", null)
@@ -698,8 +707,8 @@ export class DBClient {
 							}, err => {
 								obs.error(err);
 							}
-						);			
-						
+						);
+
 					}, (err) => {
 						obs.error("An error occured: " + JSON.stringify(err));
 					});
@@ -725,7 +734,7 @@ export class DBClient {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public saveRegistration(user: User): Observable<boolean> {
 		user.db = user.customer_account_name.replace(/\s*/g, '') + (user.is_production == 1 ? "_prod" : "_dev");
@@ -828,7 +837,7 @@ export class DBClient {
 					params.push.apply(params, this.saveAllData[i].parameters);
 				}
 				let isDone = done;
-	
+
 				db.executeSql(query, params)
 					.then((data) => {
 						this.saveAllData = [];
@@ -850,7 +859,6 @@ export class DBClient {
 						this.saveAllData = [];
 						obs.error(err);
 					});
-				
 			};
 			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
@@ -951,7 +959,7 @@ export class DBClient {
 	private getMultiple<T>(type: string, table: string, parameters: any[]): Observable<T[]> {
 		return this.doGet<T>(type, "select", table, parameters);
 	}
-	
+
 	private getAll<T>(type: string, table: string, params?: any[]): Observable<T[]> {
 		return this.doGet<T>(type, "selectAll", table, params);
 	}
