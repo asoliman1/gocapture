@@ -72,9 +72,20 @@ export class BusinessCard extends BaseElement {
 
   ngAfterContentInit(){
     this.theVal = {
-      front: this.currentVal.front,
-      back: this.currentVal.back
+      front: this.imageUrl(this.currentVal.front),
+      back: this.imageUrl(this.currentVal.back)
     };
+  }
+
+  private imageUrl(path) {
+    //if local image
+    if (path.startsWith("assets")) {
+      return path;
+    }
+    let folder = this.file.dataDirectory + "leadliaison/images";
+    let name = path.substr(path.lastIndexOf("/") + 1);
+    let url = folder + "/" + name;
+    return this.util.normalizeURL(url);
   }
 
   captureImage(type: number) {

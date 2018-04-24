@@ -141,6 +141,14 @@ export class Image extends BaseElement {
 		return this.util.normalizeURL(url);
 	}
 
+  private imageUrl(path) {
+
+    let folder = this.file.dataDirectory + "leadliaison/images";
+    let name = path.substr(path.lastIndexOf("/") + 1);
+    let url = folder + "/" + name;
+    return this.normalizeURL(url);
+  }
+
 	private onImageReceived(imageData) {
     if (!this.currentVal) {
       this.currentVal = [];
