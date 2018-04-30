@@ -138,7 +138,7 @@ export class OcrSelector {
       let folder = image.substr(0, image.lastIndexOf("/"));
       new File().writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
         z.run(() => {
-          t.image = t.info.dataUrl.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "");
+          t.image = t.info.dataUrl.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "");
           t.info.dataUrl = t.image;
           t.ionViewDidEnter();
         });

@@ -321,6 +321,6 @@ export class BusinessCard extends BaseElement {
 	}
 
 	private adjustImagePath(path) {
-    return path.replace(/\?.*/, "") + "?" + parseInt(((1 + Math.random())*1000) + "")
+    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "")
   }
 }
