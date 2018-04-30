@@ -19,7 +19,7 @@ export class Checkboxes extends BaseElement {
 		super();
 	}
 
-	writeValue(obj: any): void{
+	writeValue(obj: any): void {
 		if(!obj){
 			obj = [];
 			for(let i = 0; i < this.element.options.length; i++){
@@ -28,6 +28,11 @@ export class Checkboxes extends BaseElement {
 				}
 			}
 		}
+
+    if (typeof obj === 'string') {
+      obj = obj.split(';');
+    }
+
 		this.currentVal = obj;
 	}
 
@@ -44,7 +49,8 @@ export class Checkboxes extends BaseElement {
 		this.propagateChange(this.currentVal);
 	}
 
-	has(values: any[], option){
+	has(values: any[], option) {
+
 		return values && values.filter((val)=>{
 			return val == option.option;
 		}).length > 0;

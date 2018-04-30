@@ -40,7 +40,7 @@
     "@ionic/storage": "2.1.3",
     "angular2-signaturepad": "^2.6.1",
     "angular2-text-mask": "^8.0.4",
-    "cordova-android": "6.3.0",
+    "cordova-android": "7.1.0",
     "cordova-clipboard": "^1.2.0",
     "cordova-fabric-plugin": "git+https://github.com/AlexandruCiobanu/FabricPlugin.git",
     "cordova-ios": "4.5.4",
@@ -121,7 +121,8 @@
       "cordova-plugin-gocapture-ocr": {}
     },
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "config": {
