@@ -1,13 +1,13 @@
 <div class="business card">
 	<ion-row>
 		<ion-col>
-			<button ion-button color="light" (click)="captureImage(FRONT)">
+			<button type="button" ion-button color="light" (click)="captureImage(FRONT)">
 				<img #frontImage [class.hidden]="frontLoading" [src]="normalizeURL(theVal.front)" (load)="onImageLoaded($event, true)">
 				<ion-spinner [class.hidden]="!frontLoading"></ion-spinner>
 			</button>
 		</ion-col>
 		<ion-col>
-			<button ion-button color="light" (click)="captureImage(BACK)">
+			<button type="button" ion-button color="light" (click)="captureImage(BACK)">
 				<img #backImage [class.hidden]="backLoading" [src]="normalizeURL(theVal.back)" (load)="onImageLoaded($event, false)">
 				<ion-spinner [class.hidden]="!backLoading"></ion-spinner>
 			</button>
