@@ -68,7 +68,7 @@ export class Image extends BaseElement {
 			return;
 		}
 
-		let camera = this.camera;
+    let camera = this.camera;
 		let sheet = this.actionCtrl.create({
 			title: "",
 			buttons: [
@@ -80,7 +80,7 @@ export class Image extends BaseElement {
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
 							targetHeight:1000,
-              destinationType: this.camera.DestinationType.DATA_URL
+              destinationType: this.destinationType()
 						}).then((imageData) => {
 						  this.onImageReceived(imageData);
             })
@@ -97,7 +97,7 @@ export class Image extends BaseElement {
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
 							targetHeight:1000,
-							destinationType: this.camera.DestinationType.DATA_URL
+							destinationType: this.destinationType()
 						}).then((imageData) => {
               this.onImageReceived(imageData);
             })
@@ -149,30 +149,46 @@ export class Image extends BaseElement {
     return this.normalizeURL(url);
   }
 
-	private onImageReceived(imageData) {
+  private destinationType() {
+	  return this.platform.is("Android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
+  }
+
+  private onImageReceived(imageData) {
     if (!this.currentVal) {
       this.currentVal = [];
     }
 
     let t = this;
 
-    imageData = 'data:image/jpeg;base64,' + imageData;
+    if (this.platform.is('Android')) {
+      this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
 
-    let newFolder = this.file.dataDirectory + "leadliaison/images";
-    let newName = new Date().getTime() + '.jpeg';
-
-    t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
-      if (t.checkFileExistAtPath(newPath)) {
-        console.log('File at path - ' + newPath + ' exists');
         t.zone.run(()=>{
           t.currentVal.unshift(newPath);
           t.propagateChange(t.currentVal);
         });
-      } else {
-        console.error('File doesn\'t exist at path - ' + newPath);
-      }
-    }, (err) => {
-      console.error(err);
-    });
+      }, (err) => {
+        console.error(err);
+      })
+    } else {
+      imageData = 'data:image/jpeg;base64,' + imageData;
+
+      let newFolder = this.file.dataDirectory + "leadliaison/images";
+      let newName = new Date().getTime() + '.jpeg';
+
+      t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
+        if (t.checkFileExistAtPath(newPath)) {
+          console.log('File at path - ' + newPath + ' exists');
+          t.zone.run(()=>{
+            t.currentVal.unshift(newPath);
+            t.propagateChange(t.currentVal);
+          });
+        } else {
+          console.error('File doesn\'t exist at path - ' + newPath);
+        }
+      }, (err) => {
+        console.error(err);
+      });
+    }
   }
 }
