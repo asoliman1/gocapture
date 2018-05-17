@@ -1,17 +1,27 @@
-.address{
-	.address-label{
-		font-style: normal !important;
-		font-size: 1.2em !important;
-	}
-	ion-item{
-		padding-left:0 !important;
-		&.item-select .item-inner{
-			border-bottom: none;
-		}
-	}
-	
+address {
+
+  .address{
+    .address-label{
+      font-style: normal !important;
+      font-size: 1.2em !important;
+    }
+
+    ion-item{
+      padding-left:0 !important;
+      &.item-select .item-inner{
+        border-bottom: none;
+      }
+    }
+  }
+
+  .address{
+    width: 100%;
+  }
+
+  .select-disabled {
+    color: orange;
+    opacity: 1 !important;
+  }
 }
 
-address, .address{
-	width: 100%;
-}
+

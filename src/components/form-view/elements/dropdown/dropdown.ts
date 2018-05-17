@@ -3,6 +3,10 @@ import { BaseElement } from "../base-element";
 import { FormElement } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 
+import {ModalController} from "ionic-angular";
+import {OptionItem} from "../../../../model/option-item";
+import {ISearch} from "../../../../views/search/search";
+
 @Component({
 	selector: 'dropdown',
 	templateUrl: 'dropdown.html',
@@ -10,14 +14,26 @@ import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Dropdown), multi: true }
 	]
 })
-export class Dropdown extends BaseElement {
+export class Dropdown extends BaseElement implements ISearch {
+
 	@Input() element: FormElement = <any>{};
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
 
-	constructor() {
+	constructor(private modal: ModalController,) {
 		super();
 	}
+
+
+  showOptions() {
+	  if (!this.readonly) {
+      let search = this.modal.create('SearchPage', {items: this.getOptions()});
+      search.onDidDismiss(data => {
+        this.currentVal = data;
+      });
+      search.present();
+    }
+  }
 
 	writeValue(obj: any): void{
 		if(!obj){
@@ -34,4 +50,16 @@ export class Dropdown extends BaseElement {
 		}
 		super.writeValue(obj);
 	}
+
+	getOptions() {
+	  let items = [];
+    this.element.options.forEach(item => {
+      let optionItem = new OptionItem(item.position.toString(), item.option_label || item.option, null, (item.option_label || item.option));
+      if (this.currentVal == item.option) {
+        optionItem.isSelected = true;
+      }
+      items.push(optionItem);
+    });
+    return items;
+  }
 }

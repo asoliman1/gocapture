@@ -67,7 +67,7 @@
       </ion-item>
 
       <!--ADDRESS-->
-      <address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm"
+      <address *ngSwitchCase="'address'" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
                [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)"></address>
 
       <!--MONEY-->

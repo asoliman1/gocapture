@@ -1,66 +1,60 @@
 import { Component, NgZone } from '@angular/core';
-import { DeviceFormMembership, Form } from "../../model";
+import { Form } from "../../model";
 import { BussinessClient } from "../../services/business-service";
-import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
+import {OptionItem} from "../../model/option-item";
+import {SearchPage} from "../search/search";
 
 @Component({
-	selector: 'prospect-search',
-	templateUrl: 'prospect-search.html'
+  selector: 'prospect-search',
+  templateUrl: 'prospect-search.html'
 })
-export class ProspectSearch {
-	static list = [];
-	static formId = "";
+export class ProspectSearch extends SearchPage {
+  static formId = "";
 
-	selectedContact: DeviceFormMembership = null;
-	loading = true;
+  loading = true;
 
-	form: Form;
+  form: Form;
 
-	searchFilter: string = "";
+  constructor(
+    public viewCtrl: ViewController,
+    public navParams: NavParams,
+    public client: BussinessClient,
+    public zone: NgZone) {
+    super(navParams, viewCtrl);
 
-	contacts: DeviceFormMembership[] = [];
+    //
+  }
 
-	filteredContacts: DeviceFormMembership[] = [];
+  ionViewDidEnter() {
+    this.form = this.navParams.get("form");
+    this.loading = true;
+    this.client.getContacts(this.form)
+      .subscribe(contacts => {
+        this.zone.run(()=>{
+          this.loading = false;
+          let sortedItems = [];
+          contacts.forEach((contact, index) => {
+            let optionItem = new OptionItem(index.toString(), contact.fields.FirstName + " " + contact.fields.LastName, contact.fields.Email, contact);
+            sortedItems.push(optionItem);
+          });
 
-	constructor(private navCtrl: NavController,
-		private viewCtrl: ViewController,
-		private navParams: NavParams,
-		private client: BussinessClient,
-		private zone: NgZone) {
+          sortedItems.sort((item1, item2) => {
+            let textA = item1.title.toLowerCase();
+            let textB = item2.title.toLowerCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+          });
 
-	}
+          this.items = sortedItems;
+          this.content.resize();
+          ProspectSearch.formId = this.form.form_id+"";
+          this.onInput({target: {value: ""}})
+        });
+      });
+  }
 
-	cancel() {
-		this.viewCtrl.dismiss(null);
-	}
-
-	done() {
-		if(this.selectedContact){
-			this.viewCtrl.dismiss(this.selectedContact);
-		}
-	}
-
-	ionViewDidEnter() {
-		this.form = this.navParams.get("form");
-		this.loading = true;
-		this.client.getContacts(this.form).subscribe(contacts => {
-			this.zone.run(()=>{
-				this.loading = false;
-				this.contacts = contacts;
-				ProspectSearch.list = contacts;
-				ProspectSearch.formId = this.form.form_id+"";
-				this.onInput({target: {value: ""}})
-			});
-		});
-	}
-
-	onInput(event){
-		let val = event.target.value;
-		let regexp = new RegExp(val, "i");
-		this.filteredContacts = this.contacts.filter(contact => {			
-			return !val || regexp.test(contact["search"]);
-		});
-	}
+  fieldToSearch() {
+    return "search";
+  }
 }
