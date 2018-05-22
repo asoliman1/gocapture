@@ -1,14 +1,14 @@
 <ion-header>
   <ion-navbar>
     <ion-buttons start>
-      <button ion-button (click)="cancel()">
+      <button ion-button (click)="cancel()" color="orange">
         Cancel
       </button>
     </ion-buttons>
     <ion-title>Select prospect</ion-title>
     <ion-buttons end>
-      <button ion-button [disabled]="!selectedItem" (click)="done()">
-        Ok
+      <button ion-button [disabled]="!selectedItem" (click)="done()" color="orange">
+        OK
       </button>
     </ion-buttons>
   </ion-navbar>
