@@ -150,7 +150,7 @@ export class Image extends BaseElement {
   }
 
   private destinationType() {
-	  return this.platform.is("Android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
+	  return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
   }
 
   private onImageReceived(imageData) {
@@ -160,7 +160,8 @@ export class Image extends BaseElement {
 
     let t = this;
 
-    if (this.platform.is('Android')) {
+    if (this.platform.is('android')) {
+
       this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
 
         t.zone.run(()=>{
