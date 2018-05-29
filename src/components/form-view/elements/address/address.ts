@@ -55,7 +55,13 @@ export class Address extends BaseGroupElement implements ISearch {
   getOptions() {
     let items = [];
     Countries.forEach((country, index) => {
-      let optionItem = new OptionItem(index.toString(), country.name, null, country);
+      let optionItem = new OptionItem({
+        id: index.toString(),
+        title: country.name,
+        subtitle: null,
+        search:country.name,
+        value: country
+      });
       items.push(optionItem);
       if (this.country && (this.country == country.name)) {
         optionItem.isSelected = true;

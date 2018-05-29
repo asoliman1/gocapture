@@ -26,6 +26,7 @@ export class SearchPage {
   @ViewChild(Content) content: Content;
 
   selectedItem: OptionItem;
+
   loading = true;
 
   searchFilter: string = "";
@@ -72,12 +73,13 @@ export class SearchPage {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
     this.filteredItems = this.items.filter(item => {
+
       return !val || regexp.test(item[this.fieldToSearch()]);
     });
   }
 
   fieldToSearch() {
-    return 'title';
+    return 'search';
   }
 
   isSearchAvailable() {

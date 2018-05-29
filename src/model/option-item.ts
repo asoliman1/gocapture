@@ -1,14 +1,16 @@
 export class OptionItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  value: any;
-  isSelected: boolean = false;
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  value?: any;
+  search?: string;
+  isSelected?: boolean = false;
 
-  constructor(id: string, title: string, subtitle: string, value: any) {
-    this.id = id;
-    this.title = title;
-    this.subtitle = subtitle;
-    this.value = value;
+  constructor(options: {id?: string, title?: string, subtitle?: string, search?: string, value?: any}) {
+    this.id = options.id;
+    this.title = options.title;
+    this.subtitle = options.subtitle;
+    this.search = options.search;
+    this.value = options.value;
   }
 }

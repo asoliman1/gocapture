@@ -36,7 +36,13 @@ export class ProspectSearch extends SearchPage {
           this.loading = false;
           let sortedItems = [];
           contacts.forEach((contact, index) => {
-            let optionItem = new OptionItem(index.toString(), contact.fields.FirstName + " " + contact.fields.LastName, contact.fields.Email, contact);
+            let optionItem = new OptionItem({
+              id: index.toString(),
+              title: contact.fields.FirstName + " " + contact.fields.LastName,
+              subtitle: contact.fields.Email,
+              search: contact['search'],
+              value: contact
+            });
             sortedItems.push(optionItem);
           });
 
@@ -52,9 +58,5 @@ export class ProspectSearch extends SearchPage {
           this.onInput({target: {value: ""}})
         });
       });
-  }
-
-  fieldToSearch() {
-    return "search";
   }
 }

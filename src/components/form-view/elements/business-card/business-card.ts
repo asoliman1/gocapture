@@ -144,6 +144,9 @@ export class BusinessCard extends BaseElement {
     }
   }
 
+
+
+
   private doCapture(type: number, captureType: number = 1) {
     //screen.orientation.lock && screen.orientation.lock("landscape");
     this.camera.getPicture({
@@ -153,13 +156,15 @@ export class BusinessCard extends BaseElement {
       encodingType: this.camera.EncodingType.JPEG,
       targetWidth: 1280,
       targetHeight:1000,
-      destinationType: this.camera.DestinationType.DATA_URL
+      destinationType: this.destinationType()
     }).then(imageData => {
 
       this.frontLoading = type == this.FRONT;
       this.backLoading = type != this.FRONT;
 
-      imageData = 'data:image/jpeg;base64,' + imageData;
+      if (this.platform.is('ios')) {
+        imageData = 'data:image/jpeg;base64,' + imageData;
+      }
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
@@ -322,5 +327,9 @@ export class BusinessCard extends BaseElement {
 
 	private adjustImagePath(path) {
     return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "")
+  }
+
+  private destinationType() {
+    return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
   }
 }
