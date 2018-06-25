@@ -31,6 +31,8 @@ export class FormView {
 
 	private sub: Subscription;
 
+  private valueChangesSub: Subscription;
+
 	selectionMode: boolean = false;
 
 	data: any;
@@ -137,9 +139,17 @@ export class FormView {
   }
 
 	private setupFormGroup() {
-		if (this.sub) {
+
+	  if (this.sub) {
 			this.sub.unsubscribe();
 		}
+
+    if (this.valueChangesSub) {
+      this.valueChangesSub.unsubscribe();
+    }
+
+    this.updateForm();
+
 		this.data = this.getValues();
 		if (this.submission && this.submission.fields) {
 			this.data = Object.assign(Object.assign({}, this.submission.fields), this.data);
@@ -163,13 +173,22 @@ export class FormView {
 				control = this.fb.control({ value: this.data[identifier] || this.getDefaultValue(element), disabled: element.is_readonly || this.readOnly });
 				control.setValidators(this.makeValidators(element));
 			}
+
 			f.addControl(identifier, control);
 		});
+
 		this.theForm = f;
+
+
 		//console.log(this.form, f);
 		this.sub = this.theForm.statusChanges.subscribe(() => {
 			this.onValidationChange.emit(this.theForm.valid);
 		});
+
+    this.theForm.valueChanges.subscribe(data => {
+      this.updateForm();
+    });
+
 		setTimeout(() => {
 			this.zone.run(() => {
 				this.displayForm = this.form;
@@ -235,9 +254,7 @@ export class FormView {
 		//console.log(event);
 	}
 
-  isControlInvalid(element) {
-    return !this.theForm.controls[element.identifier].valid && this.submitAttempt;
-  }
+  //MARK: Private
 
   private composeErrorMessage() {
 	  let invalidControls = [];
@@ -267,4 +284,81 @@ export class FormView {
 			return validator(control);
 		};
 	}
+
+
+  private updateForm() {
+    this.form.elements.forEach(element => {
+      if (element["visible_conditions"]) {
+        this.applyVisibilityRules(element);
+      }
+    });
+  }
+
+  private validateVisibleCondition(rule: { field_identifier: string, condition: string, value: any }) {
+	  let ruleValue = rule.value[0];
+	  let identifier = "element_" + rule.field_identifier;
+    switch (rule.condition) {
+      case "equals" : {
+        return ruleValue == this.theForm.value[identifier];
+      }
+      case "notEquals" : {
+        return ruleValue != this.theForm.value[identifier];
+      }
+      case "hasValue" : {
+        return this.theForm.value[identifier] && this.theForm.value[identifier].length > 0;
+      }
+    }
+  }
+
+  private applyVisibilityRules(element) {
+    let isMatchingRules = true;
+
+    for (let rule of element.visible_conditions) {
+      let isValidCondition = this.validateVisibleCondition(rule);
+      if (typeof rule.operator != "undefined" && rule.operator == "OR") {
+        isMatchingRules = isValidCondition || isMatchingRules;
+      } else {
+        isMatchingRules = isValidCondition && isMatchingRules;
+      }
+    }
+
+    element.isMatchingRules = isMatchingRules;
+
+    if (!element.isMatchingRules) {
+      this.resetField(element);
+    }
+  }
+
+  private shouldElementBeDisplayed(element) {
+    return element.isMatchingRules;
+  }
+
+  resetField(element) {
+    let identifier = "element_" + element.id;
+
+    let formControl = this.theForm.controls[identifier];
+    if (formControl) {
+
+      let opts = {};
+        //For sub elements we have standalone is_required property, so we use this one in the validator
+      Object.keys(formControl.value).forEach(key => {
+        opts[key] = this.getDefaultValue(element);
+      });
+
+      formControl.patchValue(opts, {
+        emitEvent: false,
+        emitModelToViewChange: false,
+        emitViewToModelChange: false,
+      });
+
+      /*
+      if (element.controlType == "radio") {
+        element.options.forEach(option => {
+          if (option.checked) option.checked = false;
+        });
+      }
+      */
+
+    }
+  }
 }

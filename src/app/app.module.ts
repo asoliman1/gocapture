@@ -51,6 +51,7 @@ import { IonicApp } from 'ionic-angular/components/app/app-root';
 import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
 import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
+import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
-    MyCurrencyDirective
+    MyCurrencyDirective,
+    DynamicFormElementComponent
   ],
   imports: [
     BrowserModule,
@@ -105,6 +107,9 @@ import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
+  ],
+  exports: [
+    DynamicFormElementComponent
   ],
   providers: [
     DBClient,
