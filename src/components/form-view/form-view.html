@@ -6,7 +6,8 @@
     <div class="" *ngFor="let element of displayForm.elements">
       <dynamic-form-element [theForm]="theForm"
                             [element]="element" *ngIf="shouldElementBeDisplayed(element)"
-                            [submitAttempt]="submitAttempt">
+                            [submitAttempt]="submitAttempt"
+                            [readOnly]="readOnly">
       </dynamic-form-element>
     </div>
 

@@ -11,6 +11,7 @@ export class DynamicFormElementComponent {
   @Input() theForm: FormGroup;
   @Input() element: FormElement;
   @Input() submitAttempt: boolean = false;
+  @Input() readOnly: boolean = false;
 
   constructor() {
     //
