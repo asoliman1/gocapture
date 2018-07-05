@@ -304,28 +304,56 @@ export class FormView {
   }
 
   private validateVisibleCondition(rule: { field_identifier: string, condition: string, value: any }) {
-    let ruleValue = rule.value[0];
+
     let identifier = "element_" + rule.field_identifier;
+
+    let ruleValue = rule.value;
+    let elementValue = this.theForm.value[identifier];
+
     switch (rule.condition) {
       case "equals" : {
-        return ruleValue == this.theForm.value[identifier];
+        return this.isValueEqual(ruleValue, elementValue);
       }
       case "not_equal" : {
-        return ruleValue != this.theForm.value[identifier];
+        return !this.isValueEqual(ruleValue, elementValue);
       }
       case "has_value" : {
-        return this.theForm.value[identifier] && this.theForm.value[identifier].length > 0;
+        return elementValue && elementValue.length > 0;
       }
       case "is_blank" : {
-        return this.theForm.value[identifier] && this.theForm.value[identifier].length == 0;
+        return elementValue && elementValue.length == 0;
       }
       case "doesnot_contain" : {
-        return this.theForm.value[identifier] && !this.theForm.value[identifier].includes(ruleValue);
+        return elementValue && !this.isValueMatched(ruleValue, elementValue);
       }
       case "contains" : {
-        return this.theForm.value[identifier] && this.theForm.value[identifier].includes(ruleValue);
+        return elementValue && this.isValueMatched(ruleValue, elementValue);
       }
     }
+  }
+
+  private isValueMatched(ruleValue: [any], value) {
+    let isMatch = false;
+    for (let i = 0; i < ruleValue.length; i++) {
+      let v1 = ruleValue[i];
+      isMatch = value.includes(v1);
+      if (isMatch) {
+        break;
+      }
+    }
+    return isMatch;
+  }
+
+  private isValueEqual(ruleValue: [any], value) {
+    let isEqual = false;
+    for (let i = 0; i < ruleValue.length; i++) {
+      let v1 = ruleValue[i];
+      isEqual = value == v1;
+      if (isEqual) {
+        break;
+      }
+    }
+    return isEqual;
   }
 
   private applyVisibilityRules(element) {
