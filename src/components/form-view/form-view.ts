@@ -170,7 +170,7 @@ export class FormView {
       this.onValidationChange.emit(this.theForm.valid);
     });
 
-    this.theForm.valueChanges.subscribe(data => {
+    this.valueChangesSub = this.theForm.valueChanges.subscribe(data => {
       this.updateForm();
     });
 
@@ -379,9 +379,38 @@ export class FormView {
     return element.isMatchingRules;
   }
 
+  /*
   resetField(element) {
     let identifier = this.elementIdentifier(element);
     this.theForm.controls[identifier] = this.createFormControl(element, identifier);
+
+    if (this.valueChangesSub) {
+      this.valueChangesSub.unsubscribe();
+    }
+
+    this.valueChangesSub = this.theForm.valueChanges.subscribe(data => {
+      this.updateForm();
+    });
+  }
+  */
+
+  resetField(element) {
+    let identifier = this.elementIdentifier(element);
+    let value = this.getDefaultValue(element);
+    let control = this.theForm.controls[identifier];
+    if (!control) {
+      return;
+    }
+    this.theForm.controls[identifier].patchValue(value, {
+      onlySelf: true,
+      emitEvent: false,
+      emitModelToViewChange: false,
+      emitViewToModelChange: false,
+    });
+
+    element.value = value;
+
+    this.theForm.value[identifier] = value;
   }
 
   private elementIdentifier(element) {
