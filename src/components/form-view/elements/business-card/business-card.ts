@@ -171,12 +171,18 @@ export class BusinessCard extends BaseElement {
       this.imageProc.ensureLandscape(imageData, !shouldRecognize)
         .subscribe((info) => {
 
+
           let newFolder = this.file.dataDirectory + "leadliaison/images";
           let name = imageData.substr(imageData.lastIndexOf("/") + 1);
           let newName = new Date().getTime() + '.jpeg';
+          let folder = imageData.substr(0, imageData.lastIndexOf("/"));
           let promise: Promise<any>;
 
-          promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+          if (this.platform.is('ios')) {
+            promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+          } else {
+            promise = this.file.moveFile(folder, name, newFolder, newName);
+          }
 
           promise.then((entry)=>{
               this.zone.run(()=>{
