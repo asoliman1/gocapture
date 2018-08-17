@@ -379,21 +379,6 @@ export class FormView {
     return element.isMatchingRules;
   }
 
-  /*
-  resetField(element) {
-    let identifier = this.elementIdentifier(element);
-    this.theForm.controls[identifier] = this.createFormControl(element, identifier);
-
-    if (this.valueChangesSub) {
-      this.valueChangesSub.unsubscribe();
-    }
-
-    this.valueChangesSub = this.theForm.valueChanges.subscribe(data => {
-      this.updateForm();
-    });
-  }
-  */
-
   resetField(element) {
     let identifier = this.elementIdentifier(element);
     let value = this.getDefaultValue(element);
