@@ -7,6 +7,8 @@ import { Subscription } from "rxjs/Subscription";
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
+import {Util} from "../../util/util";
+
 
 @Component({
 	selector: 'form-review',
@@ -37,7 +39,9 @@ export class FormReview {
 		private client: BussinessClient,
 		private zone: NgZone,
 		private syncClient: SyncClient,
-		private toast: ToastController) {
+		private toast: ToastController,
+              private util: Util,
+              ) {
 
 	}
 
@@ -106,9 +110,15 @@ export class FormReview {
 		return !email && !name && submission.fields[id];
 	}
 
+  private normalizeURL(url: string): string {
+    return this.util.normalizeURL(url);
+  }
+
 	getBusinessCard(submission: FormSubmission){
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
-		return submission.fields[id] ? submission.fields[id]["front"] + "?" + new Date().getTime() : "" ;
+		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
+		front = this.util.imageUrl(front);
+		return this.normalizeURL(front + "#" + parseInt(((1 + Math.random())*1000) + ""));
 	}
 
 	doRefresh() {

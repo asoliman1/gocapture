@@ -7,6 +7,7 @@ import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
 import { FormView } from "../../components/form-view";
 import { ProspectSearch } from "../prospect-search";
+import {isTranspileRequired} from "@ionic/app-scripts/dist/aot/aot-compiler";
 
 @Component({
   selector: 'form-capture',
@@ -196,10 +197,16 @@ export class FormCapture {
   doSave() {
     this.submitAttempt = true;
 
+    /*
+     When transcription is enabled, the app is still requiring name and email. If there is a business card attached and transcription is turned on, we should not require either of these fields.
+     */
+
     if (!this.isEmailOrNameInputted()) {
-      this.errorMessage = "Email or name is required";
-      this.content.resize();
-      return;
+      if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
+        this.errorMessage = "Email or name is required";
+        this.content.resize();
+        return;
+      }
     }
 
     if (!this.valid) {
@@ -265,18 +272,50 @@ export class FormCapture {
     let email = "";
 
     let fields = this.formView.getValues();
-    this.form.elements.forEach(element => {
-      switch(element.type){
-        case "simple_name":
-          firstName = <any>fields[element["identifier"] + "_1"] || "";
-          lastName = <any>fields[element["identifier"] + "_2"] || "";
-          break;
-        case "email":
-          email = <any>fields[element["identifier"]] || "";
-          break;
-      }
-    });
+
+    let nameEl = this.getElementForType("simple_name");
+
+    if (nameEl) {
+      firstName = <any>fields[nameEl["identifier"] + "_1"] || "";
+      lastName = <any>fields[nameEl["identifier"] + "_2"] || "";
+    }
+
+    let emailEl = this.getElementForType("email");
+
+    if (emailEl) {
+      email = <any>fields[emailEl["identifier"]] || "";
+    }
 
     return (firstName.length > 0 && lastName.length > 0) || email.length > 0;
+  }
+
+  private getElementForType(type) {
+    for (let element of this.form.elements) {
+      if (element.type == type) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  private isTranscriptionEnabled() {
+    let businessCardEl = this.getElementForType("business_card");
+    return typeof businessCardEl != 'undefined' && businessCardEl['is_enable_transcription'] == 1;
+  }
+
+  private isBusinessCardAdded() {
+
+    let fields = this.formView.getValues();
+    let businessCardEl = this.getElementForType("business_card");
+    let businessCard = <any>fields[businessCardEl["identifier"]] || "";
+
+    if (businessCard) {
+      let front = businessCard.front && businessCard.front.length;
+      let back = businessCard.back && businessCard.back.length;
+
+      return front || back;
+    }
+
+    return false;
   }
 }

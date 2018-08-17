@@ -72,20 +72,9 @@ export class BusinessCard extends BaseElement {
 
   ngAfterContentInit(){
     this.theVal = {
-      front: this.imageUrl(this.currentVal.front),
-      back: this.imageUrl(this.currentVal.back)
+      front: this.util.imageUrl(this.currentVal.front),
+      back: this.util.imageUrl(this.currentVal.back)
     };
-  }
-
-  private imageUrl(path) {
-    //if local image
-    if (path.startsWith("assets")) {
-      return path;
-    }
-    let folder = this.file.dataDirectory + "leadliaison/images";
-    let name = path.substr(path.lastIndexOf("/") + 1);
-    let url = folder + "/" + name;
-    return this.util.normalizeURL(url);
   }
 
   captureImage(type: number) {
@@ -324,7 +313,8 @@ export class BusinessCard extends BaseElement {
   private viewImage(type){
     //const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
     //imageViewer.present();
-    this.modalCtrl.create(ImageViewer, {image: this.normalizeURL(type == this.FRONT ? this.currentVal.front : this.currentVal.back)}).present();
+    let image = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
+    this.modalCtrl.create(ImageViewer, {image: image}).present();
   }
 
 	private normalizeURL(url: string): string {

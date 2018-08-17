@@ -1,6 +1,7 @@
 import { Platform } from "ionic-angular/platform/platform";
 import { normalizeURL } from 'ionic-angular/util/util';
 import {Injectable} from "@angular/core";
+import { File } from '@ionic-native/file';
 
 /**
  * Jquery clone
@@ -27,7 +28,7 @@ export class Util {
   //private static toString : Function = Util.class2type.toString;
   private static hasOwn : Function = Util.class2type.hasOwnProperty;
 
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private file: File) {
     //
   }
 
@@ -156,6 +157,16 @@ export class Util {
 
   public normalizeURL(url: string): string{
     return this.platform.is('ios') ? normalizeURL(url) : url;
+  }
+
+  public imageUrl(path) {
+    //if local image
+    if (path.startsWith("assets")) {
+      return path;
+    }
+    let folder = this.file.dataDirectory + "leadliaison/images";
+    let name = path.substr(path.lastIndexOf("/") + 1);
+    return folder + "/" + name;
   }
 
 }

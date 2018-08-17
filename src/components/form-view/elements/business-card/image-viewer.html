@@ -1,13 +1,13 @@
 <ion-header>
-	<ion-navbar color="dark">
-		<ion-buttons start>
+	<ion-toolbar color="orange">
+		<ion-buttons left>
 			<button ion-button (click)="cancel()">
-				<ion-icon name="arrow-back" class="capture"></ion-icon>
+				<ion-icon ios="md-close" md="md-close"></ion-icon>
 			</button>
 		</ion-buttons>
 		<ion-title></ion-title>
-	</ion-navbar>
-</ion-header>
+	</ion-toolbar>
+</ion-header>`
 
 <ion-content class="image-viewer">
 	<img [src]="image">
