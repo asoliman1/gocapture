@@ -224,16 +224,23 @@ export class FormCapture {
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
-      if(this.form.is_mobile_kiosk_mode){
+      if(this.form.is_mobile_kiosk_mode) {
         this.submission = null;
         this.form = null;
         this.dispatch = null;
+        let successToast = this.toast.create({
+          message: "Submission Successful.",
+          duration: 1500,
+          position: 'top',
+          cssClass: 'success-toast'
+        });
+        successToast.present();
         setTimeout(()=>{
           this.zone.run(()=>{
             this.ionViewWillEnter();
           });
         }, 10);
-      }else{
+      } else{
         this.navCtrl.pop();
       }
     }, err => {
