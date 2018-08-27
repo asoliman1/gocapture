@@ -51,7 +51,7 @@ export class BusinessCardOverlayPage {
     this.screenOrientation.unlock();
     this.cameraPreview.stopCamera();
   }
-  
+
   cameraPreviewOpts: CameraPreviewOptions = {
     x: 12,
     y: 150,
