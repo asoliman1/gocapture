@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import {CameraPreview, CameraPreviewOptions, CameraPreviewPictureOptions} from "@ionic-native/camera-preview";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
@@ -33,11 +33,7 @@ export class BusinessCardOverlayPage {
     if (this.platform.is('android')) {
       this.cameraPreviewOpts["storeToFile"] = true;
     }
-
-    setTimeout(()=>{
-      this.startCamera();
-    });
-
+    this.startCamera();
   }
 
   private startCamera() {
@@ -53,13 +49,9 @@ export class BusinessCardOverlayPage {
 
   ionViewWillLeave() {
     this.screenOrientation.unlock();
-    setTimeout(()=>{
-      this.cameraPreview.stopCamera();
-    });
-
+    this.cameraPreview.stopCamera();
   }
-
-  // camera options (Size and location). In the following example, the preview uses the rear camera and display the preview in the back of the webview
+  
   cameraPreviewOpts: CameraPreviewOptions = {
     x: 12,
     y: 150,
