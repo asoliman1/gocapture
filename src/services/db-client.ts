@@ -837,7 +837,7 @@ export class DBClient {
 					params.push.apply(params, this.saveAllData[i].parameters);
 				}
 				let isDone = done;
-
+				console.log(query, params);
 				db.executeSql(query, params)
 					.then((data) => {
 						this.saveAllData = [];

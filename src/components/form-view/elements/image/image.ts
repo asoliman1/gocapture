@@ -8,10 +8,11 @@ import { normalizeURL } from 'ionic-angular/util/util';
 import { Platform } from 'ionic-angular/platform/platform';
 import {Util} from "../../../../util/util";
 import {ImageProcessor} from "../../../../services/image-processor";
+import { DomSanitizer } from '@angular/platform-browser';
 declare var cordova: any;
 
 @Component({
-	selector: 'image',
+	selector: 'image-item',
 	templateUrl: 'image.html',
 	providers: [
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Image), multi: true }
@@ -43,7 +44,8 @@ export class Image extends BaseElement {
 				private platform: Platform,
 				private zone: NgZone,
         public util: Util,
-        private imageProc: ImageProcessor,) {
+        private imageProc: ImageProcessor,
+		private dom: DomSanitizer) {
 		super();
 		this.currentVal = [];
 	}
@@ -137,8 +139,8 @@ export class Image extends BaseElement {
 		}
 	}
 
-	public  normalizeURL(url: string): string{
-		return this.util.normalizeURL(url);
+	public  normalizeURL(url: string): any{
+		return this.dom.bypassSecurityTrustUrl(this.util.normalizeURL(url));
 	}
 
   private imageUrl(path) {
