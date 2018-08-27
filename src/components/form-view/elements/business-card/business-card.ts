@@ -155,7 +155,7 @@ export class BusinessCard extends BaseElement {
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.imageProc.ensureLandscape(imageData, !shouldRecognize)
+      this.imageProc.ensureLandscape(imageData, true)
         .subscribe((info) => {
 
           let newFolder = this.file.dataDirectory + "leadliaison/images";
