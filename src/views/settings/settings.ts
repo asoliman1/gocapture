@@ -11,6 +11,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import {App} from "ionic-angular";
+import {LogClient} from "../../services/log-client";
 //import { OcrSelector } from "../../components/ocr-selector";
 declare var screen;
 
@@ -32,7 +33,8 @@ export class Settings {
 		private alertCtrl: AlertController,
 		private modalCtrl: ModalController,
 		private appVersion: AppVersion,
-    public app: App) {
+    public app: App,
+              private logger: LogClient) {
 		this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
@@ -41,12 +43,16 @@ export class Settings {
 	ionViewWillEnter() {
 		this.db.getAllConfig().subscribe(settings => {
 			this.settings = settings;
+
+      if (typeof settings['enableLogging'] == "undefined") {
+        this.settings.enableLogging = true;
+      }
+
 			this.db.getRegistration().subscribe(user => {
 				this.user = user;
 				this.shouldSave = false;
 			});
 		});
-
 	}
 
 	getName(user: User){
@@ -76,6 +82,11 @@ export class Settings {
 			this.saveSettings();
 		},1)
 	}
+
+  onChangeEnableLogging() {
+	  this.logger.enableLogging(this.settings.enableLogging);
+	  this.onChange();
+  }
 
 	saveSettings() {
 		this.db.saveConfig("autoUpload", this.settings.autoUpload).subscribe(() => {

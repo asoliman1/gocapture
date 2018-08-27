@@ -1,0 +1,51 @@
+page-business-card-overlay {
+
+  .business-card-content {
+    background-color: black;
+    position: relative;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    .title {
+      margin-top: 80px;
+      width: 100%;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .card-overlay {
+      position: absolute;
+      top: 148px;
+      padding-bottom: 62.4%;
+      width: 95%;
+      margin-left: 2.5%;
+      margin-right: 2.5%;
+      border-style: solid;
+      border-color: orange;
+      border-width: 2px;
+    }
+
+    #modal-close-btn {
+      position: absolute;
+      top: 30px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+
+    #capture-btn {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+  }
+
+}

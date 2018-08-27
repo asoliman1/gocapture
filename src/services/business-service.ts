@@ -133,6 +133,17 @@ export class BussinessClient {
 		}
 	}
 
+	public getSetting(setting): Observable<string> {
+    return new Observable<string>((obs: Observer<string>) => {
+      this.db.getConfig(setting).subscribe((value) => {
+        obs.next(value);
+        obs.complete();
+      }, error => {
+        obs.error(error);
+      })
+    });
+  }
+
 	public getRegistration(registerForPush?: boolean): Observable<User> {
 		return new Observable<User>((obs: Observer<User>) => {
 			this.db.getRegistration().subscribe((user) => {

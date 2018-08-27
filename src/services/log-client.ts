@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject } from "rxjs/Rx";
 import { Util } from "../util/util";
+import {DBClient} from "./db-client";
 
 @Injectable()
 export class LogClient{
@@ -15,7 +16,9 @@ export class LogClient{
 
 	private consoleHandler: any;
 
-	constructor(){
+	isLoggingEnabled = true;
+
+	constructor(private db: DBClient) {
 		this.consoleHandler = window.console;
 		var c = "console";
 		window[c] = this.makeConsole();
@@ -30,6 +33,10 @@ export class LogClient{
 
 	public clearLogs() {
 	  this.logs = [];
+  }
+
+  public enableLogging(isEnabled) {
+	  this.isLoggingEnabled = isEnabled === 'true';
   }
 
 	private makeConsole() : any{
@@ -50,6 +57,9 @@ export class LogClient{
 	}
 
 	private logEntry(messages: any[], severity: LogSeverity){
+	  if (!this.isLoggingEnabled) {
+	    return;
+    }
 		this.consoleHandler[severity.name].apply(this.consoleHandler, messages);
 		var message = messages[0];
 		if(typeof(message) == "object"){

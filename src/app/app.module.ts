@@ -52,6 +52,8 @@ import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
 import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
+import {CameraPreview} from "@ionic-native/camera-preview";
+import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-card-overlay";
 
 @NgModule({
   declarations: [
@@ -77,7 +79,8 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
-    DynamicFormElementComponent
+    DynamicFormElementComponent,
+    BusinessCardOverlayPage
   ],
   imports: [
     BrowserModule,
@@ -106,7 +109,8 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     FormSelectionView,
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
     ProspectSearch,
-    OcrSelector
+    OcrSelector,
+    BusinessCardOverlayPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -132,6 +136,7 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     BarcodeScanner,
     StatusBar,
     ScreenOrientation,
+    CameraPreview,
     {
       provide: Http,
       useFactory: httpFactory,

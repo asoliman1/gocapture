@@ -13,6 +13,7 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
+import {BusinessCardOverlayPage} from "../../../../pages/business-card-overlay/business-card-overlay";
 
 declare var screen;
 
@@ -112,7 +113,8 @@ export class BusinessCard extends BaseElement {
           {
             text: 'Camera',
             handler: () => {
-              this.doCapture(type, 1);
+              // this.doCapture(type, 1);
+              this.showBusinessCardOverlay(type);
             }
           },
           {
@@ -129,12 +131,64 @@ export class BusinessCard extends BaseElement {
       });
       sheet.present();
     }else{
-      this.doCapture(type);
+      // this.doCapture(type);
+      this.showBusinessCardOverlay(type);
     }
   }
 
+  private showBusinessCardOverlay(type: number) {
+    let businessCardModal = this.modalCtrl.create(BusinessCardOverlayPage);
+    businessCardModal.onDidDismiss(imageData => {
 
+      if (!imageData) {
+        return;
+      }
 
+      this.frontLoading = type == this.FRONT;
+      this.backLoading = type != this.FRONT;
+
+      if (this.platform.is('ios')) {
+        imageData = 'data:image/jpeg;base64,' + imageData;
+      } else {
+        imageData ='file://' + imageData;
+      }
+
+      let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
+
+      this.imageProc.ensureLandscape(imageData, !shouldRecognize)
+        .subscribe((info) => {
+
+          let newFolder = this.file.dataDirectory + "leadliaison/images";
+          let name = imageData.toString().substr(imageData.lastIndexOf("/") + 1);
+          let newName = new Date().getTime() + '.jpeg';
+          let folder = imageData.toString().substr(0, imageData.lastIndexOf("/"));
+          let promise: Promise<any>;
+
+          if (this.platform.is('ios')) {
+            promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+          } else {
+            promise = this.file.moveFile(folder, name, newFolder, newName);
+          }
+
+          promise.then((entry)=>{
+              this.zone.run(()=>{
+                this.setValue(type, newFolder + "/" + newName);
+                info.dataUrl = newFolder + "/" + newName;
+                this.frontLoading = false;
+                this.backLoading = false;
+                if(shouldRecognize && type == this.FRONT){
+                  this.recognizeText(info);
+                }
+              });
+            },
+            (err) => {
+              console.error(err);
+            });
+        });
+    });
+
+    businessCardModal.present();
+  }
 
   private doCapture(type: number, captureType: number = 1) {
     //screen.orientation.lock && screen.orientation.lock("landscape");
@@ -160,11 +214,10 @@ export class BusinessCard extends BaseElement {
       this.imageProc.ensureLandscape(imageData, !shouldRecognize)
         .subscribe((info) => {
 
-
           let newFolder = this.file.dataDirectory + "leadliaison/images";
-          let name = imageData.substr(imageData.lastIndexOf("/") + 1);
+          let name = imageData.substring(imageData.lastIndexOf("/") + 1);
           let newName = new Date().getTime() + '.jpeg';
-          let folder = imageData.substr(0, imageData.lastIndexOf("/"));
+          let folder = imageData.substring(0, imageData.lastIndexOf("/"));
           let promise: Promise<any>;
 
           if (this.platform.is('ios')) {
@@ -181,21 +234,18 @@ export class BusinessCard extends BaseElement {
                 this.backLoading = false;
                 if(shouldRecognize && type == this.FRONT){
                   this.recognizeText(info);
-                }/*else{
-                 screen.orientation.unlock && screen.orientation.unlock();
-                 }*/
+                }
               });
             },
             (err) => {
               console.error(err);
-              //screen.orientation.unlock && screen.orientation.unlock();
             });
         });
     }).catch(err => {
       console.error(err);
-      //screen.orientation.unlock && screen.orientation.unlock();
     });
   }
+
 
   recognizeText(info: Info){
     let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
