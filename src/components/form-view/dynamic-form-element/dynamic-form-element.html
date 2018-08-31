@@ -138,6 +138,10 @@
               [class.hidden]="element.is_hidden">
     </barcoder>
 
+    <!--HTML-BLOCK-->
+    <html-block *ngSwitchCase="'section'" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
+             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)"></html-block>
+
     <ion-item *ngSwitchDefault>
       <ion-label>Coming soon! A component for {{element.type}}</ion-label>
     </ion-item>

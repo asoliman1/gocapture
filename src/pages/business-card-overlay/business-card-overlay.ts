@@ -56,7 +56,7 @@ export class BusinessCardOverlayPage {
     x: 12,
     y: 150,
     width: window.screen.width - 24,
-    height: (window.screen.width - 24) / 1.5,
+    height: (window.screen.width - 24) / 1.75,
     camera: 'rear',
     tapPhoto: false,
     previewDrag: false,

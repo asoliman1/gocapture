@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule, SafeHtml} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyApp } from './app.component';
 import { Login, UrlChoose } from "../views/login";
@@ -54,6 +54,8 @@ import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
 import {CameraPreview} from "@ionic-native/camera-preview";
 import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-card-overlay";
+import {HTMLBlock} from "../components/form-view/elements/html-block";
+import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
 
 @NgModule({
   declarations: [
@@ -69,13 +71,14 @@ import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-c
     FormReview,
     FormCapture,
     ArrayFilterPipe,
+    SafeHtmlPipe,
     FormControlPipe,
     AvatarPathUpdaterPipe,
     FormView,
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, HTMLBlock, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,

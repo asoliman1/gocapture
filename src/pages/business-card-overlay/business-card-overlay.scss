@@ -18,13 +18,16 @@ page-business-card-overlay {
     .card-overlay {
       position: absolute;
       top: 148px;
-      padding-bottom: 62.4%;
+      padding-bottom: 54.5%;
       width: 95%;
       margin-left: 2.5%;
       margin-right: 2.5%;
-      border-style: solid;
-      border-color: orange;
-      border-width: 2px;
+      //border-style: solid;
+      //border-color: orange;
+      //border-width: 2px;
+      background: url('../assets/images/business_card_overlay.png') no-repeat center;
+      background-size: contain;
+      object-fit: cover;
     }
 
     #modal-close-btn {
@@ -47,5 +50,4 @@ page-business-card-overlay {
       color: white;
     }
   }
-
 }
