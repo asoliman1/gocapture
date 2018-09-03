@@ -24,6 +24,12 @@ export class HTMLBlock extends BaseGroupElement {
 	}
 
 	onExpandCollapse() {
-    this.isCollapsed = !this.isCollapsed;
+    if (this.element["collapse_content"]) {
+      this.isCollapsed = !this.isCollapsed;
+    }
+  }
+
+  isContentCollapsed() {
+    return this.element["collapse_content"] && this.isCollapsed;
   }
 }
