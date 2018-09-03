@@ -15,8 +15,15 @@ export class HTMLBlock extends BaseGroupElement {
 
 	@Input() readonly: boolean = false;
 
+	isCollapsed = true;
+
+  btnColor: string = 'dark';
 
 	constructor() {
 		super();
 	}
+
+	onExpandCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
 }

@@ -1,9 +1,33 @@
-.simpleName{
-	ion-col:first-child{
-		padding-left: 0;
-	}
+.html-block {
+  line-height: 12px;
 
-	ion-col:last-child{
-		padding-right: 0;
-	}
+  .block-content {
+    position: relative;
+
+    &.collapsed {
+      height: 36px;
+      overflow: hidden;
+
+      &:after {
+        content  : "";
+        position : absolute;
+        z-index  : 1;
+        bottom   : 0;
+        left     : 0;
+        pointer-events   : none;
+        background-image : linear-gradient(to bottom,
+          rgba(255,255,255, 0),
+          rgba(255,255,255, 1) 90%);
+        width    : 100%;
+        height   : 4em;
+      }
+    }
+  }
+
+  #expand-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 2;
+  }
 }
