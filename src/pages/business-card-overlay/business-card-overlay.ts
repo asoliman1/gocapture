@@ -4,6 +4,7 @@ import {CameraPreview, CameraPreviewOptions, CameraPreviewPictureOptions} from "
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import {Popup} from "../../providers/popup/popup";
 import { Platform } from 'ionic-angular/platform/platform';
+import {ImageProcessor} from "../../services/image-processor";
 
 /**
  * Generated class for the BusinessCardOverlayPage page.
@@ -19,9 +20,14 @@ import { Platform } from 'ionic-angular/platform/platform';
 })
 export class BusinessCardOverlayPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private cameraPreview: CameraPreview,
-              private viewController: ViewController, private screenOrientation: ScreenOrientation, private popup: Popup,
-              private platform: Platform) {
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              private cameraPreview: CameraPreview,
+              private viewController: ViewController,
+              private screenOrientation: ScreenOrientation,
+              private popup: Popup,
+              private platform: Platform,
+              private imageProcessor: ImageProcessor) {
   }
 
   ionViewDidLoad() {
@@ -77,7 +83,21 @@ export class BusinessCardOverlayPage {
 
   onTakePicture() {
     this.cameraPreview.takePicture(this.pictureOpts).then((imageData) => {
-      this.viewController.dismiss(imageData);
+
+      if (this.platform.is('android')) {
+        imageData ='file://' + imageData;
+      } else {
+        imageData = 'data:image/jpeg;base64,' + imageData;
+      }
+
+      let crop = {
+        x: this.cameraPreviewOpts.x,
+        y: this.cameraPreviewOpts.y,
+        width: this.cameraPreviewOpts.width,
+        height: this.cameraPreviewOpts.height};
+      this.imageProcessor.crop(imageData, crop).subscribe(data => {
+        this.viewController.dismiss(data['dataUrl']);
+      })
     }, (err) => {
       console.log(err);
       this.popup.showAlert('Error', err, 'Ok');

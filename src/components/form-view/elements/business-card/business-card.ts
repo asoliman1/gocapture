@@ -148,9 +148,9 @@ export class BusinessCard extends BaseElement {
       this.backLoading = type != this.FRONT;
 
       if (this.platform.is('ios')) {
-        imageData = 'data:image/jpeg;base64,' + imageData;
+        // imageData = 'data:image/jpeg;base64,' + imageData;
       } else {
-        imageData ='file://' + imageData;
+        // imageData ='file://' + imageData;
       }
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
