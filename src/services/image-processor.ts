@@ -62,13 +62,14 @@ export class ImageProcessor{
       image.onload = function (event: any) {
 
         let coefficient = image.naturalWidth / window.screen.width;
+        let coefficientY = image.naturalHeight / window.screen.height;
 
         let canvasWidth = crop.width * coefficient;
-        let canvasHeight = crop.height * coefficient;
+        let canvasHeight = crop.height * coefficientY;
 
         t.setupCanvas(canvasWidth, canvasHeight);
 
-        t.ctx.drawImage(image, crop.x * coefficient, crop.y * coefficient, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+        t.ctx.drawImage(image, crop.x * coefficient, crop.y * coefficientY, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
         obs.next({
           width: t.canvas.width,
           height: t.canvas.height,

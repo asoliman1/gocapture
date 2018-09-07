@@ -147,43 +147,26 @@ export class BusinessCard extends BaseElement {
       this.frontLoading = type == this.FRONT;
       this.backLoading = type != this.FRONT;
 
-      if (this.platform.is('ios')) {
-        // imageData = 'data:image/jpeg;base64,' + imageData;
-      } else {
-        // imageData ='file://' + imageData;
-      }
-
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.imageProc.ensureLandscape(imageData, true)
-        .subscribe((info) => {
+      let newFolder = this.file.dataDirectory + "leadliaison/images";
+      let newName = new Date().getTime() + '.jpeg';
 
-          let newFolder = this.file.dataDirectory + "leadliaison/images";
-          let name = imageData.toString().substr(imageData.lastIndexOf("/") + 1);
-          let newName = new Date().getTime() + '.jpeg';
-          let folder = imageData.toString().substr(0, imageData.lastIndexOf("/"));
-          let promise: Promise<any>;
-
-          if (this.platform.is('ios')) {
-            promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
-          } else {
-            promise = this.file.moveFile(folder, name, newFolder, newName);
-          }
-
-          promise.then((entry)=>{
-              this.zone.run(()=>{
-                this.setValue(type, newFolder + "/" + newName);
-                info.dataUrl = newFolder + "/" + newName;
-                this.frontLoading = false;
-                this.backLoading = false;
-                if(shouldRecognize && type == this.FRONT){
-                  this.recognizeText(info);
-                }
-              });
-            },
-            (err) => {
-              console.error(err);
-            });
+      let blob = this.imageProc.dataURItoBlob(imageData.dataUrl);
+      this.file.writeFile(newFolder, newName, blob).then((entry)=>{
+        console.log(JSON.stringify(entry));
+          this.zone.run(()=>{
+            this.setValue(type, newFolder + "/" + newName);
+            imageData.dataUrl = newFolder + "/" + newName;
+            this.frontLoading = false;
+            this.backLoading = false;
+            if(shouldRecognize && type == this.FRONT){
+              this.recognizeText(imageData);
+            }
+          });
+        },
+        (err) => {
+          console.error(err);
         });
     });
 

@@ -36,9 +36,9 @@ export class BusinessCardOverlayPage {
 
   ionViewDidEnter() {
 
-    if (this.platform.is('android')) {
-      this.cameraPreviewOpts["storeToFile"] = true;
-    }
+    // if (this.platform.is('android')) {
+    //   this.cameraPreviewOpts["storeToFile"] = true;
+    // }
     this.startCamera();
   }
 
@@ -72,9 +72,9 @@ export class BusinessCardOverlayPage {
 
   // picture options
   pictureOpts: CameraPreviewPictureOptions = {
-    width: 640,
-    height: 640,
-    quality: 100
+    width: this.cameraPreviewOpts.width,
+    height: this.cameraPreviewOpts.height,
+    quality: 85
   };
 
   onClose() {
@@ -84,20 +84,20 @@ export class BusinessCardOverlayPage {
   onTakePicture() {
     this.cameraPreview.takePicture(this.pictureOpts).then((imageData) => {
 
-      if (this.platform.is('android')) {
-        imageData ='file://' + imageData;
-      } else {
-        imageData = 'data:image/jpeg;base64,' + imageData;
-      }
+      imageData = 'data:image/jpeg;base64,' + imageData;
 
-      let crop = {
-        x: this.cameraPreviewOpts.x,
-        y: this.cameraPreviewOpts.y,
-        width: this.cameraPreviewOpts.width,
-        height: this.cameraPreviewOpts.height};
-      this.imageProcessor.crop(imageData, crop).subscribe(data => {
-        this.viewController.dismiss(data['dataUrl']);
-      })
+      if (this.platform.is("ios")) {
+        this.viewController.dismiss({dataUrl: imageData});
+      } else {
+        let crop = {
+          x: this.cameraPreviewOpts.x,
+          y: this.cameraPreviewOpts.y,
+          width: this.cameraPreviewOpts.width,
+          height: this.cameraPreviewOpts.height};
+        this.imageProcessor.crop(imageData, crop).subscribe(data => {
+          this.viewController.dismiss(data);
+        })
+      }
     }, (err) => {
       console.log(err);
       this.popup.showAlert('Error', err, 'Ok');
