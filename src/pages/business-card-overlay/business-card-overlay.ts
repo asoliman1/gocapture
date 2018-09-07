@@ -86,6 +86,9 @@ export class BusinessCardOverlayPage {
 
       imageData = 'data:image/jpeg;base64,' + imageData;
 
+      this.viewController.dismiss({dataUrl: imageData});
+
+      /*
       if (this.platform.is("ios")) {
         this.viewController.dismiss({dataUrl: imageData});
       } else {
@@ -98,6 +101,7 @@ export class BusinessCardOverlayPage {
           this.viewController.dismiss(data);
         })
       }
+      */
     }, (err) => {
       console.log(err);
       this.popup.showAlert('Error', err, 'Ok');
