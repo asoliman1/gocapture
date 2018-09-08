@@ -72,9 +72,9 @@ export class BusinessCardOverlayPage {
 
   // picture options
   pictureOpts: CameraPreviewPictureOptions = {
-    width: this.cameraPreviewOpts.width,
-    height: this.cameraPreviewOpts.height,
-    quality: 85
+    width: window.screen.width,
+    height: window.screen.height,
+    quality: 100
   };
 
   onClose() {

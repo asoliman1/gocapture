@@ -202,17 +202,23 @@
       croppedImage = [croppedImage imageByApplyingTransform:matrix];
     }
 
-    self.latestFrame = croppedImage;
-
     CGFloat pointScale;
     if ([[UIScreen mainScreen] respondsToSelector:@selector(nativeScale)]) {
       pointScale = [[UIScreen mainScreen] nativeScale];
     } else {
       pointScale = [[UIScreen mainScreen] scale];
     }
+
+      CIFilter *scaleFilter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
+      [scaleFilter setValue:croppedImage forKey:@"inputImage"];
+      [scaleFilter setValue:[NSNumber numberWithFloat:pointScale] forKey:@"inputScale"];
+
+      self.latestFrame = [scaleFilter outputImage];
+
     CGRect dest = CGRectMake(0, 0, self.view.frame.size.width*pointScale, self.view.frame.size.height*pointScale);
 
     [self.ciContext drawImage:croppedImage inRect:dest fromRect:[croppedImage extent]];
+
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
     [(GLKView *)(self.view)display];
     [self.renderLock unlock];

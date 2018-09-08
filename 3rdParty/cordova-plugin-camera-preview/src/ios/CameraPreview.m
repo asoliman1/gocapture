@@ -459,9 +459,11 @@
 
     CGImageRef img = [context createCGImage:self.cameraRenderController.latestFrame fromRect:self.cameraRenderController.latestFrame.extent];
 
+
     NSString *base64Image = [self getBase64Image:img withQuality:100];
     NSMutableArray *params = [[NSMutableArray alloc] init];
 
+    CGImageRelease(img);
     [params addObject:base64Image];
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:params];
