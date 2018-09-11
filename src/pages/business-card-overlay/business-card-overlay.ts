@@ -72,8 +72,8 @@ export class BusinessCardOverlayPage {
 
   // picture options
   pictureOpts: CameraPreviewPictureOptions = {
-    width: window.screen.width,
-    height: window.screen.height,
+    width: window.screen.width * 2,
+    height: window.screen.height * 2,
     quality: 100
   };
 
@@ -86,22 +86,15 @@ export class BusinessCardOverlayPage {
 
       imageData = 'data:image/jpeg;base64,' + imageData;
 
-      this.viewController.dismiss({dataUrl: imageData});
+      let crop = {
+        x: this.cameraPreviewOpts.x,
+        y: this.cameraPreviewOpts.y,
+        width: this.cameraPreviewOpts.width,
+        height: this.cameraPreviewOpts.height};
+      this.imageProcessor.crop(imageData, crop).subscribe(data => {
+        this.viewController.dismiss(data);
+      })
 
-      /*
-      if (this.platform.is("ios")) {
-        this.viewController.dismiss({dataUrl: imageData});
-      } else {
-        let crop = {
-          x: this.cameraPreviewOpts.x,
-          y: this.cameraPreviewOpts.y,
-          width: this.cameraPreviewOpts.width,
-          height: this.cameraPreviewOpts.height};
-        this.imageProcessor.crop(imageData, crop).subscribe(data => {
-          this.viewController.dismiss(data);
-        })
-      }
-      */
     }, (err) => {
       console.log(err);
       this.popup.showAlert('Error', err, 'Ok');

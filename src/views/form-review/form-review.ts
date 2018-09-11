@@ -118,7 +118,7 @@ export class FormReview {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
 		front = this.util.imageUrl(front);
-		return this.normalizeURL(front + "#" + parseInt(((1 + Math.random())*1000) + ""));
+		return this.normalizeURL(front );
 	}
 
 	doRefresh() {

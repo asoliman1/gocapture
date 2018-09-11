@@ -490,7 +490,7 @@ export class RESTClient {
 					params.offset = offset;
 				}
 				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
-			}
+			};
 			doTheCall();
 
 		});
