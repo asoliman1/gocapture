@@ -9,6 +9,7 @@ import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionS
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
 import { Device } from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
+import {isProductionEnvironment} from "../app/config";
 
 @Injectable()
 export class RESTClient {
@@ -302,7 +303,7 @@ export class RESTClient {
 		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json', {
 		  device_token: device_token,
       is_allow_to_receive_notification: receiveNotifications,
-      is_dev: Config.isProd == false
+      is_dev: !isProductionEnvironment
 		})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
