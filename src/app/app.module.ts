@@ -56,6 +56,7 @@ import {CameraPreview} from "@ionic-native/camera-preview";
 import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-card-overlay";
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
+import {HTTP} from "@ionic-native/http";
 
 @NgModule({
   declarations: [
@@ -129,6 +130,7 @@ import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
     Transfer,
     File,
     Device,
+    HTTP,
     Push,
     Network,
     Camera,

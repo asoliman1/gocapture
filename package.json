@@ -29,7 +29,9 @@
     "@ionic-native/device": "^4.5.3",
     "@ionic-native/device-orientation": "^4.5.3",
     "@ionic-native/file": "^4.5.3",
+    "@ionic-native/file-transfer": "^4.12.2",
     "@ionic-native/geolocation": "^4.5.3",
+    "@ionic-native/http": "^4.12.2",
     "@ionic-native/image-picker": "^4.5.3",
     "@ionic-native/network": "^4.5.3",
     "@ionic-native/push": "^4.5.3",
@@ -45,6 +47,7 @@
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "^1.1.14-dev",
     "cordova-ios": "4.5.4",
+    "cordova-plugin-advanced-http": "^2.0.1",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-camera-preview": "^0.10.0",
@@ -120,7 +123,8 @@
       "phonegap-plugin-push": {
         "FCM_VERSION": "11.6.2"
       },
-      "cordova-plugin-camera-preview": {}
+      "cordova-plugin-camera-preview": {},
+      "cordova-plugin-advanced-http": {}
     },
     "platforms": [
       "ios",

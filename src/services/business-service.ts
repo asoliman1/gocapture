@@ -225,26 +225,6 @@ export class BussinessClient {
               });
           });
         });
-
-
-
-				// this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
-				// 	.then((result) => {
-				// 		reply.user_profile_picture = result.nativeURL;
-				// 		ext = reply.customer_logo.split('.').pop();
-				// 		target = cordova.file.dataDirectory + 'leadliaison/profile/logo.' + ext;
-				// 		this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
-				// 			.then((result) => {
-				// 				reply.customer_logo = result.nativeURL;
-				//
-				// 			})
-				// 			.catch((err) => {
-				// 				obs.error("There was an error retrieving the profile picture");
-				// 			})
-				// 			.catch((err) => {
-				// 				obs.error("There was an error retrieving the logo picture")
-				// 			});
-				// 	});
 			}, err =>{
 				obs.error("Invalid authentication code");
 			});

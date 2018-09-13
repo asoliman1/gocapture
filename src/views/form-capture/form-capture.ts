@@ -25,7 +25,7 @@ export class FormCapture {
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
 
-  valid: boolean;
+  valid: boolean = true;
   errorMessage: String;
 
   submitAttempt: boolean = false;
@@ -209,7 +209,7 @@ export class FormCapture {
       }
     }
 
-    if (!this.valid) {
+    if (!this.valid && !this.submission.id) {
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;

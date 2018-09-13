@@ -4,11 +4,12 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
-import { Transfer } from '@ionic-native/transfer';
-import { FileEntry, File } from '@ionic-native/file';
+import {FileEntry, File} from '@ionic-native/file';
 import { SyncStatus, BarcodeStatus, FormElementType, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
+import { HTTP } from '@ionic-native/http';
 declare var cordova: any;
+
 
 @Injectable()
 export class SyncClient {
@@ -37,7 +38,7 @@ export class SyncClient {
 
 	private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
 
-	constructor(private rest: RESTClient, private db: DBClient, private file: File, private transfer: Transfer) {
+	constructor(private rest: RESTClient, private db: DBClient, private file: File, private http: HTTP) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -606,7 +607,6 @@ export class SyncClient {
 			}
 			var urls = Object.keys(urlMap);
 			let index = 0;
-			let fileTransfer = this.transfer.create();
 			let handler = () => {
 				if (index == urls.length) {
 					submissions.forEach(submission => {
@@ -635,24 +635,26 @@ export class SyncClient {
 					obs.complete();
 				} else {
 					let ext = urls[index].substr(urls[index].lastIndexOf("."));
-					fileTransfer.download(urls[index], cordova.file.dataDirectory + "leadliaison/images/dwn_" + new Date().getTime() + ext)
-						.then((value: FileEntry) => {
-							//console.log(value);
-							urlMap[urls[index]] = "/" + value.nativeURL.split("///")[1];
-							index++;
-							setTimeout(() => {
-								handler();
-							});
-						})
-						.catch((err) => {
-							console.error(err);
-							index++;
-							setTimeout(() => {
-								handler();
-							});
-						});
+					let pathToDownload = encodeURI(urls[index]);
+          let newFolder = this.file.dataDirectory + "leadliaison/images/";
+          let newName = "dwn_" + new Date().getTime() + ext;
+          let path = newFolder + newName;
+
+          this.http.downloadFile(pathToDownload, {}, {}, path).then(entry => {
+            urlMap[urls[index]] = "/" + entry.nativeURL.split("///")[1];
+            index++;
+            setTimeout(() => {
+              handler();
+            });
+          }).catch((err) => {
+            console.error(err);
+            index++;
+            setTimeout(() => {
+              handler();
+            });
+          });
 				}
-			}
+			};
 			handler();
 		});
 	}
