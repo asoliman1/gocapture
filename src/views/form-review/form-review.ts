@@ -110,6 +110,11 @@ export class FormReview {
 		return !email && !name && submission.fields[id];
 	}
 
+	shouldShowBusinessCard(submission: FormSubmission) {
+    submission.status != SubmissionStatus.Submitted && this.getBusinessCard(submission);
+  }
+
+
   private normalizeURL(url: string): string {
     return this.util.normalizeURL(url);
   }
@@ -118,7 +123,7 @@ export class FormReview {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
 		front = this.util.imageUrl(front);
-		return this.normalizeURL(front );
+		return this.normalizeURL(front);
 	}
 
 	doRefresh() {

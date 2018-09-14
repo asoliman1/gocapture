@@ -7,7 +7,6 @@ import { BussinessClient } from "../../services/business-service";
 import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
 import { FormView } from "../../components/form-view";
 import { ProspectSearch } from "../prospect-search";
-import {isTranspileRequired} from "@ionic/app-scripts/dist/aot/aot-compiler";
 
 @Component({
   selector: 'form-capture',
