@@ -1,4 +1,4 @@
-import { OcrSelector } from '../ocr-selector/index';
+import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Form, BarcodeStatus, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
 import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
