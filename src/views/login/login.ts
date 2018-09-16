@@ -1,4 +1,4 @@
-import {Component, NgZone} from '@angular/core';
+import {Component} from '@angular/core';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";

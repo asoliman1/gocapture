@@ -17,15 +17,17 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
 import { Nav } from 'ionic-angular/components/nav/nav';
+import {ThemeProvider} from "../providers/theme/theme";
 
 declare var cordova;
 
 @Component({
-  template: '<ion-nav #nav></ion-nav>'
+  templateUrl: 'app.html'
 })
 export class MyApp {
 
   rootPage: any;
+  selectedTheme: String;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -41,7 +43,9 @@ export class MyApp {
     public statusBar: StatusBar,
     private popup: Popup,
     private loading: LoadingController,
-    private logger: LogClient) {
+    private logger: LogClient,
+    public themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     this.initializeApp();
   }
 

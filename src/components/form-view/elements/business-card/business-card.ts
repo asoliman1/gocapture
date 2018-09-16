@@ -13,7 +13,7 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
-import {BusinessCardOverlayPage} from "../../../../pages/business-card-overlay/business-card-overlay";
+import {BusinessCardOverlayPage} from "../../../../views/business-card-overlay/business-card-overlay";
 
 declare var screen;
 
