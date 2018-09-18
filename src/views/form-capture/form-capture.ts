@@ -1,12 +1,27 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import {Component, NgZone, ViewChild} from '@angular/core';
 import {
-  NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar,
-  ToastController, Content
+  AlertController,
+  Content,
+  MenuController,
+  ModalController,
+  Navbar,
+  NavController,
+  NavParams,
+  Platform,
+  ToastController
 } from 'ionic-angular';
-import { BussinessClient } from "../../services/business-service";
-import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
-import { FormView } from "../../components/form-view";
-import { ProspectSearch } from "../prospect-search";
+import {BussinessClient} from "../../services/business-service";
+import {
+  BarcodeStatus,
+  DeviceFormMembership,
+  DispatchOrder,
+  Form,
+  FormSubmission,
+  FormSubmissionType,
+  SubmissionStatus
+} from "../../model";
+import {FormView} from "../../components/form-view";
+import {ProspectSearch} from "../prospect-search";
 
 @Component({
   selector: 'form-capture',
@@ -220,6 +235,10 @@ export class FormCapture {
 
     if (this.submission.status != SubmissionStatus.Blocked) {
       this.submission.status = SubmissionStatus.ToSubmit;
+    }
+
+    if (this.form["barcode_processed"] == BarcodeStatus.Processed) {
+      this.submission.submission_type = FormSubmissionType.barcode;
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {

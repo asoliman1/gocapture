@@ -75,7 +75,7 @@ export class DBClient {
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status=4",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -288,6 +288,11 @@ export class DBClient {
       9: {
         queries: [
           "alter table forms add column members_last_sync_date VARCHAR(50)"
+        ]
+      },
+      10: {
+        queries: [
+          "alter table submissions add column submission_type VARCHAR(50)"
         ]
       },
 		}
@@ -627,6 +632,7 @@ export class DBClient {
 					form.activity_id = dbForm.activityId;
 					form.invalid_fields = dbForm.invalid_fields;
 					form.barcode_processed = dbForm.barcode_processed;
+          form.submission_type = dbForm.submission_type;
 					forms.push(form);
 				});
 				return forms;
@@ -652,6 +658,7 @@ export class DBClient {
 							form.invalid_fields = dbForm.invalid_fields;
 							form.activity_id = dbForm.activityId;
 							form.barcode_processed = dbForm.barcode_processed;
+              form.submission_type = dbForm.submission_type;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -700,7 +707,7 @@ export class DBClient {
 							return;
 						}
 
-						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed]).subscribe(
+						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]).subscribe(
 							(d) => {
 								obs.next(true);
 								obs.complete();
@@ -716,7 +723,7 @@ export class DBClient {
 			});
 		}
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed]);
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]);
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
