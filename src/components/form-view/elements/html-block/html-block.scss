@@ -1,8 +1,8 @@
 .html-block {
   line-height: 12px;
+  position: relative;
 
   .block-content {
-    position: relative;
 
     &.collapsed {
       height: 72px;
