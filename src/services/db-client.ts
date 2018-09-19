@@ -740,6 +740,10 @@ export class DBClient {
 		return this.saveAll<FormSubmission>(forms, "Submission");
 	}
 
+	public deleteSubmission(form: FormSubmission) {
+    return this.remove(WORK, "submissions", [form.id]);
+  }
+
 	/**
 	 *
 	 */

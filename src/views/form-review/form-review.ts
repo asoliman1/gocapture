@@ -75,6 +75,11 @@ export class FormReview {
 		return result;
 	}
 
+	isSubmissionRemovable(submission: FormSubmission) {
+	  return (submission.status != SubmissionStatus.OnHold) &&
+      (submission.status != SubmissionStatus.Submitted);
+  }
+
 	getColor(submission: FormSubmission) {
 		let result = "";
 		switch (submission.status) {
@@ -96,6 +101,13 @@ export class FormReview {
 		}
 		return result;
 	}
+
+	deleteSubmission(submission) {
+	  this.client.removeSubmission(submission).subscribe(result => {
+	    this.doRefresh();
+    });
+  }
+
 
 	goToEntry(submission) {
 		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
