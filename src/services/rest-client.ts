@@ -170,7 +170,7 @@ export class RESTClient {
 			form_type: "device"
 		};
 		if(lastSyncDate){
-			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
+			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
 		let f = form;
 		return this.getAll<SubmissionResponse>("/forms/submissions.json", opts)
@@ -209,6 +209,11 @@ export class RESTClient {
 											vals = tmp;
 										}
 									}
+
+									if (field.type == "simple_name") {
+                    entry.full_name = dataItem.value;
+                  }
+
 									vals.forEach((value, index) => {
 										entry.fields[fieldName + "_" + (index+1)] = value;
 									});

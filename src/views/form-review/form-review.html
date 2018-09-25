@@ -50,7 +50,7 @@
         <ion-item (click)="goToEntry(submission)">
           <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
           <div *ngIf="!shouldShowBusinessCard(submission)">
-            <h1>{{submission.first_name + " " + submission.last_name}}</h1>
+            <h1>{{submission.full_name}}</h1>
             <h2>{{submission.company }}</h2>
             <h2>{{submission.email}}</h2>
             <h2>{{submission.telephone}}</h2>

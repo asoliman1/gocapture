@@ -10,6 +10,7 @@ export class FormSubmission{
 	phone: string = "";
 	first_name: string = "";
 	last_name: string = "";
+	full_name: string = "";
 	activity_id: number = null;
 	hold_request_id: number = null;
 	invalid_fields: number = 0;
