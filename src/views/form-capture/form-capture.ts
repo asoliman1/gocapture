@@ -79,7 +79,7 @@ export class FormCapture {
   }
 
   isReadOnly(submission: FormSubmission): boolean {
-    return submission && submission.status == SubmissionStatus.Submitted;
+    return submission && (submission.status == SubmissionStatus.Submitted || submission.status == SubmissionStatus.OnHold);
   }
 
   ionViewDidEnter() {

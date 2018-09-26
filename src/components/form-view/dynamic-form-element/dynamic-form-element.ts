@@ -1,9 +1,9 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from "@angular/forms";
-import {FormElement} from "../../../model/form-element";
+import {FormElement} from "../../../model";
 import {FormView} from "../form-view";
-import {Form} from "../../../model/form";
-import {FormSubmission} from "../../../model/form-submission";
+import {Form} from "../../../model";
+import {FormSubmission} from "../../../model";
 
 @Component({
   selector: 'dynamic-form-element',

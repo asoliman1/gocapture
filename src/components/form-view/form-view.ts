@@ -92,7 +92,6 @@ export class FormView {
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
       if (this.form && this.submission) {
-        this.readOnly = this.submission.isSubmitted();
         setTimeout(()=> {
           this.setupFormGroup();
         }, 1);
