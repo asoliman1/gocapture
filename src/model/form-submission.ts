@@ -66,5 +66,6 @@ export enum SubmissionStatus {
 export enum FormSubmissionType {
   normal = 'normal',
   barcode = 'barcode',
+  list = 'list'
 }
 
