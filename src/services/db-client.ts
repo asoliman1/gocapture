@@ -76,7 +76,7 @@ export class DBClient {
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status=4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
-				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, where id=?",
+				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",

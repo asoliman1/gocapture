@@ -237,14 +237,6 @@ export class FormCapture {
       this.submission.status = SubmissionStatus.ToSubmit;
     }
 
-    if (this.form["barcode_processed"] == BarcodeStatus.Processed) {
-      this.submission.submission_type = FormSubmissionType.barcode;
-    }
-
-    if (this.submission.prospect_id) {
-      this.submission.submission_type = FormSubmissionType.list;
-    }
-
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode) {
         this.submission = null;
