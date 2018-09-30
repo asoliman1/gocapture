@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2202880" id="com.leadliaison.mobilitease" ios-CFBundleVersion="288" version="2.4.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2202890" id="com.leadliaison.mobilitease" ios-CFBundleVersion="289" version="2.4.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
@@ -124,7 +124,7 @@
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-ionic-webview" spec="^1.2.1" />
     <plugin name="cordova-plugin-camera" spec="^4.0.3">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="GoCapture! will need to access your camera" />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="GoCapture! needs access to the camera to scan barcodes and to take a picture of business cards" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="GoCapture! will need to access your photo library" />
     </plugin>
     <plugin name="es6-promise-plugin" spec="^4.2.2" />
