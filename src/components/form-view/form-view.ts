@@ -159,6 +159,7 @@ export class FormView {
     this.form.elements.forEach((element) => {
       let identifier = this.elementIdentifier(element);
       let control = this.createFormControl(element, identifier);
+      element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
     });
 

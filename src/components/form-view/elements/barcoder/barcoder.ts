@@ -105,18 +105,9 @@ export class Barcoder extends BaseElement {
 				this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
 				this.statusMessage = "Rescan Barcode";
 				this.form.elements.forEach((element) => {
-					if(element.is_filled_from_barcode){
-						let control = this.getControl(this.formGroup, element["identifier"]);
-						if(control){
-							if (element.mapping.length > 1) {
-								element.mapping.forEach(mapping => {
-									let c = control.get(mapping["identifier"]);
-									c.setValue("Scanned");
-								});
-							} else {
-								control.setValue("Scanned");
-							}
-						}
+
+					if(element.is_filled_from_barcode) {
+					  element.placeholder = "Scanned";
 					}
 				});
 			});
@@ -126,7 +117,7 @@ export class Barcoder extends BaseElement {
 		});
 	}
 
-	private getControl(formGroup: FormGroup, id: string): AbstractControl{
+	private getControl(formGroup: FormGroup, id: string): AbstractControl {
 		let control = null;
 		if(id){
 			let match = /(\w+\_\d+)\_\d+/g.exec(id);

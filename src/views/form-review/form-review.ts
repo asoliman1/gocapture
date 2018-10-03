@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form, FormSubmission, SubmissionStatus, FormElementType } from "../../model";
+import {Form, FormSubmission, SubmissionStatus, FormElementType, BarcodeStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { Subscription } from "rxjs/Subscription";
 import { NavController } from 'ionic-angular/navigation/nav-controller';
@@ -124,6 +124,31 @@ export class FormReview {
 
 	shouldShowBusinessCard(submission: FormSubmission) {
     submission.status != SubmissionStatus.Submitted && this.getBusinessCard(submission);
+  }
+
+  displayedName(submission) {
+	  let hasFullName = submission.full_name && submission.full_name.length > 0;
+	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
+	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+	  if (hasFullName) {
+	    return submission.full_name;
+    } else if (hasFirstLastName) {
+      return submission.first_name + ' ' + submission.last_name;
+    } else if (isScannedAndNoProcessed) {
+	    return "Scanned";
+    }
+    return "";
+  }
+
+  displayedProperty(submission, key) {
+    let hasValue = submission[key] && submission[key].length > 0;
+    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+    if (hasValue) {
+      return submission[key];
+    }  else if (isScannedAndNoProcessed) {
+      return "Scanned";
+    }
+    return "";
   }
 
 

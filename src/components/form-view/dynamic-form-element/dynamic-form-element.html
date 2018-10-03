@@ -9,7 +9,7 @@
       <ion-label class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--PAGE BREAK-->
@@ -22,14 +22,14 @@
     <ion-item *ngSwitchCase="'url'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--TEXT-->
     <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden"
               [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--DROPDOWN-->
@@ -78,7 +78,7 @@
     <ion-item *ngSwitchCase="'number'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.invalid]="isControlInvalid(element)" [class.hidden]="element.is_hidden">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--DATE-->
@@ -94,14 +94,14 @@
     <ion-item *ngSwitchCase="'phone'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--SIMPLE PHONE-->
     <ion-item *ngSwitchCase="'simple_phone'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--CHECKBOX-->

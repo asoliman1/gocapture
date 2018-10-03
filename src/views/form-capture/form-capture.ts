@@ -215,15 +215,17 @@ export class FormCapture {
      When transcription is enabled, the app is still requiring name and email. If there is a business card attached and transcription is turned on, we should not require either of these fields.
      */
 
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+
     if (!this.isEmailOrNameInputted()) {
-      if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
+      if ((this.isTranscriptionEnabled() && !this.isBusinessCardAdded() || isNotScanned)) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
       }
     }
 
-    if (!this.valid && !this.submission.id) {
+    if (isNotScanned && !this.valid && !this.submission.id) {
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
@@ -321,7 +323,7 @@ export class FormCapture {
 
   private isTranscriptionEnabled() {
     let businessCardEl = this.getElementForType("business_card");
-    return typeof businessCardEl != 'undefined' && businessCardEl['is_enable_transcription'] == 1;
+    return businessCardEl && businessCardEl['is_enable_transcription'] == 1;
   }
 
   private isBusinessCardAdded() {
