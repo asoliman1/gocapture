@@ -92,7 +92,6 @@ export class FormView {
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
       if (this.form && this.submission) {
-        this.readOnly = this.submission.isSubmitted();
         setTimeout(()=> {
           this.setupFormGroup();
         }, 1);
@@ -160,6 +159,7 @@ export class FormView {
     this.form.elements.forEach((element) => {
       let identifier = this.elementIdentifier(element);
       let control = this.createFormControl(element, identifier);
+      element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
     });
 

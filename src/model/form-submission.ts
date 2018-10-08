@@ -10,12 +10,15 @@ export class FormSubmission{
 	phone: string = "";
 	first_name: string = "";
 	last_name: string = "";
+	full_name: string = "";
 	activity_id: number = null;
 	hold_request_id: number = null;
 	invalid_fields: number = 0;
 	fields : {[key: string]: string | string[]} = {};
 
 	barcode_processed: BarcodeStatus = 0;
+
+	submission_type: FormSubmissionType = FormSubmissionType.normal;
 
 	public isSubmitted(): boolean{
 		return this.status == SubmissionStatus.Submitted;
@@ -44,13 +47,13 @@ export class FormSubmission{
 	}
 }
 
-export enum BarcodeStatus{
+export enum BarcodeStatus {
 	None = 0,
 	Processed = 1,
 	Queued = 2
 }
 
-export enum SubmissionStatus{
+export enum SubmissionStatus {
 	Submitted = 1,
 	OnHold = 2,
 	Blocked = 3,
@@ -59,3 +62,10 @@ export enum SubmissionStatus{
 	InvalidFields = 6,
 	Error = 7
 }
+
+export enum FormSubmissionType {
+  normal = 'normal',
+  barcode = 'barcode',
+  list = 'list'
+}
+

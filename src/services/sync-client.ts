@@ -5,7 +5,18 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
 import {FileEntry, File} from '@ionic-native/file';
-import { SyncStatus, BarcodeStatus, FormElementType, Form, Dispatch, DispatchOrder, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
+import {
+  SyncStatus,
+  BarcodeStatus,
+  FormElementType,
+  Form,
+  Dispatch,
+  DispatchOrder,
+  DeviceFormMembership,
+  FormSubmission,
+  SubmissionStatus,
+  FormSubmissionType
+} from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 import { HTTP } from '@ionic-native/http';
 declare var cordova: any;
@@ -213,7 +224,7 @@ export class SyncClient {
 					index++;
 					handler();
 				});
-			}
+			};
 			handler();
 		});
 	}
@@ -268,47 +279,70 @@ export class SyncClient {
 						}
 					}
 				}
-				if(submission.barcode_processed == BarcodeStatus.Queued){
-					let identifier = data.form.getIdByFieldType(FormElementType.barcode);
-					let form = data.form.getFieldByIdentifier(identifier);
-					this.rest.fetchBarcodeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe( barcodeData => {
-						if(!barcodeData || barcodeData.length == 0){
-							return;
-						}
-						submission.barcode_processed = BarcodeStatus.Processed;
-						barcodeData.forEach(entry => {
-							let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
-							if(!id){
-								return;
-							}
-							submission.fields[id] = entry.value;
-						});
-
-						this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-							this.actuallySubmitForm(data.form.name, submission, obs);
-						}, (err) => {
-							obs.error(err);
-							this.errorSource.next("Could not save updated barcode info into teh submission for form " + data.form.name);
-						});
-					}, (err) => {
-						obs.error(err);
-						let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
-						this.errorSource.next(msg);
-					});
-				}else{
-					this.actuallySubmitForm(data.form.name, submission, obs);
+				if (submission.barcode_processed == BarcodeStatus.Queued) {
+          this.processBarcode(data, submission, obs);
+        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !this.isSubmissionValid(submission)) {
+          this.processBarcode(data, submission, obs);
+        } else {
+				  this.actuallySubmitForm(data.form.name, submission, obs);
 				}
 			}, (err) => {
 				obs.error(err);
 				let msg = "Could not process submission for form " + data.form.name;
 				this.errorSource.next(msg);
 			});
-
 		});
 	}
 
-	private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>){
-		this.rest.submitForm(submission).subscribe((d) => {
+  private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
+    let identifier = data.form.getIdByFieldType(FormElementType.barcode);
+    let form = data.form.getFieldByIdentifier(identifier);
+    this.rest.fetchBarcodeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe(barcodeData => {
+      if (!barcodeData || barcodeData.length == 0) {
+        return;
+      }
+
+      console.log("Barcode data: " + JSON.stringify(barcodeData));
+
+      submission.barcode_processed = BarcodeStatus.Processed;
+
+      barcodeData.forEach(entry => {
+        let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
+        if (!id) {
+          return;
+        }
+        submission.fields[id] = entry.value;
+      });
+
+      this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+        this.actuallySubmitForm(data.form.name, submission, obs, JSON.stringify(barcodeData));
+      }, (err) => {
+        obs.error(err);
+        this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
+      });
+    }, (err) => {
+      obs.error(err);
+      let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
+      this.errorSource.next(msg);
+    });
+  }
+
+  private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
+
+    console.log("Submit form: " + JSON.stringify(submission));
+	  if (barcodeData) {
+      console.log("With Barcode data: " + barcodeData);
+    }
+
+    if (submission.barcode_processed == BarcodeStatus.Processed) {
+	    submission.submission_type = FormSubmissionType.barcode;
+    }
+
+    if (submission.prospect_id) {
+      submission.submission_type = FormSubmissionType.list;
+    }
+
+    this.rest.submitForm(submission).subscribe((d) => {
 			if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
 				let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
 				submission.invalid_fields = 1;
@@ -350,6 +384,10 @@ export class SyncClient {
 			this.errorSource.next(msg);
 		});
 	}
+
+	private isSubmissionValid(submission: FormSubmission) {
+	  return (submission.first_name.length > 0 && submission.last_name.length > 0) || submission.email.length > 0;
+  }
 
 	private uploadImages(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
 		return new Observable<any>((obs: Observer<any>) => {

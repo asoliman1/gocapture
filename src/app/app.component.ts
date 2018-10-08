@@ -61,7 +61,7 @@ export class MyApp {
         if(user) {
 
           this.client.getSetting("enableLogging").subscribe(setting => {
-            if (typeof setting == "undefined") {
+            if (typeof setting == "undefined" || setting.length == 0) {
               this.logger.enableLogging(true);
             } else {
               this.logger.enableLogging(setting);
@@ -94,7 +94,7 @@ export class MyApp {
 
         //check device status when app resumes
         checkDeviceStatus();
-        
+
         this.client.getUpdates().subscribe(()=> {});
       });
 

@@ -36,7 +36,7 @@ export class LogClient{
   }
 
   public enableLogging(isEnabled) {
-	  this.isLoggingEnabled = isEnabled === 'true';
+	  this.isLoggingEnabled = String(isEnabled) == "true";
   }
 
 	private makeConsole() : any{

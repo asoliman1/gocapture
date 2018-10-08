@@ -372,6 +372,10 @@ export class BussinessClient {
 		});
 	}
 
+	public removeSubmission(submission) {
+    return this.db.deleteSubmission(submission)
+  }
+
 	//MARK: Private
 
   private handlePush(note) {

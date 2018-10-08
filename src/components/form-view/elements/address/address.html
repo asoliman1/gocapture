@@ -5,7 +5,7 @@
 			<ion-col>
 				<ion-item>
 					<ion-label stacked>Street address</ion-label>
-					<ion-input type="text"[attr.name]="element.identifier + '_1'" [formControlName]="element.identifier + '_1'"></ion-input>
+					<ion-input type="text"[attr.name]="element.identifier + '_1'" [formControlName]="element.identifier + '_1'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_1')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
@@ -14,7 +14,7 @@
 			<ion-col>
 				<ion-item>
 					<ion-label stacked>Address line 2</ion-label>
-					<ion-input type="text" [attr.name]="element.identifier + '_2'" [formControlName]="element.identifier + '_2'"></ion-input>
+					<ion-input type="text" [attr.name]="element.identifier + '_2'" [formControlName]="element.identifier + '_2'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_2')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
@@ -23,14 +23,14 @@
 			<ion-col>
 				<ion-item>
 					<ion-label stacked>City</ion-label>
-					<ion-input type="text" [attr.name]="element.identifier + '_3'" [formControlName]="element.identifier + '_3'"></ion-input>
+					<ion-input type="text" [attr.name]="element.identifier + '_3'" [formControlName]="element.identifier + '_3'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_3')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
 			<ion-col>
 				<ion-item>
 					<ion-label stacked>State</ion-label>
-					<ion-input type="text" [attr.name]="element.identifier + '_4'" [formControlName]="element.identifier + '_4'"></ion-input>
+					<ion-input type="text" [attr.name]="element.identifier + '_4'" [formControlName]="element.identifier + '_4'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_4')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
@@ -39,7 +39,7 @@
 			<ion-col>
 				<ion-item>
 					<ion-label stacked>Zip code</ion-label>
-					<ion-input type="text" [attr.name]="element.identifier + '_5'" [formControlName]="element.identifier + '_5'"></ion-input>
+					<ion-input type="text" [attr.name]="element.identifier + '_5'" [formControlName]="element.identifier + '_5'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_5')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>

@@ -31,7 +31,7 @@
 						Ready
 					</ion-segment-button>
 					<ion-segment-button value="2" class="hold" color="orange">
-						On Hold
+						Pending
 					</ion-segment-button>
 					<ion-segment-button value="3" class="blocked" color="danger">
 						Blocked
@@ -46,18 +46,29 @@
 	<div [hidden]="filteredSubmissions.length == 0">
 		<!-- [virtualScroll]="filteredSubmissions" approxItemHeight="84px"-->
 		<ion-list >
-			<ion-item *ngFor="let submission of filteredSubmissions" (click)="goToEntry(submission)" [class.danger]="submission.invalid_fields == 1">
-				<img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
-        <div *ngIf="!shouldShowBusinessCard(submission)">
-          <h1>{{submission.first_name + " " + submission.last_name}}</h1>
-          <h2>{{submission.company }}</h2>
-          <h2>{{submission.email}}</h2>
-          <h2>{{submission.telephone}}</h2>
-        </div>
-				<button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
-					<ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
-				</button>
-			</ion-item>
+      <ion-item-sliding *ngFor="let submission of filteredSubmissions"  [class.danger]="submission.invalid_fields == 1">
+        <ion-item (click)="goToEntry(submission)">
+          <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
+
+          <div *ngIf="!shouldShowBusinessCard(submission)">
+            <h1>{{displayedName(submission)}}</h1>
+            <h2>{{submission.company}}</h2>
+            <h2>{{displayedProperty(submission, "email")}}</h2>
+            <h2>{{submission.telephone}}</h2>
+          </div>
+
+          <button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
+            <ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
+          </button>
+        </ion-item>
+        <ion-item-options side="right" *ngIf="isSubmissionRemovable(submission)">
+          <button ion-button color="danger" (click)="deleteSubmission(submission)">
+            <ion-icon name="trash"></ion-icon>
+            Delete
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+
 		</ion-list>
 	</div>
 	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">

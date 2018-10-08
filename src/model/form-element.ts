@@ -44,7 +44,7 @@ export const FormElementType = {
 	page_break: "page_break",
 	section: "section",
 	url: "url",
-	text: "text",			
+	text: "text",
 	select: "select",
 	radio: "radio",
 	simple_name: "simple_name",
@@ -60,4 +60,4 @@ export const FormElementType = {
 	business_card: "business_card",
 	signature: "signature",
 	barcode: "barcode"
-}
+};
