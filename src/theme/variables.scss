@@ -25,11 +25,6 @@ $app-direction: ltr;
 $text-color:        #000;
 $background-color:  #fff;
 
-$alert-ios-button-text-color: #fb8f04;
-
-$action-sheet-ios-button-text-color: #fb8f04;
-
-
 // Named Color Variables
 // --------------------------------------------------
 // Named colors makes it easy to reuse colors on various components.
@@ -53,14 +48,21 @@ $colors: (
     base: #000000,
     contrast: #000000
   ),
-  orange:(
-	  base: #fb8f04,
-	  contrast: #fff
-  ),
+
+  orange: #fb8f04,
+
   yellow:(
     base:#f5ed38,
     contrast:#fff
-  )
+  ),
+
+  blue: #23395B,
+  purple: #cbc5ea,
+  blue-green: #45a3e7,
+  green: #3e8914,
+  grey: #c2dfe3,
+  candy-apple: #8b2635,
+  summer: #bfd7ea
 );
 
 
@@ -110,3 +112,4 @@ $colors: (
 @import "noto-sans";
 
 @import "default-theme";
+@import "blue-theme";

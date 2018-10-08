@@ -1,0 +1,11 @@
+$primary: color($colors, blue);
+
+$alert-ios-button-text-color: color($colors, blue);
+
+$action-sheet-ios-button-text-color: color($colors, blue);
+
+.blue-theme {
+  .header .toolbar-background {
+    background-color: $primary;
+  }
+}

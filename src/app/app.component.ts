@@ -45,7 +45,9 @@ export class MyApp {
     private loading: LoadingController,
     private logger: LogClient,
     public themeProvider: ThemeProvider) {
+
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
     this.initializeApp();
   }
 
