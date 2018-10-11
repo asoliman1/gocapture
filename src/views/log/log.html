@@ -1,13 +1,14 @@
-<ion-header>
-	<ion-navbar>
+<ion-header [class]="selectedTheme">
+	<ion-navbar color="primary">
 		<ion-title>Logs</ion-title>
 		<ion-buttons end>
 			<button ion-button (click)="done()">
-				<ion-icon name="close" class="capture" color="primary"></ion-icon>
+				<ion-icon name="close" class="capture"></ion-icon>
 			</button>
 		</ion-buttons>
 	</ion-navbar>
 </ion-header>
+
 <ion-content class="log">
 	<ion-list>
 		<ion-item *ngFor="let log of logs" (click)="log.style = !log.style">
@@ -20,14 +21,15 @@
 	</ion-list>
 
 </ion-content>
-<ion-footer>
+
+<ion-footer [class]="selectedTheme">
   <ion-toolbar>
     <ion-buttons class="text-center">
 			<button ion-button (click)="copy()">
-				<ion-icon name="copy" class="capture smaller" color="primary"></ion-icon>
+				<ion-icon name="copy" class="capture smaller" color="white"></ion-icon>
 			</button>
       <button ion-button (click)="clearLogs()">
-        <ion-icon name="trash" class="capture smaller" color="primary"></ion-icon>
+        <ion-icon name="trash" class="capture smaller" color="white"></ion-icon>
       </button>
 		</ion-buttons>
   </ion-toolbar>

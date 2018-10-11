@@ -24,6 +24,7 @@ declare var cordova;
 @Component({
   templateUrl: 'app.html'
 })
+
 export class MyApp {
 
   rootPage: any;

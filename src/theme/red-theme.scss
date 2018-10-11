@@ -1,11 +1,12 @@
-$theme-color: color($colors, blue);
+$theme-color: color($colors, candy-apple);
 
 @import "theme";
 
-.blue-theme {
+.red-theme {
   .header .toolbar-background,
   .footer .toolbar-background,
   .toolbar .toolbar-background {
     background-color: $theme-color;
   }
 }
+

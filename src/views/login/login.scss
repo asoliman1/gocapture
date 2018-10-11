@@ -20,7 +20,7 @@
 }
 
 .bottom-content{
-  padding:0px;
+  padding:0;
   background-color: color($colors, light, base);
   min-height:55vh;
   position: relative;
@@ -43,10 +43,10 @@
   & ion-icon{
     opacity: 0;
   }
-  &.on{
+  &.on {
     font-weight: bold;
     & *{
-      color: #fb8f04;
+      color: $theme-color;
     }
     & ion-icon{
       opacity: 1;
