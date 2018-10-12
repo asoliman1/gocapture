@@ -1,8 +1,8 @@
-$theme-color: color($colors, red);
+$theme-color: color($colors, silver);
 
 @import "theme";
 
-.red-theme {
+.silver-theme {
   .header .toolbar-background,
   .footer .toolbar-background,
   .toolbar .toolbar-background {
