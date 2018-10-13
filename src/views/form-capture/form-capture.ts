@@ -22,6 +22,8 @@ import {
 } from "../../model";
 import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
+import {Popup} from "../../providers/popup/popup";
+import {Login} from "../login";
 
 @Component({
   selector: 'form-capture',
@@ -56,7 +58,8 @@ export class FormCapture {
               private menuCtrl: MenuController,
               private alertCtrl: AlertController,
               private platform: Platform,
-              private toast: ToastController) {
+              private toast: ToastController,
+              private popup: Popup) {
     console.log("FormCapture");
   }
 
@@ -140,42 +143,54 @@ export class FormCapture {
 
   }
 
-
   doBack() {
     if (this.form.is_mobile_kiosk_mode) {
-      let alert = this.alertCtrl.create({
-        title: 'Enter pass code',
-        inputs: [
-          {
-            name: 'passcode',
-            placeholder: 'Kiosk Mode Pass Code',
-            value: ""
-          }
-        ],
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            handler: () => {
-            }
-          },
-          {
-            text: 'Ok',
-            handler: (data) => {
-              let password = data.passcode;
-              this.client.validateKioskPassword(password).subscribe((valid) => {
-                if(valid){
-                  this.internalBack();
-                }else{
-                  return false;
+      this.client.hasKioskPassword().subscribe((hasPas) => {
+        if (hasPas) {
+          let alert = this.alertCtrl.create({
+            title: 'Enter pass code',
+            inputs: [
+              {
+                name: 'passcode',
+                placeholder: 'Kiosk Mode Pass Code',
+                value: ""
+              }
+            ],
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                handler: () => {
                 }
-              });
-            }
-          }
-        ]
+              },
+              {
+                text: 'Ok',
+                handler: (data) => {
+                  let password = data.passcode;
+                  this.client.validateKioskPassword(password).subscribe((valid) => {
+                    if (valid) {
+                      this.internalBack();
+                    } else {
+                      return false;
+                    }
+                  });
+                }
+              }
+            ]
+          });
+          alert.present();
+        } else {
+          const buttons = [
+            {
+              text: 'Ok',
+              handler: () => {
+                this.internalBack();
+              }
+            }];
+          this.popup.showAlert('Info', "No kiosk password set!", buttons);
+        }
       });
-      alert.present();
-    }else{
+    } else {
       this.internalBack();
     }
   }
