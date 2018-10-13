@@ -57,6 +57,7 @@ import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-c
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
 import {HTTP} from "@ionic-native/http";
+import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import {HTTP} from "@ionic-native/http";
     SafeHtmlPipe,
     FormControlPipe,
     AvatarPathUpdaterPipe,
+    SubmissionStatusPipe,
     FormView,
     LogView,
     SignaturePad,
