@@ -628,6 +628,7 @@ export class DBClient {
 				data.forEach((dbForm: any) => {
 					let form = new FormSubmission();
 					form.id = dbForm.id;
+					form.sub_date = dbForm.sub_date;
 					form.form_id = dbForm.formId;
 					form.fields = JSON.parse(dbForm.data);
 					form.status = dbForm.status;
@@ -665,6 +666,7 @@ export class DBClient {
 							form.activity_id = dbForm.activityId;
 							form.barcode_processed = dbForm.barcode_processed;
               form.submission_type = dbForm.submission_type;
+              form.sub_date = dbForm.dbForm.sub_date;
 							resp.push(form);
 						}
 						responseObserver.next(resp);

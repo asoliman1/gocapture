@@ -244,6 +244,7 @@ export class RESTClient {
 						entry.last_name = "";
 						entry.company = "";
 						entry.phone = "";
+						entry.sub_date = item.submission_date;
 						entry.updateFields(f);
 						data.push(entry);
 					});

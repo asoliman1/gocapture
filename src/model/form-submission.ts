@@ -15,6 +15,7 @@ export class FormSubmission{
 	hold_request_id: number = null;
 	invalid_fields: number = 0;
 	fields : {[key: string]: string | string[]} = {};
+	sub_date: string;
 
 	barcode_processed: BarcodeStatus = 0;
 

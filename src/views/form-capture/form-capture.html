@@ -15,6 +15,17 @@
 		</ion-buttons>
 	</ion-navbar>
 
+  <ion-toolbar *ngIf="isReadOnly(submission)">
+    <div class="info-box">
+      <div class="description-info">
+        {{submission | submissionStatusPipe}}
+      </div>
+      <div class="date-info">
+        Captured on {{submissionDate()}}
+      </div>
+    </div>
+  </ion-toolbar>
+
   <ion-toolbar *ngIf="errorMessage && errorMessage.length > 0">
     <div class="error-message" >{{errorMessage}}</div>
   </ion-toolbar>
