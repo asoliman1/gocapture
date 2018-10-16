@@ -24,6 +24,7 @@ import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
 import {Popup} from "../../providers/popup/popup";
 import {Login} from "../login";
+import moment from "moment";
 
 @Component({
   selector: 'form-capture',
@@ -356,4 +357,9 @@ export class FormCapture {
 
     return false;
   }
+
+  private submissionDate() {
+    return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
+  }
+
 }
