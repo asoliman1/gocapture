@@ -450,7 +450,7 @@ export class DBClient {
     // updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
 		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
       form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
-      JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date, form.is_mobile_quick_capture_mode ? 1 : 0]);
+      JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -848,17 +848,22 @@ export class DBClient {
 			let index = 0;
 			let name = "save" + type;
 			console.log("Start save all " + type + " " + items.length);
+
 			let exec = (done: boolean) => {
-				if(this.saveAllData.length == 0){
+			  console.log('Save all data: ' + this.saveAllData.length);
+				if(this.saveAllData.length == 0) {
 					this.saveAllEnabled = false;
 					obs.next(true);
 					obs.complete();
 					return;
 				}
-				let query = this.saveAllData[0].query;
-				let params = [].concat(this.saveAllData[0].parameters);
-				for (var i = 1; i < this.saveAllData.length; i++) {
-					query += ", " + this.saveAllData[0].query.split("VALUES")[1];
+        let query = this.saveAllData[0].query.split("VALUES")[0];
+				let params = [];
+				for (let i = 0; i < this.saveAllData.length; i++) {
+					query += this.saveAllData[i].query.split("VALUES")[1];
+					if (i < this.saveAllData.length - 1) {
+					  query += ', ';
+          }
 					params.push.apply(params, this.saveAllData[i].parameters);
 				}
 				let isDone = done;
@@ -885,7 +890,9 @@ export class DBClient {
 						obs.error(err);
 					});
 			};
-			var page = pageSize > 0 ? pageSize : this.saveAllPageSize;
+
+			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
+
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
 				if (index % page == 0) {
@@ -894,7 +901,7 @@ export class DBClient {
 					if(index == items.length){
 						return;
 					}
-				}else if(index == items.length){
+				} else if (index == items.length) {
 					this.saveAllEnabled = false;
 					console.log("save " + type + " " + index);
 					exec(true);
