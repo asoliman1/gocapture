@@ -672,7 +672,7 @@ export class DBClient {
 							form.activity_id = dbForm.activityId;
 							form.barcode_processed = dbForm.barcode_processed;
               form.submission_type = dbForm.submission_type;
-              form.sub_date = dbForm.dbForm.sub_date;
+              form.sub_date = dbForm.sub_date;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -702,7 +702,7 @@ export class DBClient {
 									obs.error("An error occured: " + JSON.stringify(err));
 								});
 								return;
-						}else if(data.rows.length > 1){
+						} else if(data.rows.length > 1) {
 							console.log("more than a row");
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 							.then((data) => {
@@ -721,7 +721,22 @@ export class DBClient {
 							return;
 						}
 
-						this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.full_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]).subscribe(
+						this.save(WORK, "submissions", [
+						  form.id,
+              form.form_id,
+              JSON.stringify(form.fields),
+              form.sub_date ? form.sub_date : new Date().toISOString(),
+              form.status,
+              form.first_name,
+              form.last_name,
+              form.full_name,
+              form.email,
+              false,
+              null,
+              form.activity_id,
+              form.hold_request_id,
+              form.barcode_processed,
+              form.submission_type]).subscribe(
 							(d) => {
 								obs.next(true);
 								obs.complete();
@@ -736,8 +751,9 @@ export class DBClient {
 				});
 			});
 		}
+
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), new Date().toISOString(), form.status, form.first_name, form.last_name, form.full_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]);
+		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), form.sub_date ? form.sub_date : new Date().toISOString(), form.status, form.first_name, form.last_name, form.full_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]);
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
@@ -857,38 +873,31 @@ export class DBClient {
 					obs.complete();
 					return;
 				}
-        let query = this.saveAllData[0].query.split("VALUES")[0];
-				let params = [];
-				for (let i = 0; i < this.saveAllData.length; i++) {
-					query += this.saveAllData[i].query.split("VALUES")[1];
-					if (i < this.saveAllData.length - 1) {
-					  query += ', ';
-          }
-					params.push.apply(params, this.saveAllData[i].parameters);
-				}
 				let isDone = done;
-
-				db.executeSql(query, params)
-					.then((data) => {
-						this.saveAllData = [];
-						if (data.rowsAffected > 0) {
-							if (isDone) {
-								this.saveAllEnabled = false;
-								obs.next(true);
-								obs.complete();
-								//console.log(new Date().getTime());
-							} else {
-								handler(true);
-							}
-						} else {
-							this.saveAllEnabled = false;
-							obs.error("Wrong number of affected rows: " + data.rowsAffected);
-						}
-					}, (err) => {
-						this.saveAllEnabled = false;
-						this.saveAllData = [];
-						obs.error(err);
-					});
+				db.transaction((tx: any) => {
+          for (let i = 0; i < this.saveAllData.length; i++) {
+            let query = this.saveAllData[i].query;
+            let params = this.saveAllData[i].parameters;
+            tx.executeSql(query, params, function(success) {
+              //
+            }, function(error) {
+              tx.abort(error);
+            });
+          }
+        }).then(result => {
+          this.saveAllData = [];
+          if (isDone) {
+            this.saveAllEnabled = false;
+            obs.next(true);
+            obs.complete();
+          } else {
+            handler(true);
+          }
+        }, (error) => {
+          this.saveAllEnabled = false;
+          this.saveAllData = [];
+          obs.error(error);
+        })
 			};
 
 			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
