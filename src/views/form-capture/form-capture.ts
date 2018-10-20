@@ -94,7 +94,8 @@ export class FormCapture {
     this.navbar.backButtonClick = () => {
       this.doBack();
     };
-    if (this.form.is_mobile_kiosk_mode) {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
       this.client.hasKioskPassword().subscribe(hasPwd => {
         if (!hasPwd) {
           this.alertCtrl.create({
@@ -145,7 +146,8 @@ export class FormCapture {
   }
 
   doBack() {
-    if (this.form.is_mobile_kiosk_mode) {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
       this.client.hasKioskPassword().subscribe((hasPas) => {
         if (hasPas) {
           let alert = this.alertCtrl.create({
@@ -256,7 +258,7 @@ export class FormCapture {
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
-      if(this.form.is_mobile_kiosk_mode) {
+      if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.submission = null;
         this.form = null;
         this.dispatch = null;

@@ -14,6 +14,7 @@ export class Form extends BaseForm{
 	total_views : number;
 	submit_button_text : string;
 	is_mobile_kiosk_mode: boolean;
+  is_mobile_quick_capture_mode: boolean;
 	elements : FormElement[];
 	barcode_processed? : BarcodeStatus;
 
