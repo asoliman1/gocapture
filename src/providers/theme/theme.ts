@@ -7,7 +7,7 @@ export class ThemeProvider {
   private theme: BehaviorSubject<String>;
 
   constructor() {
-    this.theme = new BehaviorSubject('black-theme');
+    this.theme = new BehaviorSubject('default-theme');
   }
 
   setActiveTheme(val) {

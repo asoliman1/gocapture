@@ -81,6 +81,7 @@ export class Login {
 			this.client.authenticate(this.email, this.authCode)
         .subscribe(data => {
 					loader.setContent(data.message);
+					// this.themeProvider.setActiveTheme()
 				}, err => {
 					loader.dismiss();
 					let toaster = this.toast.create({

@@ -1,11 +1,5 @@
 $theme-color: color($colors, orange);
 
-@import "theme";
-
 .default-theme {
-  .header .toolbar-background,
-  .footer .toolbar-background,
-  .toolbar .toolbar-background {
-    background-color: $theme-color;
-  }
+  @include theme($theme-color);
 }

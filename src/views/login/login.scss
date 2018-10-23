@@ -39,14 +39,14 @@
   line-height: 1.4em;
 }
 
-.connMode{
+.connMode {
   & ion-icon{
     opacity: 0;
   }
   &.on {
     font-weight: bold;
     & *{
-      color: $theme-color;
+      color: orange;
     }
     & ion-icon{
       opacity: 1;

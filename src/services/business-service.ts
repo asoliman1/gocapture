@@ -203,7 +203,6 @@ export class BussinessClient {
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 
-
         this.registration = reply;
         reply.pushRegistered = 1;
         reply.is_production = Config.isProd? 1 : 0;

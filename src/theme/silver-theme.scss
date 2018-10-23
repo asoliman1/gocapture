@@ -1,12 +1,6 @@
 $theme-color: color($colors, silver);
 
-@import "theme";
-
 .silver-theme {
-  .header .toolbar-background,
-  .footer .toolbar-background,
-  .toolbar .toolbar-background {
-    background-color: $theme-color;
-  }
+  @include theme($theme-color);
 }
 

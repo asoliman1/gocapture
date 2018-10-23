@@ -122,7 +122,7 @@ export class FormCapture {
 
                   });
                 }
-              }
+              },
             ]
           }).present();
         }
@@ -150,38 +150,36 @@ export class FormCapture {
     if (isKioskMode) {
       this.client.hasKioskPassword().subscribe((hasPas) => {
         if (hasPas) {
-          let alert = this.alertCtrl.create({
-            title: 'Enter pass code',
-            inputs: [
-              {
-                name: 'passcode',
-                placeholder: 'Kiosk Mode Pass Code',
-                value: ""
+
+          const buttons = [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
               }
-            ],
-            buttons: [
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                handler: () => {
-                }
-              },
-              {
-                text: 'Ok',
-                handler: (data) => {
-                  let password = data.passcode;
-                  this.client.validateKioskPassword(password).subscribe((valid) => {
-                    if (valid) {
-                      this.internalBack();
-                    } else {
-                      return false;
-                    }
-                  });
-                }
+            },
+            {
+              text: 'Ok',
+              handler: (data) => {
+                let password = data.passcode;
+                this.client.validateKioskPassword(password).subscribe((valid) => {
+                  if (valid) {
+                    this.internalBack();
+                  } else {
+                    return false;
+                  }
+                });
               }
-            ]
-          });
-          alert.present();
+            }];
+
+          const inputs = [{
+            name: 'passcode',
+            placeholder: 'Kiosk Mode Pass Code',
+            value: ""
+          }];
+
+          this.popup.showPrompt('Enter pass code', "", inputs, buttons);
+
         } else {
           const buttons = [
             {
@@ -190,6 +188,7 @@ export class FormCapture {
                 this.internalBack();
               }
             }];
+
           this.popup.showAlert('Info', "No kiosk password set!", buttons);
         }
       });

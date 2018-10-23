@@ -10,6 +10,7 @@ import { Nav } from 'ionic-angular/components/nav/nav';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import {Util} from "../../util/util";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 @Component({
 	selector: 'main',
@@ -42,7 +43,8 @@ export class Main {
 		private navParams: NavParams,
 		public client: BussinessClient,
 		private syncClient: SyncClient,
-    private util: Util) {
+    private util: Util,
+    private themeProvider: ThemeProvider) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Forms', component: Forms, icon: "document" },
@@ -59,6 +61,8 @@ export class Main {
 		this.client.getRegistration().subscribe(user => {
 			this.user = user;
 			this.client.setupNotifications();
+			let theme = this.user.theme ? this.user.theme : 'default';
+			this.themeProvider.setActiveTheme(theme + '-theme');
 		});
 	}
 

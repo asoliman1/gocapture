@@ -52,11 +52,11 @@ export class LogView{
 	getColor(log: LogEntry): string{
 		if(log.severity == LogSeverity.ERROR){
 			return "danger";
-		}else if(log.severity == LogSeverity.INFO){
-			return "primary";
-		}else if(log.severity == LogSeverity.LOG){
-			return "primary";
-		}else if(log.severity == LogSeverity.WARN){
+		}else if (log.severity == LogSeverity.INFO){
+			return "dark";
+		} else if(log.severity == LogSeverity.LOG){
+			return "dark";
+		} else if(log.severity == LogSeverity.WARN){
 			return "orange";
 		}
 		return "";

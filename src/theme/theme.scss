@@ -1,5 +1,20 @@
-$alert-ios-button-text-color: $theme-color;
+@mixin theme ($theme-color) {
+  $alert-ios-button-text-color: $theme-color;
 
-$action-sheet-ios-button-text-color: $theme-color;
-$button-ios-background-color: $theme-color;
-$button-md-background-color: $theme-color;
+  $action-sheet-ios-button-text-color: $theme-color;
+  $button-ios-background-color: $theme-color;
+  $button-md-background-color: $theme-color;
+  $toggle-ios-background-color-on: $theme-color;
+
+  .header .toolbar-background,
+  .footer .toolbar-background,
+  .toolbar .toolbar-background,
+  .toggle-ios.toggle-checked .toggle-icon,
+  .toggle-md.toggle-checked .toggle-icon {
+    background-color: $theme-color;
+  }
+
+  .alert-button {
+    color: $theme-color !important;
+  }
+}
