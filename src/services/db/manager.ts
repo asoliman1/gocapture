@@ -70,7 +70,7 @@ export class Manager{
 			if (platform.is("cordova")) {
 				db = new SQLite();
 			} else {
-				db = new LocalSql();
+				db = <any> new LocalSql();
 			}
 			console.log("OPen db " + this.map[type].dbName);
 			let settings = {
@@ -122,7 +122,7 @@ export class Manager{
 				}
 				let query = Utils.makeCreateTableQuery(this.tables[index]);
 				index++;
-				db.executeSql(query, {}).then(handler, (err) => {
+				db.executeSql(query, <any>{}).then(handler, (err) => {
 					if (err.hasOwnProperty("rows")) {
 						handler(err);
 						return;

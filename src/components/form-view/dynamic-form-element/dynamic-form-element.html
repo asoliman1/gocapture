@@ -113,7 +113,7 @@
     <!--IMAGE-->
     <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <image [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
+      <image-item [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
     </ion-item>
 
     <!--BUSINESS CARD-->
