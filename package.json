@@ -49,7 +49,7 @@
     "cordova-ios": "4.5.4",
     "cordova-plugin-advanced-http": "^2.0.1",
     "cordova-plugin-app-version": "^0.1.9",
-    "cordova-plugin-camera": "^4.0.3",
+    "cordova-plugin-camera": "file:3rdParty/cordova-plugin-camera",
     "cordova-plugin-camera-preview": "^0.10.0",
     "cordova-plugin-device": "^1.1.7",
     "cordova-plugin-file": "^6.0.1",
@@ -110,10 +110,6 @@
       "cordova-plugin-app-version": {},
       "cordova-plugin-file": {},
       "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-camera": {
-        "CAMERA_USAGE_DESCRIPTION": "GoCapture! will need to access your camera",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "GoCapture! will need to access your photo library"
-      },
       "es6-promise-plugin": {},
       "cordova-clipboard": {},
       "cordova-fabric-plugin": {
@@ -125,7 +121,8 @@
         "FCM_VERSION": "11.6.2"
       },
       "cordova-plugin-camera-preview": {},
-      "cordova-plugin-advanced-http": {}
+      "cordova-plugin-advanced-http": {},
+      "cordova-plugin-camera": {}
     },
     "platforms": [
       "ios",
