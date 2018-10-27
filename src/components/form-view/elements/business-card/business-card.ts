@@ -72,28 +72,28 @@ export class BusinessCard extends BaseElement {
 		};
 	}
 
-  ngAfterContentInit(){
-    this.theVal = {
-      front: this.util.imageUrl(this.currentVal.front),
-      back: this.util.imageUrl(this.currentVal.back)
-    };
-  }
+	ngAfterContentInit() {
+		this.theVal = {
+			front: this.util.imageUrl(this.currentVal.front),
+			back: this.util.imageUrl(this.currentVal.back)
+		};
+	}
 
-  captureImage(type: number) {
-    if(this.readonly){
-      return;
-    }
-    if ((type == this.FRONT && this.currentVal.front != this.front) ||
-      (type == this.BACK && this.currentVal.back != this.back)) {
-      let sheet = this.actionCtrl.create({
-        title: "",
-        buttons: [
-          {
-            text: 'Remove',
-            role: 'destructive',
-            handler: () => {
-              this.zone.run(() =>{
-                this.setValue(type, type == this.FRONT ? this.front : this.back);
+	captureImage(type: number) {
+		if (this.readonly) {
+			return;
+		}
+		if ((type == this.FRONT && this.currentVal.front != this.front) ||
+			(type == this.BACK && this.currentVal.back != this.back)) {
+			let sheet = this.actionCtrl.create({
+				title: "",
+				buttons: [
+					{
+						text: 'Remove',
+						role: 'destructive',
+						handler: () => {
+							this.zone.run(() => {
+								this.setValue(type, type == this.FRONT ? this.front : this.back);
 
 							});
 
@@ -161,19 +161,17 @@ export class BusinessCard extends BaseElement {
 
 			this.imageProc.ensureLandscape(imageData, !shouldRecognize)
 				.subscribe((info) => {
+					let newFolder = this.file.dataDirectory + "leadliaison/images";
+					let newName = new Date().getTime() + '.jpeg';
+					let promise: Promise<any>;
 
-
-          let newFolder = this.file.dataDirectory + "leadliaison/images";
-          let name = imageData.substr(imageData.lastIndexOf("/") + 1);
-          let newName = new Date().getTime() + '.jpeg';
-          let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-          let promise: Promise<any>;
-
-          if (this.platform.is('ios')) {
-            promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
-          } else {
-            promise = this.file.moveFile(folder, name, newFolder, newName);
-          }
+					if (imageData.substr(0, 5) == "data:") {
+						promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+					} else {
+						let folder = imageData.substr(0, imageData.lastIndexOf("/"));
+						let name = imageData.substr(imageData.lastIndexOf("/") + 1);
+						promise = this.file.moveFile(folder, name, newFolder, newName);
+					}
 
 					promise.then((entry) => {
 						this.zone.run(() => {
@@ -312,12 +310,12 @@ export class BusinessCard extends BaseElement {
 		}
 	}
 
-  private viewImage(type){
-    //const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
-    //imageViewer.present();
-    let image = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
-    this.modalCtrl.create(ImageViewer, {image: image}).present();
-  }
+	private viewImage(type) {
+		//const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
+		//imageViewer.present();
+		let image = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
+		this.modalCtrl.create(ImageViewer, { image: image }).present();
+	}
 
 	private normalizeURL(url: string): any {
 		return this.dom.bypassSecurityTrustUrl(this.util.normalizeURL(url));

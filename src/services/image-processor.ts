@@ -28,7 +28,7 @@ export class ImageProcessor{
 						height: image.naturalHeight,
 						dataUrl: url,
 						data: null,
-						isDataUrl: false
+						isDataUrl: url.substr(0, 5) == "data:"
 					});
 					console.log("Ensure landscape ended after " + (new Date().getTime() - start) + "ms");
 					obs.complete();

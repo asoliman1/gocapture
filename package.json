@@ -127,7 +127,6 @@
     ]
   },
   "config": {
-    "ionic_webpack": "./webpack.config.js",
-    "ionic_uglifyjs": "./uglify.config.js"
+    "ionic_webpack": "./webpack.config.js"
   }
 }

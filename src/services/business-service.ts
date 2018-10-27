@@ -12,7 +12,7 @@ import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
 import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
-import {StatusResponse} from "../model/protocol/status-response";
+import { StatusResponse } from "../model/protocol/status-response";
 declare var cordova: any;
 
 @Injectable()
@@ -42,18 +42,18 @@ export class BussinessClient {
 
 	private errorSource: BehaviorSubject<any>;
 
-	private pushSubs : Subscription[] = [];
+	private pushSubs: Subscription[] = [];
     /**
      * Error event
      */
 	error: Observable<any>;
 
 	constructor(private db: DBClient,
-				private rest: RESTClient,
-				private sync: SyncClient,
-				private push: PushClient,
-				private net: Network,
-				private fileTransfer: Transfer) {
+		private rest: RESTClient,
+		private sync: SyncClient,
+		private push: PushClient,
+		private net: Network,
+		private fileTransfer: Transfer) {
 
 		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
 		this.network = this.networkSource.asObservable();
@@ -84,14 +84,16 @@ export class BussinessClient {
 	}
 
 	public doAutoSync() {
-	  console.log('doAutoSync');
-		if(this.isOnline()){
-			this.db.getConfig("autoUpload").subscribe((val) => {
-				if (val+"" == "true") {
-					this.doSync().subscribe(()=>{
+		console.log('doAutoSync');
+		if (this.isOnline()) {
+			this.db.isWorkDbInited() && this.db.getConfig("autoUpload").subscribe((val) => {
+				if (val + "" == "true") {
+					this.doSync().subscribe(() => {
 						console.log("Sync up done");
 					});
 				}
+			}, err => {
+
 			});
 		}
 	}
@@ -106,7 +108,7 @@ export class BussinessClient {
 
 			this.pushSubs.push(this.push.notification.subscribe((note) => {
 
-			  if(!note){
+				if (!note) {
 					return;
 				}
 
@@ -114,11 +116,11 @@ export class BussinessClient {
 
 			}));
 
-			this.pushSubs.push(this.push.registration.subscribe((regId)=>{
-				if(!regId){
+			this.pushSubs.push(this.push.registration.subscribe((regId) => {
+				if (!regId) {
 					return;
 				}
-				this.db.updateRegistration(regId).subscribe((ok)=>{
+				this.db.updateRegistration(regId).subscribe((ok) => {
 					this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
 						if (done) {
 							this.registration.pushRegistered = 1;
@@ -150,7 +152,7 @@ export class BussinessClient {
 		});
 	}
 
-	public validateKioskPassword(password: string): Observable<boolean>{
+	public validateKioskPassword(password: string): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
 				obs.next(pwd && password && password == pwd);
@@ -161,7 +163,7 @@ export class BussinessClient {
 		});
 	}
 
-	public setKioskPassword(password: string): Observable<boolean>{
+	public setKioskPassword(password: string): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.saveConfig("kioskModePassword", password).subscribe((done) => {
 				obs.next(done);
@@ -172,7 +174,7 @@ export class BussinessClient {
 		});
 	}
 
-	public hasKioskPassword(): Observable<boolean>{
+	public hasKioskPassword(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
 				obs.next(pwd != null && pwd.length > 0);
@@ -193,27 +195,27 @@ export class BussinessClient {
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 
 
-        this.registration = reply;
-        reply.pushRegistered = 1;
-        reply.is_production = Config.isProd? 1 : 0;
-        this.db.makeAllAccountsInactive().subscribe((done) => {
-          this.db.saveRegistration(reply).subscribe((done) => {
-            this.db.setupWorkDb(reply.db);
-            obs.next({ user: reply, message: "Done" });
-            obs.complete();
-            let d = new Date();
-            this.sync.download(null).subscribe(downloadData => {
-              },
-              (err) => {
-                obs.error(err);
-              },
-              () => {
-                this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-                  obs.next({ user: reply, message: "Done" });
-                })
-              });
-          });
-        });
+				this.registration = reply;
+				reply.pushRegistered = 1;
+				reply.is_production = Config.isProd ? 1 : 0;
+				this.db.makeAllAccountsInactive().subscribe((done) => {
+					this.db.saveRegistration(reply).subscribe((done) => {
+						this.db.setupWorkDb(reply.db);
+						obs.next({ user: reply, message: "Done" });
+						obs.complete();
+						let d = new Date();
+						this.sync.download(null).subscribe(downloadData => {
+						},
+							(err) => {
+								obs.error(err);
+							},
+							() => {
+								this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+									obs.next({ user: reply, message: "Done" });
+								})
+							});
+					});
+				});
 
 
 
@@ -234,7 +236,7 @@ export class BussinessClient {
 				// 				obs.error("There was an error retrieving the logo picture")
 				// 			});
 				// 	});
-			}, err =>{
+			}, err => {
 				obs.error("Invalid authentication code");
 			});
 		});
@@ -266,18 +268,18 @@ export class BussinessClient {
 	}
 
 	public getDeviceStatus(user: User) {
-    return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
-      this.rest.validateAccessToken(user.access_token).subscribe((status) => {
-        obs.next(status);
-        obs.complete();
-      })
-    });
-  }
+		return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
+			this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+				obs.next(status);
+				obs.complete();
+			})
+		});
+	}
 
 	public getUpdates(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.getConfig("lastSyncDate").subscribe(time => {
-				this.db.getConfig("getAllContacts").subscribe( getAllContacts => {
+				this.db.getConfig("getAllContacts").subscribe(getAllContacts => {
 					let d = new Date();
 					if (time) {
 						d.setTime(parseInt(time));
@@ -325,11 +327,11 @@ export class BussinessClient {
 	public saveSubmission(sub: FormSubmission, form: Form): Observable<boolean> {
 		sub.updateFields(form);
 		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.saveSubmission(sub).subscribe((done)=>{
+			this.db.saveSubmission(sub).subscribe((done) => {
 				this.doAutoSync();
 				obs.next(done);
 				obs.complete();
-			}, (err)=>{
+			}, (err) => {
 				obs.error(err);
 			});
 		});
@@ -383,35 +385,35 @@ export class BussinessClient {
 
 	//MARK: Private
 
-  private handlePush(note) {
-    console.log('Push received - ' + JSON.stringify(note));
+	private handlePush(note) {
+		console.log('Push received - ' + JSON.stringify(note));
 
-    if (note.action == 'sync') {
-      this.db.getConfig("lastSyncDate").subscribe(time => {
-        let d = new Date();
-        if (time) {
-          d.setTime(parseInt(time));
-        }
-        this.sync.download(time ? d : null,).subscribe(data => {
-          //
-        }, (err) => {
-          //obs.error(err);
-        }, () => {
-          console.log("sync-ed");
-          this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-            //
-          });
-        });
-      });
-    } else if (note.action == 'resync') {
-      this.sync.download(null).subscribe(data => {
-        //
-      }, (err) => {
-        //obs.error(err);
-      }, () => {
-        console.log("resync-ed");
-        this.db.saveConfig("lastSyncDate", new Date().getTime() + "");
-      });
-    }
-  }
+		if (note.action == 'sync') {
+			this.db.getConfig("lastSyncDate").subscribe(time => {
+				let d = new Date();
+				if (time) {
+					d.setTime(parseInt(time));
+				}
+				this.sync.download(time ? d : null).subscribe(data => {
+					//
+				}, (err) => {
+					//obs.error(err);
+				}, () => {
+					console.log("sync-ed");
+					this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+						//
+					});
+				});
+			});
+		} else if (note.action == 'resync') {
+			this.sync.download(null).subscribe(data => {
+				//
+			}, (err) => {
+				//obs.error(err);
+			}, () => {
+				console.log("resync-ed");
+				this.db.saveConfig("lastSyncDate", new Date().getTime() + "");
+			});
+		}
+	}
 }
