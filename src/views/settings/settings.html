@@ -52,7 +52,7 @@
 		</ion-item>
 		<ion-item class="last">
 			<ion-label>Enable logging</ion-label>
-			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChange()" checked="false"></ion-toggle>
+			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChangeEnableLogging()" checked="settings.enableLogging"></ion-toggle>
 		</ion-item>
 		<ion-item>
 			<button ion-button full large color="light" (click)="showLogs()">View log</button>

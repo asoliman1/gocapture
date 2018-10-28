@@ -45,9 +45,13 @@ $colors: (
   light:      #f4f4f4,
   dark:       #222,
   favorite:   #69BB7B,
-  red:(
-    base:#EF473A,
-    contrast:#fff
+  white:      (
+    base: #ffffff,
+    contrast: #ffffff
+  ),
+  black:(
+    base: #000000,
+    contrast: #000000
   ),
   orange:(
 	  base: #fb8f04,

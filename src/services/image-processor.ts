@@ -55,6 +55,37 @@ export class ImageProcessor{
 		});
 	}
 
+	public crop(url: string, crop: {x: number, y: number, width: number, height: number}): Observable<Info> {
+    return new Observable<Info>((obs: Observer<Info>) => {
+      let image: any = document.createElement("img");
+      let t = this;
+      image.onload = function (event: any) {
+
+        let coefficient = image.naturalWidth / window.screen.width;
+
+        let canvasWidth = crop.width * coefficient;
+        let aspectRatio = crop.width / crop.height;
+        let canvasHeight = canvasWidth / aspectRatio;
+
+        let Y = (image.naturalHeight - canvasHeight) * 0.5;
+
+        t.setupCanvas(canvasWidth, canvasHeight);
+
+        t.ctx.drawImage(image, crop.x * coefficient, Y, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+        obs.next({
+          width: t.canvas.width,
+          height: t.canvas.height,
+          dataUrl:t.canvas.toDataURL(),
+          data: null,
+          isDataUrl: true
+        });
+        obs.complete();
+        t.ctx.clearRect(0, 0, t.canvas.width, t.canvas.height);
+      };
+      image.src = url;
+    });
+  }
+
 	public flip(url: string): Observable<Info> {
 		return new Observable<Info>((obs: Observer<Info>) => {
 			let image: any = document.createElement("img");

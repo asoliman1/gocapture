@@ -10,7 +10,7 @@ import { BaseGroupElement} from "../base-group-element";
 export class SimpleName extends BaseGroupElement {
 
 	@Input() element: FormElement;
-	
+
 	@Input() rootGroup: FormGroup;
 
 	@Input() readonly: boolean = false;
@@ -22,7 +22,7 @@ export class SimpleName extends BaseGroupElement {
 	nameMap = {
 		"FirstName": "First Name",
 		"LastName": "Last Name"
-	}
+	};
 
 	constructor() {
 		super();

@@ -1,13 +1,30 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import {Component, NgZone, ViewChild} from '@angular/core';
 import {
-  NavController, NavParams, ModalController, MenuController, AlertController, Platform, Navbar,
-  ToastController, Content
+  AlertController,
+  Content,
+  MenuController,
+  ModalController,
+  Navbar,
+  NavController,
+  NavParams,
+  Platform,
+  ToastController
 } from 'ionic-angular';
-import { BussinessClient } from "../../services/business-service";
-import { Form, FormSubmission, SubmissionStatus, DeviceFormMembership, DispatchOrder } from "../../model";
-import { FormView } from "../../components/form-view";
-import { ProspectSearch } from "../prospect-search";
-import {isTranspileRequired} from "@ionic/app-scripts/dist/aot/aot-compiler";
+import {BussinessClient} from "../../services/business-service";
+import {
+  BarcodeStatus,
+  DeviceFormMembership,
+  DispatchOrder,
+  Form,
+  FormSubmission,
+  FormSubmissionType,
+  SubmissionStatus
+} from "../../model";
+import {FormView} from "../../components/form-view";
+import {ProspectSearch} from "../prospect-search";
+import {Popup} from "../../providers/popup/popup";
+import {Login} from "../login";
+import moment from "moment";
 
 @Component({
   selector: 'form-capture',
@@ -25,7 +42,7 @@ export class FormCapture {
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
 
-  valid: boolean;
+  valid: boolean = true;
   errorMessage: String;
 
   submitAttempt: boolean = false;
@@ -42,7 +59,8 @@ export class FormCapture {
               private menuCtrl: MenuController,
               private alertCtrl: AlertController,
               private platform: Platform,
-              private toast: ToastController) {
+              private toast: ToastController,
+              private popup: Popup) {
     console.log("FormCapture");
   }
 
@@ -65,7 +83,7 @@ export class FormCapture {
   }
 
   isReadOnly(submission: FormSubmission): boolean {
-    return submission && submission.status == SubmissionStatus.Submitted;
+    return submission && (submission.status == SubmissionStatus.Submitted || submission.status == SubmissionStatus.OnHold);
   }
 
   ionViewDidEnter() {
@@ -76,7 +94,8 @@ export class FormCapture {
     this.navbar.backButtonClick = () => {
       this.doBack();
     };
-    if (this.form.is_mobile_kiosk_mode) {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
       this.client.hasKioskPassword().subscribe(hasPwd => {
         if (!hasPwd) {
           this.alertCtrl.create({
@@ -126,42 +145,55 @@ export class FormCapture {
 
   }
 
-
   doBack() {
-    if (this.form.is_mobile_kiosk_mode) {
-      let alert = this.alertCtrl.create({
-        title: 'Enter pass code',
-        inputs: [
-          {
-            name: 'passcode',
-            placeholder: 'Kiosk Mode Pass Code',
-            value: ""
-          }
-        ],
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            handler: () => {
-            }
-          },
-          {
-            text: 'Ok',
-            handler: (data) => {
-              let password = data.passcode;
-              this.client.validateKioskPassword(password).subscribe((valid) => {
-                if(valid){
-                  this.internalBack();
-                }else{
-                  return false;
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
+      this.client.hasKioskPassword().subscribe((hasPas) => {
+        if (hasPas) {
+          let alert = this.alertCtrl.create({
+            title: 'Enter pass code',
+            inputs: [
+              {
+                name: 'passcode',
+                placeholder: 'Kiosk Mode Pass Code',
+                value: ""
+              }
+            ],
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                handler: () => {
                 }
-              });
-            }
-          }
-        ]
+              },
+              {
+                text: 'Ok',
+                handler: (data) => {
+                  let password = data.passcode;
+                  this.client.validateKioskPassword(password).subscribe((valid) => {
+                    if (valid) {
+                      this.internalBack();
+                    } else {
+                      return false;
+                    }
+                  });
+                }
+              }
+            ]
+          });
+          alert.present();
+        } else {
+          const buttons = [
+            {
+              text: 'Ok',
+              handler: () => {
+                this.internalBack();
+              }
+            }];
+          this.popup.showAlert('Info', "No kiosk password set!", buttons);
+        }
       });
-      alert.present();
-    }else{
+    } else {
       this.internalBack();
     }
   }
@@ -201,15 +233,17 @@ export class FormCapture {
      When transcription is enabled, the app is still requiring name and email. If there is a business card attached and transcription is turned on, we should not require either of these fields.
      */
 
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+
     if (!this.isEmailOrNameInputted()) {
-      if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
+      if ((this.isTranscriptionEnabled() && !this.isBusinessCardAdded() || isNotScanned)) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
       }
     }
 
-    if (!this.valid) {
+    if (isNotScanned && !this.valid && !this.submission.id) {
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
@@ -224,16 +258,23 @@ export class FormCapture {
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
-      if(this.form.is_mobile_kiosk_mode){
+      if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.submission = null;
         this.form = null;
         this.dispatch = null;
+        let successToast = this.toast.create({
+          message: "Submission Successful.",
+          duration: 1500,
+          position: 'top',
+          cssClass: 'success-toast'
+        });
+        successToast.present();
         setTimeout(()=>{
           this.zone.run(()=>{
             this.ionViewWillEnter();
           });
         }, 10);
-      }else{
+      } else{
         this.navCtrl.pop();
       }
     }, err => {
@@ -300,7 +341,7 @@ export class FormCapture {
 
   private isTranscriptionEnabled() {
     let businessCardEl = this.getElementForType("business_card");
-    return typeof businessCardEl != 'undefined' && businessCardEl['is_enable_transcription'] == 1;
+    return businessCardEl && businessCardEl['is_enable_transcription'] == 1;
   }
 
   private isBusinessCardAdded() {
@@ -318,4 +359,9 @@ export class FormCapture {
 
     return false;
   }
+
+  private submissionDate() {
+    return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
+  }
+
 }

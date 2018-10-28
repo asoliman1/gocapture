@@ -83,3 +83,9 @@ ion-toast.error .toast-container{
 ion-toast.success .toast-container{
   background-color: darkgreen;
 }
+
+.success-toast {
+  .toast-message {
+    background-color: green;
+  }
+}

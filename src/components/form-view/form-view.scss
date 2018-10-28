@@ -1,5 +1,6 @@
-form-view, .form-view{
+$barcode-fill-color: #f0f0f0;
 
+form-view, .form-view{
 	.selection{
 		ion-item{
 			display: flex;
@@ -113,8 +114,9 @@ form-view, .form-view{
 	}
 
 	&.queued .from-barcode,
-	&.queued simple-name.from-barcode ion-row{
-		background-color: #f0f0f0;
+	&.queued simple-name.from-barcode ion-row,
+  &.queued address.from-barcode ion-row {
+		background-color: $barcode-fill-color;
 
 		& * {
 			border: none !important;
@@ -127,8 +129,9 @@ form-view, .form-view{
 		}
 	}
 
-	&.queued simple-name.from-barcode ion-row ion-item{
-		background-color: #f0f0f0;
+	&.queued simple-name.from-barcode ion-row ion-item,
+  &.queued address.from-barcode ion-row ion-item {
+		background-color: $barcode-fill-color;
 	}
 
   .hidden {

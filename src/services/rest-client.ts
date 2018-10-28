@@ -9,6 +9,7 @@ import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionS
 import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
 import { Device } from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
+import {isProductionEnvironment} from "../app/config";
 
 @Injectable()
 export class RESTClient {
@@ -169,7 +170,7 @@ export class RESTClient {
 			form_type: "device"
 		};
 		if(lastSyncDate){
-			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
+			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
 		let f = form;
 		return this.getAll<SubmissionResponse>("/forms/submissions.json", opts)
@@ -208,6 +209,11 @@ export class RESTClient {
 											vals = tmp;
 										}
 									}
+
+									if (field.type == "simple_name") {
+                    entry.full_name = dataItem.value;
+                  }
+
 									vals.forEach((value, index) => {
 										entry.fields[fieldName + "_" + (index+1)] = value;
 									});
@@ -238,6 +244,7 @@ export class RESTClient {
 						entry.last_name = "";
 						entry.company = "";
 						entry.phone = "";
+						entry.sub_date = item.submission_date;
 						entry.updateFields(f);
 						data.push(entry);
 					});
@@ -302,7 +309,7 @@ export class RESTClient {
 		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json', {
 		  device_token: device_token,
       is_allow_to_receive_notification: receiveNotifications,
-      is_dev: Config.isProd == false
+      is_dev: !isProductionEnvironment
 		})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
@@ -490,7 +497,7 @@ export class RESTClient {
 					params.offset = offset;
 				}
 				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
-			}
+			};
 			doTheCall();
 
 		});

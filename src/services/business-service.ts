@@ -135,6 +135,17 @@ export class BussinessClient {
 		}
 	}
 
+	public getSetting(setting): Observable<string> {
+    return new Observable<string>((obs: Observer<string>) => {
+      this.db.getConfig(setting).subscribe((value) => {
+        obs.next(value);
+        obs.complete();
+      }, error => {
+        obs.error(error);
+      })
+    });
+  }
+
 	public getRegistration(registerForPush?: boolean): Observable<User> {
 		return new Observable<User>((obs: Observer<User>) => {
 			this.db.getRegistration().subscribe((user) => {
@@ -195,48 +206,28 @@ export class BussinessClient {
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 
 
-				this.registration = reply;
-				reply.pushRegistered = 1;
-				reply.is_production = Config.isProd ? 1 : 0;
-				this.db.makeAllAccountsInactive().subscribe((done) => {
-					this.db.saveRegistration(reply).subscribe((done) => {
-						this.db.setupWorkDb(reply.db);
-						obs.next({ user: reply, message: "Done" });
-						obs.complete();
-						let d = new Date();
-						this.sync.download(null).subscribe(downloadData => {
-						},
-							(err) => {
-								obs.error(err);
-							},
-							() => {
-								this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-									obs.next({ user: reply, message: "Done" });
-								})
-							});
-					});
-				});
-
-
-
-				// this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
-				// 	.then((result) => {
-				// 		reply.user_profile_picture = result.nativeURL;
-				// 		ext = reply.customer_logo.split('.').pop();
-				// 		target = cordova.file.dataDirectory + 'leadliaison/profile/logo.' + ext;
-				// 		this.fileTransfer.create().download(reply.user_profile_picture, target, true, {})
-				// 			.then((result) => {
-				// 				reply.customer_logo = result.nativeURL;
-				//
-				// 			})
-				// 			.catch((err) => {
-				// 				obs.error("There was an error retrieving the profile picture");
-				// 			})
-				// 			.catch((err) => {
-				// 				obs.error("There was an error retrieving the logo picture")
-				// 			});
-				// 	});
-			}, err => {
+        this.registration = reply;
+        reply.pushRegistered = 1;
+        reply.is_production = Config.isProd? 1 : 0;
+        this.db.makeAllAccountsInactive().subscribe((done) => {
+          this.db.saveRegistration(reply).subscribe((done) => {
+            this.db.setupWorkDb(reply.db);
+            obs.next({ user: reply, message: "Done" });
+            obs.complete();
+            let d = new Date();
+            this.sync.download(null).subscribe(downloadData => {
+              },
+              (err) => {
+                obs.error(err);
+              },
+              () => {
+                this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
+                  obs.next({ user: reply, message: "Done" });
+                })
+              });
+          });
+        });
+			}, err =>{
 				obs.error("Invalid authentication code");
 			});
 		});
@@ -382,6 +373,10 @@ export class BussinessClient {
 			});
 		});
 	}
+
+	public removeSubmission(submission) {
+    return this.db.deleteSubmission(submission)
+  }
 
 	//MARK: Private
 

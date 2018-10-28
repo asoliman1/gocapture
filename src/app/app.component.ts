@@ -40,7 +40,8 @@ export class MyApp {
     private toast: ToastController,
     public statusBar: StatusBar,
     private popup: Popup,
-    private loading: LoadingController) {
+    private loading: LoadingController,
+    private logger: LogClient) {
     this.initializeApp();
   }
 
@@ -54,6 +55,15 @@ export class MyApp {
 
       this.client.getRegistration(true).subscribe((user) => {
         if(user) {
+
+          this.client.getSetting("enableLogging").subscribe(setting => {
+            if (typeof setting == "undefined" || setting.length == 0) {
+              this.logger.enableLogging(true);
+            } else {
+              this.logger.enableLogging(setting);
+            }
+          });
+
           Config.isProd = user.is_production == 1;
           this.nav.setRoot(Main);
         } else {
@@ -80,7 +90,7 @@ export class MyApp {
 
         //check device status when app resumes
         checkDeviceStatus();
-        
+
         this.client.getUpdates().subscribe(()=> {});
       });
 

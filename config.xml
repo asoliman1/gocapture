@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2202800" id="com.leadliaison.mobilitease" ios-CFBundleVersion="280" version="2.4.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2202930" id="com.leadliaison.mobilitease" ios-CFBundleVersion="293" version="2.4.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
@@ -53,7 +53,8 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <allow-navigation href="http://localhost:8080/*" />
+        <allow-navigation href="https://*/*/embed" />
+        <allow-navigation href="https://*/embed/*" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
@@ -123,7 +124,7 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
     <plugin name="cordova-sqlite-storage" spec="^2.3.2" />
     <plugin name="phonegap-plugin-barcodescanner" spec="^7.1.2">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="GoCapture! will need to access your camera" />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="GoCapture! needs access to the camera to scan barcodes and take pictures of business cards." />
     </plugin>
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.1.2" />
@@ -132,21 +133,19 @@
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-ionic-webview" spec="^1.2.1" />
-    <plugin name="cordova-plugin-camera" spec="^4.0.3">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="GoCapture! will need to access your camera" />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="GoCapture! will need to access your photo library" />
-    </plugin>
     <plugin name="es6-promise-plugin" spec="^4.2.2" />
     <plugin name="cordova-clipboard" spec="^1.2.1" />
-    <plugin name="phonegap-plugin-push" spec="^2.2.3">
-        <variable name="FCM_VERSION" value="11.6.2" />
-    </plugin>
     <plugin name="cordova-fabric-plugin" spec="^1.1.14-dev">
         <variable name="FABRIC_API_KEY" value="87c5f596ba1288e89c53293ff749dca7b2f1ec1a" />
         <variable name="FABRIC_API_SECRET" value="1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7" />
     </plugin>
-    <plugin name="cordova-plugin-gocapture-ocr" spec=".\cordova-plugin-gocapture-ocr" />
+    <plugin name="cordova-plugin-gocapture-ocr" spec="file:cordova-plugin-gocapture-ocr" />
+    <plugin name="phonegap-plugin-push" spec="^2.1.3">
+        <variable name="FCM_VERSION" value="11.6.2" />
+    </plugin>
+    <plugin name="cordova-plugin-camera-preview" spec="^0.10.0" />
+    <plugin name="cordova-plugin-advanced-http" spec="^2.0.1" />
+    <plugin name="cordova-plugin-camera" spec="3rdParty/cordova-plugin-camera" />
     <engine name="ios" spec="4.5.4" />
-    <engine name="android" spec="6.3.0" />
-    <engine name="windows" spec="~6.0.1" />
+    <engine name="android" spec="7.1.0" />
 </widget>

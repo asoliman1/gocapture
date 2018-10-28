@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule, SafeHtml} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyApp } from './app.component';
 import { Login, UrlChoose } from "../views/login";
@@ -52,6 +52,12 @@ import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
 import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
+import {CameraPreview} from "@ionic-native/camera-preview";
+import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-card-overlay";
+import {HTMLBlock} from "../components/form-view/elements/html-block";
+import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
+import {HTTP} from "@ionic-native/http";
+import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 
 @NgModule({
   declarations: [
@@ -67,17 +73,20 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     FormReview,
     FormCapture,
     ArrayFilterPipe,
+    SafeHtmlPipe,
     FormControlPipe,
     AvatarPathUpdaterPipe,
+    SubmissionStatusPipe,
     FormView,
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, HTMLBlock, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
-    DynamicFormElementComponent
+    DynamicFormElementComponent,
+    BusinessCardOverlayPage
   ],
   imports: [
     BrowserModule,
@@ -106,7 +115,8 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     FormSelectionView,
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
     ProspectSearch,
-    OcrSelector
+    OcrSelector,
+    BusinessCardOverlayPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -122,6 +132,7 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     Transfer,
     File,
     Device,
+    HTTP,
     Push,
     Network,
     Camera,
@@ -132,6 +143,7 @@ import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-
     BarcodeScanner,
     StatusBar,
     ScreenOrientation,
+    CameraPreview,
     {
       provide: Http,
       useFactory: httpFactory,

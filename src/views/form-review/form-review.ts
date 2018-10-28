@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form, FormSubmission, SubmissionStatus, FormElementType } from "../../model";
+import {Form, FormSubmission, SubmissionStatus, FormElementType, BarcodeStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { Subscription } from "rxjs/Subscription";
 import { NavController } from 'ionic-angular/navigation/nav-controller';
@@ -75,6 +75,11 @@ export class FormReview {
 		return result;
 	}
 
+	isSubmissionRemovable(submission: FormSubmission) {
+	  return (submission.status != SubmissionStatus.OnHold) &&
+      (submission.status != SubmissionStatus.Submitted);
+  }
+
 	getColor(submission: FormSubmission) {
 		let result = "";
 		switch (submission.status) {
@@ -97,6 +102,13 @@ export class FormReview {
 		return result;
 	}
 
+	deleteSubmission(submission) {
+	  this.client.removeSubmission(submission).subscribe(result => {
+	    this.doRefresh();
+    });
+  }
+
+
 	goToEntry(submission) {
 		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
@@ -110,6 +122,36 @@ export class FormReview {
 		return !email && !name && submission.fields[id];
 	}
 
+	shouldShowBusinessCard(submission: FormSubmission) {
+    submission.status != SubmissionStatus.Submitted && this.getBusinessCard(submission);
+  }
+
+  displayedName(submission) {
+	  let hasFullName = submission.full_name && submission.full_name.length > 0;
+	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
+	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+	  if (hasFullName) {
+	    return submission.full_name;
+    } else if (hasFirstLastName) {
+      return submission.first_name + ' ' + submission.last_name;
+    } else if (isScannedAndNoProcessed) {
+	    return "Scanned";
+    }
+    return "";
+  }
+
+  displayedProperty(submission, key) {
+    let hasValue = submission[key] && submission[key].length > 0;
+    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+    if (hasValue) {
+      return submission[key];
+    }  else if (isScannedAndNoProcessed) {
+      return "Scanned";
+    }
+    return "";
+  }
+
+
   private normalizeURL(url: string): string {
     return this.util.normalizeURL(url);
   }
@@ -117,8 +159,11 @@ export class FormReview {
 	getBusinessCard(submission: FormSubmission){
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
-		front = this.util.imageUrl(front);
-		return this.normalizeURL(front + "#" + parseInt(((1 + Math.random())*1000) + ""));
+		if (front && front.length > 0) {
+      front = this.util.imageUrl(front);
+      front = this.normalizeURL(front);
+    }
+    return front;
 	}
 
 	doRefresh() {

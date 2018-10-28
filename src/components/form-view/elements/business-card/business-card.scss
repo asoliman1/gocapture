@@ -1,10 +1,5 @@
-business-card{
-	width: 100%;
-}
-
 .business.card{
-	width: 100%;
-	ion-col:first-child{
+	ion-col:first-child {
 		padding-left: 0;
 	}
 
@@ -20,19 +15,37 @@ business-card{
 	img.hidden{
 		opacity: 0;
 	}
-	ion-spinner{
-		position: absolute;
-		width: 60%;
-		height: 60%;
-		z-index: 40;
-		left: 0;
-		top: 0;
-		margin: 10% 0 0 20%;
-	}
 
 	ion-spinner.hidden{
 		display: none;
 	}
+
+  .card-container {
+    position: relative;
+    padding: 5px 5px 0;
+    height: 100px;
+    margin-bottom: 15px;
+
+    .card-image {
+      border-radius: 5px;
+      border-style: solid;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    ion-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+    }
+  }
+
+  .card-label {
+    color: gray;
+    margin-left: 5px;
+  }
 }
 
 image-viewer{
