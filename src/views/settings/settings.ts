@@ -12,6 +12,8 @@ import { AlertController } from 'ionic-angular/components/alert/alert-controller
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import {App} from "ionic-angular";
 import {LogClient} from "../../services/log-client";
+import {Popup} from "../../providers/popup/popup";
+import {ThemeProvider} from "../../providers/theme/theme";
 //import { OcrSelector } from "../../components/ocr-selector";
 declare var screen;
 
@@ -25,6 +27,7 @@ export class Settings {
 	user: User = <any>{};
 	shouldSave: boolean = false;
 	version: string;
+  private selectedTheme;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -34,10 +37,13 @@ export class Settings {
 		private modalCtrl: ModalController,
 		private appVersion: AppVersion,
     public app: App,
-              private logger: LogClient) {
+    private logger: LogClient,
+    private popup: Popup,
+    private themeProvider: ThemeProvider) {
 		this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	ionViewWillEnter() {
@@ -103,29 +109,25 @@ export class Settings {
 	}
 
 	unauthenticate() {
-		let confirm = this.alertCtrl.create({
-			title: 'Unauthenticate?',
-			message: 'Are you sure you want to unauthenticate this device?',
-			buttons: [
-				{
-					text: 'Cancel',
-					handler: () => {
-					}
-				},
-				{
-					text: 'Unauthenticate',
-					handler: () => {
-						this.client.unregister(this.user).subscribe(()=>{
-							//this.user = <any>{};
-							setTimeout(()=>{
-                this.app.getRootNav().setRoot(Login, {unauthenticated: true});
-							}, 300);
-						});
-					}
-				}
-			]
-		});
-		confirm.present();
+		const buttons = [
+      {
+        text: 'Cancel',
+        handler: () => {
+        }
+      },
+      {
+        text: 'Unauthenticate',
+        handler: () => {
+          this.client.unregister(this.user).subscribe(()=>{
+            //this.user = <any>{};
+            setTimeout(()=>{
+              this.app.getRootNav().setRoot(Login, {unauthenticated: true});
+            }, 300);
+          });
+        }
+      }
+    ];
+    this.popup.showAlert("Unauthenticate?", "Are you sure you want to unauthenticate this device?", buttons, this.selectedTheme);
 	}
 
 }
