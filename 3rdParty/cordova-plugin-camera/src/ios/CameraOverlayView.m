@@ -10,6 +10,10 @@
 @interface CameraOverlayView()
 
 @property (strong, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIButton *captureBtn;
+@property (weak, nonatomic) IBOutlet UIView *cameraView;
+@property (weak, nonatomic) IBOutlet UIButton *closeBtn;
+@property (weak, nonatomic) IBOutlet UIView *containerView;
 
 @end
 
@@ -69,65 +73,43 @@
     fillLayer.fillRule = kCAFillRuleEvenOdd;
     fillLayer.fillColor = [UIColor blackColor].CGColor;
 
-    [self.layer addSublayer: fillLayer];
-    [self addSubview:imageView];
+    [self.cameraView.layer addSublayer: fillLayer];
+    [self.containerView addSubview:imageView];
 
     //Camera btn
-
-    UIButton *takePictureBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-
-    takePictureBtn.frame = CGRectMake(0, 0, 30, 30);
-
-    [takePictureBtn addTarget:self action:@selector(onTakePicture:) forControlEvents:UIControlEventTouchUpInside];
 
     NSString *cameraImagePath = [bundle pathForResource:@"camera-icon" ofType:@"png"];
     UIImage *cameraImage = [UIImage imageWithContentsOfFile:cameraImagePath];
 
-    [takePictureBtn setImage:cameraImage forState:UIControlStateNormal];
-
-    takePictureBtn.center = CGPointMake(CGRectGetMidX(self.bounds), self.frame.size.height - 80);
-
-    [self addSubview:takePictureBtn];
+    [self.captureBtn setImage:cameraImage forState:UIControlStateNormal];
 
     //Close btn
-
-    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-
-    closeBtn.frame = CGRectMake(self.frame.size.width - 60, 30, 30, 30);
-
-    [closeBtn addTarget:self action:@selector(onClose:) forControlEvents:UIControlEventTouchUpInside];
 
     NSString *closeImagePath = [bundle pathForResource:@"close-icon@2x" ofType:@"png"];
     UIImage *closeImage = [UIImage imageWithContentsOfFile:closeImagePath];
 
-    [closeBtn setImage:closeImage forState:UIControlStateNormal];
-
-    [self addSubview:closeBtn];
+    [self.closeBtn setImage:closeImage forState:UIControlStateNormal];
 
     //info label
 
     UILabel *textLbl = [[UILabel alloc] initWithFrame:CGRectMake(0, internalRect.origin.y - 50, self.frame.size.width, 30)];
 
     textLbl.text = @"Tap to focus";
-
     textLbl.font = [UIFont systemFontOfSize:18];
-
     textLbl.textColor = [UIColor whiteColor];
     textLbl.textAlignment = NSTextAlignmentCenter;
 
-    [self addSubview:textLbl];
+    [self.containerView addSubview:textLbl];
 }
 
-
-- (void)onTakePicture:(UIButton *)sender
+- (IBAction)onTakePicture:(UIButton *)sender
 {
     [self.delegate onTakePicture];
 }
 
-- (void)onClose:(UIButton *)sender
+- (IBAction)onClose:(UIButton *)sender
 {
     [self.delegate onClose];
 }
-
 
 @end

@@ -217,7 +217,6 @@ export class BusinessCard extends BaseElement {
           this.saveData(data, type, shouldRecognize);
         })
       } else {
-
         this.imageProc.ensureLandscape(imageData, !shouldRecognize).subscribe((info) => {
           this.saveData(info, type, shouldRecognize);
         });
