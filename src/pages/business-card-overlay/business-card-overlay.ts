@@ -61,8 +61,8 @@ export class BusinessCardOverlayPage {
   cameraPreviewOpts: CameraPreviewOptions = {
     x: 12,
     y: 150,
-    width: window.screen.width - 24,
-    height: (window.screen.width - 24) / 1.75,
+    width: this.platform.width() - 24,
+    height: (this.platform.width() - 24) / 1.75,
     camera: 'rear',
     tapPhoto: false,
     previewDrag: false,
@@ -72,8 +72,8 @@ export class BusinessCardOverlayPage {
 
   // picture options
   pictureOpts: CameraPreviewPictureOptions = {
-    width: window.screen.width * 2,
-    height: window.screen.height * 2,
+    width: this.platform.width() * 2,
+    height: this.platform.width() * 2,
     quality: 100
   };
 

@@ -1,13 +1,14 @@
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
 import { Injectable } from "@angular/core";
+import { Platform } from 'ionic-angular/platform/platform';
 
 @Injectable()
 export class ImageProcessor{
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 
-	constructor(){
+	constructor(private platform: Platform){
 		try{
 			window["TesseractPlugin"] = (<any>window).cordova.plugins.TesseractPlugin;
 		}catch(e){
@@ -56,18 +57,25 @@ export class ImageProcessor{
 	}
 
 	public crop(url: string, crop: {x: number, y: number, width: number, height: number}): Observable<Info> {
-    return new Observable<Info>((obs: Observer<Info>) => {
+    let self = this;
+	  return new Observable<Info>((obs: Observer<Info>) => {
       let image: any = document.createElement("img");
       let t = this;
       image.onload = function (event: any) {
 
-        let coefficient = image.naturalWidth / window.screen.width;
+        let coefficient = image.naturalWidth / self.platform.width();
 
         let canvasWidth = crop.width * coefficient;
         let aspectRatio = crop.width / crop.height;
         let canvasHeight = canvasWidth / aspectRatio;
 
-        let Y = (image.naturalHeight - canvasHeight) * 0.5;
+        let outputAspectRatio = image.naturalHeight / image.naturalWidth;
+
+        let Y = crop.y * image.naturalHeight  / self.platform.height();
+
+        if (image.naturalHeight > self.platform.height()) {
+          Y = Y * outputAspectRatio;
+        }
 
         t.setupCanvas(canvasWidth, canvasHeight);
 

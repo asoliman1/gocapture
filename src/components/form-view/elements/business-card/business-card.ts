@@ -193,8 +193,8 @@ export class BusinessCard extends BaseElement {
       shouldDisplayOverlay: true,
       previewPositionX: 12,
       previewPositionY: 150,
-      previewWidth: window.screen.width - 24,
-      previewHeight: (window.screen.width - 24) / 1.75
+      previewWidth: this.platform.width() - 24,
+      previewHeight: (this.platform.width() - 24) / 1.75
     };
 
     this.frontLoading = type == this.FRONT;
@@ -210,8 +210,8 @@ export class BusinessCard extends BaseElement {
         let crop = {
           x: 12,
           y: 150,
-          width: window.screen.width - 24,
-          height: (window.screen.width - 24) / 1.75,
+          width: this.platform.width() - 24,
+          height: (this.platform.width() - 24) / 1.75,
         };
         this.imageProc.crop(imageData, crop).subscribe(data => {
           this.saveData(data, type, shouldRecognize);
