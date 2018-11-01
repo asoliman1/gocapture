@@ -381,22 +381,7 @@ export class BussinessClient {
     console.log('Push received - ' + JSON.stringify(note));
 
     if (note.action == 'sync') {
-      this.db.getConfig("lastSyncDate").subscribe(time => {
-        let d = new Date();
-        if (time) {
-          d.setTime(parseInt(time));
-        }
-        this.sync.download(time ? d : null,).subscribe(data => {
-          //
-        }, (err) => {
-          //obs.error(err);
-        }, () => {
-          console.log("sync-ed");
-          this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-            //
-          });
-        });
-      });
+      this.getUpdates().subscribe();
     } else if (note.action == 'resync') {
       this.sync.download(null).subscribe(data => {
         //
