@@ -12,6 +12,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CameraOverlayView" customModule="GoCapture" customModuleProvider="target">
             <connections>
+                <outlet property="cameraView" destination="utQ-sN-iAh" id="elQ-VR-eyg"/>
+                <outlet property="captureBtn" destination="xVp-xD-3Ut" id="QXh-H1-gnX"/>
+                <outlet property="closeBtn" destination="Euq-A9-eNr" id="jdd-ci-x98"/>
+                <outlet property="containerView" destination="vMP-Vx-rwC" id="ZFc-Sm-WvA"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="ngG-4H-Pxe"/>
             </connections>
         </placeholder>
@@ -20,16 +24,58 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NtP-9Z-Jyn">
-                    <rect key="frame" x="321" y="42" width="30" height="40"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                    <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <state key="normal" title="X"/>
-                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utQ-sN-iAh">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vMP-Vx-rwC" userLabel="ContainerView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xVp-xD-3Ut">
+                            <rect key="frame" x="127.5" y="507" width="120" height="120"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="120" id="H2p-FO-L0m"/>
+                                <constraint firstAttribute="height" constant="120" id="fiG-MC-ncw"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="35" minY="35" maxX="35" maxY="35"/>
+                            <connections>
+                                <action selector="onTakePicture:" destination="-1" eventType="touchUpInside" id="Ju3-8z-G9Z"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Euq-A9-eNr">
+                            <rect key="frame" x="315" y="30" width="30" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="30" id="dDd-wy-e8s"/>
+                                <constraint firstAttribute="height" constant="30" id="tDw-iL-VrR"/>
+                            </constraints>
+                            <connections>
+                                <action selector="onClose:" destination="-1" eventType="touchUpInside" id="eEj-NN-gKO"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="xVp-xD-3Ut" firstAttribute="centerX" secondItem="vMP-Vx-rwC" secondAttribute="centerX" id="2AN-er-X3e"/>
+                        <constraint firstItem="Euq-A9-eNr" firstAttribute="top" secondItem="vMP-Vx-rwC" secondAttribute="top" constant="30" id="7CK-bg-OuE"/>
+                        <constraint firstAttribute="bottom" secondItem="xVp-xD-3Ut" secondAttribute="bottom" constant="40" id="ZrS-Si-YrM"/>
+                        <constraint firstAttribute="trailing" secondItem="Euq-A9-eNr" secondAttribute="trailing" constant="30" id="lqs-Ft-etv"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="utQ-sN-iAh" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="33S-wr-BRn"/>
+                <constraint firstItem="vMP-Vx-rwC" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="7OR-80-mwt"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="vMP-Vx-rwC" secondAttribute="trailing" id="Ixt-wH-JKM"/>
+                <constraint firstItem="vMP-Vx-rwC" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="NmN-GL-Hhz"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="vMP-Vx-rwC" secondAttribute="bottom" id="UE4-0N-RDd"/>
+                <constraint firstItem="utQ-sN-iAh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="guQ-eF-qHR"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="utQ-sN-iAh" secondAttribute="bottom" id="hz0-nO-suE"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="utQ-sN-iAh" secondAttribute="trailing" id="qzg-Gc-6ke"/>
+            </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="138.40000000000001" y="131.78410794602701"/>
         </view>
     </objects>
 </document>

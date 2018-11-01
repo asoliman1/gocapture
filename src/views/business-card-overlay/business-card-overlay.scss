@@ -45,9 +45,12 @@ page-business-card-overlay {
       left: 50%;
       transform: translateX(-50%);
       -webkit-transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
       color: white;
+      background: url('../assets/images/camera-icon.png') no-repeat center;
+      width: 120px;
+      height: 120px;
+      padding: 35px;
+      background-size: 50%;
     }
   }
 }

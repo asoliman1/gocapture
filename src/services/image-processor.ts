@@ -77,6 +77,10 @@ export class ImageProcessor{
           Y = Y * outputAspectRatio;
         }
 
+        if (self.platform.is("android")) {
+          Y = (image.naturalHeight - canvasHeight) * 0.5;
+        }
+
         t.setupCanvas(canvasWidth, canvasHeight);
 
         t.ctx.drawImage(image, crop.x * coefficient, Y, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);

@@ -120,9 +120,9 @@
       "phonegap-plugin-push": {
         "FCM_VERSION": "11.6.2"
       },
-      "cordova-plugin-camera-preview": {},
       "cordova-plugin-advanced-http": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {},
+      "cordova-plugin-camera-preview": {}
     },
     "platforms": [
       "ios",

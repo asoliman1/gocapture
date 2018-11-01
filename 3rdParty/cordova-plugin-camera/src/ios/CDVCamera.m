@@ -757,7 +757,7 @@ static NSString* toBase64(NSData* data) {
 
 - (void)onClose
 {
-    [[self.pickerController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
+    [self.pickerController.delegate imagePickerControllerDidCancel:self.pickerController];
 }
 
 
