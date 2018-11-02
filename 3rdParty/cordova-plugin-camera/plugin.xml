@@ -108,6 +108,8 @@
          <source-file src="src/ios/CDVJpegHeaderWriter.m" />
          <header-file src="src/ios/CDVExif.h" />
 
+         <source-file src="src/ios/GoCaptureImageCropper.swift" />
+
          <resource-file src="src/ios/CameraOverlayView.xib"/>
          <resource-file src="src/ios/CameraOverlayView.bundle"/>
 

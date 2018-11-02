@@ -31,6 +31,7 @@
 #import <objc/message.h>
 
 #import "CameraOverlayView.h"
+#import "GoCapture-Swift.h"
 
 #ifndef __CORDOVA_4_0_0
     #import <Cordova/NSData+Base64.h>
@@ -90,6 +91,8 @@ static NSString* toBase64(NSData* data) {
     NSNumber* previewBoxPositionY = [command argumentAtIndex:14 withDefault:nil];
     NSNumber* previewBoxWidth = [command argumentAtIndex:15 withDefault:nil];
     NSNumber* previewBoxHeight = [command argumentAtIndex:16 withDefault:nil];
+
+    pictureOptions.needCrop = [command argumentAtIndex:17 withDefault:@(NO)];
 
     if (previewBoxPositionX && previewBoxPositionY && previewBoxWidth && previewBoxHeight)
     {
@@ -515,9 +518,28 @@ static NSString* toBase64(NSData* data) {
         case DestinationTypeDataUrl:
         {
             image = [self retrieveImage:info options:options];
-            NSData* data = [self processImage:image info:info options:options];
-            if (data)  {
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
+
+            if (options.needCrop) {
+                GoCaptureImageCropper *cropper = [[GoCaptureImageCropper alloc] init];
+
+                [cropper cropWithUiImage:image completionHandler:^(UIImage *image) {
+                    NSData* data = [self processImage:image info:info options:options];
+
+                    CDVPluginResult* resultToReturn = nil;
+                    if (data) {
+                        resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
+                    } else {
+                        resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"Can't process image"];
+                    }
+                    completion(resultToReturn);
+
+                }];
+                return;
+            } else {
+                NSData* data = [self processImage:image info:info options:options];
+                if (data)  {
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
+                }
             }
         }
             break;

@@ -25,7 +25,7 @@ export class LogView{
 				private zone: NgZone,
 				private viewCtrl: ViewController,
 				private clipboard: Clipboard,
-              public themeProvider: ThemeProvider) {
+        public themeProvider: ThemeProvider) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 

@@ -89,30 +89,13 @@ export class BusinessCard extends BaseElement {
         title: "",
         buttons: [
           {
-            text: 'Remove',
-            role: 'destructive',
-            handler: () => {
-              this.zone.run(() =>{
-                this.setValue(type, type == this.FRONT ? this.front : this.back);
-
-              });
-
-            }
-          },
-          {
-            text: 'View image',
+            text: 'View Image',
             handler: () => {
               this.viewImage(type);
             }
           },
           {
-            text: 'Flip image',
-            handler: () => {
-              this.flip(type);
-            }
-          },
-          {
-            text: 'Camera',
+            text: 'Retake',
             handler: () => {
               if (this.platform.is('ios')) {
                 this.doCapture(type, 1);
@@ -125,6 +108,15 @@ export class BusinessCard extends BaseElement {
             text: 'Choose from Library',
             handler: () => {
               this.doCapture(type, 2);
+            }
+          },
+          {
+            text: 'Remove',
+            role: 'destructive',
+            handler: () => {
+              this.zone.run(() =>{
+                this.setValue(type, type == this.FRONT ? this.front : this.back);
+              });
             }
           },
           {
@@ -187,14 +179,16 @@ export class BusinessCard extends BaseElement {
       correctOrientation: true,
       saveToPhotoAlbum: false,
       encodingType: this.camera.EncodingType.JPEG,
-      targetWidth: 1280,
-      targetHeight:1000,
+      targetWidth: 2000,
+      targetHeight:2000,
       destinationType: this.destinationType(),
       shouldDisplayOverlay: true,
       previewPositionX: 12,
       previewPositionY: 150,
       previewWidth: this.platform.width() - 24,
-      previewHeight: (this.platform.width() - 24) / 1.75
+      previewHeight: (this.platform.width() - 24) / 1.75,
+      quality: 100,
+      needCrop: true
     };
 
     this.frontLoading = type == this.FRONT;
@@ -206,25 +200,14 @@ export class BusinessCard extends BaseElement {
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      if (captureType == 1) {
-        let crop = {
-          x: 12,
-          y: 150,
-          width: this.platform.width() - 24,
-          height: (this.platform.width() - 24) / 1.75,
-        };
-        this.imageProc.crop(imageData, crop).subscribe(data => {
-          this.saveData(data, type, shouldRecognize);
-        })
-      } else {
-        this.imageProc.ensureLandscape(imageData, !shouldRecognize).subscribe((info) => {
-          this.saveData(info, type, shouldRecognize);
-        });
-      }
+      this.saveData({dataUrl: imageData}, type, shouldRecognize);
+
     }, (error) => {
       console.error(error);
-      this.frontLoading = false;
-      this.backLoading = false;
+      this.zone.run(()=>{
+        this.frontLoading = false;
+        this.backLoading = false;
+      });
     }, options);
   }
 
@@ -247,6 +230,10 @@ export class BusinessCard extends BaseElement {
       },
       (err) => {
         console.error(err);
+        this.zone.run(()=>{
+          this.frontLoading = false;
+          this.backLoading = false;
+        });
       });
   }
 

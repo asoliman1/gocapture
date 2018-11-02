@@ -155,10 +155,11 @@ cameraExport.getPicture = function (successCallback, errorCallback, options) {
     var previewPositionY = getValue(options.previewPositionY, 0);
     var previewWidth = getValue(options.previewWidth, 0);
     var previewHeight = getValue(options.previewHeight, 0);
+    var needCrop = getValue(options.needCrop, false);
 
     var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
         mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection, shouldDisplayOverlay,
-    previewPositionX, previewPositionY, previewWidth, previewHeight];
+    previewPositionX, previewPositionY, previewWidth, previewHeight, needCrop];
 
     exec(successCallback, errorCallback, 'Camera', 'takePicture', args);
     // XXX: commented out
