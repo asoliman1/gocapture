@@ -29,6 +29,7 @@
     <preference name="SplashScreenBackgroundColor" value="0xFFFFFFFF" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
+    <preference name="deployment-target" value="11.0.0" />
     <platform name="android">
         <resource-file src="google-services.json" target="app/google-services.json" />
         <allow-intent href="market:*" />
