@@ -24,6 +24,7 @@ import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
+import {ThemeProvider} from "../../providers/theme/theme";
 
 
 @Component({
@@ -31,7 +32,7 @@ import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinit
 	templateUrl: 'forms.html',
 	animations: [
 		// Define an animation that adjusts the opactiy when a new item is created
-		//  in the DOM. We use the 'visible' string as the hard-coded value in the 
+		//  in the DOM. We use the 'visible' string as the hard-coded value in the
 		//  trigger.
 		//
 		// When an item is added we wait for 300ms, and then increase the opacity to 1
@@ -67,12 +68,16 @@ export class Forms {
 
 	private filterPipe: FormControlPipe = new FormControlPipe();
 
+  private selectedTheme;
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
 		private zone: NgZone,
 		private actionCtrl: ActionSheetController,
-		private syncClient: SyncClient) {
+		private syncClient: SyncClient,
+    private themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	doRefresh(refresher?) {
@@ -140,12 +145,13 @@ export class Forms {
 						//console.log('Cancel clicked');
 					}
 				}
-			]
+			],
+      cssClass: this.selectedTheme.toString()
 		});
 		actionSheet.present();
 	}
 
-	ionViewDidEnter() {				
+	ionViewDidEnter() {
 		this.doRefresh();
 		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
 			if(type == "Forms" || type == "Submissions"){

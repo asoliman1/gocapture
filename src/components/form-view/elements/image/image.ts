@@ -8,6 +8,7 @@ import { normalizeURL } from 'ionic-angular/util/util';
 import { Platform } from 'ionic-angular/platform/platform';
 import {Util} from "../../../../util/util";
 import {ImageProcessor} from "../../../../services/image-processor";
+import {ThemeProvider} from "../../../../providers/theme/theme";
 declare var cordova: any;
 
 @Component({
@@ -37,15 +38,19 @@ export class Image extends BaseElement {
 
 	max = 5;
 
+  private selectedTheme;
+
 	constructor(private fb: FormBuilder,
 				private actionCtrl: ActionSheetController,
 				private camera: Camera,
 				private platform: Platform,
 				private zone: NgZone,
         public util: Util,
-        private imageProc: ImageProcessor,) {
+        private imageProc: ImageProcessor,
+        private themeProvider: ThemeProvider) {
 		super();
 		this.currentVal = [];
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	chooseType() {
@@ -110,7 +115,8 @@ export class Image extends BaseElement {
 					text: 'Cancel',
 					role: 'cancel'
 				}
-			]
+			],
+      cssClass: this.selectedTheme.toString()
 		});
 		sheet.present();
 	}

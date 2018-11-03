@@ -14,7 +14,12 @@
     background-color: $theme-color;
   }
 
-  .alert-button {
+  .alert-button,
+  .action-sheet-button {
     color: $theme-color !important;
+  }
+
+  .action-sheet-destructive {
+    color: #f53d3d !important;
   }
 }

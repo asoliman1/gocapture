@@ -15,6 +15,7 @@ import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
 
 import {BusinessCardOverlayPage} from "../../../../views/business-card-overlay/business-card-overlay";
+import {ThemeProvider} from "../../../../providers/theme/theme";
 
 declare var screen;
 
@@ -51,6 +52,8 @@ export class BusinessCard extends BaseElement {
   FRONT: number = 0;
   BACK: number = 1;
 
+  private selectedTheme;
+
   constructor(private actionCtrl: ActionSheetController,
               private camera: Camera,
               private device: Device,
@@ -59,7 +62,8 @@ export class BusinessCard extends BaseElement {
               private modalCtrl: ModalController,
               private imageProc: ImageProcessor,
               public file: File,
-              public util: Util) {
+              public util: Util,
+              private themeProvider: ThemeProvider) {
     super();
     this.currentVal = {
       front: this.front,
@@ -70,6 +74,8 @@ export class BusinessCard extends BaseElement {
       front: this.front,
       back: this.back
     };
+
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ngAfterContentInit(){
@@ -123,7 +129,8 @@ export class BusinessCard extends BaseElement {
             text: 'Cancel',
             role: 'cancel'
           }
-        ]
+        ],
+        cssClass: this.selectedTheme.toString()
       });
       sheet.present();
     } else {
