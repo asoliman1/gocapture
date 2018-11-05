@@ -20,7 +20,7 @@
 }
 
 .bottom-content{
-  padding:0px;
+  padding:0;
   background-color: color($colors, light, base);
   min-height:55vh;
   position: relative;
@@ -39,14 +39,14 @@
   line-height: 1.4em;
 }
 
-.connMode{
+.connMode {
   & ion-icon{
     opacity: 0;
   }
-  &.on{
+  &.on {
     font-weight: bold;
     & *{
-      color: #fb8f04;
+      color: orange;
     }
     & ion-icon{
       opacity: 1;

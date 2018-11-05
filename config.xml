@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2202930" id="com.leadliaison.mobilitease" ios-CFBundleVersion="293" version="2.4.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2202960" id="com.leadliaison.mobilitease" ios-CFBundleVersion="296" version="2.4.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
@@ -28,6 +28,7 @@
     <preference name="SplashScreenBackgroundColor" value="#EA5D14" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
+    <preference name="deployment-target" value="11.0.0" />
     <platform name="android">
         <resource-file src="google-services.json" target="app/google-services.json" />
         <allow-intent href="market:*" />
@@ -143,8 +144,8 @@
     <plugin name="phonegap-plugin-push" spec="^2.1.3">
         <variable name="FCM_VERSION" value="11.6.2" />
     </plugin>
-    <plugin name="cordova-plugin-camera-preview" spec="^0.10.0" />
     <plugin name="cordova-plugin-advanced-http" spec="^2.0.1" />
+    <plugin name="cordova-plugin-camera-preview" spec="^0.10.0" />
     <plugin name="cordova-plugin-camera" spec="3rdParty/cordova-plugin-camera" />
     <engine name="ios" spec="4.5.4" />
     <engine name="android" spec="7.1.0" />

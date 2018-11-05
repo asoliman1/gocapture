@@ -16,5 +16,6 @@ export class User{
 	pushRegistered: 0 | 1 = 0;
 	device_token: string;
 	is_production: 0 | 1 = 1;
+	theme: string;
 
 }

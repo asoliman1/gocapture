@@ -1,4 +1,4 @@
-import {Component, NgZone} from '@angular/core';
+import {Component} from '@angular/core';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
@@ -81,6 +81,7 @@ export class Login {
 			this.client.authenticate(this.email, this.authCode)
         .subscribe(data => {
 					loader.setContent(data.message);
+					// this.themeProvider.setActiveTheme()
 				}, err => {
 					loader.dismiss();
 					let toaster = this.toast.create({

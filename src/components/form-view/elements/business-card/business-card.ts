@@ -16,6 +16,8 @@ import {Util} from "../../../../util/util";
 import { DomSanitizer } from '@angular/platform-browser';
 import {BusinessCardOverlayPage} from "../../../../pages/business-card-overlay/business-card-overlay";
 import {CameraPreviewOptions} from "@ionic-native/camera-preview";
+import {ThemeProvider} from "../../../../providers/theme/theme";
+import {Popup} from "../../../../providers/popup/popup";
 
 declare var screen;
 
@@ -52,6 +54,8 @@ export class BusinessCard extends BaseElement {
   FRONT: number = 0;
   BACK: number = 1;
 
+  private selectedTheme;
+
   constructor(private actionCtrl: ActionSheetController,
               private camera: Camera,
               private device: Device,
@@ -61,7 +65,9 @@ export class BusinessCard extends BaseElement {
               private imageProc: ImageProcessor,
               public file: File,
               public util: Util,
-		private dom: DomSanitizer) {
+		private dom: DomSanitizer,
+              private themeProvider: ThemeProvider,
+              private popup: Popup) {
     super();
     this.currentVal = {
       front: this.front,
@@ -72,6 +78,8 @@ export class BusinessCard extends BaseElement {
       front: this.front,
       back: this.back
     };
+
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ngAfterContentInit(){
@@ -91,30 +99,13 @@ export class BusinessCard extends BaseElement {
         title: "",
         buttons: [
           {
-            text: 'Remove',
-            role: 'destructive',
-            handler: () => {
-              this.zone.run(() =>{
-                this.setValue(type, type == this.FRONT ? this.front : this.back);
-
-              });
-
-            }
-          },
-          {
-            text: 'View image',
+            text: 'View Image',
             handler: () => {
               this.viewImage(type);
             }
           },
           {
-            text: 'Flip image',
-            handler: () => {
-              this.flip(type);
-            }
-          },
-          {
-            text: 'Camera',
+            text: 'Retake',
             handler: () => {
               if (this.platform.is('ios')) {
                 this.doCapture(type, 1);
@@ -130,10 +121,20 @@ export class BusinessCard extends BaseElement {
             }
           },
           {
+            text: 'Remove',
+            role: 'destructive',
+            handler: () => {
+              this.zone.run(() =>{
+                this.setValue(type, type == this.FRONT ? this.front : this.back);
+              });
+            }
+          },
+          {
             text: 'Cancel',
             role: 'cancel'
           }
-        ]
+        ],
+        cssClass: this.selectedTheme.toString()
       });
       sheet.present();
     } else {
@@ -189,14 +190,16 @@ export class BusinessCard extends BaseElement {
       correctOrientation: true,
       saveToPhotoAlbum: false,
       encodingType: this.camera.EncodingType.JPEG,
-      targetWidth: 1280,
-      targetHeight:1000,
+      targetWidth: 2000,
+      targetHeight:2000,
       destinationType: this.destinationType(),
       shouldDisplayOverlay: true,
       previewPositionX: 12,
       previewPositionY: 150,
-      previewWidth: window.screen.width - 24,
-      previewHeight: (window.screen.width - 24) / 1.75
+      previewWidth: this.platform.width() - 24,
+      previewHeight: (this.platform.width() - 24) / 1.75,
+      quality: 100,
+      needCrop: true
     };
 
     this.frontLoading = type == this.FRONT;
@@ -208,26 +211,15 @@ export class BusinessCard extends BaseElement {
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      if (captureType == 1) {
-        let crop = {
-          x: 12,
-          y: 150,
-          width: window.screen.width - 24,
-          height: (window.screen.width - 24) / 1.75,
-        };
-        this.imageProc.crop(imageData, crop).subscribe(data => {
-          this.saveData(data, type, shouldRecognize);
-        })
-      } else {
+      this.saveData({dataUrl: imageData}, type, shouldRecognize);
 
-        this.imageProc.ensureLandscape(imageData, !shouldRecognize).subscribe((info) => {
-          this.saveData(info, type, shouldRecognize);
-        });
-      }
     }, (error) => {
+      this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
       console.error(error);
-      this.frontLoading = false;
-      this.backLoading = false;
+      this.zone.run(()=>{
+        this.frontLoading = false;
+        this.backLoading = false;
+      });
     }, options);
   }
 
@@ -279,16 +271,16 @@ export class BusinessCard extends BaseElement {
         .subscribe((info) => {
 
           let newFolder = this.file.dataDirectory + "leadliaison/images";
-					let newName = new Date().getTime() + '.jpeg';
-					let promise: Promise<any>;
+	  let newName = new Date().getTime() + '.jpeg';
+	  let promise: Promise<any>;
 
-					if (imageData.substr(0, 5) == "data:") {
-						promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
-					} else {
-						let folder = imageData.substr(0, imageData.lastIndexOf("/"));
-						let name = imageData.substr(imageData.lastIndexOf("/") + 1);
-						promise = this.file.moveFile(folder, name, newFolder, newName);
-					}
+	  if (imageData.substr(0, 5) == "data:") {
+	  	promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
+	  } else {
+	  	let folder = imageData.substr(0, imageData.lastIndexOf("/"));
+	  	let name = imageData.substr(imageData.lastIndexOf("/") + 1);
+	  	promise = this.file.moveFile(folder, name, newFolder, newName);
+	  }
 
           promise.then((entry)=>{
               this.zone.run(()=>{

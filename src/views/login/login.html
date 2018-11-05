@@ -1,4 +1,4 @@
-<ion-content scroll="false" class="login">
+<ion-content scroll="false" class="login default-theme">
 	<div class="top-content row" *ngIf="doAuth == false">
 		<div class="col padding col-center">
 			<img [src]="user.customer_logo">
@@ -18,7 +18,7 @@
 						<ion-input type="text" name="authCode" required placeholder="Enter Auth Code" [(ngModel)]="authCode"></ion-input>
 					</ion-item>
 					<ion-item>
-						<button ion-button full large color="orange" (click)="onClick()">
+						<button ion-button full large (click)="onClick()">
               Authenticate
             </button>
 					</ion-item>
@@ -26,7 +26,7 @@
 			</form>
       <ion-list padding *ngIf="doAuth == false">
 					<ion-item>
-						<button ion-button full large color="orange" (click)="onClick()">
+						<button ion-button full large (click)="onClick()">
               Continue
             </button>
 					</ion-item>

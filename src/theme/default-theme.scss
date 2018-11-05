@@ -1,0 +1,5 @@
+$theme-color: color($colors, orange);
+
+.default-theme {
+  @include theme($theme-color);
+}

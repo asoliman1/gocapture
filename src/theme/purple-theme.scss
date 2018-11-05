@@ -1,0 +1,6 @@
+$theme-color: color($colors, purple);
+
+.purple-theme {
+  @include theme($theme-color);
+}
+

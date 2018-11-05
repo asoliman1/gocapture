@@ -3,6 +3,7 @@ import { LogClient, LogEntry, LogSeverity } from "../../services/log-client";
 import { Subscription } from "rxjs/Subscription";
 import { Clipboard } from '@ionic-native/clipboard';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
+import {ThemeProvider} from "../../providers/theme/theme";
 
 @Component({
 	selector: 'log',
@@ -11,6 +12,7 @@ import { ViewController } from 'ionic-angular/navigation/view-controller';
 export class LogView{
 
 	private sub: Subscription;
+  selectedTheme: String;
 
 	logs: LogEntry[];
 
@@ -22,8 +24,9 @@ export class LogView{
 	constructor(private logClient: LogClient,
 				private zone: NgZone,
 				private viewCtrl: ViewController,
-				private clipboard: Clipboard) {
-
+				private clipboard: Clipboard,
+        public themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	ionViewDidEnter() {
@@ -49,11 +52,11 @@ export class LogView{
 	getColor(log: LogEntry): string{
 		if(log.severity == LogSeverity.ERROR){
 			return "danger";
-		}else if(log.severity == LogSeverity.INFO){
-			return "primary";
-		}else if(log.severity == LogSeverity.LOG){
-			return "primary";
-		}else if(log.severity == LogSeverity.WARN){
+		}else if (log.severity == LogSeverity.INFO){
+			return "dark";
+		} else if(log.severity == LogSeverity.LOG){
+			return "dark";
+		} else if(log.severity == LogSeverity.WARN){
 			return "orange";
 		}
 		return "";

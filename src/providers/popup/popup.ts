@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { Alert } from 'ionic-angular/components/alert/alert';
+import {ThemeProvider} from "../theme/theme";
 
 
 @Injectable()
@@ -12,7 +13,7 @@ export class Popup {
     //
   }
 
-  showAlert(title, message, buttons) {
+  showAlert(title, message, buttons, theme?) {
     if (this.alert) {
       this.alert.dismiss();
     }
@@ -20,13 +21,14 @@ export class Popup {
       title: title,
       message: message,
       buttons: buttons,
-      enableBackdropDismiss: false
+      enableBackdropDismiss: false,
+      cssClass: theme.toString()
     });
 
     this.alert.present();
   }
 
-  showPrompt(title, message, inputs, buttons) {
+  showPrompt(title, message, inputs, buttons, theme?) {
 
     if (this.alert) {
       this.alert.dismiss();
@@ -37,6 +39,7 @@ export class Popup {
       message: message,
       inputs: inputs,
       buttons: buttons,
+      cssClass: theme
     });
     this.alert.present();
   }

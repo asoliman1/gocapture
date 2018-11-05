@@ -1,4 +1,4 @@
-.log{
+.log {
 	.showAll{
 		word-wrap: break-word;
     	white-space: initial;
@@ -7,6 +7,10 @@
 	ion-item.activated{
 		background-color: white !important;
 	}
+
+  .show-more-lbl {
+    font-weight: bold;
+  }
 }
 
 .capture.smaller{

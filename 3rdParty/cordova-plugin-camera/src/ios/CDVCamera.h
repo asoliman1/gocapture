@@ -69,6 +69,8 @@ typedef NSUInteger CDVMediaType;
 
 @property (assign) CGRect previewBox;
 
+@property (assign) BOOL needCrop;
+
 + (instancetype) createFromTakePictureArguments:(CDVInvokedUrlCommand*)command;
 
 @end

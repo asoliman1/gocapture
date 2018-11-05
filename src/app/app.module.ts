@@ -53,10 +53,12 @@ import { Util } from "../util/util";
 import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
 import {CameraPreview} from "@ionic-native/camera-preview";
-import {BusinessCardOverlayPage} from "../pages/business-card-overlay/business-card-overlay";
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
 import {HTTP} from "@ionic-native/http";
+import { ThemeProvider } from '../providers/theme/theme';
+import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
+
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 
 @NgModule({
@@ -150,7 +152,8 @@ import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status
       deps: [XHRBackend, RequestOptions]
     },
     Popup,
-    Util
+    Util,
+    ThemeProvider
   ]
 })
 export class AppModule { }

@@ -17,15 +17,19 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
 import { Nav } from 'ionic-angular/components/nav/nav';
+import {ThemeProvider} from "../providers/theme/theme";
+import {Colors} from "../constants/colors";
 
 declare var cordova;
 
 @Component({
-  template: '<ion-nav #nav></ion-nav>'
+  templateUrl: 'app.html'
 })
+
 export class MyApp {
 
   rootPage: any;
+  selectedTheme: String;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -41,17 +45,23 @@ export class MyApp {
     public statusBar: StatusBar,
     private popup: Popup,
     private loading: LoadingController,
-    private logger: LogClient) {
+    private logger: LogClient,
+    public themeProvider: ThemeProvider) {
+
+    this.themeProvider.getActiveTheme().subscribe(val => {
+      this.selectedTheme = val;
+      if (this.platform.is('android')) {
+        let color = Colors[val.split('-')[0]];
+        this.statusBar.backgroundColorByHexString(color);
+      }
+    });
+
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
       console.log("ready!");
-
-      if (this.platform.is('android')) {
-        this.statusBar.backgroundColorByHexString('#c26100');
-      }
 
       this.client.getRegistration(true).subscribe((user) => {
         if(user) {
@@ -211,7 +221,7 @@ export class MyApp {
         }
       ];
 
-      this.popup.showAlert('Warning', status.message, buttons);
+      this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
     }
   }
 }

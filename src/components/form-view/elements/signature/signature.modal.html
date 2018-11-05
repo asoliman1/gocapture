@@ -2,13 +2,13 @@
 	<ion-navbar>
 		<ion-buttons start>
 			<button ion-button (click)="cancel()">
-				<ion-icon name="close" class="capture" class="orange"></ion-icon>
+				<ion-icon name="close" class="capture" class="primary"></ion-icon>
 			</button>
 		</ion-buttons>
 		<ion-title>Signature</ion-title>
 		<ion-buttons end>
 			<button ion-button [disabled]="!hasSignature" (click)="done()">
-				<ion-icon name="checkmark" class="capture" color="orange"></ion-icon>
+				<ion-icon name="checkmark" class="capture" color="primary"></ion-icon>
 			</button>
 		</ion-buttons>
 	</ion-navbar>
@@ -21,7 +21,7 @@
 <ion-footer>
   <ion-toolbar class="text-center">
     <button ion-button icon-only clear block (click)="clear()">
-		<ion-icon name="trash" color="orange"></ion-icon>
+		<ion-icon name="trash" color="primary"></ion-icon>
     </button>
   </ion-toolbar>
 </ion-footer>

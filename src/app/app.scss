@@ -14,18 +14,4 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
-.enable-hover{
-	.scroll-content{
-		overflow-y: auto;
-	}
 
-	.scroll-x{
-		.scroll-content{
-			overflow-y: hidden !important;
-		}
-	}
-
-	.action-sheet-group{
-		overflow: hidden;
-	}
-}

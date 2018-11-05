@@ -21,22 +21,6 @@ form-view, .form-view{
 		padding: 20px 0 !important;
 	}
 
-	.item-md.item-input.input-has-focus .item-inner,
-	.item-ios.item-input.input-has-focus .item-inner {
-		border-bottom-color: #eb7f00 !important;
-		box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
-	}
-
-	.list-md .item-input.input-has-focus:last-child,
-	.list-ios .item-input.input-has-focus:last-child {
-		border-bottom-color: #eb7f00 !important;
-		box-shadow: inset 0 -1px 0 0 #eb7f00 !important;
-	}
-
-	radios.ng-dirty .item-radio-checked .item-inner {
-		border-bottom: 1px solid #eb7f00 !important;
-	}
-
 	.item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
 	.item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
 	.item-ios.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner,
@@ -56,22 +40,6 @@ form-view, .form-view{
 		font-weight: bold;
 		padding-left: 5px;
 		color: red;
-	}
-
-	ion-select.ng-dirty{
-		color: #eb7f00;
-	}
-
-	ion-datetime.ng-dirty{
-		color: #eb7f00;
-	}
-
-	ion-input.ng-dirty {
-		color: #eb7f00;
-	}
-
-	ion-textarea.ng-dirty {
-		color: #eb7f00;
 	}
 
   .invalid {

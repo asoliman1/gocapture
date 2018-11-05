@@ -205,7 +205,6 @@ export class BussinessClient {
 				let ext = reply.user_profile_picture.split('.').pop();
 				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 
-
         this.registration = reply;
         reply.pushRegistered = 1;
         reply.is_production = Config.isProd? 1 : 0;
@@ -383,32 +382,17 @@ export class BussinessClient {
 	private handlePush(note) {
 		console.log('Push received - ' + JSON.stringify(note));
 
-		if (note.action == 'sync') {
-			this.db.getConfig("lastSyncDate").subscribe(time => {
-				let d = new Date();
-				if (time) {
-					d.setTime(parseInt(time));
-				}
-				this.sync.download(time ? d : null).subscribe(data => {
-					//
-				}, (err) => {
-					//obs.error(err);
-				}, () => {
-					console.log("sync-ed");
-					this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-						//
-					});
-				});
-			});
-		} else if (note.action == 'resync') {
-			this.sync.download(null).subscribe(data => {
-				//
-			}, (err) => {
-				//obs.error(err);
-			}, () => {
-				console.log("resync-ed");
-				this.db.saveConfig("lastSyncDate", new Date().getTime() + "");
-			});
-		}
-	}
+    if (note.action == 'sync') {
+      this.getUpdates().subscribe();
+    } else if (note.action == 'resync') {
+      this.sync.download(null).subscribe(data => {
+        //
+      }, (err) => {
+        //obs.error(err);
+      }, () => {
+        console.log("resync-ed");
+        this.db.saveConfig("lastSyncDate", new Date().getTime() + "");
+      });
+    }
+  }
 }

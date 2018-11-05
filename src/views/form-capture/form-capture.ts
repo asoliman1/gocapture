@@ -25,6 +25,7 @@ import {ProspectSearch} from "../prospect-search";
 import {Popup} from "../../providers/popup/popup";
 import {Login} from "../login";
 import moment from "moment";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 @Component({
   selector: 'form-capture',
@@ -51,17 +52,20 @@ export class FormCapture {
 
   private backUnregister;
 
+  private selectedTheme;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
               private zone: NgZone,
               private modal: ModalController,
               private menuCtrl: MenuController,
-              private alertCtrl: AlertController,
               private platform: Platform,
               private toast: ToastController,
-              private popup: Popup) {
+              private popup: Popup,
+              private themeProvider: ThemeProvider) {
     console.log("FormCapture");
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ionViewWillEnter() {
@@ -97,34 +101,33 @@ export class FormCapture {
     let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
     if (isKioskMode) {
       this.client.hasKioskPassword().subscribe(hasPwd => {
-        if (!hasPwd) {
-          this.alertCtrl.create({
-            title: 'Set kiosk mode pass code',
-            inputs: [
-              {
-                name: 'passcode',
-                placeholder: 'Kiosk Mode Pass Code',
-                value: ""
-              }
-            ],
-            buttons: [
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                handler: () => {
-                }
-              },
-              {
-                text: 'Ok',
-                handler: (data) => {
-                  let password = data.passcode;
-                  this.client.setKioskPassword(password).subscribe((valid) => {
 
-                  });
-                }
+        if (!hasPwd) {
+
+          const inputs = [{
+            name: 'passcode',
+            placeholder: 'Kiosk Mode Pass Code',
+            value: ""
+          }];
+
+          const buttons = [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
               }
-            ]
-          }).present();
+            },
+            {
+              text: 'Ok',
+              handler: (data) => {
+                let password = data.passcode;
+                this.client.setKioskPassword(password).subscribe((valid) => {
+
+                });
+              }
+            }];
+
+          this.popup.showPrompt('Set kiosk mode pass code', "", inputs, buttons, this.selectedTheme);
         }
       })
     }
@@ -150,38 +153,36 @@ export class FormCapture {
     if (isKioskMode) {
       this.client.hasKioskPassword().subscribe((hasPas) => {
         if (hasPas) {
-          let alert = this.alertCtrl.create({
-            title: 'Enter pass code',
-            inputs: [
-              {
-                name: 'passcode',
-                placeholder: 'Kiosk Mode Pass Code',
-                value: ""
+
+          const buttons = [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
               }
-            ],
-            buttons: [
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                handler: () => {
-                }
-              },
-              {
-                text: 'Ok',
-                handler: (data) => {
-                  let password = data.passcode;
-                  this.client.validateKioskPassword(password).subscribe((valid) => {
-                    if (valid) {
-                      this.internalBack();
-                    } else {
-                      return false;
-                    }
-                  });
-                }
+            },
+            {
+              text: 'Ok',
+              handler: (data) => {
+                let password = data.passcode;
+                this.client.validateKioskPassword(password).subscribe((valid) => {
+                  if (valid) {
+                    this.internalBack();
+                  } else {
+                    return false;
+                  }
+                });
               }
-            ]
-          });
-          alert.present();
+            }];
+
+          const inputs = [{
+            name: 'passcode',
+            placeholder: 'Kiosk Mode Pass Code',
+            value: ""
+          }];
+
+          this.popup.showPrompt('Enter pass code', "", inputs, buttons, this.selectedTheme);
+
         } else {
           const buttons = [
             {
@@ -190,7 +191,8 @@ export class FormCapture {
                 this.internalBack();
               }
             }];
-          this.popup.showAlert('Info', "No kiosk password set!", buttons);
+
+          this.popup.showAlert('Info', "No kiosk password set!", buttons, this.selectedTheme);
         }
       });
     } else {
@@ -198,32 +200,30 @@ export class FormCapture {
     }
   }
 
-  private internalBack(){
+  private internalBack() {
 
     if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
       this.navCtrl.pop();
       return;
     }
-    let alert = this.alertCtrl.create({
-      title: 'Confirm exit',
-      message: 'You have unsaved changes. Are you sure you want to go back?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            //console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Go back',
-          handler: () => {
-            this.navCtrl.pop();
-          }
+
+    const buttons = [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+          //console.log('Cancel clicked');
         }
-      ]
-    });
-    alert.present();
+      },
+      {
+        text: 'Go back',
+        handler: () => {
+          this.navCtrl.pop();
+        }
+      }
+    ];
+
+    this.popup.showAlert('Confirm exit', 'You have unsaved changes. Are you sure you want to go back?', buttons, this.selectedTheme);
   }
 
   doSave() {
@@ -236,7 +236,7 @@ export class FormCapture {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
 
     if (!this.isEmailOrNameInputted()) {
-      if ((this.isTranscriptionEnabled() && !this.isBusinessCardAdded() || isNotScanned)) {
+      if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
@@ -351,8 +351,8 @@ export class FormCapture {
     let businessCard = <any>fields[businessCardEl["identifier"]] || "";
 
     if (businessCard) {
-      let front = businessCard.front && businessCard.front.length;
-      let back = businessCard.back && businessCard.back.length;
+      let front = businessCard.front && businessCard.front.length > 0;
+      let back = businessCard.back && businessCard.back.length > 0;
 
       return front || back;
     }

@@ -1,5 +1,5 @@
-<ion-header>
-	<ion-toolbar color="orange">
+<ion-header [class]="selectedTheme">
+	<ion-toolbar color="primary">
 		<ion-buttons left>
 			<button ion-button (click)="cancel()">
 				<ion-icon ios="md-close" md="md-close"></ion-icon>
@@ -7,7 +7,7 @@
 		</ion-buttons>
 		<ion-title></ion-title>
 	</ion-toolbar>
-</ion-header>`
+</ion-header>
 
 <ion-content class="image-viewer">
 	<img [src]="image">

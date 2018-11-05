@@ -175,7 +175,7 @@ export class DBClient {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"makeAllInactive": "UPDATE org_master set active = 0",
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?'
 			}
@@ -212,6 +212,11 @@ export class DBClient {
 			5: {
 				queries: [
 					"ALTER TABLE org_master add column isProduction integer default 1"
+				]
+			},
+      6: {
+				queries: [
+					"ALTER TABLE org_master add column theme text"
 				]
 			}
 		},
@@ -502,6 +507,7 @@ export class DBClient {
 					user.customer_logo = data.logo;
 					user.user_name = data.username;
 					user.customer_name = data.name;
+					user.theme = data.theme;
 					user.db = data.db;
 					user.email = data.email;
 					user.first_name = data.operatorFirstName;
@@ -796,7 +802,8 @@ export class DBClient {
 			user.first_name,
 			user.last_name,
 			user.pushRegistered,
-			user.is_production
+			user.is_production,
+      user.theme
 		]).map(data => {
 			this.registration = user;
 			return data;

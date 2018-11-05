@@ -1,6 +1,6 @@
 <ion-item (click)="showOptions()">
 	<ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-	<ion-select  [disabled]="true" color="orange" [attr.name]="element.id" (ionChange)="onChange($event)"
+	<ion-select  [disabled]="true" color="primary" [attr.name]="element.id" (ionChange)="onChange($event)"
                [ngModel]="currentVal">
 		<ion-option *ngFor="let option of element.options" [value]="option.option">{{option.option_label || option.option}}</ion-option>
 	</ion-select>

@@ -2,6 +2,7 @@ import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import {Util} from "../../../../util/util";
+import {ThemeProvider} from "../../../../providers/theme/theme";
 
 declare var cordova: any;
 declare var screen;
@@ -13,10 +14,13 @@ declare var screen;
 export class ImageViewer {
 
 	image: string;
+  selectedTheme: String;
 
 	constructor(private viewCtrl: ViewController,
 				private navParams: NavParams,
-              public util: Util) {
+              public util: Util,
+              public themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 
 	}
 
