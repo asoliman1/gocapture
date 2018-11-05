@@ -21,7 +21,7 @@ extension CGRect {
     }
 }
 
-public typealias CropCompletionHandler = (_ image: UIImage?) -> Void;
+public typealias CropCompletionHandler = (_ image: UIImage?, _ error: String?) -> Void;
 
 @objc public class GoCaptureImageCropper: NSObject {
 
@@ -37,10 +37,10 @@ public typealias CropCompletionHandler = (_ image: UIImage?) -> Void;
         DispatchQueue.global(qos: .userInteractive).async {
             do {
                 try handler.perform([VNDetectRectanglesRequest(completionHandler: { [weak self] (request, error) in
-                    let handledImage = self?.handleRectangles(request: request, error: error, image: inputImage!);
+                    let (image, error) = (self?.handleRectangles(request: request, error: error, image: inputImage!))!;
                     inputImage = nil;
                     DispatchQueue.main.async {
-                        completionHandler(handledImage);
+                        completionHandler(image, error);
                     }
                 })])
             } catch {
@@ -49,21 +49,25 @@ public typealias CropCompletionHandler = (_ image: UIImage?) -> Void;
         }
     }
 
-    func handleRectangles(request: VNRequest, error: Error?, image: CIImage) -> UIImage? {
+    func handleRectangles(request: VNRequest, error: Error?, image: CIImage) -> (image: UIImage?, error: String?) {
         guard let observations = request.results as? [VNRectangleObservation]
-            else { fatalError("unexpected result type from VNDetectRectanglesRequest") }
+            else { print("unexpected result type from VNDetectRectanglesRequest")
+                return (nil, "Business card is not detected.");
+        }
+
         guard let detectedRectangle = observations.first else {
-            print("No rectangles detected.")
-            return nil;
+            print("No rectangles detected.");
+            return (nil, "Business card is not detected.");
         }
         let imageSize = image.extent.size
 
         // Verify detected rectangle is valid.
         let boundingBox = detectedRectangle.boundingBox.scaled(to: imageSize)
         guard image.extent.contains(boundingBox)
-            else { print("invalid detected rectangle"); return nil }
-
-        return self.convert(cmage: image.cropped(to: boundingBox));
+            else { print("invalid detected rectangle");
+                return (nil, "Business card is not detected.")
+        }
+        return (self.convert(cmage: image.cropped(to: boundingBox)), nil);
     }
 
     func convert(cmage:CIImage) -> UIImage {

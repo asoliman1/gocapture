@@ -16,6 +16,7 @@ import {Util} from "../../../../util/util";
 
 import {BusinessCardOverlayPage} from "../../../../views/business-card-overlay/business-card-overlay";
 import {ThemeProvider} from "../../../../providers/theme/theme";
+import {Popup} from "../../../../providers/popup/popup";
 
 declare var screen;
 
@@ -63,7 +64,8 @@ export class BusinessCard extends BaseElement {
               private imageProc: ImageProcessor,
               public file: File,
               public util: Util,
-              private themeProvider: ThemeProvider) {
+              private themeProvider: ThemeProvider,
+              private popup: Popup) {
     super();
     this.currentVal = {
       front: this.front,
@@ -210,6 +212,7 @@ export class BusinessCard extends BaseElement {
       this.saveData({dataUrl: imageData}, type, shouldRecognize);
 
     }, (error) => {
+      this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
       console.error(error);
       this.zone.run(()=>{
         this.frontLoading = false;
@@ -243,64 +246,6 @@ export class BusinessCard extends BaseElement {
         });
       });
   }
-
-  /*
-  private doCapture(type: number, captureType: number = 1) {
-    //screen.orientation.lock && screen.orientation.lock("landscape");
-    this.camera.getPicture({
-      sourceType: this.device.isVirtual && this.platform.is("ios") ? 2 : captureType,
-      correctOrientation: true,
-      saveToPhotoAlbum: false,
-      encodingType: this.camera.EncodingType.JPEG,
-      targetWidth: 1280,
-      targetHeight:1000,
-      destinationType: this.destinationType()
-    }).then(imageData => {
-
-      this.frontLoading = type == this.FRONT;
-      this.backLoading = type != this.FRONT;
-
-      if (this.platform.is('ios')) {
-        imageData = 'data:image/jpeg;base64,' + imageData;
-      }
-
-      let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
-
-      this.imageProc.ensureLandscape(imageData, !shouldRecognize)
-        .subscribe((info) => {
-
-          let newFolder = this.file.dataDirectory + "leadliaison/images";
-          let name = imageData.substring(imageData.lastIndexOf("/") + 1);
-          let newName = new Date().getTime() + '.jpeg';
-          let folder = imageData.substring(0, imageData.lastIndexOf("/"));
-          let promise: Promise<any>;
-
-          if (this.platform.is('ios')) {
-            promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(info.dataUrl));
-          } else {
-            promise = this.file.moveFile(folder, name, newFolder, newName);
-          }
-
-          promise.then((entry)=>{
-              this.zone.run(()=>{
-                this.setValue(type, newFolder + "/" + newName);
-                info.dataUrl = newFolder + "/" + newName;
-                this.frontLoading = false;
-                this.backLoading = false;
-                if(shouldRecognize && type == this.FRONT){
-                  this.recognizeText(info);
-                }
-              });
-            },
-            (err) => {
-              console.error(err);
-            });
-        });
-    }).catch(err => {
-      console.error(err);
-    });
-  }
-  */
 
   recognizeText(info: Info){
     let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});

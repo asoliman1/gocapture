@@ -221,7 +221,7 @@ export class MyApp {
         }
       ];
 
-      this.popup.showAlert('Warning', status.message, buttons);
+      this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
     }
   }
 }

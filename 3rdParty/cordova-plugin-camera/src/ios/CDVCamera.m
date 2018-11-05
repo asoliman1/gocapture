@@ -522,18 +522,27 @@ static NSString* toBase64(NSData* data) {
             if (options.needCrop) {
                 GoCaptureImageCropper *cropper = [[GoCaptureImageCropper alloc] init];
 
-                [cropper cropWithUiImage:image completionHandler:^(UIImage *image) {
-                    NSData* data = [self processImage:image info:info options:options];
+                [cropper cropWithUiImage:image completionHandler:^(UIImage *image, NSString *error) {
 
                     CDVPluginResult* resultToReturn = nil;
-                    if (data) {
-                        resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
+
+                    if (error) {
+                        resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:error];
                     } else {
-                        resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"Can't process image"];
+                        NSData* data = [self processImage:image info:info options:options];
+
+
+                        if (data) {
+                            resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:toBase64(data)];
+                        } else {
+                            resultToReturn = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:@"Can't process image"];
+                        }
                     }
+
                     completion(resultToReturn);
 
                 }];
+
                 return;
             } else {
                 NSData* data = [self processImage:image info:info options:options];
