@@ -149,13 +149,13 @@ cameraExport.getPicture = function (successCallback, errorCallback, options) {
     var popoverOptions = getValue(options.popoverOptions, null);
     var cameraDirection = getValue(options.cameraDirection, Camera.Direction.BACK);
 
-    var shouldDisplayOverlay = getValue(options.shouldDisplayOverlay, false);
+    var shouldDisplayOverlay = !!options.shouldDisplayOverlay;
 
     var previewPositionX = getValue(options.previewPositionX, 0);
     var previewPositionY = getValue(options.previewPositionY, 0);
     var previewWidth = getValue(options.previewWidth, 0);
     var previewHeight = getValue(options.previewHeight, 0);
-    var needCrop = getValue(options.needCrop, false);
+    var needCrop = !!options.needCrop;
 
     var args = [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType,
         mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions, cameraDirection, shouldDisplayOverlay,
