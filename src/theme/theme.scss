@@ -65,4 +65,13 @@
     color: $theme-color;
   }
 
+  .checkbox-checked {
+    border-color: $theme-color !important;
+    background-color: $theme-color !important;
+  }
+
+  .radio-checked .radio-inner {
+    border-color: $theme-color !important;
+  }
+
 }

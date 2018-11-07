@@ -1,14 +1,14 @@
-<ion-header>
-	<ion-navbar>
+<ion-header [class]="selectedTheme">
+	<ion-navbar color="primary">
 		<ion-buttons start>
 			<button ion-button (click)="cancel()">
-				<ion-icon name="close" class="capture" class="primary"></ion-icon>
+				<ion-icon name="close" class="capture" ></ion-icon>
 			</button>
 		</ion-buttons>
 		<ion-title>Signature</ion-title>
 		<ion-buttons end>
 			<button ion-button [disabled]="!hasSignature" (click)="done()">
-				<ion-icon name="checkmark" class="capture" color="primary"></ion-icon>
+				<ion-icon name="checkmark" class="capture" ></ion-icon>
 			</button>
 		</ion-buttons>
 	</ion-navbar>

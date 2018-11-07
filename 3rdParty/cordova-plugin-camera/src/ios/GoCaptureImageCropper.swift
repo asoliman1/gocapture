@@ -52,12 +52,12 @@ public typealias CropCompletionHandler = (_ image: UIImage?, _ error: String?) -
     func handleRectangles(request: VNRequest, error: Error?, image: CIImage) -> (image: UIImage?, error: String?) {
         guard let observations = request.results as? [VNRectangleObservation]
             else { print("unexpected result type from VNDetectRectanglesRequest")
-                return (nil, "Business card is not detected.");
+                return (self.convert(cmage: image), nil);
         }
 
         guard let detectedRectangle = observations.first else {
             print("No rectangles detected.");
-            return (nil, "Business card is not detected.");
+            return (self.convert(cmage: image), nil);
         }
         let imageSize = image.extent.size
 
@@ -65,7 +65,7 @@ public typealias CropCompletionHandler = (_ image: UIImage?, _ error: String?) -
         let boundingBox = detectedRectangle.boundingBox.scaled(to: imageSize)
         guard image.extent.contains(boundingBox)
             else { print("invalid detected rectangle");
-                return (nil, "Business card is not detected.")
+                return (self.convert(cmage: image), nil)
         }
         return (self.convert(cmage: image.cropped(to: boundingBox)), nil);
     }

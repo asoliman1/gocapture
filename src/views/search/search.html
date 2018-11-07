@@ -18,11 +18,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list [class]="selectedTheme" [virtualScroll]="filteredItems" approxItemHeight="75px">
-    <a ion-item detail-none *virtualItem="let item" class="option-item"  approxItemHeight="75px"
+  <ion-list [class]="selectedTheme" >
+    <ion-item *ngFor="let item of filteredItems" class="option-item"
        [class.selected]="item == selectedItem || (!selectedItem && item.isSelected)" (click)="selectedItem = item">
       <h1 class="title">{{item.title}}</h1>
       <h2 class="subtitle" *ngIf="item.subtitle">{{item.subtitle}}</h2>
-    </a>
+    </ion-item>
   </ion-list>
 </ion-content>

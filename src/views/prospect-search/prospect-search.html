@@ -1,13 +1,13 @@
-<ion-header>
-  <ion-navbar>
+<ion-header [class]="selectedTheme">
+  <ion-navbar color="primary">
     <ion-buttons start>
-      <button ion-button (click)="cancel()" color="primary">
+      <button ion-button (click)="cancel()">
         Cancel
       </button>
     </ion-buttons>
     <ion-title>Select prospect</ion-title>
     <ion-buttons end>
-      <button ion-button [disabled]="!selectedItem" (click)="done()" color="primary">
+      <button ion-button [disabled]="!selectedItem" (click)="done()">
         OK
       </button>
     </ion-buttons>
@@ -18,12 +18,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list [virtualScroll]="filteredItems" approxItemHeight="75px">
-    <a ion-item detail-none *virtualItem="let item" class="option-item"  approxItemHeight="75px"
-       [class.selected]="item == selectedItem || (!selectedItem && item.isSelected)" (click)="selectedItem = item">
+  <ion-list [class]="selectedTheme">
+    <ion-item  *ngFor="let item of filteredItems" class="option-item"
+               [class.selected]="item == selectedItem || (!selectedItem && item.isSelected)" (click)="selectedItem = item">
       <h1 class="title">{{item.title}}</h1>
       <h2 class="subtitle" *ngIf="item.subtitle">{{item.subtitle}}</h2>
-    </a>
+    </ion-item>
   </ion-list>
 </ion-content>
 

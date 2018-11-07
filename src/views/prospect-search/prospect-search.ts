@@ -61,4 +61,5 @@ export class ProspectSearch extends SearchPage {
         });
       });
   }
+
 }
