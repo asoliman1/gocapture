@@ -235,7 +235,7 @@ export class FormCapture {
 
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
 
-    if (!this.isEmailOrNameInputted()) {
+    if (isNotScanned && !this.isEmailOrNameInputted()) {
       if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
