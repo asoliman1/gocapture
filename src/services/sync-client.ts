@@ -45,6 +45,8 @@ export class SyncClient {
 
 	private _isSyncing: boolean = false;
 
+  private _isFetching: boolean = false;
+
 	private lastSyncStatus: SyncStatus[];
 
 	private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
@@ -60,7 +62,7 @@ export class SyncClient {
 	}
 
 	public isSyncing(): boolean {
-		return this._isSyncing;
+		return this._isSyncing || this._isFetching;
 	}
 
 	public getLastSync(): SyncStatus[] {
@@ -77,7 +79,7 @@ export class SyncClient {
 				dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
 				submissions: new SyncStatus(false, false, 0, "Submissions", 0)
 			};
-			this._isSyncing = true;
+			this._isFetching = true;
 			this.lastSyncStatus = [
 				map["forms"],
 				map["contacts"],
@@ -144,7 +146,7 @@ export class SyncClient {
 	}
 
 	private syncCleanup(){
-		this._isSyncing = false;
+		this._isFetching = false;
 		this.syncSource.complete();
 		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
 		this.onSync = this.syncSource.asObservable();
@@ -152,9 +154,18 @@ export class SyncClient {
 
 	public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>(obs => {
+      let result = [];
+		//   if (this._isSyncing) {
+      //   obs.next(result);
+      //   obs.complete();
+      //   this.syncSource.complete();
+      //   this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
+      //   this.onSync = this.syncSource.asObservable();
+      //   return;
+      // }
+
 			this._isSyncing = true;
-			var result = [];
-			var map: { [key: number]: FormMapEntry } = {};
+			let map: { [key: number]: FormMapEntry } = {};
 			this.lastSyncStatus = [];
 			forms.forEach(form => {
 				map[form.form_id + ""] = {
