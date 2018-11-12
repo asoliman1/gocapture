@@ -279,6 +279,7 @@ export class SyncClient {
 						}
 					}
 				}
+
 				if (submission.barcode_processed == BarcodeStatus.Queued) {
           this.processBarcode(data, submission, obs);
         } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !this.isSubmissionValid(submission)) {

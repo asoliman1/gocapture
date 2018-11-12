@@ -249,9 +249,7 @@ export class FormCapture {
       return;
     }
     this.submission.fields = this.formView.getValues();
-    if (!this.submission.id) {
-      this.submission.id = new Date().getTime();
-    }
+    this.submission.id = new Date().getTime();
 
     if (this.submission.status != SubmissionStatus.Blocked) {
       this.submission.status = SubmissionStatus.ToSubmit;
