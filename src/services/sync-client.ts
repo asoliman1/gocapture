@@ -45,8 +45,6 @@ export class SyncClient {
 
 	private _isSyncing: boolean = false;
 
-  private _isFetching: boolean = false;
-
 	private lastSyncStatus: SyncStatus[];
 
 	private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
@@ -62,7 +60,7 @@ export class SyncClient {
 	}
 
 	public isSyncing(): boolean {
-		return this._isSyncing || this._isFetching;
+		return this._isSyncing;
 	}
 
 	public getLastSync(): SyncStatus[] {
@@ -79,7 +77,7 @@ export class SyncClient {
 				dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
 				submissions: new SyncStatus(false, false, 0, "Submissions", 0)
 			};
-			this._isFetching = true;
+			this._isSyncing = true;
 			this.lastSyncStatus = [
 				map["forms"],
 				map["contacts"],
@@ -146,7 +144,7 @@ export class SyncClient {
 	}
 
 	private syncCleanup(){
-		this._isFetching = false;
+		this._isSyncing = false;
 		this.syncSource.complete();
 		this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
 		this.onSync = this.syncSource.asObservable();
@@ -155,14 +153,6 @@ export class SyncClient {
 	public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>(obs => {
       let result = [];
-		//   if (this._isSyncing) {
-      //   obs.next(result);
-      //   obs.complete();
-      //   this.syncSource.complete();
-      //   this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
-      //   this.onSync = this.syncSource.asObservable();
-      //   return;
-      // }
 
 			this._isSyncing = true;
 			let map: { [key: number]: FormMapEntry } = {};
@@ -354,6 +344,11 @@ export class SyncClient {
       submission.submission_type = FormSubmissionType.list;
     }
 
+
+    //update status to submitting
+    submission.status = SubmissionStatus.Submitting;
+    this.db.updateSubmissionStatus(submission).subscribe();
+
     this.rest.submitForm(submission).subscribe((d) => {
 			if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
 				let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
@@ -370,10 +365,10 @@ export class SyncClient {
 				});
 				return;
 			}
-			if(d.id > 0){
+			if (d.id > 0) {
 				submission.activity_id = d.id;
 				submission.status = SubmissionStatus.Submitted;
-			}else{
+			} else {
 				submission.activity_id = submission.id;
 				submission.hold_request_id = d.hold_request_id;
 				submission.status = SubmissionStatus.OnHold;

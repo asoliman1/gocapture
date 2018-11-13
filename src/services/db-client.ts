@@ -74,13 +74,14 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
-				"toSend": "SELECT * FROM submissions where status=4",
+				"toSend": "SELECT * FROM submissions where status in (4,5)",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
+        "updateByStatus": "UPDATE submissions set status=? where id=?",
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
 				"deleteAll": "delete from submissions"
 			}
@@ -767,6 +768,11 @@ export class DBClient {
 		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
+  public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
+    //id, formId, data, sub_date, status, isDispatch, dispatchId
+    return this.updateByStatus(WORK, "submissions", [form.status, form.id]);
+  }
+
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
 		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.id]);
@@ -952,6 +958,10 @@ export class DBClient {
 	private updateById(type: string, table: string, parameters: any[]): Observable<boolean> {
 		return this.doUpdate(type, "updateById", table, parameters);
 	}
+
+  private updateByStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
+    return this.doUpdate(type, "updateByStatus", table, parameters);
+  }
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {
 		return new Observable<T>((responseObserver: Observer<T>) => {
