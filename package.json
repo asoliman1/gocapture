@@ -122,8 +122,8 @@
         "FCM_VERSION": "11.6.2"
       },
       "cordova-plugin-advanced-http": {},
-      "cordova-plugin-camera-preview": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {},
+      "cordova-plugin-camera-preview": {}
     },
     "platforms": [
       "ios",

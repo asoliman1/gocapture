@@ -4,7 +4,7 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Subscription } from "rxjs/Subscription";
 import { Config } from '../config';
-import { DeviceFormMembership, DispatchOrder, Form, FormSubmission, User } from '../model';
+import {DeviceFormMembership, DispatchOrder, Form, FormSubmission, SubmissionStatus, User} from '../model';
 import { AuthenticationRequest } from '../model/protocol';
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
@@ -357,7 +357,17 @@ export class BussinessClient {
 					});
 				}
 				this.db.getFormsByIds(formIds).subscribe(forms => {
-					this.sync.sync(submissions, forms).subscribe(submitted => {
+
+				   //sync submissions with status "ToSubmit"
+           //sync submissions with status "Submitting" in case the first attempt was 9 min ago
+				   let filteredSubmissions = submissions.filter(submission => {
+				    let submissionTime = new Date(submission.sub_date).getTime();
+            let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
+				    let isValidToBeSubmitted = submission.status == SubmissionStatus.Submitting && diff > 0.15;
+				    return submission.status == SubmissionStatus.ToSubmit || isValidToBeSubmitted
+          });
+
+					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
 						obs.next(true);
 						obs.complete();
 					}, (err) => {

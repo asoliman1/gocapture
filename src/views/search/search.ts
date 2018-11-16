@@ -1,6 +1,7 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController, Content} from 'ionic-angular';
 import {OptionItem} from "../../model/option-item";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 /**
  * Generated class for the SearchPage page.
@@ -19,6 +20,7 @@ export interface ISearch {
   selector: 'page-search',
   templateUrl: 'search.html',
 })
+
 export class SearchPage {
 
   @Input() items: OptionItem[];
@@ -33,9 +35,12 @@ export class SearchPage {
 
   filteredItems:OptionItem[] = [];
 
+  selectedTheme;
+
   constructor(public navParams: NavParams,
-              public viewCtrl: ViewController) {
-    //
+              public viewCtrl: ViewController,
+              public themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ionViewDidLoad() {

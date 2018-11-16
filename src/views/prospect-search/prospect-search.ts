@@ -5,6 +5,7 @@ import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import {OptionItem} from "../../model/option-item";
 import {SearchPage} from "../search/search";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 @Component({
   selector: 'prospect-search',
@@ -21,8 +22,9 @@ export class ProspectSearch extends SearchPage {
     public viewCtrl: ViewController,
     public navParams: NavParams,
     public client: BussinessClient,
-    public zone: NgZone) {
-    super(navParams, viewCtrl);
+    public zone: NgZone,
+    public themeProvider: ThemeProvider) {
+    super(navParams, viewCtrl, themeProvider);
 
     //
   }
@@ -59,4 +61,5 @@ export class ProspectSearch extends SearchPage {
         });
       });
   }
+
 }

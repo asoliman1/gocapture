@@ -22,4 +22,56 @@
   .action-sheet-destructive {
     color: #f53d3d !important;
   }
+
+  .option-item {
+    &.selected {
+      color: $theme-color !important;
+    }
+  }
+
+  ion-select.ng-dirty{
+    color: $theme-color;
+  }
+
+  ion-datetime.ng-dirty{
+    color: $theme-color;
+  }
+
+  ion-input.ng-dirty {
+    color: $theme-color;
+  }
+
+  ion-textarea.ng-dirty {
+    color: $theme-color;
+  }
+
+  .item-md.item-input.input-has-focus .item-inner,
+  .item-ios.item-input.input-has-focus .item-inner {
+    border-bottom-color: $theme-color !important;
+    box-shadow: inset 0 -1px 0 0 $theme-color !important;
+  }
+
+  .list-md .item-input.input-has-focus:last-child,
+  .list-ios .item-input.input-has-focus:last-child {
+    border-bottom-color: $theme-color !important;
+    box-shadow: inset 0 -1px 0 0 $theme-color !important;
+  }
+
+  radios.ng-dirty .item-radio-checked .item-inner {
+    border-bottom: 1px solid $theme-color !important;
+  }
+
+  .select-disabled {
+    color: $theme-color;
+  }
+
+  .checkbox-checked {
+    border-color: $theme-color !important;
+    background-color: $theme-color !important;
+  }
+
+  .radio-checked .radio-inner {
+    border-color: $theme-color !important;
+  }
+
 }

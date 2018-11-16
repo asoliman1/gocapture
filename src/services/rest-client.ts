@@ -10,6 +10,7 @@ import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, For
 import { Device } from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
 import {isProductionEnvironment} from "../app/config";
+import {retry} from "rxjs/operators/retry";
 
 @Injectable()
 export class RESTClient {
@@ -524,20 +525,28 @@ export class RESTClient {
 						opts.search.set(field, content[field]);
 					}
 					delete opts.search;
-					sub = this.http.get(url + search, opts);
+					sub = this.http.get(url + search, opts).pipe(
+            retry(3)
+          );
 					break;
 				case "POST":
-					sub = this.http.post(url, JSON.stringify(content), opts);
+					sub = this.http.post(url, JSON.stringify(content), opts).pipe(
+            retry(3)
+          );
 					break;
 				case "DELETE":
 					for(let field in content){
 						opts.search.set(field, content[field]);
 					}
 					delete opts.search;
-					sub = this.http.delete(url + search, opts);
+					sub = this.http.delete(url + search, opts).pipe(
+            retry(3)
+          );
 					break;
 				case "PATCH":
-					sub = this.http.patch(url, content, opts);
+					sub = this.http.patch(url, content, opts).pipe(
+            retry(3)
+          );
 					break;
 			}
 

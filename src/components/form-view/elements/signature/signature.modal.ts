@@ -2,6 +2,7 @@ import { Component, NgZone, ViewChild, HostListener } from '@angular/core';
 import { SignaturePad } from "./signature-pad";
 import { Content } from 'ionic-angular/components/content/content';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
+import {ThemeProvider} from "../../../../providers/theme/theme";
 
 @Component({
 	selector: 'signature-modal',
@@ -21,8 +22,12 @@ export class SignatureModal {
 
 	hasSignature: boolean = false;
 
-	constructor(private zone: NgZone, private viewCtrl: ViewController) {
+  selectedTheme;
 
+	constructor(private zone: NgZone,
+              private viewCtrl: ViewController,
+              public themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	ionViewDidEnter(){
@@ -60,7 +65,7 @@ export class SignatureModal {
 	}
 
 	clear(){
-		this.signaturePad.clear(); 
+		this.signaturePad.clear();
 	}
 
 	cancel() {
@@ -86,7 +91,7 @@ export class SignatureModal {
                 croppedCtx.drawImage(canvas, 0, 0);
 
             // Next do the actual cropping
-			
+
             var w         = croppedCanvas.width,
                 h         = croppedCanvas.height,
                 pix       = {x:[], y:[]},

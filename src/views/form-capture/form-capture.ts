@@ -234,9 +234,10 @@ export class FormCapture {
      */
 
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+    let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (!this.isEmailOrNameInputted()) {
-      if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
+    if (isNotScanned && noTranscriptable ) {
+      if (!this.isEmailOrNameInputted()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
@@ -249,6 +250,7 @@ export class FormCapture {
       return;
     }
     this.submission.fields = this.formView.getValues();
+
     if (!this.submission.id) {
       this.submission.id = new Date().getTime();
     }
@@ -284,6 +286,8 @@ export class FormCapture {
 
   onValidationChange(valid: boolean) {
     this.valid = valid;
+    this.errorMessage = '';
+    this.content.resize();
   }
 
   searchProspect() {

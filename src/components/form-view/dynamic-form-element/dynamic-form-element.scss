@@ -19,21 +19,6 @@ dynamic-form-element, .dynamic-form-element {
     padding: 20px 0 !important;
   }
 
-  .item-md.item-input.input-has-focus .item-inner,
-  .item-ios.item-input.input-has-focus .item-inner {
-    border-bottom-color: $theme-color !important;
-    box-shadow: inset 0 -1px 0 0 $theme-color !important;
-  }
-
-  .list-md .item-input.input-has-focus:last-child,
-  .list-ios .item-input.input-has-focus:last-child {
-    border-bottom-color: $theme-color !important;
-    box-shadow: inset 0 -1px 0 0 $theme-color !important;
-  }
-
-  radios.ng-dirty .item-radio-checked .item-inner {
-    border-bottom: 1px solid $theme-color !important;
-  }
 
   .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
   .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
@@ -56,21 +41,7 @@ dynamic-form-element, .dynamic-form-element {
     color: red;
   }
 
-  ion-select.ng-dirty{
-    color: $theme-color;
-  }
 
-  ion-datetime.ng-dirty{
-    color: $theme-color;
-  }
-
-  ion-input.ng-dirty {
-    color: $theme-color;
-  }
-
-  ion-textarea.ng-dirty {
-    color: $theme-color;
-  }
 
   .invalid {
     ion-label.element-name {
