@@ -225,6 +225,7 @@ export class SyncClient {
             index++;
             handler();
           });
+
         }, (err) => {
           index++;
           handler();
@@ -267,9 +268,13 @@ export class SyncClient {
       let urlMap: { [key: string]: string } = {};
       let hasUrls = this.buildUrlMap(submission, data.urlFields, urlMap);
 
+      //update status to submitting
+      submission.status = SubmissionStatus.Submitting;
+      this.db.updateSubmissionStatus(submission).subscribe();
+
       this.uploadImages(urlMap, hasUrls).subscribe((d) => {
 
-        for (var field in submission.fields) {
+        for (let field in submission.fields) {
           if (data.urlFields.indexOf(field) > -1) {
             let sub = submission.fields[field];
             if (sub) {
@@ -297,8 +302,8 @@ export class SyncClient {
         }
       }, (err) => {
         obs.error(err);
-        let msg = "Could not process submission for form " + data.form.name;
-        this.errorSource.next(msg);
+        // let msg = "Could not process submission for form " + data.form.name;
+        // this.errorSource.next(msg);
       });
     });
   }
@@ -350,10 +355,6 @@ export class SyncClient {
     if (submission.prospect_id) {
       submission.submission_type = FormSubmissionType.list;
     }
-
-    //update status to submitting
-    submission.status = SubmissionStatus.Submitting;
-    this.db.updateSubmissionStatus(submission).subscribe();
 
     this.rest.submitForm(submission).subscribe((d) => {
 
