@@ -81,7 +81,7 @@ export class DBClient {
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
-        "updateByStatus": "UPDATE submissions set status=? where id=?",
+				"updateByStatus": "UPDATE submissions set status=? where id=?",
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
 				"deleteAll": "delete from submissions"
 			}
@@ -215,7 +215,7 @@ export class DBClient {
 					"ALTER TABLE org_master add column isProduction integer default 1"
 				]
 			},
-      6: {
+			6: {
 				queries: [
 					"ALTER TABLE org_master add column theme text"
 				]
@@ -268,12 +268,12 @@ export class DBClient {
 						console.log(data.rows.length);
 						let list = [];
 						let index = 0;
-						while(index < data.rows.length){
+						while (index < data.rows.length) {
 							list.push(data.rows.item(index));
 							index++;
 						}
-						t.internalSaveAll<any>(db, list, "FormContact", 50).subscribe(()=>{
-							db.executeSql("update contacts set formId=NULL", []).then(()=>{
+						t.internalSaveAll<any>(db, list, "FormContact", 50).subscribe(() => {
+							db.executeSql("update contacts set formId=NULL", []).then(() => {
 								callback();
 							}).catch(err => {
 								console.error(err);
@@ -291,26 +291,26 @@ export class DBClient {
 					"alter table submissions add column barcode_processed integer default 0"
 				]
 			},
-      9: {
-        queries: [
-          "alter table forms add column members_last_sync_date VARCHAR(50)"
-        ]
-      },
-      10: {
-        queries: [
-          "alter table submissions add column submission_type VARCHAR(50)"
-        ]
-      },
-      11: {
-        queries: [
-          "alter table submissions add column fullName VARCHAR(50)"
-        ]
-      },
-      12: {
-        queries: [
-          "alter table forms add column is_mobile_quick_capture_mode integer default 0"
-        ]
-      },
+			9: {
+				queries: [
+					"alter table forms add column members_last_sync_date VARCHAR(50)"
+				]
+			},
+			10: {
+				queries: [
+					"alter table submissions add column submission_type VARCHAR(50)"
+				]
+			},
+			11: {
+				queries: [
+					"alter table submissions add column fullName VARCHAR(50)"
+				]
+			},
+			12: {
+				queries: [
+					"alter table forms add column is_mobile_quick_capture_mode integer default 0"
+				]
+			},
 		}
 	};
 	/**
@@ -386,7 +386,7 @@ export class DBClient {
 		form.updated_at = dbForm.updated_at;
 		form.success_message = dbForm.success_message;
 		form.is_mobile_kiosk_mode = dbForm.is_mobile_kiosk_mode == 1;
-    form.is_mobile_quick_capture_mode = dbForm.is_mobile_quick_capture_mode == 1;
+		form.is_mobile_quick_capture_mode = dbForm.is_mobile_quick_capture_mode == 1;
 		form.submit_error_message = dbForm.submit_error_message;
 		form.submit_button_text = dbForm.submit_button_text;
 		form.elements = typeof dbForm.elements == "string" ? JSON.parse(dbForm.elements) : dbForm.elements;
@@ -453,10 +453,10 @@ export class DBClient {
 
 	public saveForm(form: Form): Observable<boolean> {
 		//id, name, list_id, title, description, success_message, submit_error_message, submit_button_text, created_at,
-    // updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
+		// updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
 		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
-      form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
-      JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0]);
+		form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
+		JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -607,10 +607,10 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					let data = [];
 					forms.forEach(form => {
-						data.push({id: form.membership_id, formId: form.form_id});
+						data.push({ id: form.membership_id, formId: form.form_id });
 					});
-					this.saveAll<any>(data, "FormContact").subscribe(()=>{
-						db.executeSql("update contacts set formId=NULL", []).then(()=>{
+					this.saveAll<any>(data, "FormContact").subscribe(() => {
+						db.executeSql("update contacts set formId=NULL", []).then(() => {
 							obs.next(true);
 							obs.complete();
 						}).catch(err => {
@@ -626,7 +626,7 @@ export class DBClient {
 		});
 	}
 
-	public saveFormContact(data: any): Observable<boolean>{
+	public saveFormContact(data: any): Observable<boolean> {
 		return this.save(WORK, "contact_forms", [data.formId, data.id]);
 	}
 
@@ -652,7 +652,7 @@ export class DBClient {
 					form.activity_id = dbForm.activityId;
 					form.invalid_fields = dbForm.invalid_fields;
 					form.barcode_processed = dbForm.barcode_processed;
-          form.submission_type = dbForm.submission_type;
+					form.submission_type = dbForm.submission_type;
 					forms.push(form);
 				});
 				return forms;
@@ -678,8 +678,8 @@ export class DBClient {
 							form.invalid_fields = dbForm.invalid_fields;
 							form.activity_id = dbForm.activityId;
 							form.barcode_processed = dbForm.barcode_processed;
-              form.submission_type = dbForm.submission_type;
-              form.sub_date = dbForm.sub_date;
+							form.submission_type = dbForm.submission_type;
+							form.sub_date = dbForm.sub_date;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -708,20 +708,20 @@ export class DBClient {
 								}, (err) => {
 									obs.error("An error occured: " + JSON.stringify(err));
 								});
-								return;
-						} else if(data.rows.length > 1) {
+							return;
+						} else if (data.rows.length > 1) {
 							console.log("more than a row");
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
-							.then((data) => {
+								.then((data) => {
 									console.log(data);
 									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id])
-									.then((data) => {
-										console.log(data);
-										obs.next(true);
-										obs.complete();
-									}, (err) => {
-										obs.error("An error occured: " + JSON.stringify(err));
-									});
+										.then((data) => {
+											console.log(data);
+											obs.next(true);
+											obs.complete();
+										}, (err) => {
+											obs.error("An error occured: " + JSON.stringify(err));
+										});
 								}, (err) => {
 									obs.error("An error occured: " + JSON.stringify(err));
 								});
@@ -729,28 +729,28 @@ export class DBClient {
 						}
 
 						this.save(WORK, "submissions", [
-						  form.id,
-              form.form_id,
-              JSON.stringify(form.fields),
-              form.sub_date ? form.sub_date : new Date().toISOString(),
-              form.status,
-              form.first_name,
-              form.last_name,
-              form.full_name,
-              form.email,
-              false,
-              null,
-              form.activity_id,
-              form.hold_request_id,
-              form.barcode_processed,
-              form.submission_type]).subscribe(
-							(d) => {
-								obs.next(true);
-								obs.complete();
-							}, err => {
-								obs.error(err);
-							}
-						);
+							form.id,
+							form.form_id,
+							JSON.stringify(form.fields),
+							form.sub_date ? form.sub_date : new Date().toISOString(),
+							form.status,
+							form.first_name,
+							form.last_name,
+							form.full_name,
+							form.email,
+							false,
+							null,
+							form.activity_id,
+							form.hold_request_id,
+							form.barcode_processed,
+							form.submission_type]).subscribe(
+								(d) => {
+									obs.next(true);
+									obs.complete();
+								}, err => {
+									obs.error(err);
+								}
+							);
 
 					}, (err) => {
 						obs.error("An error occured: " + JSON.stringify(err));
@@ -768,10 +768,10 @@ export class DBClient {
 		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
-  public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
-    //id, formId, data, sub_date, status, isDispatch, dispatchId
-    return this.updateByStatus(WORK, "submissions", [form.status, form.id]);
-  }
+	public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
+		//id, formId, data, sub_date, status, isDispatch, dispatchId
+		return this.updateByStatus(WORK, "submissions", [form.status, form.id]);
+	}
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
@@ -783,8 +783,8 @@ export class DBClient {
 	}
 
 	public deleteSubmission(form: FormSubmission) {
-    return this.remove(WORK, "submissions", [form.id]);
-  }
+		return this.remove(WORK, "submissions", [form.id]);
+	}
 
 	/**
 	 *
@@ -809,14 +809,14 @@ export class DBClient {
 			user.last_name,
 			user.pushRegistered,
 			user.is_production,
-      user.theme
+			user.theme
 		]).map(data => {
 			this.registration = user;
 			return data;
 		});
 	}
 
-	public makeAllAccountsInactive(): Observable<boolean>{
+	public makeAllAccountsInactive(): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.manager.db(MASTER).subscribe((db) => {
 				db.executeSql(this.getQuery("org_master", "makeAllInactive"), [])
@@ -824,7 +824,7 @@ export class DBClient {
 						obs.next(true);
 						obs.complete();
 					});
-				});
+			});
 		});
 	}
 
@@ -866,9 +866,9 @@ export class DBClient {
 		});
 	}
 
-	private internalSaveAll<T>(db: SQLiteObject, items: T[], type: string, pageSize: number): Observable<boolean>{
+	private internalSaveAll<T>(db: SQLiteObject, items: T[], type: string, pageSize: number): Observable<boolean> {
 		return new Observable<boolean>((obs: Observer<boolean>) => {
-			if(!items || items.length == 0){
+			if (!items || items.length == 0) {
 				obs.next(true);
 				obs.complete();
 				return;
@@ -879,8 +879,8 @@ export class DBClient {
 			console.log("Start save all " + type + " " + items.length);
 
 			let exec = (done: boolean) => {
-			  console.log('Save all data: ' + this.saveAllData.length);
-				if(this.saveAllData.length == 0) {
+				console.log('Save all data: ' + this.saveAllData.length);
+				if (this.saveAllData.length == 0) {
 					this.saveAllEnabled = false;
 					obs.next(true);
 					obs.complete();
@@ -888,29 +888,29 @@ export class DBClient {
 				}
 				let isDone = done;
 				db.transaction((tx: any) => {
-          for (let i = 0; i < this.saveAllData.length; i++) {
-            let query = this.saveAllData[i].query;
-            let params = this.saveAllData[i].parameters;
-            tx.executeSql(query, params, function(success) {
-              //
-            }, function(error) {
-              tx.abort(error);
-            });
-          }
-        }).then(result => {
-          this.saveAllData = [];
-          if (isDone) {
-            this.saveAllEnabled = false;
-            obs.next(true);
-            obs.complete();
-          } else {
-            handler(true);
-          }
-        }, (error) => {
-          this.saveAllEnabled = false;
-          this.saveAllData = [];
-          obs.error(error);
-        })
+					for (let i = 0; i < this.saveAllData.length; i++) {
+						let query = this.saveAllData[i].query;
+						let params = this.saveAllData[i].parameters;
+						tx.executeSql(query, params, function (success) {
+							//
+						}, function (error) {
+							tx.abort(error);
+						});
+					}
+				}).then(result => {
+					this.saveAllData = [];
+					if (isDone) {
+						this.saveAllEnabled = false;
+						obs.next(true);
+						obs.complete();
+					} else {
+						handler(true);
+					}
+				}, (error) => {
+					this.saveAllEnabled = false;
+					this.saveAllData = [];
+					obs.error(error);
+				})
 			};
 
 			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
@@ -920,7 +920,7 @@ export class DBClient {
 				if (index % page == 0) {
 					console.log("save " + type + " " + index);
 					exec(index == items.length);
-					if(index == items.length){
+					if (index == items.length) {
 						return;
 					}
 				} else if (index == items.length) {
@@ -959,9 +959,9 @@ export class DBClient {
 		return this.doUpdate(type, "updateById", table, parameters);
 	}
 
-  private updateByStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
-    return this.doUpdate(type, "updateByStatus", table, parameters);
-  }
+	private updateByStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
+		return this.doUpdate(type, "updateByStatus", table, parameters);
+	}
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {
 		return new Observable<T>((responseObserver: Observer<T>) => {
@@ -997,11 +997,11 @@ export class DBClient {
 							responseObserver.complete();
 						} else {
 							let ids = [];
-							for(let i = 0; i < data.rows.length-1; i++){
+							for (let i = 0; i < data.rows.length - 1; i++) {
 								ids.push(data.rows.item(i).id);
 							}
-							db.executeSql(this.getQuery(table, "makeInactiveByIds").replace("?", ids.join(",")), []).then(()=> {
-								responseObserver.next(data.rows.item(data.rows.length-1));
+							db.executeSql(this.getQuery(table, "makeInactiveByIds").replace("?", ids.join(",")), []).then(() => {
+								responseObserver.next(data.rows.item(data.rows.length - 1));
 								responseObserver.complete();
 							}, (err) => {
 								responseObserver.error("An error occured: " + JSON.stringify(err));
@@ -1022,7 +1022,7 @@ export class DBClient {
 		return this.doGet<T>(type, "selectAll", table, params);
 	}
 
-	private doGet<T>(type: string, queryId: string, table: string, params?: any[]): Observable<T[]>{
+	private doGet<T>(type: string, queryId: string, table: string, params?: any[]): Observable<T[]> {
 		return new Observable<T[]>((responseObserver: Observer<T[]>) => {
 			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, queryId), params)
@@ -1040,7 +1040,7 @@ export class DBClient {
 		});
 	}
 
-	private doUpdate(type: string, queryId: string, table: string, params?: any[]): Observable<boolean>{
+	private doUpdate(type: string, queryId: string, table: string, params?: any[]): Observable<boolean> {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, queryId), params)

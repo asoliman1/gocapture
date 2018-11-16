@@ -6,6 +6,12 @@ import { BusinessCardOverlayPage } from './business-card-overlay';
   declarations: [
     BusinessCardOverlayPage,
   ],
+  exports: [
+	  BusinessCardOverlayPage
+  ],
+  entryComponents: [
+	  BusinessCardOverlayPage
+  ],
   imports: [
     IonicPageModule.forChild(BusinessCardOverlayPage),
   ],

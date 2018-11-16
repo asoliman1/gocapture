@@ -1,7 +1,5 @@
-var path = require('path')
-var tsconfig = require('./tsconfig.json')
 var webpackConfig = require('@ionic/app-scripts/config/webpack.config');
-
+var webpack = require("webpack");
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 webpackConfig.dev.plugins.push(new BundleAnalyzerPlugin({
@@ -18,5 +16,8 @@ webpackConfig.prod.plugins.push(new BundleAnalyzerPlugin({
 	reportFilename: "../../.analysis/report3524.html",
 	statsFilename: "../../.analysis/stats3524.json"
 }));
+
+webpackConfig.prod.plugins.push( new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/));
+webpackConfig.dev.plugins.push( new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/));
 
 module.exports = webpackConfig;

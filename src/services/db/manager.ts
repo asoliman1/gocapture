@@ -6,22 +6,22 @@ import { Utils } from "./utils";
 import { Migrator } from "./migrator";
 import { Table } from "./metadata";
 
-export class Manager{
-	private map: {[key:string]: {obs: Observable<SQLiteObject>, db: SQLiteObject, dbName: string, master: boolean}} = {};
+export class Manager {
+	private map: { [key: string]: { obs: Observable<SQLiteObject>, db: SQLiteObject, dbName: string, master: boolean } } = {};
 
-	constructor(private platform: Platform, private migrator: Migrator, private tables: Table[]){
+	constructor(private platform: Platform, private migrator: Migrator, private tables: Table[]) {
 
 	}
 
-	public registerDb(name: string, type: string, master: boolean){
-		if(!this.map[type]){
+	public registerDb(name: string, type: string, master: boolean) {
+		if (!this.map[type]) {
 			this.map[type] = {
 				obs: null,
 				db: null,
 				dbName: name,
 				master: master
 			};
-		}else if(!this.map[type].dbName){
+		} else if (!this.map[type].dbName) {
 			this.map[type].dbName = name;
 		}
 	}
@@ -35,25 +35,25 @@ export class Manager{
 				});
 				return;
 			}
-			if(this.map[type] && this.map[type].obs){
+			if (this.map[type] && this.map[type].obs) {
 				this.doSubscribe(type, this.map[type].obs, obs);
-			}else if(this.map[type]){
+			} else if (this.map[type]) {
 				this.map[type].obs = this.initializeDb(this.platform, type).share();
 				this.doSubscribe(type, this.map[type].obs, obs);
-			}else{
+			} else {
 				obs.error("Unregistered Db: " + type);
 			}
 		});
 	}
 
-	private doSubscribe(type: string, o: Observable<SQLiteObject>, obs: Observer<SQLiteObject>){
+	private doSubscribe(type: string, o: Observable<SQLiteObject>, obs: Observer<SQLiteObject>) {
 		o.subscribe((db) => {
-			if(!obs.closed){
+			if (!obs.closed) {
 				this.map[type].db = db;
 				obs.next(this.map[type].db);
 				obs.complete();
 				obs.closed = true;
-			}else{
+			} else {
 				obs.next(this.map[type].db);
 			}
 		});
@@ -70,7 +70,7 @@ export class Manager{
 			if (platform.is("cordova")) {
 				db = new SQLite();
 			} else {
-				db = <any> new LocalSql();
+				db = <any>new LocalSql();
 			}
 			console.log("OPen db " + this.map[type].dbName);
 			let settings = {
@@ -79,12 +79,12 @@ export class Manager{
 			};
 			settings["version"] = this.map[type].master ? '1.0' : '';
 			db.create(settings).then((theDb: SQLiteObject) => {
-				this.setup(theDb, type).subscribe(()=>{
+				this.setup(theDb, type).subscribe(() => {
 					setTimeout(() => {
 						obs.next(theDb);
 						obs.complete();
 					}, 50);
-				}, (err) =>{
+				}, (err) => {
 					console.error('Unable to setup: ', err);
 					obs.error(err);
 				});
@@ -95,7 +95,7 @@ export class Manager{
 		});
 	}
 
-	private setup(db: SQLiteObject, type: string) : Observable<any> {
+	private setup(db: SQLiteObject, type: string): Observable<any> {
 		return new Observable<any>((obs: Observer<any>) => {
 			let index = 0;
 			let handler = (data) => {
@@ -140,12 +140,26 @@ export class Manager{
 class LocalSql {
 	private db: any;
 
-	echoTest(): Promise<any>{
+	echoTest(): Promise<any> {
 		return null;
 	}
 
-    deleteDatabase(config): Promise<any>{
+	deleteDatabase(config): Promise<any> {
 		return null;
+	}
+
+	transaction(fn: any): Promise<any> {
+		return new Promise(function (resolve, reject) {
+			let wrapper = (tx) => {
+				try {
+					fn(tx);
+					resolve();
+				} catch (e) {
+					reject(e);
+				}
+			}
+			this.db.transaction(wrapper);
+		});
 	}
 
 	create(opts: { name: string, location: string, version: string }): Promise<any> {
@@ -154,11 +168,11 @@ class LocalSql {
 		let size = 2 * 1024 * 1024;
 		let version = opts.version;
 		return new Promise<any>((resolve, reject) => {
-			try{
+			try {
 				this.db = window["openDatabase"](name, version, description, size, (db) => {
 					resolve(this);
 				});
-			}catch(e){
+			} catch (e) {
 				console.log(e);
 			}
 			setTimeout(() => {

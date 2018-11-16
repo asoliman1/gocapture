@@ -14,7 +14,7 @@ import { ModalController } from 'ionic-angular/components/modal/modal-controller
 import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
 import { DomSanitizer } from '@angular/platform-browser';
-import {BusinessCardOverlayPage} from "../../../../pages/business-card-overlay/business-card-overlay";
+import {BusinessCardOverlayPage} from "../../../../views/business-card-overlay/business-card-overlay"
 import {CameraPreviewOptions} from "@ionic-native/camera-preview";
 import {ThemeProvider} from "../../../../providers/theme/theme";
 import {Popup} from "../../../../providers/popup/popup";

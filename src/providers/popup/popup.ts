@@ -16,13 +16,13 @@ export class Popup {
   showAlert(title, message, buttons, theme?) {
     if (this.alert) {
       this.alert.dismiss();
-    }
+	}
     this.alert = this.alertCtrl.create({
       title: title,
       message: message,
       buttons: buttons,
       enableBackdropDismiss: false,
-      cssClass: theme.toString()
+      cssClass: theme ? theme.toString() : ""
     });
 
     this.alert.present();

@@ -1,11 +1,23 @@
 import { NgModule } from '@angular/core';
-import { SaveHtmlPipe } from './save-html/save-html';
+import { SafeHtmlPipe } from "./save-html/safe-html";
 import { SubmissionStatusPipe } from './submission-status/submission-status';
+import { FormControlPipe } from './form-control-pipe';
+import { AvatarPathUpdaterPipe } from './avatar-path-updater';
+import { ArrayFilterPipe } from './filter-pipe';
 @NgModule({
-	declarations: [SaveHtmlPipe,
-    SubmissionStatusPipe],
+	declarations: [
+		SafeHtmlPipe,
+		SubmissionStatusPipe, 
+		FormControlPipe, 
+		AvatarPathUpdaterPipe, 
+		ArrayFilterPipe],
 	imports: [],
-	exports: [SaveHtmlPipe,
-    SubmissionStatusPipe]
+	exports: [
+		SafeHtmlPipe,
+		SubmissionStatusPipe, 
+		FormControlPipe, 
+		AvatarPathUpdaterPipe, 
+		ArrayFilterPipe
+	]
 })
-export class PipesModule {}
+export class PipesModule { }

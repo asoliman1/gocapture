@@ -13,7 +13,7 @@ import {ThemeProvider} from "../../../../providers/theme/theme";
 declare var cordova: any;
 
 @Component({
-	selector: 'image',
+	selector: 'image-item',
 	templateUrl: 'image.html',
 	providers: [
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Image), multi: true }
@@ -48,7 +48,8 @@ export class Image extends BaseElement {
 				private zone: NgZone,
         public util: Util,
         private imageProc: ImageProcessor,
-        private themeProvider: ThemeProvider) {
+		private themeProvider: ThemeProvider,
+		private dom: DomSanitizer) {
 		super();
 		this.currentVal = [];
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
