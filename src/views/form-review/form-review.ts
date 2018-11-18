@@ -90,7 +90,7 @@ export class FormReview {
 				result = "danger";
 				break;
 			case SubmissionStatus.ToSubmit:
-				result = submission.invalid_fields == 1 ? "danger": "primary";
+				result = submission.invalid_fields == 1 ? "danger": "blue";
 				break;
 			case SubmissionStatus.Submitted:
 				result = "secondary";
