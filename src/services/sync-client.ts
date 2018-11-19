@@ -85,6 +85,7 @@ export class SyncClient {
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
+
       this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
         obs.next(result);
         this.db.getForms().subscribe(forms => {
@@ -135,6 +136,8 @@ export class SyncClient {
             obs.error(err);
             this.syncCleanup();
           });
+        }, (err) => {
+          this.syncCleanup();
         });
       }, (err) => {
         obs.error(err);
@@ -489,6 +492,7 @@ export class SyncClient {
       mapEntry.loading = true;
       mapEntry.percent = 10;
       this.rest.getAvailableFormIds().subscribe(ids => {
+
         this.db.getForms().subscribe(forms => {
           let toDelete = [];
           let newForms = [];
@@ -529,9 +533,12 @@ export class SyncClient {
               obs.error(err);
             });
           });
+        }, err => {
+          obs.error(err);
         });
+      }, err => {
+        obs.error(err);
       });
-
     });
   }
 

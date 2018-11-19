@@ -181,7 +181,11 @@ export class FormReview {
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				return !f || sub.status + "" == f + "";
 			}).reverse();
-			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
+			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
+			  return this.client.isSubmissionNeedToBeSubmitted(sub)
+			}).length > 0;
+
+			console.log(this.hasSubmissionsToSend);
 		});
 	}
 
