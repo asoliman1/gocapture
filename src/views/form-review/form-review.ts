@@ -182,12 +182,16 @@ export class FormReview {
 				return !f || sub.status + "" == f + "";
 			}).reverse();
 			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
-			  return this.client.isSubmissionNeedToBeSubmitted(sub)
+			  return this.isSubmissionNeedToBeSubmitted(sub)
 			}).length > 0;
 
 			console.log(this.hasSubmissionsToSend);
 		});
 	}
+
+	private isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
+    return submission.status == SubmissionStatus.ToSubmit || SubmissionStatus.Submitting
+  }
 
 	sync() {
 		this.syncing = true;
