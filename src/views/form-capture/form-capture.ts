@@ -26,6 +26,8 @@ import {Popup} from "../../providers/popup/popup";
 import {Login} from "../login";
 import moment from "moment";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {FormInstructions} from "../form-instructions";
+import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 
 @Component({
   selector: 'form-capture',
@@ -63,7 +65,8 @@ export class FormCapture {
               private platform: Platform,
               private toast: ToastController,
               private popup: Popup,
-              private themeProvider: ThemeProvider) {
+              private themeProvider: ThemeProvider,
+              private localStorage: LocalStorageProvider) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -84,6 +87,18 @@ export class FormCapture {
       });
     }
     this.menuCtrl.enable(false);
+
+    let instructions = this.localStorage.get("FormInstructions");
+    let formsInstructions = instructions ? JSON.parse(instructions) : [];
+
+    if (this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
+      this.modal.create(FormInstructions, {form: this.form, isModal: true}).present().then((result) => {
+        formsInstructions.push(this.form.id);
+        this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+      });
+    }
+
+
   }
 
   isReadOnly(submission: FormSubmission): boolean {

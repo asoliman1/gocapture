@@ -12,6 +12,7 @@ import { LogView } from "../views/log";
 import { FormSummary } from "../views/form-summary";
 import { FormReview } from "../views/form-review";
 import { FormCapture } from "../views/form-capture";
+import { FormInstructions } from "../views/form-instructions";
 import { RESTClient} from "../services/rest-client";
 import { DBClient } from "../services/db-client";
 import { PushClient } from "../services/push-client";
@@ -60,6 +61,7 @@ import { ThemeProvider } from '../providers/theme/theme';
 import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
 
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
+import {LocalStorageProvider} from "../providers/local-storage/local-storage";
 
 @NgModule({
   declarations: [
@@ -74,6 +76,7 @@ import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status
     FormSummary,
     FormReview,
     FormCapture,
+    FormInstructions,
     ArrayFilterPipe,
     SafeHtmlPipe,
     FormControlPipe,
@@ -111,6 +114,7 @@ import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status
     FormSummary,
     FormReview,
     FormCapture,
+    FormInstructions,
     FormView,
     LogView,
     SignaturePad,
@@ -153,7 +157,8 @@ import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status
     },
     Popup,
     Util,
-    ThemeProvider
+    ThemeProvider,
+    LocalStorageProvider
   ]
 })
 export class AppModule { }

@@ -25,6 +25,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 import {ThemeProvider} from "../../providers/theme/theme";
+import {FormInstructions} from "../form-instructions";
 
 
 @Component({
@@ -139,6 +140,13 @@ export class Forms {
 						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
 					}
 				}, {
+          text: 'Instructions',
+          icon: "paper",
+          handler: () => {
+            //console.log('review clicked');
+            this.navCtrl.push(FormInstructions, { form: form });
+          }
+        }, {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
