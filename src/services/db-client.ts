@@ -75,13 +75,13 @@ export class DBClient {
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
-        "updateByStatus": "UPDATE submissions set status=? where id=?",
+        "updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
 				"deleteAll": "delete from submissions"
 			}
@@ -315,6 +315,11 @@ export class DBClient {
         queries: [
           "alter table forms add column is_enforce_instructions_initially integer default 0",
           "alter table forms add column instructions_content text"
+        ]
+      },
+      14: {
+        queries: [
+          "alter table submissions add column last_sync_date text"
         ]
       },
 		}
@@ -650,6 +655,7 @@ export class DBClient {
 					let form = new FormSubmission();
 					form.id = dbForm.id;
 					form.sub_date = dbForm.sub_date;
+          form.last_sync_date = dbForm.last_sync_date;
 					form.form_id = dbForm.formId;
 					form.fields = JSON.parse(dbForm.data);
 					form.status = dbForm.status;
@@ -688,6 +694,7 @@ export class DBClient {
 							form.barcode_processed = dbForm.barcode_processed;
               form.submission_type = dbForm.submission_type;
               form.sub_date = dbForm.sub_date;
+              form.last_sync_date = dbForm.last_sync_date;
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -751,7 +758,8 @@ export class DBClient {
               form.activity_id,
               form.hold_request_id,
               form.barcode_processed,
-              form.submission_type]).subscribe(
+              form.submission_type,
+              form.last_sync_date ? form.sub_date : new Date().toISOString()]).subscribe(
 							(d) => {
 								obs.next(true);
 								obs.complete();
@@ -777,8 +785,7 @@ export class DBClient {
 	}
 
   public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
-    //id, formId, data, sub_date, status, isDispatch, dispatchId
-    return this.updateByStatus(WORK, "submissions", [form.status, form.id]);
+    return this.updateWithStatus(WORK, "submissions", [form.status, form.last_sync_date, form.id]);
   }
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
@@ -967,8 +974,8 @@ export class DBClient {
 		return this.doUpdate(type, "updateById", table, parameters);
 	}
 
-  private updateByStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
-    return this.doUpdate(type, "updateByStatus", table, parameters);
+  private updateWithStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
+    return this.doUpdate(type, "updateWithStatus", table, parameters);
   }
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {

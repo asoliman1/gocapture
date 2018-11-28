@@ -97,12 +97,10 @@ export class FormCapture {
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
     }
-
-
   }
 
   isReadOnly(submission: FormSubmission): boolean {
-    return submission && (submission.status == SubmissionStatus.Submitted || submission.status == SubmissionStatus.OnHold);
+    return submission && (submission.status == SubmissionStatus.Submitted || submission.status == SubmissionStatus.OnHold || submission.status == SubmissionStatus.Submitting);
   }
 
   ionViewDidEnter() {

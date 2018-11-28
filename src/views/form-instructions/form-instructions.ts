@@ -7,6 +7,7 @@ import {
 import {Form} from "../../model";
 import {ViewController} from "ionic-angular/navigation/view-controller";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 
 @Component({
@@ -17,13 +18,15 @@ export class FormInstructions {
 
   form: Form;
   isModal: boolean = false;
+  selectedTheme: String;
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private viewCtrl: ViewController,
-              private localStorage: LocalStorageProvider) {
+              public themeProvider: ThemeProvider) {
     this.form = this.navParams.get("form");
     this.isModal = this.navParams.get("isModal");
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   onDismiss() {

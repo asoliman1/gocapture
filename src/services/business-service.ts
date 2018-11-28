@@ -379,10 +379,14 @@ export class BussinessClient {
 	}
 
 	public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
-	  let submissionTime = new Date(submission.sub_date).getTime();
+    let submissionTime = new Date(submission.sub_date).getTime();
+	  if (submission.last_sync_date) {
+      submissionTime = new Date(submission.last_sync_date).getTime();
+    }
+
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-    let isValidToBeSubmitted = submission.status == SubmissionStatus.Submitting && diff > 0.15;
-    return submission.status == SubmissionStatus.ToSubmit || isValidToBeSubmitted
+    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.15;
+    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted
   }
 
 	public removeSubmission(submission) {

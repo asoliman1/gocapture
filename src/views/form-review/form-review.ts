@@ -90,6 +90,7 @@ export class FormReview {
 				result = "danger";
 				break;
 			case SubmissionStatus.ToSubmit:
+      case SubmissionStatus.Submitting:
 				result = submission.invalid_fields == 1 ? "danger": "blue";
 				break;
 			case SubmissionStatus.Submitted:
@@ -179,10 +180,15 @@ export class FormReview {
 			var f = this.filter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
+				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
+				if (Number(f) == SubmissionStatus.ToSubmit) {
+				  return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
+        }
+
 				return !f || sub.status + "" == f + "";
 			}).reverse();
 			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
-			  return this.isSubmissionNeedToBeSubmitted(sub)
+			  return this.isSubmissionNeedToBeSubmitted(sub);
 			}).length > 0;
 
 			console.log(this.hasSubmissionsToSend);
@@ -190,7 +196,7 @@ export class FormReview {
 	}
 
 	private isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
-    return submission.status == SubmissionStatus.ToSubmit || SubmissionStatus.Submitting
+    return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting)
   }
 
 	sync() {

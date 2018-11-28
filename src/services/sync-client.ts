@@ -273,6 +273,7 @@ export class SyncClient {
 
       //update status to submitting
       submission.status = SubmissionStatus.Submitting;
+      submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
       this.uploadImages(urlMap, hasUrls).subscribe((d) => {

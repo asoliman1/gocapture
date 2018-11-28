@@ -72,8 +72,8 @@ export class BusinessCardOverlayPage {
 
   // picture options
   pictureOpts: CameraPreviewPictureOptions = {
-    width: this.platform.width() * 2,
-    height: this.platform.width() * 2,
+    width: 2000,
+    height: 2000,
     quality: 100
   };
 
