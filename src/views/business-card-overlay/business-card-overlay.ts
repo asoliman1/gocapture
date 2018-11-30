@@ -78,6 +78,7 @@ export class BusinessCardOverlayPage {
   };
 
   onClose() {
+    this.cameraPreview.stopCamera();
     this.viewController.dismiss();
   }
 

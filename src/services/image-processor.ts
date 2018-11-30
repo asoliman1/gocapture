@@ -65,7 +65,9 @@ export class ImageProcessor{
 
         let coefficient = image.naturalWidth / self.platform.width();
 
-        let canvasWidth = crop.width * coefficient;
+        let padding = 15;
+
+        let canvasWidth = self.platform.width() * coefficient;
         let aspectRatio = crop.width / crop.height;
         let canvasHeight = canvasWidth / aspectRatio;
 
@@ -81,9 +83,12 @@ export class ImageProcessor{
           Y = (image.naturalHeight - canvasHeight) * 0.5;
         }
 
-        t.setupCanvas(canvasWidth, canvasHeight);
+        let adjustedHeight = canvasHeight + 2 * padding * coefficient;
 
-        t.ctx.drawImage(image, crop.x * coefficient, Y, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+        t.setupCanvas(canvasWidth, adjustedHeight);
+
+        t.ctx.drawImage(image, 0, Y - padding * coefficient, canvasWidth, adjustedHeight, 0, 0, canvasWidth, adjustedHeight);
+
         obs.next({
           width: t.canvas.width,
           height: t.canvas.height,
