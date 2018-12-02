@@ -65,7 +65,7 @@ export class ImageProcessor{
 
         let coefficient = image.naturalWidth / self.platform.width();
 
-        let padding = 15;
+        let padding = 25;
 
         let canvasWidth = self.platform.width() * coefficient;
         let aspectRatio = crop.width / crop.height;
