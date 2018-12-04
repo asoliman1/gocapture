@@ -3,7 +3,7 @@
 		<button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-		<ion-title>Forms</ion-title>
+		<ion-title>Events</ion-title>
 		<ion-buttons end>
 			<button ion-button (click)="sync()" class="larger" >
 				<ion-icon name="sync"></ion-icon>
@@ -20,7 +20,7 @@
 	<ion-list approxItemHeight="77px">
 		<a ion-item detail-none (click)="presentActionSheet(form)" *ngFor="let form of filteredForms">
 			<h1>{{form.name}}</h1>
-			<h2>{{form.total_submissions}} Entries &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ion-text color="secondary">{{form.total_sent}} Sent</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_hold > 0">{{form.total_hold}} Unsent</span></h2>
+			<h2>{{form.total_submissions}} Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ion-text color="secondary">{{form.total_sent}} Sent</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ion-text color="orange" *ngIf="form.total_hold > 0">{{form.total_hold}} Pending</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_unsent > 0">{{form.total_unsent}} Unsent</span></h2>
 		</a>
 	</ion-list>
 	<!--ion-refresher (ionRefresh)="doRefresh($event)">

@@ -67,7 +67,8 @@
 
 .segment-md ion-segment-button{
 	font-weight: bold !important;
-	&.all{
+
+  &.all{
 		color: #222 !important;
 		&.segment-activated{
 			border-color: #222 !important;
