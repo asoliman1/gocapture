@@ -14,11 +14,13 @@ import { ModalController } from 'ionic-angular/components/modal/modal-controller
 import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
 
-import {BusinessCardOverlayPage} from "../../../../views/business-card-overlay/business-card-overlay";
 import {ThemeProvider} from "../../../../providers/theme/theme";
 import {Popup} from "../../../../providers/popup/popup";
 
+
 declare var screen;
+
+declare var CameraPreview;
 
 @Component({
   selector: 'business-card',
@@ -55,6 +57,7 @@ export class BusinessCard extends BaseElement {
 
   private selectedTheme;
 
+
   constructor(private actionCtrl: ActionSheetController,
               private camera: Camera,
               private device: Device,
@@ -79,6 +82,26 @@ export class BusinessCard extends BaseElement {
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
+
+  private cameraPreviewOpts = {
+    x: 0,
+    y: 0,
+    width: this.platform.width(),
+    height: this.platform.height(),
+    camera: 'rear',
+    tapPhoto: false,
+    previewDrag: false,
+    toBack: false,
+    alpha: 1,
+    tapFocus: true
+  };
+
+  // picture options
+  private pictureOpts = {
+    width: this.platform.width(),
+    height: this.platform.height(),
+    quality: 100
+  };
 
   ngAfterContentInit(){
     this.theVal = {
@@ -108,7 +131,7 @@ export class BusinessCard extends BaseElement {
               if (this.platform.is('ios')) {
                 this.doCapture(type, 1);
               } else {
-                this.showBusinessCardOverlay(type);
+                this.startCamera(type);
               }
             }
           },
@@ -139,46 +162,10 @@ export class BusinessCard extends BaseElement {
       if (this.platform.is('ios')) {
         this.doCapture(type);
       } else {
-        this.showBusinessCardOverlay(type);
+        // this.showBusinessCardOverlay(type);
+        this.startCamera(type)
       }
     }
-  }
-
-  private showBusinessCardOverlay(type: number) {
-    let businessCardModal = this.modalCtrl.create(BusinessCardOverlayPage);
-    businessCardModal.onDidDismiss(imageData => {
-
-      if (!imageData) {
-        return;
-      }
-
-      this.frontLoading = type == this.FRONT;
-      this.backLoading = type != this.FRONT;
-
-      let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
-
-      let newFolder = this.file.dataDirectory + "leadliaison/images";
-      let newName = new Date().getTime() + '.jpeg';
-
-      let blob = this.imageProc.dataURItoBlob(imageData.dataUrl);
-      this.file.writeFile(newFolder, newName, blob).then((entry)=>{
-          console.log(JSON.stringify(entry));
-          this.zone.run(()=>{
-            this.setValue(type, newFolder + "/" + newName);
-            imageData.dataUrl = newFolder + "/" + newName;
-            this.frontLoading = false;
-            this.backLoading = false;
-            if(shouldRecognize && type == this.FRONT){
-              this.recognizeText(imageData);
-            }
-          });
-        },
-        (err) => {
-          console.error(err);
-        });
-    });
-
-    businessCardModal.present();
   }
 
   private doCapture(type: number, captureType: number = 1) {
@@ -378,4 +365,64 @@ export class BusinessCard extends BaseElement {
   private destinationType() {
     return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
   }
+
+  public startCamera(type: number) {
+    let self = this;
+
+    self.frontLoading = type == self.FRONT;
+    self.backLoading = type != self.FRONT;
+
+    CameraPreview.startCamera(self.cameraPreviewOpts, function(result) {
+
+      let imageData = result["picture"];
+
+      if (imageData) {
+
+        imageData = 'data:image/jpeg;base64,' + imageData;
+
+        let crop = {
+          x: 0,
+          y: 150,
+          width: self.cameraPreviewOpts.width,
+          height: self.cameraPreviewOpts.width / 1.75
+        };
+
+        self.imageProc.crop(imageData, crop).subscribe(data => {
+
+          let shouldRecognize = self.element.is_scan_cards_and_prefill_form == 1;
+
+          let newFolder = self.file.dataDirectory + "leadliaison/images";
+          let newName = new Date().getTime() + '.jpeg';
+
+          let blob = self.imageProc.dataURItoBlob(data.dataUrl);
+          self.file.writeFile(newFolder, newName, blob).then((entry)=>{
+              console.log(JSON.stringify(entry));
+              self.zone.run(()=>{
+                self.setValue(type, newFolder + "/" + newName);
+                data.dataUrl = newFolder + "/" + newName;
+                self.frontLoading = false;
+                self.backLoading = false;
+                if(shouldRecognize && type == self.FRONT){
+                  self.recognizeText(data);
+                }
+              });
+            },
+            (err) => {
+              console.error(err);
+            });
+        });
+      } else {
+        self.frontLoading = false;
+        self.backLoading = false;
+      }
+      screen.orientation.unlock();
+    }, function (error) {
+      console.log(error);
+      self.popup.showAlert('Error', error, 'Ok');
+      screen.orientation.unlock();
+    });
+
+  }
+
+
 }

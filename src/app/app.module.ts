@@ -53,12 +53,11 @@ import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
 import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
-import {CameraPreview} from "@ionic-native/camera-preview";
+
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
 import {HTTP} from "@ionic-native/http";
 import { ThemeProvider } from '../providers/theme/theme';
-import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
 
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 import {LocalStorageProvider} from "../providers/local-storage/local-storage";
@@ -90,8 +89,7 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
-    DynamicFormElementComponent,
-    BusinessCardOverlayPage
+    DynamicFormElementComponent
   ],
   imports: [
     BrowserModule,
@@ -121,8 +119,7 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     FormSelectionView,
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
     ProspectSearch,
-    OcrSelector,
-    BusinessCardOverlayPage
+    OcrSelector
   ],
   exports: [
     DynamicFormElementComponent
@@ -149,7 +146,6 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     BarcodeScanner,
     StatusBar,
     ScreenOrientation,
-    CameraPreview,
     {
       provide: Http,
       useFactory: httpFactory,

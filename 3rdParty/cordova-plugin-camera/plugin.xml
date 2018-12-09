@@ -77,6 +77,7 @@
         <source-file src="src/android/FileProvider.java" target-dir="src/org/apache/cordova/camera" />
         <source-file src="src/android/xml/camera_provider_paths.xml" target-dir="res/xml" />
 
+
         <js-module src="www/CameraPopoverHandle.js" name="CameraPopoverHandle">
             <clobbers target="CameraPopoverHandle" />
           </js-module>
@@ -112,6 +113,7 @@
 
          <resource-file src="src/ios/CameraOverlayView.xib"/>
          <resource-file src="src/ios/CameraOverlayView.bundle"/>
+
 
          <framework src="ImageIO.framework" weak="true" />
          <framework src="CoreLocation.framework" />

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="camera_overlay_horizontal_margin">12dp</dimen>
+  <dimen name="camera_overlay_top_margin">150dp</dimen>
+</resources>

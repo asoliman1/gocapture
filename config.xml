@@ -136,7 +136,9 @@
     </plugin>
     <plugin name="cordova-plugin-advanced-http" spec="^2.0.1" />
     <plugin name="cordova-plugin-camera" spec="3rdParty/cordova-plugin-camera" />
-    <plugin name="cordova-plugin-camera-preview" spec="3rdparty/cordova-plugin-camera-preview" />
+    <plugin name="cordova-plugin-camera-preview" spec="3rdParty/cordova-plugin-camera-preview">
+        <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="25+" />
+    </plugin>
     <engine name="ios" spec="4.5.4" />
     <engine name="android" spec="7.1.0" />
 </widget>

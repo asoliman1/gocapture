@@ -63,31 +63,14 @@ export class ImageProcessor{
       let t = this;
       image.onload = function (event: any) {
 
-        let coefficient = image.naturalWidth / self.platform.width();
+        let canvasWidth = image.naturalWidth;
 
-        let padding = 35;
-
-        let canvasWidth = self.platform.width() * coefficient;
-        let aspectRatio = crop.width / crop.height;
-        let canvasHeight = canvasWidth / aspectRatio;
-
-        let outputAspectRatio = image.naturalHeight / image.naturalWidth;
+        let canvasHeight = crop.height * image.naturalHeight  / self.platform.height();
 
         let Y = crop.y * image.naturalHeight  / self.platform.height();
+        t.setupCanvas(canvasWidth, canvasHeight);
 
-        if (image.naturalHeight > self.platform.height()) {
-          Y = Y * outputAspectRatio;
-        }
-
-        if (self.platform.is("android")) {
-          Y = (image.naturalHeight - canvasHeight) * 0.5;
-        }
-
-        let adjustedHeight = canvasHeight + 2 * padding * coefficient;
-
-        t.setupCanvas(canvasWidth, adjustedHeight);
-
-        t.ctx.drawImage(image, 0, Y - padding * coefficient, canvasWidth, adjustedHeight, 0, 0, canvasWidth, adjustedHeight);
+        t.ctx.drawImage(image, 0, Y, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
 
         obs.next({
           width: t.canvas.width,
