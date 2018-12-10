@@ -411,7 +411,7 @@ export class BusinessCard extends BaseElement {
               console.error(err);
             });
         });
-      } else {
+      } else if (result["cameraBack"]) {
         self.frontLoading = false;
         self.backLoading = false;
       }
@@ -420,9 +420,8 @@ export class BusinessCard extends BaseElement {
       console.log(error);
       self.popup.showAlert('Error', error, 'Ok');
       screen.orientation.unlock();
+      self.frontLoading = false;
+      self.backLoading = false;
     });
-
   }
-
-
 }
