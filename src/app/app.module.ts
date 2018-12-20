@@ -61,6 +61,8 @@ import { ThemeProvider } from '../providers/theme/theme';
 
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 import {LocalStorageProvider} from "../providers/local-storage/local-storage";
+import {Ndef, NFC} from "@ionic-native/nfc";
+import {Nfc} from "../components/form-view/elements/nfc";
 
 @NgModule({
   declarations: [
@@ -85,7 +87,7 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, HTMLBlock, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, Nfc, HTMLBlock, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -117,7 +119,7 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, Nfc, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
   ],
@@ -144,6 +146,8 @@ import {LocalStorageProvider} from "../providers/local-storage/local-storage";
     AppVersion,
     Geolocation,
     BarcodeScanner,
+    NFC,
+    Ndef,
     StatusBar,
     ScreenOrientation,
     {
