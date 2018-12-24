@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import {Component, NgZone, ViewChild} from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import {Form, FormSubmission, SubmissionStatus, FormElementType, BarcodeStatus} from "../../model";
@@ -8,6 +8,7 @@ import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 import {Util} from "../../util/util";
+import {Content} from "ionic-angular";
 
 
 @Component({
@@ -16,9 +17,11 @@ import {Util} from "../../util/util";
 })
 export class FormReview {
 
+  @ViewChild(Content) content: Content;
+
 	form: Form = new Form();
 
-	filter: string = "";
+	filter = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -29,6 +32,8 @@ export class FormReview {
 	private sub: Subscription;
 
 	private isDispatch;
+
+	filters;
 
 	filteredSubmissions: FormSubmission[] = [];
 
@@ -43,6 +48,14 @@ export class FormReview {
               private util: Util,
               ) {
 
+	  this.filters = [
+	    {id: 'all', title:"All", status: 0,  description: "Tap an entry to edit/review."},
+	    {id: 'sent', title:"Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review."},
+	    {id: 'hold', title:"Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review."},
+	    {id: 'ready', title:"Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."},
+	    {id: 'blocked', title:"Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."},
+	    ];
+	  this.filter = this.filters[0];
 	}
 
 	ionViewDidEnter() {
@@ -90,7 +103,8 @@ export class FormReview {
 				result = "danger";
 				break;
 			case SubmissionStatus.ToSubmit:
-				result = submission.invalid_fields == 1 ? "danger": "primary";
+      case SubmissionStatus.Submitting:
+				result = submission.invalid_fields == 1 ? "danger": "blue";
 				break;
 			case SubmissionStatus.Submitted:
 				result = "secondary";
@@ -130,11 +144,12 @@ export class FormReview {
 	  let hasFullName = submission.full_name && submission.full_name.length > 0;
 	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
 	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+	  let isScannedAndPending = submission.barcode_processed = BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
 	  if (hasFullName) {
 	    return submission.full_name;
     } else if (hasFirstLastName) {
       return submission.first_name + ' ' + submission.last_name;
-    } else if (isScannedAndNoProcessed) {
+    } else if (isScannedAndNoProcessed || isScannedAndPending) {
 	    return "Scanned";
     }
     return "";
@@ -179,11 +194,25 @@ export class FormReview {
 			var f = this.filter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
-				return !f || sub.status + "" == f + "";
+				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
+				if (Number(f["status"]) == SubmissionStatus.ToSubmit) {
+				  return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
+        }
+				return !f["status"] || sub.status + "" == f["status"] + "";
 			}).reverse();
-			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{return sub.status == SubmissionStatus.ToSubmit}).length > 0;
+			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
+			  return this.isSubmissionNeedToBeSubmitted(sub);
+			}).length > 0;
+
+			console.log(this.hasSubmissionsToSend);
+
+      this.content.resize();
 		});
 	}
+
+	private isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
+    return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting)
+  }
 
 	sync() {
 		this.syncing = true;
@@ -211,15 +240,15 @@ export class FormReview {
 		event.stopImmediatePropagation();
 		event.stopPropagation();
 		event.preventDefault();
-		var initialState = null;
-		if(submission.status == SubmissionStatus.ToSubmit){
+		let initialState = null;
+		if(submission.status == SubmissionStatus.ToSubmit || submission.status == SubmissionStatus.Submitting) {
 			initialState = submission.status;
 			submission.status = SubmissionStatus.Blocked;
-		}else if(submission.status == SubmissionStatus.Blocked){
+		} else if (submission.status == SubmissionStatus.Blocked) {
 			initialState = submission.status;
 			submission.status = SubmissionStatus.ToSubmit;
 		}
-		if(initialState){
+		if (initialState){
 			this.client.saveSubmission(submission, this.form).subscribe(()=>{
 				this.onFilterChanged();
 			}, (err)=>{

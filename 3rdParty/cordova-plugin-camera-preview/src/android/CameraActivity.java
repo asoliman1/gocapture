@@ -31,9 +31,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.support.media.ExifInterface;
+
+import com.leadliaison.mobilitease.R;
 
 import org.apache.cordova.LOG;
 
@@ -119,6 +122,20 @@ public class CameraActivity extends Fragment {
       layoutParams.setMargins(x, y, 0, 0);
       frameContainerLayout = (FrameLayout) view.findViewById(getResources().getIdentifier("frame_container", "id", appResourcesPackage));
       frameContainerLayout.setLayoutParams(layoutParams);
+
+        final ImageButton takePictureBtn = view.findViewById(R.id.capture_button);
+        takePictureBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                takePicture(0, 0, 100);
+            }
+        });
+
+      final ImageButton closeBtn = view.findViewById(R.id.close_button);
+      closeBtn.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+          eventListener.onBackButton();
+        }
+      });
 
       //video view
       mPreview = new Preview(getActivity());

@@ -85,6 +85,7 @@ export class SyncClient {
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
+
       this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
         obs.next(result);
         this.db.getForms().subscribe(forms => {
@@ -135,6 +136,8 @@ export class SyncClient {
             obs.error(err);
             this.syncCleanup();
           });
+        }, (err) => {
+          this.syncCleanup();
         });
       }, (err) => {
         obs.error(err);
@@ -270,6 +273,7 @@ export class SyncClient {
 
       //update status to submitting
       submission.status = SubmissionStatus.Submitting;
+      submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
       this.uploadImages(urlMap, hasUrls).subscribe((d) => {
@@ -295,7 +299,7 @@ export class SyncClient {
 
         if (submission.barcode_processed == BarcodeStatus.Queued) {
           this.processBarcode(data, submission, obs);
-        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !this.isSubmissionValid(submission)) {
+        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
           this.processBarcode(data, submission, obs);
         } else {
           this.actuallySubmitForm(data.form.name, submission, obs);
@@ -489,6 +493,7 @@ export class SyncClient {
       mapEntry.loading = true;
       mapEntry.percent = 10;
       this.rest.getAvailableFormIds().subscribe(ids => {
+
         this.db.getForms().subscribe(forms => {
           let toDelete = [];
           let newForms = [];
@@ -529,9 +534,12 @@ export class SyncClient {
               obs.error(err);
             });
           });
+        }, err => {
+          obs.error(err);
         });
+      }, err => {
+        obs.error(err);
       });
-
     });
   }
 

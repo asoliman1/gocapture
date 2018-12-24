@@ -17,6 +17,8 @@ export class Form extends BaseForm{
   is_mobile_quick_capture_mode: boolean;
 	elements : FormElement[];
 	barcode_processed? : BarcodeStatus;
+  instructions_content: string;
+  is_enforce_instructions_initially: boolean;
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;

@@ -24,6 +24,44 @@
       android:scaleType="fitXY"
       android:layout_gravity="top" />
 
+    <com.cordovaplugincamerapreview.CameraBackgroundView
+      android:id="@+id/camera_backgroundView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" >
+    </com.cordovaplugincamerapreview.CameraBackgroundView>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="24sp"
+      android:textColor="@android:color/white"
+      android:text="@string/tap_to_focus"
+      android:layout_marginTop="80dp"
+      android:gravity="center_horizontal"
+      android:layout_centerHorizontal="true"/>
+
+    <ImageButton
+      android:id="@+id/close_button"
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:src="@drawable/close_icon"
+      android:background="@color/transparent"
+      android:layout_alignParentTop="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginTop="30dp"
+      android:layout_marginRight="10dp"/>
+
+
+    <ImageButton
+      android:id="@+id/capture_button"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:src="@drawable/camera_icon"
+      android:background="@color/transparent"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginBottom="30dp"/>
+
     <ImageView
       android:layout_width="match_parent"
       android:layout_height="match_parent"

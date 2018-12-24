@@ -14,7 +14,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form } from "../../model";
+import {Form, FormSubmission, SubmissionStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";
@@ -25,6 +25,8 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 import {ThemeProvider} from "../../providers/theme/theme";
+import {FormInstructions} from "../form-instructions";
+import {Observable} from "rxjs/Observable";
 
 
 @Component({
@@ -118,6 +120,10 @@ export class Forms {
 		this.filteredForms = [].concat(this.forms.filter(form => {
 			return !val || regexp.test(form.name);
 		}));
+
+		this.filteredForms.forEach(form => {
+		  this.getUnsentSubmissions(form);
+    })
 	}
 
 	presentActionSheet(form: Form) {
@@ -139,6 +145,13 @@ export class Forms {
 						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
 					}
 				}, {
+          text: 'Instructions',
+          icon: "paper",
+          handler: () => {
+            //console.log('review clicked');
+            this.navCtrl.push(FormInstructions, { form: form });
+          }
+        }, {
 					text: 'Cancel',
 					role: 'cancel',
 					handler: () => {
@@ -154,7 +167,7 @@ export class Forms {
 	ionViewDidEnter() {
 		this.doRefresh();
 		this.sub = this.syncClient.entitySynced.subscribe((type)=>{
-			if(type == "Forms" || type == "Submissions"){
+			if(type == "Forms" || type == "Submissions") {
 				this.doRefresh();
 			}
 		});
@@ -163,4 +176,13 @@ export class Forms {
 	ionViewDidLeave() {
 		this.sub.unsubscribe();
 	}
+
+	getUnsentSubmissions(form: Form) {
+    this.client.getSubmissions(form, false).subscribe(submissions => {
+      form.total_unsent = submissions.filter((sub)=>{
+        return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
+      }).length;
+    });
+  }
+
 }

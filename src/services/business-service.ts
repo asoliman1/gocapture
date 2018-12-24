@@ -361,10 +361,7 @@ export class BussinessClient {
 				   //sync submissions with status "ToSubmit"
            //sync submissions with status "Submitting" in case the first attempt was 9 min ago
 				   let filteredSubmissions = submissions.filter(submission => {
-				    let submissionTime = new Date(submission.sub_date).getTime();
-            let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-				    let isValidToBeSubmitted = submission.status == SubmissionStatus.Submitting && diff > 0.15;
-				    return submission.status == SubmissionStatus.ToSubmit || isValidToBeSubmitted
+				    return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
 					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
@@ -382,6 +379,17 @@ export class BussinessClient {
 			});
 		});
 	}
+
+	public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
+    let submissionTime = new Date(submission.sub_date).getTime();
+	  if (submission.last_sync_date) {
+      submissionTime = new Date(submission.last_sync_date).getTime();
+    }
+
+    let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
+    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.15;
+    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted
+  }
 
 	public removeSubmission(submission) {
     return this.db.deleteSubmission(submission)

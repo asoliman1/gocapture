@@ -12,6 +12,7 @@ import { LogView } from "../views/log";
 import { FormSummary } from "../views/form-summary";
 import { FormReview } from "../views/form-review";
 import { FormCapture } from "../views/form-capture";
+import { FormInstructions } from "../views/form-instructions";
 import { RESTClient} from "../services/rest-client";
 import { DBClient } from "../services/db-client";
 import { PushClient } from "../services/push-client";
@@ -53,8 +54,9 @@ import {CameraPreview} from "@ionic-native/camera-preview";
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {HTTP} from "@ionic-native/http";
 import { ThemeProvider } from '../providers/theme/theme';
-import { PipesModule } from '../pipes/pipes.module';
-import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/business-card-overlay.module';
+import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
+
+import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 
 @NgModule({
   declarations: [
@@ -69,6 +71,7 @@ import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/bu
     FormSummary,
     FormReview,
     FormCapture,
+    FormInstructions,
     FormView,
     LogView,
     SignaturePad,
@@ -102,6 +105,7 @@ import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/bu
     FormSummary,
     FormReview,
     FormCapture,
+    FormInstructions,
     FormView,
     LogView,
     SignaturePad,
@@ -135,7 +139,6 @@ import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/bu
     BarcodeScanner,
     StatusBar,
     ScreenOrientation,
-    CameraPreview,
     {
       provide: Http,
       useFactory: httpFactory,
@@ -143,7 +146,8 @@ import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/bu
     },
     Popup,
     Util,
-    ThemeProvider
+    ThemeProvider,
+    LocalStorageProvider
   ]
 })
 export class AppModule { }

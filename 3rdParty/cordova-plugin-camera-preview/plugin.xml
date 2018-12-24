@@ -22,14 +22,24 @@
     <source-file src="src/android/camera_activity.xml" target-dir="res/layout" />
     <source-file src="src/android/camera_theme.xml" target-dir="res/values" />
     <source-file src="src/android/camera_ids.xml" target-dir="res/values" />
+    <source-file src="src/android/colors.xml" target-dir="res/values" />
+    <source-file src="src/android/dimension.xml" target-dir="res/values" />
 
-    <framework src="com.android.support:exifinterface:25+" />
+    <resource-file src="src/android/images/drawable-port-xhdpi/camera_icon.png" target="res/drawable-port-xhdpi/camera_icon.png" />
+    <resource-file src="src/android/images/drawable-port-xhdpi/close_icon.png" target="res/drawable-port-xhdpi/close_icon.png" />
+
+    <preference name="ANDROID_SUPPORT_LIBRARY_VERSION" default="25+"/>
+    <framework src="com.android.support:exifinterface:$ANDROID_SUPPORT_LIBRARY_VERSION" />
 
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="CameraPreview">
         <param name="android-package" value="com.cordovaplugincamerapreview.CameraPreview" />
         <param name="onload" value="true" />
       </feature>
+    </config-file>
+
+    <config-file target="res/values/strings.xml" parent="/*">
+      <string name="tap_to_focus">Tap to focus</string>
     </config-file>
 
     <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -62,6 +72,7 @@
     <header-file src="src/ios/CameraRenderController.h" />
     <source-file src="src/ios/CameraRenderController.m" />
 
+
     <framework src="ImageIO.framework" weak="true" />
     <framework src="MobileCoreServices.framework" />
     <framework src="CoreLocation.framework" />
@@ -74,14 +85,5 @@
     <framework src="CoreVideo.framework" />
     <framework src="QuartzCore.framework"/>
   </platform>
-
-  <platform name="windows">
-        <config-file target="package.appxmanifest" parent="/Package/Capabilities">
-            <DeviceCapability Name="webcam" />
-        </config-file>
-        <js-module src="src/windows/CameraPreviewProxy.js" name="CameraPreviewProxy">
-            <runs />
-        </js-module>
-    </platform>
 
 </plugin>

@@ -6,4 +6,6 @@ export class BaseForm{
 	total_submissions : number;
 	total_hold: number;
 	total_sent: number;
+	//ready, submitting, blocked
+  total_unsent: number;
 }

@@ -298,7 +298,14 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
   public void onCameraStarted() {
     Log.d(TAG, "Camera started");
 
-    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "Camera started");
+    JSONObject data = new JSONObject();
+    try {
+      data.put("result", "Camera started");
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+
+    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, data);
     pluginResult.setKeepCallback(true);
     startCameraCallbackContext.sendPluginResult(pluginResult);
   }
@@ -318,17 +325,23 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
   public void onPictureTaken(String originalPicture) {
     Log.d(TAG, "returning picture");
 
-    JSONArray data = new JSONArray();
-    data.put(originalPicture);
+    JSONObject data = new JSONObject();
+    try {
+      data.put("picture", originalPicture);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, data);
     pluginResult.setKeepCallback(true);
-    takePictureCallbackContext.sendPluginResult(pluginResult);
+    startCameraCallbackContext.sendPluginResult(pluginResult);
+
+    this.stopCamera(startCameraCallbackContext);
   }
 
   public void onPictureTakenError(String message) {
     Log.d(TAG, "CameraPreview onPictureTakenError");
-    takePictureCallbackContext.error(message);
+      startCameraCallbackContext.error(message);
   }
 
   private boolean setColorEffect(String effect, CallbackContext callbackContext) {
@@ -912,11 +925,17 @@ private boolean getSupportedFocusModes(CallbackContext callbackContext) {
   }
 
   public void onBackButton() {
-    if(tapBackButtonContext == null) {
-      return;
+    this.stopCamera(startCameraCallbackContext);
+
+    JSONObject data = new JSONObject();
+    try {
+      data.put("result", "cameraBack");
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
-    Log.d(TAG, "Back button tapped, notifying");
-    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "Back button pressed");
-    tapBackButtonContext.sendPluginResult(pluginResult);
+
+    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, data);
+    pluginResult.setKeepCallback(true);
+    startCameraCallbackContext.sendPluginResult(pluginResult);
   }
 }
