@@ -100,16 +100,26 @@ export class Barcoder extends BaseElement {
 				this.formGroup.setValue(vals);
 
 			}, err => {
-				console.error("Could not fetch barcode data: " + (typeof err == "string" ? err : JSON.stringify(err)));
-				this.form["barcode_processed"] = BarcodeStatus.Queued;
-				this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
-				this.statusMessage = "Rescan Barcode";
-				this.form.elements.forEach((element) => {
 
-					if(element.is_filled_from_barcode) {
-					  element.placeholder = "Scanned";
-					}
-				});
+        this.statusMessage = "Rescan Barcode";
+
+				console.error("Could not fetch barcode data: " + (typeof err == "string" ? err : JSON.stringify(err)));
+        this.form.elements.forEach((element) => {
+
+          if (element.is_filled_from_barcode) {
+            element.placeholder = "Scanned";
+          }
+        });
+
+				if (this.element.accept_invalid_barcode) {
+          this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
+          this.form["barcode_processed"] = BarcodeStatus.Processed;
+          this.submission.hold_submission = 1;
+          this.submission.hold_submission_reason = err.message ? err.message : "";
+        } else {
+          this.form["barcode_processed"] = BarcodeStatus.Queued;
+          this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+        }
 			});
 		}).catch(err => {
 			console.error("Could not scan barcode: " + (typeof err == "string" ? err : JSON.stringify(err)));

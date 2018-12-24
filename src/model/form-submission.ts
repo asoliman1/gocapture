@@ -13,6 +13,8 @@ export class FormSubmission{
 	full_name: string = "";
 	activity_id: number = null;
 	hold_request_id: number = null;
+	hold_submission: number = 0;
+	hold_submission_reason: string = "";
 	invalid_fields: number = 0;
 	fields : {[key: string]: string | string[]} = {};
 	sub_date: string;

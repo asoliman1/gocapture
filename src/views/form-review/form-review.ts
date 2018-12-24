@@ -144,11 +144,12 @@ export class FormReview {
 	  let hasFullName = submission.full_name && submission.full_name.length > 0;
 	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
 	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+	  let isScannedAndPending = submission.barcode_processed = BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
 	  if (hasFullName) {
 	    return submission.full_name;
     } else if (hasFirstLastName) {
       return submission.first_name + ' ' + submission.last_name;
-    } else if (isScannedAndNoProcessed) {
+    } else if (isScannedAndNoProcessed || isScannedAndPending) {
 	    return "Scanned";
     }
     return "";
