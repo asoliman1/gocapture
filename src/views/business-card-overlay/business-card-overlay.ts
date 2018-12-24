@@ -31,7 +31,7 @@ export class BusinessCardOverlayPage {
 	}
 
 	ionViewDidLoad() {
-		this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+		this.screenOrientation.lock && this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
 	}
 
 	ionViewDidEnter() {
@@ -39,7 +39,34 @@ export class BusinessCardOverlayPage {
 		// if (this.platform.is('android')) {
 		//   this.cameraPreviewOpts["storeToFile"] = true;
 		// }
-		this.startCamera();
+		//this.startCamera();
+		var video = <any>document.querySelector('video');
+
+			function successCallback(stream) {
+				// Set the source of the video element with the stream from the camera
+				if (video.mozSrcObject !== undefined) {
+					video.mozSrcObject = stream;
+				} else {
+					video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+				}
+				video.play();
+			}
+
+			function errorCallback(error) {
+				console.error('An error occurred: [CODE ' + error.code + ']');
+				// Display a friendly "sorry" message to the user
+			}
+
+			navigator.getUserMedia = navigator.getUserMedia || (<any>navigator).webkitGetUserMedia || (<any>navigator).mozGetUserMedia || (<any>navigator).msGetUserMedia;
+			window.URL = window.URL || (<any>window).webkitURL || (<any>window).mozURL || (<any>window).msURL;
+
+			// Call the getUserMedia method with our callback functions
+			if (navigator.getUserMedia) {
+				navigator.getUserMedia({ video: true }, successCallback, errorCallback);
+			} else {
+				console.log('Native web camera streaming (getUserMedia) not supported in this browser.');
+				// Display a friendly "sorry" message to the user
+			}
 	}
 
 	private startCamera() {
@@ -54,7 +81,7 @@ export class BusinessCardOverlayPage {
 	}
 
 	ionViewWillLeave() {
-		this.screenOrientation.unlock();
+		this.screenOrientation.unlock &&this.screenOrientation.unlock();
 		this.cameraPreview.stopCamera();
 	}
 

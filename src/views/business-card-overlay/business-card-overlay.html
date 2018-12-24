@@ -6,22 +6,23 @@
 -->
 
 
-<ion-content no-padding no-bounce class="business-card-content">
+<ion-content no-padding no-bounce class="business-card-content" scroll="false">
 
-  <div class="title">
-    Tap to focus
-  </div>
+	<div class="title">
+		Tap to focus
+	</div>
 
 
-  <button id="modal-close-btn" ion-button icon-only [outline]="true" [clear]="true" [large]="true" (click)="onClose()">
-    <ion-icon ios="ios-close-circle-outline" md="ios-close-circle-outline"></ion-icon>
-  </button>
+	<button id="modal-close-btn" ion-button icon-only [outline]="true" [clear]="true" [large]="true" (click)="onClose()">
+		<ion-icon ios="ios-close-circle-outline" md="ios-close-circle-outline"></ion-icon>
+	</button>
 
-  <div class="card-overlay">
-  </div>
+	<div class="card-overlay">
+		<video></video>
+	</div>
 
-  <button id="capture-btn" ion-button icon-only [outline]="true" [clear]="true" [large]="true" (click)="onTakePicture()">
-    <!--<ion-icon name="camera"></ion-icon>-->
-  </button>
+	<button id="capture-btn" ion-button icon-only [outline]="true" [clear]="true" [large]="true" (click)="onTakePicture()">
+		<!--<ion-icon name="camera"></ion-icon>-->
+	</button>
 
 </ion-content>
