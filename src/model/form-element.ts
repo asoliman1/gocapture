@@ -1,4 +1,4 @@
-export class FormElement{
+export class FormElement {
 	id : number;
 	title : string;
 	guidelines : string;
@@ -22,6 +22,7 @@ export class FormElement{
 	barcode_provider_name: string;
 	identifier?: string;
 	placeholder: string = "";
+  accept_invalid_barcode: boolean;
 }
 
 export class Option{

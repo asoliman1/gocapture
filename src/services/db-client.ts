@@ -75,7 +75,7 @@ export class DBClient {
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -322,6 +322,12 @@ export class DBClient {
           "alter table submissions add column last_sync_date text"
         ]
       },
+      15: {
+        queries: [
+          "alter table submissions add column hold_submission integer",
+          "alter table submissions add column hold_submission_reason text"
+        ]
+      }
 		}
 	};
 	/**
@@ -652,21 +658,7 @@ export class DBClient {
 			.map((data) => {
 				let forms = [];
 				data.forEach((dbForm: any) => {
-					let form = new FormSubmission();
-					form.id = dbForm.id;
-					form.sub_date = dbForm.sub_date;
-          form.last_sync_date = dbForm.last_sync_date;
-					form.form_id = dbForm.formId;
-					form.fields = JSON.parse(dbForm.data);
-					form.status = dbForm.status;
-					form.first_name = dbForm.firstName;
-					form.last_name = dbForm.lastName;
-					form.full_name = dbForm.fullName;
-					form.email = dbForm.email;
-					form.activity_id = dbForm.activityId;
-					form.invalid_fields = dbForm.invalid_fields;
-					form.barcode_processed = dbForm.barcode_processed;
-          form.submission_type = dbForm.submission_type;
+          let form = this.submissonFromDBEntry(dbForm);
 					forms.push(form);
 				});
 				return forms;
@@ -681,21 +673,9 @@ export class DBClient {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {
 							let dbForm = data.rows.item(i);
-							let form = new FormSubmission();
-							form.id = dbForm.id;
-							form.form_id = dbForm.formId;
-							form.fields = JSON.parse(dbForm.data);
-							form.status = dbForm.status;
-							form.first_name = dbForm.firstName;
-							form.last_name = dbForm.lastName;
-							form.email = dbForm.email;
-							form.invalid_fields = dbForm.invalid_fields;
-							form.activity_id = dbForm.activityId;
-							form.barcode_processed = dbForm.barcode_processed;
-              form.submission_type = dbForm.submission_type;
-              form.sub_date = dbForm.sub_date;
-              form.last_sync_date = dbForm.last_sync_date;
-							resp.push(form);
+
+              let form = this.submissonFromDBEntry(dbForm);
+              resp.push(form);
 						}
 						responseObserver.next(resp);
 						responseObserver.complete();
@@ -705,6 +685,27 @@ export class DBClient {
 			});
 		});
 	}
+
+  private submissonFromDBEntry(dbForm) {
+    let form = new FormSubmission();
+    form.id = dbForm.id;
+    form.form_id = dbForm.formId;
+    form.fields = JSON.parse(dbForm.data);
+    form.status = dbForm.status;
+    form.first_name = dbForm.firstName;
+    form.last_name = dbForm.lastName;
+    form.full_name = dbForm.fullName;
+    form.email = dbForm.email;
+    form.invalid_fields = dbForm.invalid_fields;
+    form.activity_id = dbForm.activityId;
+    form.barcode_processed = dbForm.barcode_processed;
+    form.submission_type = dbForm.submission_type;
+    form.sub_date = dbForm.sub_date;
+    form.last_sync_date = dbForm.last_sync_date;
+    form.hold_submission = dbForm.hold_submission;
+    form.hold_submission_reason = dbForm.hold_submission_reason;
+    return form;
+  }
 
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 
@@ -743,23 +744,9 @@ export class DBClient {
 							return;
 						}
 
-						this.save(WORK, "submissions", [
-						  form.id,
-              form.form_id,
-              JSON.stringify(form.fields),
-              form.sub_date ? form.sub_date : new Date().toISOString(),
-              form.status,
-              form.first_name,
-              form.last_name,
-              form.full_name,
-              form.email,
-              false,
-              null,
-              form.activity_id,
-              form.hold_request_id,
-              form.barcode_processed,
-              form.submission_type,
-              form.last_sync_date ? form.sub_date : new Date().toISOString()]).subscribe(
+						let params = this.composeParamsForSubmission(form);
+
+						this.save(WORK, "submissions", params).subscribe(
 							(d) => {
 								obs.next(true);
 								obs.complete();
@@ -775,9 +762,31 @@ export class DBClient {
 			});
 		}
 
-		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.save(WORK, "submissions", [form.id, form.form_id, JSON.stringify(form.fields), form.sub_date ? form.sub_date : new Date().toISOString(), form.status, form.first_name, form.last_name, form.full_name, form.email, false, null, form.activity_id, form.hold_request_id, form.barcode_processed, form.submission_type]);
+    let params = this.composeParamsForSubmission(form);
+		return this.save(WORK, "submissions", params);
 	}
+
+	private composeParamsForSubmission(form) {
+    return [
+      form.id,
+      form.form_id,
+      JSON.stringify(form.fields),
+      form.sub_date ? form.sub_date : new Date().toISOString(),
+      form.status,
+      form.first_name,
+      form.last_name,
+      form.full_name,
+      form.email,
+      false,
+      null,
+      form.activity_id,
+      form.hold_request_id,
+      form.barcode_processed,
+      form.submission_type,
+      form.last_sync_date ? form.sub_date : new Date().toISOString(),
+      form.hold_submission,
+      form.hold_submission_reason];
+  }
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId

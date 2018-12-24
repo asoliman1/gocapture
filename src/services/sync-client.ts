@@ -299,7 +299,7 @@ export class SyncClient {
 
         if (submission.barcode_processed == BarcodeStatus.Queued) {
           this.processBarcode(data, submission, obs);
-        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !this.isSubmissionValid(submission)) {
+        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
           this.processBarcode(data, submission, obs);
         } else {
           this.actuallySubmitForm(data.form.name, submission, obs);
