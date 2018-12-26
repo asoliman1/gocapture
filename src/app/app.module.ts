@@ -23,8 +23,8 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer} from "../components/form-view/elements";
-import { ArrayFilterPipe } from '../pipes/filter-pipe';
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer} from "../components/form-view/elements";
+import { ArrayFilterPipe } from '../pipes/filter-pipe'
 import { FormControlPipe } from '../pipes/form-control-pipe';
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
@@ -62,7 +62,6 @@ import { ThemeProvider } from '../providers/theme/theme';
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 import {LocalStorageProvider} from "../providers/local-storage/local-storage";
 import {Ndef, NFC} from "@ionic-native/nfc";
-import {Nfc} from "../components/form-view/elements/nfc";
 
 @NgModule({
   declarations: [
@@ -87,7 +86,7 @@ import {Nfc} from "../components/form-view/elements/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, Nfc, HTMLBlock, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -119,7 +118,7 @@ import {Nfc} from "../components/form-view/elements/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, Nfc, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
   ],

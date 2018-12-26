@@ -315,7 +315,7 @@ export class SyncClient {
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
-    this.rest.fetchBarcodeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe(barcodeData => {
+    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe(barcodeData => {
       if (!barcodeData || barcodeData.length == 0) {
         return;
       }

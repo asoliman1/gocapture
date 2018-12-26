@@ -5,6 +5,6 @@ export class ItemData{
 	value: string;
 }
 
-export class BarcodeResponse extends BaseResponse{
+export class BadgeResponse extends BaseResponse{
 	public info: ItemData[];
 }

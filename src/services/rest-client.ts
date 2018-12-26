@@ -1,4 +1,4 @@
-import { BarcodeResponse, ItemData } from '../model/barcode';
+import { BadgeResponse, ItemData } from '../model/badge';
 import { Injectable } from "@angular/core";
 import { Headers, Response, Http, URLSearchParams } from "@angular/http";
 import { Config } from "../config";
@@ -158,8 +158,8 @@ export class RESTClient {
 				});
 	}
 
-	public fetchBarcodeData(barcodeId: string, providerId: string): Observable<ItemData[]>{
-		return this.call<BarcodeResponse>("GET", "/barcode/scan.json", {barcode_id: barcodeId, provider_id: providerId})
+	public fetchBadgeData(barcodeId: string, providerId: string): Observable<ItemData[]>{
+		return this.call<BadgeResponse>("GET", "/barcode/scan.json", {barcode_id: barcodeId, provider_id: providerId})
 		.map( resp => {
 			return resp.info;
 		});
