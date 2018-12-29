@@ -32,7 +32,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
 import { MyCurrencyDirective } from "../util/currency";
-import { Transfer } from '@ionic-native/transfer';
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { Device } from "@ionic-native/device";
 import { Push } from '@ionic-native/push';
@@ -55,7 +55,7 @@ import {AvatarPathUpdaterPipe} from "../pipes/avatar-path-updater";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
 
 import {HTMLBlock} from "../components/form-view/elements/html-block";
-import {SafeHtmlPipe} from "../pipes/save-html/safe-html";
+import {SafeHtmlPipe} from "../pipes/safe-html/safe-html";
 import {HTTP} from "@ionic-native/http";
 import { ThemeProvider } from '../providers/theme/theme';
 
@@ -133,7 +133,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogClient,
     BussinessClient,
     ImageProcessor,
-    Transfer,
+    FileTransfer,
     File,
     Device,
     HTTP,

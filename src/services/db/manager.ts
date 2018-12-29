@@ -144,6 +144,10 @@ class LocalSql {
 		return null;
 	}
 
+  selfTest(): Promise<any>{
+		return null;
+	}
+
     deleteDatabase(config): Promise<any>{
 		return null;
 	}

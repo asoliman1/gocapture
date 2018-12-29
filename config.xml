@@ -142,6 +142,7 @@
     <plugin name="phonegap-nfc" spec="1.0.3">
         <variable name="NFC_USAGE_DESCRIPTION" value="Read NFC Tags" />
     </plugin>
+    <plugin name="cordova-plugin-media-capture" spec="3.0.2" />
     <engine name="ios" spec="4.5.4" />
     <engine name="android" spec="7.1.0" />
 </widget>
