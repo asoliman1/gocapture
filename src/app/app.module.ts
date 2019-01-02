@@ -62,6 +62,9 @@ import { ThemeProvider } from '../providers/theme/theme';
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 import {LocalStorageProvider} from "../providers/local-storage/local-storage";
 import {Ndef, NFC} from "@ionic-native/nfc";
+import {GOCAudio} from "../components/form-view/elements/audio/goc-audio";
+import {AudioCaptureService} from "../services/audio-capture-service";
+import {Media} from "@ionic-native/media";
 
 @NgModule({
   declarations: [
@@ -86,7 +89,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, GOCAudio, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -118,7 +121,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, GOCAudio, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
   ],
@@ -157,7 +160,9 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     Popup,
     Util,
     ThemeProvider,
-    LocalStorageProvider
+    LocalStorageProvider,
+    AudioCaptureService,
+    Media
   ]
 })
 export class AppModule { }

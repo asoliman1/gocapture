@@ -112,28 +112,16 @@ export class MyApp {
       //ensure folders exist
       this.file.checkDir(cordova.file.dataDirectory, "leadliaison")
         .then((exists)=>{
-          this.file.checkDir(cordova.file.dataDirectory + "leadliaison/", "images")
-            .then((exists)=>{
-              console.log("Images folder present");
-            }).catch(err=>{
-            this.file.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
-              .then(ok => {
-                console.log("Created images folder");
-              }).catch(err => {
-              console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
-            })
-          });
+
+          this.checkDir('images');
+          this.checkDir('audio');
+
         }).catch(err=>{
         this.file.createDir(cordova.file.dataDirectory, "leadliaison", true)
           .then(ok => {
-            this.file.createDir(cordova.file.dataDirectory + "leadliaison/", "images", true)
-              .then(ok => {
-                console.log("Created images folder");
-              }).catch(err => {
-              console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
-            })
-          }).catch(err => {
-          console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
+
+            this.checkDir("images");
+            this.checkDir("audio");
         })
       });
     });
@@ -185,6 +173,20 @@ export class MyApp {
         cssClass: "error"
       });
       toaster.present();
+    });
+  }
+
+  private checkDir(dirName) {
+    this.file.checkDir(cordova.file.dataDirectory + "leadliaison/", dirName)
+      .then((exists)=>{
+        console.log( dirName + " folder present");
+      }).catch(err=>{
+      this.file.createDir(cordova.file.dataDirectory + "leadliaison/", dirName, true)
+        .then(ok => {
+          console.log("Created " + dirName + " folder");
+        }).catch(err => {
+        console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
+      })
     });
   }
 

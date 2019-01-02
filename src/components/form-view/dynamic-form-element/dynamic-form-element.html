@@ -117,12 +117,12 @@
     </ion-item>
 
     <!--BUSINESS CARD-->
-    <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
-      <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
-                     [formControlName]="element.identifier" [form]="form" [submission]="submission">
-      </business-card>
-    </ion-item>
+    <!--<ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">-->
+      <!--<ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>-->
+      <!--<business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"-->
+                     <!--[formControlName]="element.identifier" [form]="form" [submission]="submission">-->
+      <!--</business-card>-->
+    <!--</ion-item>-->
 
     <!--SIGNATURE-->
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
@@ -140,7 +140,15 @@
 
     <!--HTML-BLOCK-->
     <html-block *ngSwitchCase="'section'" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
-             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)"></html-block>
+             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
+    </html-block>
+
+    <!--AUDIO-->
+
+    <goc-audio  *ngSwitchCase="'business_card'" [readonly]="readOnly" item-content [element]="element"
+           [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
+           [class.hidden]="element.is_hidden">
+    </goc-audio>
 
     <ion-item *ngSwitchDefault>
       <ion-label>Coming soon! A component for {{element.type}}</ion-label>
