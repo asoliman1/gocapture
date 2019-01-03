@@ -28,7 +28,7 @@ export class GOCAudio extends BaseElement {
   private isPlaying = false;
 
   private trackDuration = 0;
-  private currentPosition = 0 //%;
+  private currentPosition = 0;//%
 
   private audioTimer;
   private recordTimer;
@@ -38,6 +38,9 @@ export class GOCAudio extends BaseElement {
   private step = 0;
 
   private isSeeked = false;
+
+  private timeUp;
+  private timeDown;
 
   constructor(private audioCaptureService: AudioCaptureService,
               private themeProvider: ThemeProvider,
@@ -78,6 +81,7 @@ export class GOCAudio extends BaseElement {
     this.pausePlayback();
     this.currentPosition = event.value;
     this.isSeeked = true;
+    this.updateTimeLabels(this.currentPosition, this.trackDuration)
   }
 
   private updateRecordDuration(shouldStop?) {
@@ -90,7 +94,7 @@ export class GOCAudio extends BaseElement {
 
     this.recordTimer = setInterval(x => {
       this.zone.run(() =>{
-        this.trackDuration += 1;
+        this.trackDuration += 1000;
       });
     }, 1000);
   }
@@ -110,8 +114,8 @@ export class GOCAudio extends BaseElement {
       if (this.isPlaying) {
         this.audioCaptureService.currentPosition().then(position => {
           this.zone.run(() =>{
-            console.log(position);
             this.currentPosition = position / (this.trackDuration * 0.001) * 100;
+            this.updateTimeLabels(this.currentPosition, this.trackDuration);
           });
         })
       }
@@ -163,5 +167,10 @@ export class GOCAudio extends BaseElement {
         reject(error);
       })
     })
+  }
+
+  private updateTimeLabels(position, duration) {
+    this.timeUp = position * duration / 100;
+    this.timeDown = duration - position * duration / 100;
   }
 }

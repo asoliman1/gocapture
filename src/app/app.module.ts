@@ -26,6 +26,7 @@ import { FormView, FormSelectionView } from '../components/form-view';
 import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer} from "../components/form-view/elements";
 import { ArrayFilterPipe } from '../pipes/filter-pipe'
 import { FormControlPipe } from '../pipes/form-control-pipe';
+
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
 //import { CustomFormsModule } from 'ng2-validation';
@@ -65,6 +66,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCAudio} from "../components/form-view/elements/audio/goc-audio";
 import {AudioCaptureService} from "../services/audio-capture-service";
 import {Media} from "@ionic-native/media";
+import {TimeIntervalPipe} from "../pipes/time-interval-pipe";
 
 @NgModule({
   declarations: [
@@ -85,6 +87,7 @@ import {Media} from "@ionic-native/media";
     FormControlPipe,
     AvatarPathUpdaterPipe,
     SubmissionStatusPipe,
+    TimeIntervalPipe,
     FormView,
     LogView,
     SignaturePad,

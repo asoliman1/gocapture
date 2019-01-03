@@ -1,11 +1,19 @@
 .goc-audio {
 
+  border-bottom: 0.55px solid #c8c7cc;
+  padding-bottom: 10px;
+
   .trash-btn {
     float: right;
   }
 
   .play-btn {
     text-align: center;
+  }
+
+  .counter {
+    display: inline-block;
+    margin-bottom: 10px;
   }
 
 }
