@@ -151,22 +151,31 @@ export class GOCAudio extends BaseElement {
   }
 
   private removeAudio() {
-    return new Promise((resolve, reject) => {
-      this.audioCaptureService.removeRecord(this.currentVal)
-        .then(result => {
-          if (result) {
-            console.log('Audio file was removed');
-            this.currentVal = '';
 
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        }).catch(error => {
-        console.log('Audio file can\'t be removed');
-        reject(error);
-      })
-    })
+    const buttons = [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+        }
+      },
+      {
+        text: 'Remove',
+        role: '',
+        handler: () => {
+          this.audioCaptureService.removeRecord(this.currentVal)
+            .then(result => {
+              if (result) {
+                console.log('Audio file was removed');
+                this.currentVal = '';
+              }
+            }).catch(error => {
+            console.log('Audio file can\'t be removed');
+          });
+        }
+      }];
+
+    this.popup.showAlert('Warning', "Do you want to delete the record?", buttons, this.selectedTheme);
   }
 
   private updateTimeLabels(position, duration) {

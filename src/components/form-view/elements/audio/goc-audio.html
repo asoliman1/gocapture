@@ -1,13 +1,14 @@
-<div class="goc-audio">
+<div class="goc-audio" ngClass="{recording: isRecording}">
+
   <div class="recorder" *ngIf="!currentVal">
     <!--audio recording-->
-    <button ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording">
-      <ion-icon name="microphone"></ion-icon>
+    <button class="recording-btn" ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording">
+      <div class="mic-icon red"></div>
     </button>
 
     <div *ngIf="isRecording">
       <div class="counter">{{trackDuration | timeIntervalPipe}}</div>
-      <button ion-button icon-only outline block (click)="stopRecording()">
+      <button class="stop-btn" ion-button icon-only outline block (click)="stopRecording()">
         <ion-icon name="square"></ion-icon>
       </button>
     </div>
