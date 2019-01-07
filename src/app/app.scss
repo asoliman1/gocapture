@@ -15,6 +15,16 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+
+.scroll-content{
+    overflow-y: auto !important;
+}
+
+
 ion-content[scroll=false] div.scroll-content{
 	overflow: hidden !important;
+}
+
+.action-sheet-group{
+	overflow: auto;
 }

@@ -81,11 +81,7 @@ export class DBClient {
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
-<<<<<<< HEAD
-				"updateByStatus": "UPDATE submissions set status=? where id=?",
-=======
         "updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
 				"deleteAll": "delete from submissions"
 			}
@@ -295,28 +291,6 @@ export class DBClient {
 					"alter table submissions add column barcode_processed integer default 0"
 				]
 			},
-<<<<<<< HEAD
-			9: {
-				queries: [
-					"alter table forms add column members_last_sync_date VARCHAR(50)"
-				]
-			},
-			10: {
-				queries: [
-					"alter table submissions add column submission_type VARCHAR(50)"
-				]
-			},
-			11: {
-				queries: [
-					"alter table submissions add column fullName VARCHAR(50)"
-				]
-			},
-			12: {
-				queries: [
-					"alter table forms add column is_mobile_quick_capture_mode integer default 0"
-				]
-			},
-=======
       9: {
         queries: [
           "alter table forms add column members_last_sync_date VARCHAR(50)"
@@ -354,7 +328,6 @@ export class DBClient {
           "alter table submissions add column hold_submission_reason text"
         ]
       }
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 		}
 	};
 	/**
@@ -430,13 +403,9 @@ export class DBClient {
 		form.updated_at = dbForm.updated_at;
 		form.success_message = dbForm.success_message;
 		form.is_mobile_kiosk_mode = dbForm.is_mobile_kiosk_mode == 1;
-<<<<<<< HEAD
-		form.is_mobile_quick_capture_mode = dbForm.is_mobile_quick_capture_mode == 1;
-=======
     form.is_mobile_quick_capture_mode = dbForm.is_mobile_quick_capture_mode == 1;
     form.is_enforce_instructions_initially = dbForm.is_enforce_instructions_initially == 1;
     form.instructions_content = dbForm.instructions_content;
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 		form.submit_error_message = dbForm.submit_error_message;
 		form.submit_button_text = dbForm.submit_button_text;
 		form.elements = typeof dbForm.elements == "string" ? JSON.parse(dbForm.elements) : dbForm.elements;
@@ -505,13 +474,8 @@ export class DBClient {
 		//id, name, list_id, title, description, success_message, submit_error_message, submit_button_text, created_at,
 		// updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date
 		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
-<<<<<<< HEAD
-		form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
-		JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0]);
-=======
       form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
       JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0, form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0, form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0]);
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -694,24 +658,7 @@ export class DBClient {
 			.map((data) => {
 				let forms = [];
 				data.forEach((dbForm: any) => {
-<<<<<<< HEAD
-					let form = new FormSubmission();
-					form.id = dbForm.id;
-					form.sub_date = dbForm.sub_date;
-					form.form_id = dbForm.formId;
-					form.fields = JSON.parse(dbForm.data);
-					form.status = dbForm.status;
-					form.first_name = dbForm.firstName;
-					form.last_name = dbForm.lastName;
-					form.full_name = dbForm.fullName;
-					form.email = dbForm.email;
-					form.activity_id = dbForm.activityId;
-					form.invalid_fields = dbForm.invalid_fields;
-					form.barcode_processed = dbForm.barcode_processed;
-					form.submission_type = dbForm.submission_type;
-=======
           let form = this.submissonFromDBEntry(dbForm);
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 					forms.push(form);
 				});
 				return forms;
@@ -726,26 +673,9 @@ export class DBClient {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {
 							let dbForm = data.rows.item(i);
-<<<<<<< HEAD
-							let form = new FormSubmission();
-							form.id = dbForm.id;
-							form.form_id = dbForm.formId;
-							form.fields = JSON.parse(dbForm.data);
-							form.status = dbForm.status;
-							form.first_name = dbForm.firstName;
-							form.last_name = dbForm.lastName;
-							form.email = dbForm.email;
-							form.invalid_fields = dbForm.invalid_fields;
-							form.activity_id = dbForm.activityId;
-							form.barcode_processed = dbForm.barcode_processed;
-							form.submission_type = dbForm.submission_type;
-							form.sub_date = dbForm.sub_date;
-							resp.push(form);
-=======
 
               let form = this.submissonFromDBEntry(dbForm);
               resp.push(form);
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 						}
 						responseObserver.next(resp);
 						responseObserver.complete();
@@ -814,31 +744,6 @@ export class DBClient {
 							return;
 						}
 
-<<<<<<< HEAD
-						this.save(WORK, "submissions", [
-							form.id,
-							form.form_id,
-							JSON.stringify(form.fields),
-							form.sub_date ? form.sub_date : new Date().toISOString(),
-							form.status,
-							form.first_name,
-							form.last_name,
-							form.full_name,
-							form.email,
-							false,
-							null,
-							form.activity_id,
-							form.hold_request_id,
-							form.barcode_processed,
-							form.submission_type]).subscribe(
-								(d) => {
-									obs.next(true);
-									obs.complete();
-								}, err => {
-									obs.error(err);
-								}
-							);
-=======
 						let params = this.composeParamsForSubmission(form);
 
 						this.save(WORK, "submissions", params).subscribe(
@@ -849,7 +754,6 @@ export class DBClient {
 								obs.error(err);
 							}
 						);
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 
 					}, (err) => {
 						obs.error("An error occured: " + JSON.stringify(err));
@@ -889,16 +793,9 @@ export class DBClient {
 		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
-<<<<<<< HEAD
-	public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
-		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateByStatus(WORK, "submissions", [form.status, form.id]);
-	}
-=======
   public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
     return this.updateWithStatus(WORK, "submissions", [form.status, form.last_sync_date, form.id]);
   }
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
@@ -1086,15 +983,9 @@ export class DBClient {
 		return this.doUpdate(type, "updateById", table, parameters);
 	}
 
-<<<<<<< HEAD
-	private updateByStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
-		return this.doUpdate(type, "updateByStatus", table, parameters);
-	}
-=======
   private updateWithStatus(type: string, table: string, parameters: any[]): Observable<boolean> {
     return this.doUpdate(type, "updateWithStatus", table, parameters);
   }
->>>>>>> 13df290636f3040932ebd17d6ed7c6d33f044426
 
 	private getSingle<T>(type: string, table: string, parameters: any[]): Observable<T> {
 		return new Observable<T>((responseObserver: Observer<T>) => {

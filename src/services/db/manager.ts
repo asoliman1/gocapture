@@ -149,6 +149,7 @@ class LocalSql {
 	}
 
 	transaction(fn: any): Promise<any> {
+		let t = this;
 		return new Promise(function (resolve, reject) {
 			let wrapper = (tx) => {
 				try {
@@ -158,7 +159,7 @@ class LocalSql {
 					reject(e);
 				}
 			}
-			this.db.transaction(wrapper);
+			t.db.transaction(wrapper);
 		});
 	}
 
@@ -167,23 +168,25 @@ class LocalSql {
 		let description = opts.name;
 		let size = 2 * 1024 * 1024;
 		let version = opts.version;
+		let t = this;
 		return new Promise<any>((resolve, reject) => {
 			try {
-				this.db = window["openDatabase"](name, version, description, size, (db) => {
-					resolve(this);
+				t.db = window["openDatabase"](name, version, description, size, (db) => {
+					resolve(t);
 				});
 			} catch (e) {
 				console.log(e);
 			}
 			setTimeout(() => {
-				resolve(this);
+				resolve(t);
 			}, 1);
 		});
 	}
 
 	executeSql(query, args): Promise<any> {
+		let t = this;
 		return new Promise((resolve, reject) => {
-			this.db.transaction(function (t) {
+			t.db.transaction(function (t) {
 				let params = args || {};
 				if (Object.keys(params).length == 0) {
 					params = [];

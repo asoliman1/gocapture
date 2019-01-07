@@ -57,6 +57,9 @@ import { ThemeProvider } from '../providers/theme/theme';
 import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
 
 import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
+import { PipesModule } from '../pipes/pipes.module';
+import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/business-card-overlay.module';
+import { LocalStorageProvider } from '../providers/local-storage/local-storage';
 
 @NgModule({
   declarations: [
