@@ -8,6 +8,10 @@ ion-item .image button{
 .image ion-scroll {
    white-space: nowrap;
    height: 125px;
+
+   .scroll-zoom-wrapper{
+	   overflow-y: hidden;
+   }
 }
 
 .image ion-scroll div{

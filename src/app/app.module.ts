@@ -50,13 +50,9 @@ import { IonicApp } from 'ionic-angular/components/app/app-root';
 import { IonicModule } from 'ionic-angular/module';
 import { Util } from "../util/util";
 import {DynamicFormElementComponent} from "../components/form-view/dynamic-form-element/dynamic-form-element";
-import {CameraPreview} from "@ionic-native/camera-preview";
 import {HTMLBlock} from "../components/form-view/elements/html-block";
 import {HTTP} from "@ionic-native/http";
 import { ThemeProvider } from '../providers/theme/theme';
-import {BusinessCardOverlayPage} from "../views/business-card-overlay/business-card-overlay";
-
-import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status";
 import { PipesModule } from '../pipes/pipes.module';
 import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/business-card-overlay.module';
 import { LocalStorageProvider } from '../providers/local-storage/local-storage';

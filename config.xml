@@ -25,7 +25,7 @@
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="FadeSplashScreen" value="true" />
     <preference name="FadeSplashScreenDuration" value="1" />
-    <preference name="SplashScreenBackgroundColor" value="#EA5D14" />
+    <preference name="SplashScreenBackgroundColor" value="#EE8934" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
     <preference name="deployment-target" value="11.0.0" />

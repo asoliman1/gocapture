@@ -418,7 +418,7 @@ export class BusinessCard extends BaseElement {
       screen.orientation.unlock();
     }, function (error) {
       console.log(error);
-      self.popup.showAlert('Error', error, 'Ok');
+      self.popup.showAlert('Error', error, ['Ok']);
       screen.orientation.unlock();
       self.frontLoading = false;
       self.backLoading = false;
