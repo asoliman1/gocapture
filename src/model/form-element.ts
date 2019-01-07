@@ -20,6 +20,7 @@ export class FormElement {
 	mapping : ElementMapping[];
 	barcode_provider_id: string;
 	barcode_provider_name: string;
+  badge_type: string;
 	identifier?: string;
 	placeholder: string = "";
   accept_invalid_barcode: boolean;

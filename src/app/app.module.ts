@@ -23,7 +23,7 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer} from "../components/form-view/elements";
+import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer} from "../components/form-view/elements";
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
 //import { CustomFormsModule } from 'ng2-validation';
@@ -60,6 +60,7 @@ import {SubmissionStatusPipe} from "../pipes/submission-status/submission-status
 import { PipesModule } from '../pipes/pipes.module';
 import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/business-card-overlay.module';
 import { LocalStorageProvider } from '../providers/local-storage/local-storage';
+import {Ndef, NFC} from "@ionic-native/nfc";
 
 @NgModule({
   declarations: [
@@ -79,7 +80,7 @@ import { LocalStorageProvider } from '../providers/local-storage/local-storage';
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, HTMLBlock, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -113,7 +114,7 @@ import { LocalStorageProvider } from '../providers/local-storage/local-storage';
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Barcoder, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
   ],
@@ -140,6 +141,8 @@ import { LocalStorageProvider } from '../providers/local-storage/local-storage';
     AppVersion,
     Geolocation,
     BarcodeScanner,
+    NFC,
+    Ndef,
     StatusBar,
     ScreenOrientation,
     {
