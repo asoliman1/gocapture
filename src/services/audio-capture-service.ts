@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import {Media, MEDIA_STATUS, MediaObject} from "@ionic-native/media";
 import {File, RemoveResult} from '@ionic-native/file';
 import {Observable} from "rxjs";
+import {Platform} from "ionic-angular";
 
 @Injectable()
 
@@ -9,17 +10,25 @@ export class AudioCaptureService {
 
   audioFile: MediaObject;
 
-  constructor(private media: Media, private fileService: File) {
+  constructor(private media: Media,
+              private fileService: File,
+              private platform: Platform) {
     //
   }
 
   startRecord(): Promise<string> {
 
     let audioFolder = this.fileService.dataDirectory + "leadliaison/audio";
-    let audioName = new Date().getTime() + '.m4a';
+    let audioName = new Date().getTime() + '.wav';
     let filePath = audioFolder + '/' + audioName;
 
-    filePath = filePath.replace(/^file:\/\//, '');
+    if (this.platform.is("ios")) {
+      filePath = filePath.replace(/^file:\/\//, '');
+    }
+
+    if (this.platform.is('android')) {
+      filePath = this.fileService.externalDataDirectory.replace(/file:\/\//g, '');
+    }
 
     return new Promise<string>((resolve, reject) => {
       this.fileService.createFile(audioFolder, audioName, true)
