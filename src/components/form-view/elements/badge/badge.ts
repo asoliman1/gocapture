@@ -9,6 +9,7 @@ import {GOCNFCScanner} from "./Scanners/GOCNFCScanner";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
+import {Util} from "../../../../util/util";
 
 @Component({
 	selector: 'badge',
@@ -31,7 +32,8 @@ export class Badge extends BaseElement implements OnInit {
               private toast: ToastController,
               public barcodeScanner: BarcodeScanner,
               public nfc: NFC,
-              public ndef: Ndef) {
+              public ndef: Ndef,
+              public utils: Util) {
 		super();
 	}
 
@@ -56,7 +58,7 @@ export class Badge extends BaseElement implements OnInit {
       this.onChange(response.scannedId);
 
       this.toast.create({
-        message: this.scanner.name + " scanned successfully",
+        message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
         duration: 1500,
         position: "bottom",
         cssClass: "success"
@@ -152,4 +154,6 @@ export class Badge extends BaseElement implements OnInit {
 
   setDisabledState(isDisabled: boolean): void {
   }
+
+
 }
