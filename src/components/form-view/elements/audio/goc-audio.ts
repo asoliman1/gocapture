@@ -1,7 +1,7 @@
-import {Component, Input, NgZone} from "@angular/core";
+import {Component, forwardRef, Input, NgZone} from "@angular/core";
 import {BaseElement} from "../base-element";
 import {Form, FormElement, FormSubmission} from "../../../../model";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {AudioCaptureService} from "../../../../services/audio-capture-service";
 import {ThemeProvider} from "../../../../providers/theme/theme";
 import {ActionSheetController} from "ionic-angular";
@@ -11,7 +11,10 @@ import {MEDIA_STATUS} from "@ionic-native/media";
 
 @Component({
   selector: 'goc-audio',
-  templateUrl: 'goc-audio.html'
+  templateUrl: 'goc-audio.html',
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => GOCAudio), multi: true }
+  ]
 })
 
 export class GOCAudio extends BaseElement {
@@ -65,7 +68,7 @@ export class GOCAudio extends BaseElement {
   }
 
   stopRecording() {
-    this.audioCaptureService.stopRecord();
+    this.audioCaptureService.stopRecord(this.filePath);
     this.isRecording = false;
     this.currentVal = this.filePath;
     this.updateRecordDuration(true);

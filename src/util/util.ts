@@ -2,6 +2,7 @@ import { Platform } from "ionic-angular/platform/platform";
 import { normalizeURL } from 'ionic-angular/util/util';
 import {Injectable} from "@angular/core";
 import { File } from '@ionic-native/file';
+import {Observable, Observer} from "rxjs";
 
 /**
  * Jquery clone
@@ -28,7 +29,8 @@ export class Util {
   //private static toString : Function = Util.class2type.toString;
   private static hasOwn : Function = Util.class2type.hasOwnProperty;
 
-  constructor(private platform: Platform, private file: File) {
+  constructor(private platform: Platform,
+              private file: File) {
     //
   }
 
@@ -173,4 +175,27 @@ export class Util {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+
+  public moveFile(filePath: string, newFolder: string) : Observable<string>{
+    return new Observable<string>((obs: Observer<string>) => {
+      let name = filePath.substr(filePath.lastIndexOf("/") + 1).split("?")[0];
+      let ext = name.split(".").pop();
+      let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
+      let newName = new Date().getTime() + "." + ext;
+      let doMove = (d) =>{
+        this.file.moveFile(oldFolder, name, newFolder, newName)
+          .then(entry => {
+            obs.next(newFolder + "/" + newName);
+            obs.complete();
+          })
+          .catch(err => {
+            obs.error(err);
+          });
+      };
+      //console.log(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1));
+      this.file.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
+        .then(doMove)
+        .catch(doMove);
+    });
+  }
 }

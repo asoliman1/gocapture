@@ -143,6 +143,7 @@
     <plugin name="cordova-plugin-camera-preview" spec="3rdParty/cordova-plugin-camera-preview">
         <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="25+" />
     </plugin>
+    <plugin name="cordova-plugin-media" spec="~5.0.2" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="^7.1.4" />
 </widget>
