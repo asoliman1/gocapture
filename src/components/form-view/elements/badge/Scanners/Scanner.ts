@@ -3,7 +3,7 @@ interface ScannerResponse {
   isCancelled?: boolean;
 }
 
-enum ScannerType {
+const enum ScannerType {
   NFC = 'nfc',
   Barcode = 'barcode'
 }

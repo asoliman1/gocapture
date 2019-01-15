@@ -3,7 +3,7 @@ import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 export class GOCBarcodeScanner implements Scanner {
 
   readonly name: string = 'barcode';
-  statusMessage: string;
+  statusMessage: string = "Scan barcode";
 
   constructor(public barcodeScanner: BarcodeScanner) {
     //
