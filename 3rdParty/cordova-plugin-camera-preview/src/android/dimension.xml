@@ -2,5 +2,5 @@
 <resources>
   <dimen name="camera_overlay_horizontal_margin">12dp</dimen>
   <dimen name="camera_overlay_top_margin">150dp</dimen>
-  <dimen name="line_width">2dp</dimen>
+  <dimen name="line_width">30dp</dimen>
 </resources>

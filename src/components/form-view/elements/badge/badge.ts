@@ -41,6 +41,10 @@ export class Badge extends BaseElement implements OnInit {
     this.scanner = this.getScanner();
   }
 
+  scannerStatusMessage() {
+	  return this.scanner ? this.scanner.statusMessage : "";
+  }
+
 
   scan() {
 
