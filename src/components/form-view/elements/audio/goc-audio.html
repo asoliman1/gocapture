@@ -2,7 +2,7 @@
 
   <div class="recorder" *ngIf="!currentVal">
     <!--audio recording-->
-    <button class="recording-btn" ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording">
+    <button class="recording-btn" ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording" [disabled]="readonly">
       <div class="mic-icon red"></div>
     </button>
 
@@ -33,7 +33,7 @@
       </ion-col>
 
       <ion-col>
-        <button class="trash-btn" ion-button icon-only outline block color="danger" right (click)="removeRecord()">
+        <button class="trash-btn" ion-button icon-only outline block color="danger" right (click)="removeRecord()" [disabled]="readonly">
           <ion-icon name="trash" right></ion-icon>
         </button>
       </ion-col>

@@ -65,13 +65,13 @@ export class AudioCaptureService {
             reject(err);
           })
       } else {
-        resolve(this.adjustFilePath(this.audioFolder() + "/" + this.fileName));
+        resolve(this.audioFolder() + "/" + this.fileName);
       }
     })
   }
 
   playRecord(filePath): Observable<MEDIA_STATUS> {
-    this.audioFile = this.media.create(filePath);
+    this.audioFile = this.media.create(this.adjustFilePath(filePath));
     this.audioFile.play();
 
     return this.audioFile.onStatusUpdate;
@@ -118,6 +118,9 @@ export class AudioCaptureService {
   }
 
   private adjustFilePath(filePath) {
-    return filePath.replace(/^file:\/\//, '');
+    if (this.platform.is("ios")) {
+      return filePath.replace(/^file:\/\//, '');
+    }
+    return filePath;
   }
 }

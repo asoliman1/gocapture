@@ -67,6 +67,7 @@ import {GOCAudio} from "../components/form-view/elements/audio/goc-audio";
 import {AudioCaptureService} from "../services/audio-capture-service";
 import {Media} from "@ionic-native/media";
 import {TimeIntervalPipe} from "../pipes/time-interval-pipe";
+import {StorageProvider} from "../services/storage-provider";
 
 @NgModule({
   declarations: [
@@ -165,7 +166,8 @@ import {TimeIntervalPipe} from "../pipes/time-interval-pipe";
     ThemeProvider,
     LocalStorageProvider,
     AudioCaptureService,
-    Media
+    Media,
+    StorageProvider
   ]
 })
 export class AppModule { }

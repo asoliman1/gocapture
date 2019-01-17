@@ -493,7 +493,7 @@ export class SyncClient {
     let entry = new FileInfo();
     let d = data.split(";base64,");
     entry.data = d[1];
-    entry.name = name;
+    entry.name =  name.split('.').shift();
     entry.size = size;
 
     if (entry.size == 0) {
@@ -740,25 +740,7 @@ export class SyncClient {
     return url.indexOf("http") == 0;
   }
 
-  uploadFile(path, filePath) {
-    return this.file.resolveLocalFilesystemUrl(filePath).then((entry: Entry) => {
-      return new Promise((resolve, reject) => {
-        entry.getParent((directoryEntry: DirectoryEntry) => {
-          resolve({entry, directoryEntry});
-        }, error => {
-          reject(error);
-        });
-      });
-    }).then(({entry, directoryEntry}) => {
-      return this.file.readAsArrayBuffer(directoryEntry.nativeURL, entry.name);
-    }).then((arrayBuffer: ArrayBuffer) => {
-      let blob = new Blob([arrayBuffer]);
-      return this.storageProvider.uploadFile(path, blob);
-    })
-  }
-
 }
-
 
 export class DownloadData {
   forms: Form[] = [];

@@ -116,7 +116,7 @@
       <image [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image>
     </ion-item>
 
-    BUSINESS CARD
+    <!--BUSINESS CARD-->
     <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
@@ -144,7 +144,6 @@
     </html-block>
 
     <!--AUDIO-->
-
     <goc-audio  *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element"
            [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
            [class.hidden]="element.is_hidden">

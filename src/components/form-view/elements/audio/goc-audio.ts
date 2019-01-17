@@ -69,7 +69,7 @@ export class GOCAudio extends BaseElement {
   stopRecording() {
     this.audioCaptureService.stopRecord().then(filePath => {
       this.isRecording = false;
-      this.currentVal = filePath;
+      this.onChange(filePath);
       this.updateRecordDuration(true);
     });
   }

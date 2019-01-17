@@ -66,7 +66,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
           .catch(err => {
             obs.error(err);
           });
-      }
+      };
       //console.log(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1));
       this.file.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
         .then(doWrite)
