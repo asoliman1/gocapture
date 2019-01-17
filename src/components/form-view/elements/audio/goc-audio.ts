@@ -60,17 +60,18 @@ export class GOCAudio extends BaseElement {
         this.updateRecordDuration();
         this.isRecording = true;
       }
+    }, error => {
+      this.popup.showAlert('Error', "Can't start recording", [{text: 'Cancel',
+        role: 'cancel'}], this.selectedTheme);
     });
   }
 
   stopRecording() {
-    setTimeout(() => {
-      this.audioCaptureService.stopRecord().then(filePath => {
-        this.isRecording = false;
-        this.currentVal = filePath;
-        this.updateRecordDuration(true);
-      });
-    }, 500);
+    this.audioCaptureService.stopRecord().then(filePath => {
+      this.isRecording = false;
+      this.currentVal = filePath;
+      this.updateRecordDuration(true);
+    });
   }
 
   removeRecord() {
