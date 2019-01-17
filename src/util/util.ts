@@ -176,12 +176,12 @@ export class Util {
   }
 
 
-  public moveFile(filePath: string, newFolder: string) : Observable<string>{
+  public moveFile(filePath: string, newFolder: string, needRename: boolean = false) : Observable<string>{
     return new Observable<string>((obs: Observer<string>) => {
       let name = filePath.substr(filePath.lastIndexOf("/") + 1).split("?")[0];
       let ext = name.split(".").pop();
       let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
-      let newName = new Date().getTime() + "." + ext;
+      let newName = needRename ? new Date().getTime() + "." + ext : name;
       let doMove = (d) =>{
         this.file.moveFile(oldFolder, name, newFolder, newName)
           .then(entry => {

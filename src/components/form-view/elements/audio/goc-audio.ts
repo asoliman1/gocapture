@@ -36,8 +36,6 @@ export class GOCAudio extends BaseElement {
   private audioTimer;
   private recordTimer;
 
-  private filePath;
-
   private step = 0;
 
   private isSeeked = false;
@@ -57,21 +55,22 @@ export class GOCAudio extends BaseElement {
 
   startRecording() {
     this.trackDuration = 0;
-    this.audioCaptureService.startRecord().then(result => {
-      this.updateRecordDuration();
-      this.isRecording = true;
-      this.filePath = result;
-    }, error => {
-      this.isRecording = false;
-      this.currentVal = '';
+    this.audioCaptureService.startRecord().subscribe(status => {
+      if (status == MEDIA_STATUS.RUNNING) {
+        this.updateRecordDuration();
+        this.isRecording = true;
+      }
     });
   }
 
   stopRecording() {
-    this.audioCaptureService.stopRecord(this.filePath);
-    this.isRecording = false;
-    this.currentVal = this.filePath;
-    this.updateRecordDuration(true);
+    setTimeout(() => {
+      this.audioCaptureService.stopRecord().then(filePath => {
+        this.isRecording = false;
+        this.currentVal = filePath;
+        this.updateRecordDuration(true);
+      });
+    }, 500);
   }
 
   removeRecord() {
@@ -128,23 +127,22 @@ export class GOCAudio extends BaseElement {
   private startPlayback() {
 
     this.audioCaptureService.playRecord(this.currentVal).subscribe(status => {
-      this.zone.run(() =>{
-        this.isPlaying = (status == MEDIA_STATUS.RUNNING);
+      this.isPlaying = (status == MEDIA_STATUS.RUNNING);
 
-        let duration = this.audioCaptureService.trackDuration();
-        if (duration != -1) {
+      let duration = this.audioCaptureService.trackDuration();
 
-          this.step = duration / 100;
-          this.trackDuration = duration;
+      if (duration > 0) {
 
-          this.updateAudioDuration(status == MEDIA_STATUS.STOPPED);
+        this.step = duration / 100;
+        this.trackDuration = duration;
 
-          if (this.isSeeked && this.isPlaying) {
-            this.audioCaptureService.seek(this.currentPosition * this.trackDuration / 100);
-            this.isSeeked = false;
-          }
+        this.updateAudioDuration(status == MEDIA_STATUS.STOPPED);
+
+        if (this.isSeeked && this.isPlaying) {
+          this.audioCaptureService.seek(this.currentPosition * this.trackDuration / 100);
+          this.isSeeked = false;
         }
-      });
+      }
     });
   }
 

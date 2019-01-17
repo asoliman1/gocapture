@@ -168,7 +168,7 @@ export class Image extends BaseElement {
 
     if (this.platform.is('android')) {
 
-      this.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images").subscribe((newPath) => {
+      this.util.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images", true).subscribe((newPath) => {
 
         t.zone.run(()=>{
           t.currentVal.unshift(newPath);

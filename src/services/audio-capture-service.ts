@@ -11,6 +11,8 @@ export class AudioCaptureService {
 
   audioFile: MediaObject;
 
+  fileName: string;
+
   constructor(private media: Media,
               private fileService: File,
               private platform: Platform,
@@ -18,54 +20,51 @@ export class AudioCaptureService {
     //
   }
 
-  startRecord(): Promise<string> {
+  startRecord(): Observable<MEDIA_STATUS> {
 
     let audioFolder =  this.fileService.dataDirectory + "leadliaison/audio";
 
     let extension = this.platform.is("ios") ? ".m4a" : ".3gp";
-    let audioName = new Date().getTime() + extension;
-    let filePath = audioFolder + "/" + audioName;
+    this.fileName = new Date().getTime() + extension;
+
+    let filePath = audioFolder + "/" + this.fileName;
 
     if (this.platform.is("ios")) {
       filePath = filePath.replace(/^file:\/\//, '');
     }
 
-    return new Promise<string>((resolve, reject) => {
-      if (this.platform.is("ios")) {
-        this.fileService.createFile(audioFolder, audioName, true)
-          .then(() => {
-            this.audioFile = this.media.create(filePath);
-            this.audioFile.startRecord();
-            resolve(filePath);
-          }).catch(error => {
-          reject(error);
-        });
-      } else {
-        this.audioFile = this.media.create(audioName);
-        this.audioFile.startRecord();
-        resolve(filePath);
-      }
-    });
+    if (this.platform.is("ios")) {
+      this.fileService.createFile(audioFolder, this.fileName, true)
+        .then(() => {
+          this.startAudioRecording(filePath);
+        }).catch(error => {
+        console.error("Error - " + error)
+      });
+    } else {
+      return this.startAudioRecording(this.fileName);
+    }
   }
 
-  stopRecord(filePath) {
+  stopRecord(): Promise<string> {
     this.audioFile.stopRecord();
-
-    if (this.platform.is("android")) {
-      let audioFolder =  this.fileService.dataDirectory + "leadliaison/audio";
-      this.utils.moveFile(this.fileService.externalDataDirectory + "/" + this.adjustPath(filePath), audioFolder)
-        .subscribe((newPath) => {
-          console.log(newPath);
-      }, (err) => {
-        console.error(err);
-      })
-    }
-
-    this.audioFile.release();
+    return new Promise<string>((resolve, reject) => {
+      if (this.platform.is("android")) {
+        this.utils.moveFile(this.fileService.externalRootDirectory + this.fileName, this.audioFolder())
+          .subscribe((path) => {
+            this.audioFile.release();
+            return resolve(path);
+          }, (err) => {
+            console.error(err);
+            reject(err);
+          })
+      } else {
+        resolve(this.audioFolder() + this.fileName);
+      }
+    })
   }
 
   playRecord(filePath): Observable<MEDIA_STATUS> {
-    this.audioFile = this.media.create(this.adjustPath(filePath));
+    this.audioFile = this.media.create(filePath);
     this.audioFile.play();
 
     return this.audioFile.onStatusUpdate;
@@ -101,11 +100,13 @@ export class AudioCaptureService {
     this.audioFile.seekTo(value);
   }
 
-  private adjustPath(filePath) {
-    if (this.platform.is("android")) {
-      let pathComponents = filePath.split("/");
-      return pathComponents[pathComponents.length - 1];
-    }
-    return filePath;
+  private startAudioRecording(filePath) {
+    this.audioFile = this.media.create(filePath);
+    this.audioFile.startRecord();
+    return this.audioFile.onStatusUpdate;
+  }
+
+  private audioFolder(): string {
+    return this.fileService.dataDirectory + "leadliaison/audio";
   }
 }
