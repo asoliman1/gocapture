@@ -1,4 +1,4 @@
-import {BarcodeScanner} from "@ionic-native/barcode-scanner";
+import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
 
 export class GOCBarcodeScanner implements Scanner {
 
@@ -13,8 +13,12 @@ export class GOCBarcodeScanner implements Scanner {
 
     this.statusMessage = "Scanning " + this.name;
 
+    let options: BarcodeScannerOptions = {
+      formats: 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI'
+    };
+
     return new Promise<ScannerResponse>((resolve, reject) => {
-      this.barcodeScanner.scan().then((scannedData) => {
+      this.barcodeScanner.scan(options).then((scannedData) => {
         if (scannedData.cancelled) {
           this.statusMessage = "Scan " + this.name;
           resolve({isCancelled: true});
