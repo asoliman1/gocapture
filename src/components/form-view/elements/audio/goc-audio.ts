@@ -69,7 +69,7 @@ export class GOCAudio extends BaseElement {
   stopRecording() {
     this.audioCaptureService.stopRecord().then(filePath => {
       this.isRecording = false;
-      this.onChange(filePath);
+      this.onChange([filePath]);
       this.updateRecordDuration(true);
     });
   }
@@ -102,6 +102,10 @@ export class GOCAudio extends BaseElement {
     }, 1000);
   }
 
+  hasValue() {
+    return this.currentVal && this.currentVal.length > 0;
+  }
+
   private updateAudioDuration(shouldStop?) {
 
     clearInterval(this.audioTimer);
@@ -127,7 +131,7 @@ export class GOCAudio extends BaseElement {
 
   private startPlayback() {
 
-    this.audioCaptureService.playRecord(this.currentVal).subscribe(status => {
+    this.audioCaptureService.playRecord(this.currentVal[0]).subscribe(status => {
       this.isPlaying = (status == MEDIA_STATUS.RUNNING);
 
       let duration = this.audioCaptureService.trackDuration();
@@ -165,11 +169,11 @@ export class GOCAudio extends BaseElement {
         text: 'Remove',
         role: '',
         handler: () => {
-          this.audioCaptureService.removeRecord(this.currentVal)
+          this.audioCaptureService.removeRecord(this.currentVal[0])
             .then(result => {
               if (result) {
                 console.log('Audio file was removed');
-                this.currentVal = '';
+                this.currentVal = [];
               }
             }).catch(error => {
             console.log('Audio file can\'t be removed');

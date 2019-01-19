@@ -1,6 +1,6 @@
 <div class="goc-audio" ngClass="{recording: isRecording}">
 
-  <div class="recorder" *ngIf="!currentVal">
+  <div class="recorder" *ngIf="!hasValue()">
     <!--audio recording-->
     <button class="recording-btn" ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording" [disabled]="readonly">
       <div class="mic-icon red"></div>
@@ -15,7 +15,7 @@
 
   </div>
 
-  <div class="playback" *ngIf="currentVal" >
+  <div class="playback" *ngIf="hasValue()" >
     <ion-range [(ngModel)]="currentPosition" (ionBlur)="onSeek($event)">
       <ion-label range-left>{{timeUp | timeIntervalPipe}}</ion-label>
       <ion-label range-right>-{{timeDown | timeIntervalPipe}}</ion-label>

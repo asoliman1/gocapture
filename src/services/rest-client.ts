@@ -220,7 +220,8 @@ export class RESTClient {
 									});
 									break;
 								case "image":
-								case "business_card":
+                case "business_card":
+                case "audio":
 									try{
 										let obj = JSON.parse(dataItem.value);
 										if(typeof(obj) == "string" ){

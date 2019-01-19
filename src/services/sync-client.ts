@@ -638,7 +638,7 @@ export class SyncClient {
         this.syncSource.next(this.lastSyncStatus);
         result.submissions = submissions;
         //let forms: Form[] = [];
-        this.downloadImages(forms, submissions).subscribe(subs => {
+        this.downloadData(forms, submissions).subscribe(subs => {
           this.db.saveSubmisisons(subs).subscribe(reply => {
             mapEntry.complete = true;
             mapEntry.loading = false;
@@ -659,7 +659,7 @@ export class SyncClient {
     });
   }
 
-  private downloadImages(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
+  private downloadData(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       if (!submissions || submissions.length == 0) {
         obs.next([]);
@@ -713,7 +713,7 @@ export class SyncClient {
         } else {
           let ext = urls[index].substr(urls[index].lastIndexOf("."));
           let pathToDownload = encodeURI(urls[index]);
-          let newFolder = this.file.dataDirectory + "leadliaison/images/";
+          let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
           let newName = "dwn_" + new Date().getTime() + ext;
           let path = newFolder + newName;
 
@@ -734,6 +734,13 @@ export class SyncClient {
       };
       handler();
     });
+  }
+
+  private folderForFile(ext: string) {
+    if (ext == '.png' || ext == '.jpg' || ext == '.heic') {
+      return "images/";
+    }
+    return "audio/";
   }
 
   private isExternalUrl(url: string) {
