@@ -16,7 +16,6 @@ import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import {Form, FormSubmission, SubmissionStatus} from "../../model";
 import { FormCapture } from "../form-capture";
-import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";
 import { FormControlPipe } from "../../pipes/form-control-pipe";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
@@ -26,7 +25,6 @@ import { ActionSheetController } from 'ionic-angular/components/action-sheet/act
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
-import {Observable} from "rxjs/Observable";
 
 
 @Component({

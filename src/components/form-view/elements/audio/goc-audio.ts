@@ -87,6 +87,12 @@ export class GOCAudio extends BaseElement {
     this.updateTimeLabels(this.currentPosition, this.trackDuration)
   }
 
+  releaseResources() {
+    super.releaseResources();
+    return this.audioCaptureService.removeRecord(this.currentVal[0]);
+  }
+
+
   private updateRecordDuration(shouldStop?) {
 
     clearInterval(this.recordTimer);
@@ -169,13 +175,12 @@ export class GOCAudio extends BaseElement {
         text: 'Remove',
         role: '',
         handler: () => {
-          this.audioCaptureService.removeRecord(this.currentVal[0])
-            .then(result => {
-              if (result) {
-                console.log('Audio file was removed');
-                this.currentVal = [];
-              }
-            }).catch(error => {
+          this.releaseResources().then(result => {
+            if (result) {
+              console.log('Audio file was removed');
+              this.onChange(null);
+            }
+          }).catch(error => {
             console.log('Audio file can\'t be removed');
           });
         }

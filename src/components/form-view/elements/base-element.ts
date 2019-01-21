@@ -31,7 +31,10 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
     }
   }
 
-  writeValue(obj: any): void{
+  writeValue(obj: any): void {
+    if (this.currentVal && !obj) {
+      this.releaseResources();
+    }
     this.currentVal = obj;
   }
 
@@ -47,7 +50,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
 
   }
 
-  onChange(value){
+  onChange(value) {
     this.currentVal = value;
     this.propagateChange(value);
   }
@@ -109,5 +112,9 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
           obs.error(err);
         })
     });
+  }
+
+  protected releaseResources() {
+    console.log("Element release resources")
   }
 }

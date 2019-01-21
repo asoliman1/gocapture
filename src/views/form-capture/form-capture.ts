@@ -230,6 +230,7 @@ export class FormCapture {
       {
         text: 'Go back',
         handler: () => {
+          this.clear();
           this.navCtrl.pop();
         }
       }
@@ -237,6 +238,11 @@ export class FormCapture {
 
     this.popup.showAlert('Confirm exit', 'You have unsaved changes. Are you sure you want to go back?', buttons, this.selectedTheme);
   }
+
+  private clear() {
+    this.formView.clear();
+  }
+
 
   doSave() {
     this.submitAttempt = true;
