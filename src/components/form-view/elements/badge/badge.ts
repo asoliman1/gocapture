@@ -10,6 +10,7 @@ import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
 import {Util} from "../../../../util/util";
+import {Platform} from "ionic-angular";
 
 @Component({
 	selector: 'badge',
@@ -33,7 +34,8 @@ export class Badge extends BaseElement implements OnInit {
               public barcodeScanner: BarcodeScanner,
               public nfc: NFC,
               public ndef: Ndef,
-              public utils: Util) {
+              public utils: Util,
+              public platform: Platform) {
 		super();
 	}
 
@@ -151,7 +153,7 @@ export class Badge extends BaseElement implements OnInit {
 
   private getScanner(): Scanner {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
-      return new GOCNFCScanner(this.nfc, this.ndef);
+      return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
     return new GOCBarcodeScanner(this.barcodeScanner);
   }

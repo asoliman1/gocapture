@@ -125,38 +125,47 @@ export class Forms {
 	}
 
 	presentActionSheet(form: Form) {
-		let actionSheet = this.actionCtrl.create({
-			title: form.name,
-			buttons: [
-				{
-					text: 'Capture',
-					icon: "magnet",
-					handler: () => {
-						//console.log('capture clicked');
-						this.navCtrl.push(FormCapture, { form: form });
-					}
-				}, {
-					text: 'Review Submissions',
-					icon: "eye",
-					handler: () => {
-						//console.log('review clicked');
-						this.navCtrl.push(FormReview, { form: form, isDispatch: false });
-					}
-				}, {
+
+	  let buttons: [any] =  [
+      {
+        text: 'Capture',
+        icon: "magnet",
+        handler: () => {
+          //console.log('capture clicked');
+          this.navCtrl.push(FormCapture, { form: form });
+        }
+      }, {
+        text: 'Review Submissions',
+        icon: "eye",
+        handler: () => {
+          //console.log('review clicked');
+          this.navCtrl.push(FormReview, { form: form, isDispatch: false });
+        }
+      }];
+
+      if (form.instructions_content && form.instructions_content.length > 0) {
+        buttons.push({
           text: 'Instructions',
           icon: "paper",
           handler: () => {
             //console.log('review clicked');
             this.navCtrl.push(FormInstructions, { form: form });
           }
-        }, {
-					text: 'Cancel',
-					role: 'cancel',
-					handler: () => {
-						//console.log('Cancel clicked');
-					}
-				}
-			],
+        })
+      }
+
+      buttons.push({
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+          //console.log('Cancel clicked');
+        }
+      });
+
+
+		let actionSheet = this.actionCtrl.create({
+			title: form.name,
+      buttons: buttons,
       cssClass: this.selectedTheme.toString()
 		});
 		actionSheet.present();
