@@ -122,7 +122,7 @@ export class Manager{
 				}
 				let query = Utils.makeCreateTableQuery(this.tables[index]);
 				index++;
-				db.executeSql(query, {}).then(handler, (err) => {
+				db.executeSql(query, []).then(handler, (err) => {
 					if (err.hasOwnProperty("rows")) {
 						handler(err);
 						return;

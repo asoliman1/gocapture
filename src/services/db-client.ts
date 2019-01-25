@@ -668,7 +668,7 @@ export class DBClient {
 	public getSubmissionsToSend(): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
 			this.manager.db(WORK).subscribe((db) => {
-				db.executeSql(this.getQuery("submissions", "toSend"), {})
+				db.executeSql(this.getQuery("submissions", "toSend"), [])
 					.then((data) => {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {

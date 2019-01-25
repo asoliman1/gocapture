@@ -61,7 +61,7 @@ export class Migrator{
 			var index = 0;
 			var handler = () => {
 				console.log("Exec " + toExecute[index]);
-				db.executeSql(toExecute[index], {}).then(result => {
+				db.executeSql(toExecute[index], []).then(result => {
 					index++;
 					if(index < toExecute.length){
 						handler();
@@ -94,7 +94,7 @@ export class Migrator{
 
 	private getDbMigrationVersion(db: SQLiteObject, type: string): Observable<number>{
 		return new Observable<number>((responseObserver: Observer<number>) => {
-			db.executeSql(this.migrations.queries.getVersion, {})
+			db.executeSql(this.migrations.queries.getVersion, [])
 			.then((data) => {
 				var entry = data.rows.item(0);
 				var v = entry.version;

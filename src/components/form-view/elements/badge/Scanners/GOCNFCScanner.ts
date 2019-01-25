@@ -25,30 +25,35 @@ export class GOCNFCScanner implements Scanner {
   }
 
   private readNfc(resolve, reject) {
+    this.statusMessage = "Ready to scan. Hold the device near the badge.";
     this.nfc.addNdefListener(() =>{
       if (this.platform.is("ios")) {
-        this.nfc.beginSession().subscribe(() => {
-          this.statusMessage = "Ready to scan. Hold the device near the badge.";
-        });
-      } else {
-        this.statusMessage = "Ready to scan. Hold the device near the badge.";
+        this.nfc.beginSession().subscribe();
       }
     }, error=>{
       reject( "Could not scan " + this.name);
     }).subscribe((event) => {
-        let payload = event.tag.ndefMessage[0].payload;
-        let tagContent = this.nfc.bytesToString(payload).substring(3);
 
-        console.log('Received ndef message. the tag contains: ', tagContent);
-        resolve({scannedId: tagContent});
-      }, err => {
-        this.statusMessage = "Could not scan " + this.name;
-        reject(err);
-      });
+      console.log('Received ndef event - ' + JSON.stringify(event));
+
+      let payload = event.tag.ndefMessage[0].payload;
+
+      let binary = '';
+      for (let i = 0; i < payload.length; i++) {
+        binary += String.fromCharCode(payload[i]);
+      }
+
+      let base64 = btoa(binary);
+
+      console.log('Received ndef message. the tag contains: ', base64);
+      resolve({scannedId: base64});
+    }, err => {
+      this.statusMessage = "Could not scan " + this.name;
+      reject(err);
+    });
   }
 
   restart() {
     this.statusMessage = "Rescan " + this.name;
   }
-
 }

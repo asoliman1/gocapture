@@ -7,10 +7,10 @@ import { ToastController } from 'ionic-angular/components/toast/toast-controller
 
 import {GOCNFCScanner} from "./Scanners/GOCNFCScanner";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
-import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
 import {Util} from "../../../../util/util";
 import {Platform} from "ionic-angular";
+import {Ndef, NFC} from "@ionic-native/nfc";
 
 @Component({
 	selector: 'badge',
@@ -32,10 +32,10 @@ export class Badge extends BaseElement implements OnInit {
 	constructor(private client: RESTClient,
               private toast: ToastController,
               public barcodeScanner: BarcodeScanner,
-              public nfc: NFC,
-              public ndef: Ndef,
               public utils: Util,
-              public platform: Platform) {
+              public platform: Platform,
+              public nfc: NFC,
+              public ndef: Ndef) {
 		super();
 	}
 
