@@ -55,7 +55,7 @@ export class Form extends BaseForm{
 
 	public getUrlFields() : string[]{
 		let res = [];
-		let types = ["business_card", "image", "signature"];
+		let types = ["business_card", "image", "signature", "audio"];
 		let element : FormElement = null;
 		for(let i = 0; i < this.elements.length; i++){
 			element = this.elements[i];

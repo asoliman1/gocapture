@@ -12,7 +12,8 @@ import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
 import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
-import { StatusResponse } from "../model/protocol/status-response";
+import {StatusResponse} from "../model/protocol/status-response";
+import {FileTransfer} from "@ionic-native/file-transfer";
 declare var cordova: any;
 
 @Injectable()
@@ -49,11 +50,11 @@ export class BussinessClient {
 	error: Observable<any>;
 
 	constructor(private db: DBClient,
-		private rest: RESTClient,
-		private sync: SyncClient,
-		private push: PushClient,
-		private net: Network,
-		private fileTransfer: Transfer) {
+				private rest: RESTClient,
+				private sync: SyncClient,
+				private push: PushClient,
+				private net: Network,
+				private fileTransfer: FileTransfer) {
 
 		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
 		this.network = this.networkSource.asObservable();

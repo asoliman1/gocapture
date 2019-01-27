@@ -4,5 +4,6 @@
     "cordova": {}
   },
   "type": "ionic-angular",
-  "pro_id": "com.leadliaison.mobilitease"
+  "pro_id": "com.leadliaison.mobilitease",
+  "id": "com.leadliaison.mobilitease"
 }

@@ -140,7 +140,14 @@
 
     <!--HTML-BLOCK-->
     <html-block *ngSwitchCase="'section'" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
-             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)"></html-block>
+             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid(element)">
+    </html-block>
+
+    <!--AUDIO-->
+    <goc-audio  *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element"
+           [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
+           [class.hidden]="element.is_hidden">
+    </goc-audio>
 
     <ion-item *ngSwitchDefault>
       <ion-label>Coming soon! A component for {{element.type}}</ion-label>

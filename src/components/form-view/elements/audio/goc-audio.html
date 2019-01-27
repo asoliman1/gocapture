@@ -1,0 +1,42 @@
+<div class="goc-audio" ngClass="{recording: isRecording}">
+
+  <div class="recorder" *ngIf="!hasValue()">
+    <!--audio recording-->
+    <button class="recording-btn" ion-button icon-only outline block (click)="startRecording()" *ngIf="!isRecording" [disabled]="readonly">
+      <div class="mic-icon red"></div>
+    </button>
+
+    <div *ngIf="isRecording">
+      <div class="counter">{{trackDuration | timeIntervalPipe}}</div>
+      <button class="stop-btn" ion-button icon-only outline block (click)="stopRecording()">
+        <ion-icon name="square"></ion-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="playback" *ngIf="hasValue()" >
+    <ion-range [(ngModel)]="currentPosition" (ionBlur)="onSeek($event)">
+      <ion-label range-left>{{timeUp | timeIntervalPipe}}</ion-label>
+      <ion-label range-right>-{{timeDown | timeIntervalPipe}}</ion-label>
+    </ion-range>
+
+    <ion-row>
+      <ion-col>
+        <button ion-button icon-only outline block *ngIf="!isPlaying" (click)="startPlayback()">
+          <ion-icon name="play"></ion-icon>
+        </button>
+
+        <button ion-button icon-only outline block *ngIf="isPlaying" (click)="pausePlayback()">
+          <ion-icon name="pause"></ion-icon>
+        </button>
+      </ion-col>
+
+      <ion-col>
+        <button class="trash-btn" ion-button icon-only outline block color="danger" right (click)="removeRecord()" [disabled]="readonly">
+          <ion-icon name="trash" right></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>

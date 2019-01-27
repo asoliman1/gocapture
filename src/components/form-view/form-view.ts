@@ -89,6 +89,10 @@ export class FormView {
     return data;
   }
 
+  public clear() {
+    this.theForm.reset();
+  }
+
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
       if (this.form && this.submission) {

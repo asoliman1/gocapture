@@ -30,7 +30,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
 import { MyCurrencyDirective } from "../util/currency";
-import { Transfer } from '@ionic-native/transfer';
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { Device } from "@ionic-native/device";
 import { Push } from '@ionic-native/push';
@@ -57,6 +57,11 @@ import { PipesModule } from '../pipes/pipes.module';
 import { BusinessCardOverlayPageModule } from '../views/business-card-overlay/business-card-overlay.module';
 import { LocalStorageProvider } from '../providers/local-storage/local-storage';
 import {Ndef, NFC} from "@ionic-native/nfc";
+import {GOCAudio} from "../components/form-view/elements/audio/goc-audio";
+import {AudioCaptureService} from "../services/audio-capture-service";
+import {Media} from "@ionic-native/media";
+import {TimeIntervalPipe} from "../pipes/time-interval-pipe";
+import {StorageProvider} from "../services/storage-provider";
 
 @NgModule({
   declarations: [
@@ -76,7 +81,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, GOCAudio, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -110,7 +115,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer, UrlChoose,
+    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, GOCAudio, ImageViewer, UrlChoose,
     ProspectSearch,
     OcrSelector
   ],
@@ -125,7 +130,7 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     LogClient,
     BussinessClient,
     ImageProcessor,
-    Transfer,
+    FileTransfer,
     File,
     Device,
     HTTP,
@@ -149,7 +154,10 @@ import {Ndef, NFC} from "@ionic-native/nfc";
     Popup,
     Util,
     ThemeProvider,
-    LocalStorageProvider
+    LocalStorageProvider,
+    AudioCaptureService,
+    Media,
+    StorageProvider
   ]
 })
 export class AppModule { }

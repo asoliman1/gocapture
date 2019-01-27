@@ -4,7 +4,8 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
-import {FileEntry, File} from '@ionic-native/file';
+
+import {DirectoryEntry, Entry, File, FileEntry, IFile} from '@ionic-native/file';
 import {
   SyncStatus,
   BarcodeStatus,
@@ -19,6 +20,7 @@ import {
 } from "../model";
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 import { HTTP } from '@ionic-native/http';
+import {StorageProvider} from "./storage-provider";
 declare var cordova: any;
 
 
@@ -49,7 +51,11 @@ export class SyncClient {
 
   private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
 
-  constructor(private rest: RESTClient, private db: DBClient, private file: File, private http: HTTP) {
+  constructor(private rest: RESTClient,
+              private db: DBClient,
+              private file: File,
+              private http: HTTP,
+              private storageProvider: StorageProvider) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
     this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -276,7 +282,7 @@ export class SyncClient {
       submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
-      this.uploadImages(urlMap, hasUrls).subscribe((d) => {
+      this.uploadData(urlMap, hasUrls).subscribe((d) => {
 
         for (let field in submission.fields) {
           if (data.urlFields.indexOf(field) > -1) {
@@ -408,7 +414,7 @@ export class SyncClient {
     return (submission.first_name.length > 0 && submission.last_name.length > 0) || submission.email.length > 0;
   }
 
-  private uploadImages(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
+  private uploadData(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
       if (!hasUrls) {
         obs.next(null);
@@ -421,7 +427,9 @@ export class SyncClient {
       let filesUploader = [];
 
       let handler = () => {
+
         let request = new FileUploadRequest();
+
         if (index >= urls.length) {
           Observable.zip(...filesUploader).subscribe((data) => {
             urls.forEach((url, index) => {
@@ -434,7 +442,8 @@ export class SyncClient {
             obs.error(err);
           })
         } else {
-          if (this.dataUrlRegexp.test(urls[index])) {
+
+          if (this.isImageData(urls, index)) {
             let data = urls[index];
             let entry = this.createFile(data, "sig" + new Date().getTime(), 0);
             request.files.push(entry);
@@ -443,28 +452,31 @@ export class SyncClient {
             handler();
             return;
           }
+
           let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-          this.file.resolveDirectoryUrl(folder).then(dir => {
-            this.file.getFile(dir, file, { create: false }).then(fileEntry => {
+
+          this.file.resolveDirectoryUrl(folder)
+            .then(dir => {
+              return this.file.getFile(dir, file, { create: false })})
+            .then(fileEntry => {
+
               fileEntry.getMetadata((metadata) => {
-                //data:[<mediatype>][;base64],<data>
-                this.file.readAsDataURL(folder, file).then((data: string) => {
-                  let entry = this.createFile(data, file, metadata.size);
-                  request.files.push(entry);
-                  filesUploader.push(this.rest.uploadFiles(request));
-                  index++;
-                  handler();
-                }).catch((err) => {
+
+                this.file.readAsDataURL(folder, file)
+                  .then((data: string) => {
+                    let entry = this.createFile(data, file, metadata.size);
+                    request.files.push(entry);
+                    filesUploader.push(this.rest.uploadFiles(request));
+                    index++;
+                    handler();
+                  }).catch((err) => {
                   obs.error(err);
                 })
               }, err => {
                 obs.error(err);
               });
             }).catch(err => {
-              obs.error(err);
-            });
-          }).catch(err => {
             obs.error(err);
           });
         }
@@ -473,11 +485,15 @@ export class SyncClient {
     });
   }
 
+  private isImageData(urls, index: number) {
+    return this.dataUrlRegexp.test(urls[index]);
+  }
+
   private createFile(data, name, size) {
     let entry = new FileInfo();
     let d = data.split(";base64,");
     entry.data = d[1];
-    entry.name = name;
+    entry.name =  name.split('.').shift();
     entry.size = size;
 
     if (entry.size == 0) {
@@ -622,7 +638,7 @@ export class SyncClient {
         this.syncSource.next(this.lastSyncStatus);
         result.submissions = submissions;
         //let forms: Form[] = [];
-        this.downloadImages(forms, submissions).subscribe(subs => {
+        this.downloadData(forms, submissions).subscribe(subs => {
           this.db.saveSubmisisons(subs).subscribe(reply => {
             mapEntry.complete = true;
             mapEntry.loading = false;
@@ -643,7 +659,7 @@ export class SyncClient {
     });
   }
 
-  private downloadImages(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
+  private downloadData(forms: Form[], submissions: FormSubmission[]): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       if (!submissions || submissions.length == 0) {
         obs.next([]);
@@ -697,7 +713,7 @@ export class SyncClient {
         } else {
           let ext = urls[index].substr(urls[index].lastIndexOf("."));
           let pathToDownload = encodeURI(urls[index]);
-          let newFolder = this.file.dataDirectory + "leadliaison/images/";
+          let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
           let newName = "dwn_" + new Date().getTime() + ext;
           let path = newFolder + newName;
 
@@ -720,11 +736,18 @@ export class SyncClient {
     });
   }
 
+  private folderForFile(ext: string) {
+    if (ext == '.png' || ext == '.jpg' || ext == '.heic') {
+      return "images/";
+    }
+    return "audio/";
+  }
+
   private isExternalUrl(url: string) {
     return url.indexOf("http") == 0;
   }
-}
 
+}
 
 export class DownloadData {
   forms: Form[] = [];

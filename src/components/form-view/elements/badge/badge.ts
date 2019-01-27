@@ -7,8 +7,10 @@ import { ToastController } from 'ionic-angular/components/toast/toast-controller
 
 import {GOCNFCScanner} from "./Scanners/GOCNFCScanner";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
-import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
+import {Util} from "../../../../util/util";
+import {Platform} from "ionic-angular";
+import {Ndef, NFC} from "@ionic-native/nfc";
 
 @Component({
 	selector: 'badge',
@@ -30,6 +32,8 @@ export class Badge extends BaseElement implements OnInit {
 	constructor(private client: RESTClient,
               private toast: ToastController,
               public barcodeScanner: BarcodeScanner,
+              public utils: Util,
+              public platform: Platform,
               public nfc: NFC,
               public ndef: Ndef) {
 		super();
@@ -37,6 +41,10 @@ export class Badge extends BaseElement implements OnInit {
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
+  }
+
+  scannerStatusMessage() {
+	  return this.scanner ? this.scanner.statusMessage : "";
   }
 
 
@@ -56,7 +64,7 @@ export class Badge extends BaseElement implements OnInit {
       this.onChange(response.scannedId);
 
       this.toast.create({
-        message: this.scanner.name + " scanned successfully",
+        message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
         duration: 1500,
         position: "bottom",
         cssClass: "success"
@@ -145,11 +153,13 @@ export class Badge extends BaseElement implements OnInit {
 
   private getScanner(): Scanner {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
-      return new GOCNFCScanner(this.nfc, this.ndef);
+      return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
     return new GOCBarcodeScanner(this.barcodeScanner);
   }
 
   setDisabledState(isDisabled: boolean): void {
   }
+
+
 }
