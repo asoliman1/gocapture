@@ -143,11 +143,11 @@ class LocalSql {
 	echoTest(): Promise<any> {
 		return null;
 	}
-  selfTest(): Promise<any>{
+	selfTest(): Promise<any> {
 		return null;
-	
+	}
 
-    deleteDatabase(config): Promise<any>{
+	deleteDatabase(config): Promise<any> {
 		return null;
 	}
 

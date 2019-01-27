@@ -95,7 +95,7 @@ import {StorageProvider} from "../services/storage-provider";
     IonicImageViewerModule,
 	TextMaskModule, 
 	PipesModule,
-	BusinessCardOverlayPageModule
+	BusinessCardOverlayPageModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
