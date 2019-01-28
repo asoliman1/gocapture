@@ -282,26 +282,11 @@ export class SyncClient {
       submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
-      this.uploadData(urlMap, hasUrls).subscribe((d) => {
+      this.uploadData(urlMap, hasUrls).subscribe((data) => {
 
-        for (let field in submission.fields) {
-          if (data.urlFields.indexOf(field) > -1) {
-            let sub = submission.fields[field];
-            if (sub) {
-              if (typeof (sub) == "object") {
-                Object.keys(sub).forEach((key) => {
-                  sub[key] = urlMap[sub[key]];
-                });
-              } else if (Array.isArray(sub)) {
-                for (let i = 0; i < sub.length; i++) {
-                  sub[i] = urlMap[sub[i]];
-                }
-              } else {
-                submission.fields[field] = urlMap[sub];
-              }
-            }
-          }
-        }
+        this.updateUrlMapWithData(urlMap, data);
+
+        this.updateSubmissionFields(submission, data, urlMap);
 
         this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
           if (submission.barcode_processed == BarcodeStatus.Queued) {
@@ -322,6 +307,40 @@ export class SyncClient {
         // this.errorSource.next(msg);
       });
     });
+  }
+
+  private updateUrlMapWithData(urlMap: { [p: string]: string }, data) {
+    let urls = Object.keys(urlMap);
+
+    urls.forEach((url, index) => {
+      if (data) {
+        let dataFile = data[index];
+        urlMap[url] = dataFile[0]['url'];
+      } else {
+        urlMap[url] = url;
+      }
+    });
+  }
+
+  private updateSubmissionFields(submission, data, urlMap: { [p: string]: string }) {
+    for (let field in submission.fields) {
+      if (data.urlFields.indexOf(field) > -1) {
+        let sub = submission.fields[field];
+        if (sub) {
+          if (typeof (sub) == "object") {
+            Object.keys(sub).forEach((key) => {
+              sub[key] = urlMap[sub[key]];
+            });
+          } else if (Array.isArray(sub)) {
+            for (let i = 0; i < sub.length; i++) {
+              sub[i] = urlMap[sub[i]];
+            }
+          } else {
+            submission.fields[field] = urlMap[sub];
+          }
+        }
+      }
+    }
   }
 
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
@@ -429,13 +448,6 @@ export class SyncClient {
       });
 
       if (!hasUrls || urls.length == 0) {
-
-        let keys = Object.keys(urlMap);
-
-        keys.forEach((url) => {
-          urlMap[url] = url;
-        });
-
         obs.next(null);
         obs.complete();
         return;
@@ -446,15 +458,9 @@ export class SyncClient {
       let filesUploader = [];
 
       let handler = () => {
-
         let request = new FileUploadRequest();
-
         if (index >= urls.length) {
           Observable.zip(...filesUploader).subscribe((data) => {
-            urls.forEach((url, index) => {
-              let dataFile = data[index];
-              urlMap[url] = dataFile[0]['url'];
-            });
             obs.next(data);
             obs.complete();
           }, err => {
