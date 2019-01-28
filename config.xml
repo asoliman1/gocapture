@@ -155,5 +155,6 @@
         <variable name="NFC_USAGE_DESCRIPTION" value="Read NFC Tags" />
     </plugin>
     <engine name="ios" spec="^4.5.5" />
-    <engine name="android" spec="^7.1.4" />
+    <engine name="android" spec="7.1.4" />
+    <engine name="windows" spec="6.0.1" />
 </widget>
