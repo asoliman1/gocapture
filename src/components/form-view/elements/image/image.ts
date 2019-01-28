@@ -178,10 +178,10 @@ export class Image extends BaseElement {
         console.error(err);
       })
     } else {
-      imageData = 'data:image/jpeg;base64,' + imageData;
+      imageData = 'data:image/jpg;base64,' + imageData;
 
       let newFolder = this.file.dataDirectory + "leadliaison/images";
-      let newName = new Date().getTime() + '.jpeg';
+      let newName = new Date().getTime() + '.jpg';
 
       t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
         if (t.checkFileExistAtPath(newPath)) {

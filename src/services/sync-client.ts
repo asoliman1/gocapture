@@ -303,13 +303,19 @@ export class SyncClient {
           }
         }
 
-        if (submission.barcode_processed == BarcodeStatus.Queued) {
-          this.processBarcode(data, submission, obs);
-        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-          this.processBarcode(data, submission, obs);
-        } else {
-          this.actuallySubmitForm(data.form.name, submission, obs);
-        }
+        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          if (submission.barcode_processed == BarcodeStatus.Queued) {
+            this.processBarcode(data, submission, obs);
+          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
+            this.processBarcode(data, submission, obs);
+          } else {
+            this.actuallySubmitForm(data.form.name, submission, obs);
+          }
+        }, (err) => {
+          obs.error(err);
+          this.errorSource.next("Could not save updated submission for form " + data.form.name);
+        });
+
       }, (err) => {
         obs.error(err);
         // let msg = "Could not process submission for form " + data.form.name;
@@ -416,13 +422,26 @@ export class SyncClient {
 
   private uploadData(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
-      if (!hasUrls) {
+
+      //handle only those urls that were not uploaded before
+      let urls = Object.keys(urlMap).filter(url => {
+        return !url.startsWith("https://")
+      });
+
+      if (!hasUrls || urls.length == 0) {
+
+        let keys = Object.keys(urlMap);
+
+        keys.forEach((url) => {
+          urlMap[url] = url;
+        });
+
         obs.next(null);
         obs.complete();
         return;
       }
+
       let index = 0;
-      let urls = Object.keys(urlMap);
 
       let filesUploader = [];
 
@@ -443,7 +462,7 @@ export class SyncClient {
           })
         } else {
 
-          if (this.isImageData(urls, index)) {
+          if (this.isData(urls, index)) {
             let data = urls[index];
             let entry = this.createFile(data, "sig" + new Date().getTime(), 0);
             request.files.push(entry);
@@ -485,7 +504,7 @@ export class SyncClient {
     });
   }
 
-  private isImageData(urls, index: number) {
+  private isData(urls, index: number) {
     return this.dataUrlRegexp.test(urls[index]);
   }
 
