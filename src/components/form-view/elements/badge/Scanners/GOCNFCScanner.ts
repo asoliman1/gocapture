@@ -3,8 +3,8 @@ import {Platform} from "ionic-angular";
 
 export class GOCNFCScanner implements Scanner {
 
-  readonly name: string = 'nfc';
-  statusMessage: string = "Scan NFC";
+  readonly name: string = 'NFC Badge';
+  statusMessage: string = "Scan NFC Badge";
 
 
   constructor(public nfc: NFC,
