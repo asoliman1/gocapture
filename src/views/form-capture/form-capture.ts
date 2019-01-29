@@ -262,7 +262,7 @@ export class FormCapture {
       }
     }
 
-    if (isNotScanned && !this.valid && !this.submission.id) {
+    if (noTranscriptable && !this.valid && !this.submission.id) {
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
