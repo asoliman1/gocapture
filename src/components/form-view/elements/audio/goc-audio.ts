@@ -51,10 +51,6 @@ export class GOCAudio extends BaseElement {
     super();
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
-
-    if (this.currentVal && this.currentVal.length > 0) {
-      this.initializeAudioRecord(this.currentVal[0]);
-    }
   }
 
   startRecording() {
@@ -77,7 +73,7 @@ export class GOCAudio extends BaseElement {
       this.onChange([filePath]);
       this.updateRecordDuration(true);
 
-      this.initializeAudioRecord(filePath);
+      this.updateTimeLabels(0, this.trackDuration);
     });
   }
 
@@ -142,9 +138,9 @@ export class GOCAudio extends BaseElement {
     }, this.step);
   }
 
-  private startPlayback() {
+  startPlayback() {
 
-    this.audioCaptureService.play().subscribe(status => {
+    this.audioCaptureService.playRecord(this.currentVal[0]).subscribe(status => {
       this.isPlaying = (status == MEDIA_STATUS.RUNNING);
 
       let duration = this.audioCaptureService.trackDuration();
@@ -162,12 +158,6 @@ export class GOCAudio extends BaseElement {
         }
       }
     });
-  }
-
-  private initializeAudioRecord(filePath) {
-    this.audioCaptureService.initializeRecord(filePath);
-
-    this.updateTimeLabels(0, this.trackDuration);
   }
 
 
