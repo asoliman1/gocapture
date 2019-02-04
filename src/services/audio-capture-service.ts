@@ -70,11 +70,11 @@ export class AudioCaptureService {
     })
   }
 
+
   playRecord(filePath): Observable<MEDIA_STATUS> {
     let fileName = filePath.split('/').pop();
     this.audioFile = this.media.create(this.adjustFilePath(this.audioFolder() + "/" + fileName ));
     this.audioFile.play();
-
     return this.audioFile.onStatusUpdate;
   }
 

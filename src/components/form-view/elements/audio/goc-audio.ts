@@ -67,10 +67,13 @@ export class GOCAudio extends BaseElement {
   }
 
   stopRecording() {
+
     this.audioCaptureService.stopRecord().then(filePath => {
       this.isRecording = false;
       this.onChange([filePath]);
       this.updateRecordDuration(true);
+
+      this.updateTimeLabels(0, this.trackDuration);
     });
   }
 
@@ -135,7 +138,7 @@ export class GOCAudio extends BaseElement {
     }, this.step);
   }
 
-  private startPlayback() {
+  startPlayback() {
 
     this.audioCaptureService.playRecord(this.currentVal[0]).subscribe(status => {
       this.isPlaying = (status == MEDIA_STATUS.RUNNING);
@@ -156,6 +159,7 @@ export class GOCAudio extends BaseElement {
       }
     });
   }
+
 
   private pausePlayback() {
     this.audioCaptureService.pausePlayback();

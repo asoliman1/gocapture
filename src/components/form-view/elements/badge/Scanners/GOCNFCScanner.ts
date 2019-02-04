@@ -3,8 +3,8 @@ import {Platform} from "ionic-angular";
 
 export class GOCNFCScanner implements Scanner {
 
-  readonly name: string = 'nfc';
-  statusMessage: string = "Scan NFC";
+  readonly name: string = 'NFC Badge';
+  statusMessage: string = "Scan NFC Badge";
 
 
   constructor(public nfc: NFC,
@@ -40,7 +40,14 @@ export class GOCNFCScanner implements Scanner {
 
       let binary = '';
       for (let i = 0; i < payload.length; i++) {
-        binary += String.fromCharCode(payload[i]);
+        let byte = payload[i];
+
+        if (this.platform.is('android')) {
+          //convert signed byte to the unsigned
+          byte = byte & 0xff;
+        }
+
+        binary += String.fromCharCode(byte);
       }
 
       let base64 = btoa(binary);
