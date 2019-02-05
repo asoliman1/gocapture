@@ -150,11 +150,11 @@
     <plugin name="cordova-plugin-camera-preview" spec="3rdParty/cordova-plugin-camera-preview">
         <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="25+" />
     </plugin>
-    <plugin name="cordova-plugin-media" spec="~5.0.2" />
     <plugin name="phonegap-nfc" spec="1.0.3">
         <variable name="NFC_USAGE_DESCRIPTION" value="Read NFC Tags" />
     </plugin>
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="7.1.4" />
     <engine name="windows" spec="6.0.1" />
+    <plugin name="cordova-plugin-media" spec="^5.0.2" />
 </widget>

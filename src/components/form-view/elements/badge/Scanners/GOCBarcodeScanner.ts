@@ -1,4 +1,5 @@
 import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
+import { Scanner, ScannerResponse } from "./Scanner";
 
 export class GOCBarcodeScanner implements Scanner {
 

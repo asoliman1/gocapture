@@ -1,14 +1,14 @@
-interface ScannerResponse {
+export interface ScannerResponse {
   scannedId?: string;
   isCancelled?: boolean;
 }
 
-const enum ScannerType {
+export const enum ScannerType {
   NFC = 'nfc',
   Barcode = 'barcode'
 }
 
-interface Scanner {
+export interface Scanner {
   readonly name: string;
   scan(): Promise<ScannerResponse>;
   restart();

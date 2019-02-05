@@ -1,7 +1,8 @@
 import {Ndef, NFC} from "@ionic-native/nfc";
 import {Platform} from "ionic-angular";
+import { ScannerResponse, Scanner } from "./Scanner";
 
-export class GOCNFCScanner implements Scanner {
+export class GOCNFCScanner implements Scanner{
 
   readonly name: string = 'NFC Badge';
   statusMessage: string = "Scan NFC Badge";

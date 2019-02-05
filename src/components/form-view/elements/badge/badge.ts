@@ -11,6 +11,7 @@ import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
 import {Util} from "../../../../util/util";
 import {Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
+import { Scanner, ScannerType } from './Scanners/Scanner';
 
 @Component({
 	selector: 'badge',
