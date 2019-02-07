@@ -389,7 +389,7 @@ export class BussinessClient {
 
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
     let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.15;
-    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted
+    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 
 	public removeSubmission(submission) {

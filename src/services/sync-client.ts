@@ -282,40 +282,65 @@ export class SyncClient {
       submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
-      this.uploadData(urlMap, hasUrls).subscribe((d) => {
+      this.uploadData(urlMap, hasUrls).subscribe((data) => {
 
-        for (let field in submission.fields) {
-          if (data.urlFields.indexOf(field) > -1) {
-            let sub = submission.fields[field];
-            if (sub) {
-              if (typeof (sub) == "object") {
-                Object.keys(sub).forEach((key) => {
-                  sub[key] = urlMap[sub[key]];
-                });
-              } else if (Array.isArray(sub)) {
-                for (let i = 0; i < sub.length; i++) {
-                  sub[i] = urlMap[sub[i]];
-                }
-              } else {
-                submission.fields[field] = urlMap[sub];
-              }
-            }
+        this.updateUrlMapWithData(urlMap, data);
+
+        this.updateSubmissionFields(submission, data, urlMap);
+
+        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          if (submission.barcode_processed == BarcodeStatus.Queued) {
+            this.processBarcode(data, submission, obs);
+          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
+            this.processBarcode(data, submission, obs);
+          } else {
+            this.actuallySubmitForm(data.form.name, submission, obs);
           }
-        }
+        }, (err) => {
+          obs.error(err);
+          this.errorSource.next("Could not save updated submission for form " + data.form.name);
+        });
 
-        if (submission.barcode_processed == BarcodeStatus.Queued) {
-          this.processBarcode(data, submission, obs);
-        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-          this.processBarcode(data, submission, obs);
-        } else {
-          this.actuallySubmitForm(data.form.name, submission, obs);
-        }
       }, (err) => {
         obs.error(err);
         // let msg = "Could not process submission for form " + data.form.name;
         // this.errorSource.next(msg);
       });
     });
+  }
+
+  private updateUrlMapWithData(urlMap: { [p: string]: string }, data) {
+    let urls = Object.keys(urlMap);
+
+    urls.forEach((url, index) => {
+      if (data) {
+        let dataFile = data[index];
+        urlMap[url] = dataFile[0]['url'];
+      } else {
+        urlMap[url] = url;
+      }
+    });
+  }
+
+  private updateSubmissionFields(submission, data, urlMap: { [p: string]: string }) {
+    for (let field in submission.fields) {
+      if (data.urlFields.indexOf(field) > -1) {
+        let sub = submission.fields[field];
+        if (sub) {
+          if (typeof (sub) == "object") {
+            Object.keys(sub).forEach((key) => {
+              sub[key] = urlMap[sub[key]];
+            });
+          } else if (Array.isArray(sub)) {
+            for (let i = 0; i < sub.length; i++) {
+              sub[i] = urlMap[sub[i]];
+            }
+          } else {
+            submission.fields[field] = urlMap[sub];
+          }
+        }
+      }
+    }
   }
 
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
@@ -416,26 +441,26 @@ export class SyncClient {
 
   private uploadData(urlMap: { [key: string]: string }, hasUrls: boolean): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
-      if (!hasUrls) {
+
+      //handle only those urls that were not uploaded before
+      let urls = Object.keys(urlMap).filter(url => {
+        return !url.startsWith("https://")
+      });
+
+      if (!hasUrls || urls.length == 0) {
         obs.next(null);
         obs.complete();
         return;
       }
+
       let index = 0;
-      let urls = Object.keys(urlMap);
 
       let filesUploader = [];
 
       let handler = () => {
-
         let request = new FileUploadRequest();
-
         if (index >= urls.length) {
           Observable.zip(...filesUploader).subscribe((data) => {
-            urls.forEach((url, index) => {
-              let dataFile = data[index];
-              urlMap[url] = dataFile[0]['url'];
-            });
             obs.next(data);
             obs.complete();
           }, err => {
@@ -443,7 +468,7 @@ export class SyncClient {
           })
         } else {
 
-          if (this.isImageData(urls, index)) {
+          if (this.isData(urls, index)) {
             let data = urls[index];
             let entry = this.createFile(data, "sig" + new Date().getTime(), 0);
             request.files.push(entry);
@@ -485,7 +510,7 @@ export class SyncClient {
     });
   }
 
-  private isImageData(urls, index: number) {
+  private isData(urls, index: number) {
     return this.dataUrlRegexp.test(urls[index]);
   }
 

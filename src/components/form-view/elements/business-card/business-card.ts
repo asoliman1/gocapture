@@ -192,7 +192,7 @@ export class BusinessCard extends BaseElement {
 
     (<any>navigator).camera.getPicture((imageData) => {
 
-      imageData = 'data:image/jpeg;base64,' + imageData;
+      imageData = 'data:image/jpg;base64,' + imageData;
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
@@ -211,7 +211,7 @@ export class BusinessCard extends BaseElement {
   private saveData(data, type, shouldRecognize) {
 
     let newFolder = this.file.dataDirectory + "leadliaison/images";
-    let newName = new Date().getTime() + '.jpeg';
+    let newName = new Date().getTime() + '.jpg';
     let promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
 
     promise.then((entry)=>{
@@ -378,7 +378,7 @@ export class BusinessCard extends BaseElement {
 
       if (imageData) {
 
-        imageData = 'data:image/jpeg;base64,' + imageData;
+        imageData = 'data:image/jpg;base64,' + imageData;
 
         let crop = {
           x: 0,
@@ -392,7 +392,7 @@ export class BusinessCard extends BaseElement {
           let shouldRecognize = self.element.is_scan_cards_and_prefill_form == 1;
 
           let newFolder = self.file.dataDirectory + "leadliaison/images";
-          let newName = new Date().getTime() + '.jpeg';
+          let newName = new Date().getTime() + '.jpg';
 
           let blob = self.imageProc.dataURItoBlob(data.dataUrl);
           self.file.writeFile(newFolder, newName, blob).then((entry)=>{
