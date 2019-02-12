@@ -282,9 +282,9 @@ export class SyncClient {
       submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
-      this.uploadData(urlMap, hasUrls).subscribe(() => {
+      this.uploadData(urlMap, hasUrls).subscribe((uploadedData) => {
 
-        this.updateUrlMapWithData(urlMap, data);
+        this.updateUrlMapWithData(urlMap, uploadedData);
 
         this.updateSubmissionFields(submission, data, urlMap);
 
