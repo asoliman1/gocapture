@@ -46,7 +46,9 @@ export class Address extends BaseGroupElement implements ISearch {
     if (!this.readonly) {
       let search = this.modal.create('SearchPage', {items: this.getOptions()});
       search.onDidDismiss(data => {
-        this.country = data.value;
+        if (data) {
+          this.country = data.value;
+        }
       });
       search.present();
     }

@@ -4,12 +4,16 @@
     <ion-title>{{form ? form.name : ''}}</ion-title>
 
     <ion-buttons end>
-			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission)">
+			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing">
 				Submit
 			</button>
 
-      <button ion-button *ngIf="isReadOnly(submission)">
-        Read only
+      <button ion-button *ngIf="isReadOnly(submission) && !isEditing" (click)="doEdit()">
+        Edit
+      </button>
+
+      <button ion-button *ngIf="isReadOnly(submission) && isEditing" (click)="doSave()">
+        Update
       </button>
 
 		</ion-buttons>
@@ -39,14 +43,15 @@
 				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Search List</button>
 			</ion-col>
 		</ion-row>
-		<ion-row>
-			<form-view #formView
+		<ion-row >
+
+      <form-view *ngIf="form"
 						[form]="form"
 						[prospect]="prospect"
 						[submission]="submission"
 						(onValidationChange)="onValidationChange($event)"
-						[readOnly]="isReadOnly(submission)"
+						[readOnly]="isReadOnly(submission) && !isEditing"
             [submitAttempt]="submitAttempt"></form-view>
-		</ion-row>
+    </ion-row>
 	</ion-grid>
 </ion-content>

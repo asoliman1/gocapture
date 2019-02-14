@@ -1,6 +1,5 @@
 import {Component, NgZone, ViewChild} from '@angular/core';
 import {
-  AlertController,
   Content,
   MenuController,
   ModalController,
@@ -40,7 +39,7 @@ export class FormCapture {
 
   dispatch: DispatchOrder;
 
-  @ViewChild("formView") formView: FormView;
+  @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
 
@@ -50,6 +49,8 @@ export class FormCapture {
   submitAttempt: boolean = false;
 
   prospect: DeviceFormMembership;
+
+  isEditing: boolean = false;
 
   private backUnregister;
 
@@ -71,6 +72,10 @@ export class FormCapture {
   }
 
   ionViewWillEnter() {
+    this.setupForm();
+  }
+
+  private setupForm() {
     this.form = this.navParams.get("form");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
@@ -99,7 +104,10 @@ export class FormCapture {
   }
 
   isReadOnly(submission: FormSubmission): boolean {
-    return submission && (submission.status == SubmissionStatus.Submitted || submission.status == SubmissionStatus.OnHold || submission.status == SubmissionStatus.Submitting);
+    return submission &&
+      (submission.status == SubmissionStatus.Submitted ||
+      submission.status == SubmissionStatus.OnHold ||
+      submission.status == SubmissionStatus.Submitting)
   }
 
   ionViewDidEnter() {
@@ -243,6 +251,14 @@ export class FormCapture {
     this.formView.clear();
   }
 
+  doEdit() {
+    this.isEditing = true;
+    this.form = null;
+    setTimeout(()=> {
+      this.setupForm();
+    });
+  }
+
 
   doSave() {
     this.submitAttempt = true;
@@ -304,7 +320,10 @@ export class FormCapture {
 
   onValidationChange(valid: boolean) {
     this.valid = valid;
-    this.errorMessage = '';
+    setTimeout(()=>{
+      this.errorMessage = '';
+    });
+
     this.content.resize();
   }
 

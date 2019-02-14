@@ -1,7 +1,7 @@
 <div class="form-view {{barcodeStatusMap[submission ? submission.barcode_processed : displayForm.barcode_processed ]}}">
   <!--button ion-button (click)="showSelection()"></button-->
 
-  <form [formGroup]="theForm" style="width:100%;" novalidate>
+  <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
 
     <div class="" *ngFor="let element of displayForm.elements">
       <dynamic-form-element [theForm]="theForm"
