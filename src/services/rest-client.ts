@@ -196,28 +196,15 @@ export class RESTClient {
 							switch(field.type){
 								case "simple_name":
 								case "address":
-									let vals = dataItem.value.split(" ");
-									if(field.type == "address"){
-										if(vals.length > 6){
-											let tmp = [];
-											vals.forEach((val, index) => {
-												if(index <= 6){
-													tmp.push(val);
-												}else{
-													tmp[tmp.length - 1] += " " + val;
-												}
-											});
-											vals = tmp;
-										}
-									}
+								  if (dataItem["value_splitted"]) {
+								    let values = dataItem["value_splitted"];
+								    entry.fields = {...entry.fields, ...values};
+                  }
 
 									if (field.type == "simple_name") {
                     entry.full_name = dataItem.value;
                   }
 
-									vals.forEach((value, index) => {
-										entry.fields[fieldName + "_" + (index+1)] = value;
-									});
 									break;
 								case "image":
                 case "business_card":
