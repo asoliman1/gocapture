@@ -61,7 +61,8 @@ export class RESTClient {
 	 */
 	public getForms(offset: number = 0, name?: string, updatedAt?: Date, createdAt?: Date): Observable<RecordsResponse<Form>> {
 		var opts: any = {
-			form_type: "device"
+			form_type: "device",
+      mode: "device_sync"
 		};
 		if (name) {
 			opts.name = name;
@@ -75,6 +76,7 @@ export class RESTClient {
 		if(offset > 0){
 			opts.offset = offset;
 		}
+
 		return this.call<RecordsResponse<Form>>("GET", "/forms.json", opts).map(resp => {
 			if (resp.status != "200") {
 				this.errorSource.next(resp);
@@ -95,7 +97,8 @@ export class RESTClient {
 
 	public getAllForms(lastSyncDate: Date) : Observable<Form[]>{
 		let opts: any = {
-			form_type: "device"
+			form_type: "device",
+      mode: "device_sync"
 		};
 		if(lastSyncDate){
 			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";

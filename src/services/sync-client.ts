@@ -530,57 +530,60 @@ export class SyncClient {
 
   private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<Form[]> {
     return new Observable<any>(obs => {
+
       let mapEntry = map["forms"];
       mapEntry.loading = true;
       mapEntry.percent = 10;
-      this.rest.getAvailableFormIds().subscribe(ids => {
 
-        this.db.getForms().subscribe(forms => {
-          let toDelete = [];
-          let newForms = [];
-          forms.forEach(form => {
-            if(ids.indexOf(form.form_id) == -1){
-              toDelete.push(form.form_id);
-            }
-          });
-          ids.forEach((id) => {
-            let form = forms.find((f) => {
-              return f.form_id == id;
-            });
-            if(!form){
-              newForms.push(id);
-            }
-          });
-          result.newFormIds = newForms;
-          this.db.deleteFormsInList(toDelete).subscribe(() => {
-            this.rest.getAllForms(lastSyncDate).subscribe(forms => {
-              result.forms = forms;
-              forms.forEach((form) => {
-                form.id = form.form_id + "";
-              });
-              mapEntry.percent = 50;
-              this.syncSource.next(this.lastSyncStatus);
-              this.db.saveForms(forms).subscribe(reply => {
-                mapEntry.complete = true;
-                mapEntry.loading = false;
-                mapEntry.percent = 100;
-                this.entitySyncedSource.next(mapEntry.formName);
-                this.syncSource.next(this.lastSyncStatus);
-                obs.next(forms);
-                obs.complete();
-              }, err => {
-                obs.error(err);
-              });
-            }, err => {
-              obs.error(err);
-            });
+      this.rest.getAllForms(lastSyncDate).subscribe(remoteForms => {
+
+        remoteForms.forEach(form => {
+          form.id = form.form_id + "";
+        });
+
+        let remoteFormsIds = remoteForms.map(form => form.id);
+
+        result.newFormIds = Object.assign(remoteFormsIds);
+        result.forms = remoteForms;
+
+        this.clearLocalForms(remoteFormsIds).subscribe(() => {
+          mapEntry.percent = 50;
+          this.syncSource.next(this.lastSyncStatus);
+          this.db.saveForms(remoteForms).subscribe(reply => {
+            mapEntry.complete = true;
+            mapEntry.loading = false;
+            mapEntry.percent = 100;
+            this.entitySyncedSource.next(mapEntry.formName);
+            this.syncSource.next(this.lastSyncStatus);
+            obs.next(remoteForms);
+            obs.complete();
+          }, err => {
+            obs.error(err);
           });
         }, err => {
           obs.error(err);
         });
-      }, err => {
-        obs.error(err);
+      })
+    });
+  }
+
+
+  private clearLocalForms(remoteFormsIds): Observable<boolean> {
+
+    if (remoteFormsIds.length == 0) {
+      return Observable.of(false);
+    }
+
+    return this.db.getForms().flatMap(localForms => {
+
+      let toDelete = [];
+
+      localForms.forEach(form => {
+        if (remoteFormsIds.indexOf(form.id) == -1) {
+          toDelete.push(form.id);
+        }
       });
+      return this.db.deleteFormsInList(toDelete);
     });
   }
 

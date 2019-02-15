@@ -214,17 +214,6 @@ export class BussinessClient {
             this.db.setupWorkDb(reply.db);
             obs.next({ user: reply, message: "Done" });
             obs.complete();
-            let d = new Date();
-            this.sync.download(null).subscribe(downloadData => {
-              },
-              (err) => {
-                obs.error(err);
-              },
-              () => {
-                this.db.saveConfig("lastSyncDate", d.getTime() + "").subscribe(() => {
-                  obs.next({ user: reply, message: "Done" });
-                })
-              });
           });
         });
 			}, err =>{
@@ -277,7 +266,7 @@ export class BussinessClient {
 					}
 					let newD = new Date();
 					this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-						//console.log(downloadData);
+						//
 					},
 						(err) => {
 							obs.error(err);
