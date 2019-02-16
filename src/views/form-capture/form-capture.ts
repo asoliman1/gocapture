@@ -293,6 +293,8 @@ export class FormCapture {
       this.submission.status = SubmissionStatus.ToSubmit;
     }
 
+    this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.submission = null;
@@ -317,6 +319,7 @@ export class FormCapture {
 
     });
   }
+
 
   onValidationChange(valid: boolean) {
     this.valid = valid;
@@ -405,4 +408,11 @@ export class FormCapture {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
+  private getHiddenElementsPerVisibilityRules(): number[] {
+    return this.form.elements.filter(element => {
+      return element["visible_conditions"] && !element.isMatchingRules;
+    }).map(hiddenElement => {
+      return hiddenElement.id;
+    });
+  }
 }

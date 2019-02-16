@@ -312,7 +312,7 @@ export class FormView {
     let identifier = "element_" + rule.field_identifier;
 
     let ruleValue = rule.value;
-    let elementValue = this.theForm.value[identifier];
+    let elementValue = this.theForm && this.theForm.value[identifier];
 
     switch (rule.condition) {
       case "equals" : {
@@ -386,7 +386,7 @@ export class FormView {
   resetField(element) {
     let identifier = this.elementIdentifier(element);
     let value = this.getDefaultValue(element);
-    let control = this.theForm.controls[identifier];
+    let control = this.theForm && this.theForm.controls[identifier];
     if (!control) {
       return;
     }

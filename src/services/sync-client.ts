@@ -546,7 +546,7 @@ export class SyncClient {
         result.newFormIds = Object.assign(remoteFormsIds);
         result.forms = remoteForms;
 
-        this.clearLocalForms(remoteFormsIds).subscribe(() => {
+        this.clearLocalForms().subscribe(() => {
           mapEntry.percent = 50;
           this.syncSource.next(this.lastSyncStatus);
           this.db.saveForms(remoteForms).subscribe(reply => {
@@ -568,22 +568,17 @@ export class SyncClient {
   }
 
 
-  private clearLocalForms(remoteFormsIds): Observable<boolean> {
-
-    if (remoteFormsIds.length == 0) {
-      return Observable.of(false);
-    }
-
-    return this.db.getForms().flatMap(localForms => {
-
-      let toDelete = [];
-
-      localForms.forEach(form => {
-        if (remoteFormsIds.indexOf(form.id) == -1) {
-          toDelete.push(form.id);
-        }
+  private clearLocalForms(): Observable<boolean> {
+    return this.rest.getAvailableFormIds().flatMap(ids => {
+      return this.db.getForms().flatMap(localForms => {
+        let toDelete = [];
+        localForms.forEach(form => {
+          if (ids.indexOf(parseInt(form.id)) == -1) {
+            toDelete.push(form.id);
+          }
+        });
+        return this.db.deleteFormsInList(toDelete);
       });
-      return this.db.deleteFormsInList(toDelete);
     });
   }
 

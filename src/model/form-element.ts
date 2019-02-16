@@ -24,6 +24,7 @@ export class FormElement {
 	identifier?: string;
 	placeholder: string = "";
   accept_invalid_barcode: boolean;
+  isMatchingRules: boolean;
 }
 
 export class Option{
