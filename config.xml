@@ -154,6 +154,10 @@
         <variable name="NFC_USAGE_DESCRIPTION" value="Read NFC Tags" />
     </plugin>
     <plugin name="cordova-plugin-media" spec="^5.0.2" />
+    <plugin name="cordova-plugin-photo-library" spec="https://github.com/nilebma/cordova-plugin-photo-library.git">
+        <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value=" " />
+    </plugin>
+    <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="7.1.4" />
     <engine name="windows" spec="6.0.1" />

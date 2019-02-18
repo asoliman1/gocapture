@@ -14,6 +14,8 @@ import {App} from "ionic-angular";
 import {LogClient} from "../../services/log-client";
 import {Popup} from "../../providers/popup/popup";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {Observable} from "rxjs";
+import {settingsKeys} from "../../constants/constants";
 //import { OcrSelector } from "../../components/ocr-selector";
 declare var screen;
 
@@ -21,6 +23,7 @@ declare var screen;
 	selector: 'settings',
 	templateUrl: 'settings.html'
 })
+
 export class Settings {
 
 	settings: any = {};
@@ -50,8 +53,12 @@ export class Settings {
 		this.db.getAllConfig().subscribe(settings => {
 			this.settings = settings;
 
-      if (typeof settings['enableLogging'] == "undefined") {
+      if (typeof settings[settingsKeys.ENABLE_LOGGING] == "undefined") {
         this.settings.enableLogging = true;
+      }
+
+      if (typeof settings[settingsKeys.AUTOSAVE_BC_CAPTURES] == "undefined") {
+        this.settings.autosaveBCCaptures = true;
       }
 
 			this.db.getRegistration().subscribe(user => {
@@ -61,7 +68,7 @@ export class Settings {
 		});
 	}
 
-	getName(user: User){
+	getName(user: User) {
 		let name = "";
 		if(user){
 			if(user.first_name){
@@ -95,13 +102,16 @@ export class Settings {
   }
 
 	saveSettings() {
-		this.db.saveConfig("autoUpload", this.settings.autoUpload).subscribe(() => {
-			this.db.saveConfig("enableLogging", this.settings.enableLogging).subscribe(() => {
-				this.db.saveConfig("kioskModePassword", this.settings.kioskModePassword).subscribe(() => {
-					this.shouldSave = false;
-				});
-			});
-		});
+
+	  let autoUpload = this.db.saveConfig(settingsKeys.AUTO_UPLOAD, this.settings.autoUpload);
+    let enableLogging = this.db.saveConfig(settingsKeys.ENABLE_LOGGING, this.settings.enableLogging);
+    let kioskModePassword = this.db.saveConfig(settingsKeys.KIOSK_MODE_PASSWORD, this.settings.kioskModePassword);
+    let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
+
+    Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures).subscribe(() => {
+      this.shouldSave = false;
+    });
+
 	}
 
 	sync() {

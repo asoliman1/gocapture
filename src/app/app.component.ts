@@ -19,6 +19,9 @@ import { LoadingController } from 'ionic-angular/components/loading/loading-cont
 import { Nav } from 'ionic-angular/components/nav/nav';
 import {ThemeProvider} from "../providers/theme/theme";
 import {Colors} from "../constants/colors";
+import {settingsKeys} from "../constants/constants";
+import {SettingsService} from "../services/settings-service";
+import {Observable} from "rxjs";
 
 declare var cordova;
 
@@ -46,7 +49,8 @@ export class MyApp {
     private popup: Popup,
     private loading: LoadingController,
     private logger: LogClient,
-    public themeProvider: ThemeProvider) {
+    public themeProvider: ThemeProvider,
+    private settingsService: SettingsService) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
@@ -66,13 +70,21 @@ export class MyApp {
       this.client.getRegistration(true).subscribe((user) => {
         if(user) {
 
-          this.client.getSetting("enableLogging").subscribe(setting => {
+          this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
             if (typeof setting == "undefined" || setting.length == 0) {
               this.logger.enableLogging(true);
             } else {
               this.logger.enableLogging(setting);
             }
           });
+
+          this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)
+            .flatMap(setting => {
+              if (typeof setting == 'undefined' || setting.length == 0) {
+                return this.settingsService.setSetting(settingsKeys.AUTOSAVE_BC_CAPTURES, true);
+              }
+              return Observable.of((setting == 'true'));
+            }).subscribe();
 
           Config.isProd = user.is_production == 1;
           this.nav.setRoot(Main);
@@ -122,7 +134,7 @@ export class MyApp {
 
             this.checkDir("images");
             this.checkDir("audio");
-        })
+          })
       });
     });
 

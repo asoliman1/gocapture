@@ -7,7 +7,6 @@ import { FormElement, Form, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
 
-import { ImageViewer } from "./image-viewer";
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { Platform } from 'ionic-angular/platform/platform';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
@@ -16,6 +15,11 @@ import {Util} from "../../../../util/util";
 
 import {ThemeProvider} from "../../../../providers/theme/theme";
 import {Popup} from "../../../../providers/popup/popup";
+import {PhotoViewer} from "@ionic-native/photo-viewer";
+import {PhotoLibrary} from "@ionic-native/photo-library";
+import {ImageViewer} from "./image-viewer";
+import {SettingsService} from "../../../../services/settings-service";
+import {settingsKeys} from "../../../../constants/constants";
 
 
 declare var screen;
@@ -65,10 +69,13 @@ export class BusinessCard extends BaseElement {
               private platform: Platform,
               private modalCtrl: ModalController,
               private imageProc: ImageProcessor,
-              public file: File,
+              public fileService: File,
               public util: Util,
               private themeProvider: ThemeProvider,
-              private popup: Popup) {
+              private popup: Popup,
+              private photoViewer: PhotoViewer,
+              private photoLibrary: PhotoLibrary,
+              private settingsService: SettingsService) {
     super();
     this.currentVal = {
       front: this.front,
@@ -111,54 +118,26 @@ export class BusinessCard extends BaseElement {
   }
 
   captureImage(type: number) {
-    if(this.readonly){
-      return;
-    }
+    let buttons = [];
     if ((type == this.FRONT && this.currentVal.front != this.front) ||
       (type == this.BACK && this.currentVal.back != this.back)) {
+
+      if(this.readonly) {
+        buttons = this.actionsForReadonlyCards(type);
+      } else {
+        buttons = this.actionsForCards(type);
+      }
+
       let sheet = this.actionCtrl.create({
         title: "",
-        buttons: [
-          {
-            text: 'View Image',
-            handler: () => {
-              this.viewImage(type);
-            }
-          },
-          {
-            text: 'Retake',
-            handler: () => {
-              if (this.platform.is('ios')) {
-                this.doCapture(type, 1);
-              } else {
-                this.startCamera(type);
-              }
-            }
-          },
-          {
-            text: 'Choose from Library',
-            handler: () => {
-              this.doCapture(type, 2);
-            }
-          },
-          {
-            text: 'Remove',
-            role: 'destructive',
-            handler: () => {
-              this.zone.run(() =>{
-                this.setValue(type, type == this.FRONT ? this.front : this.back);
-              });
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel'
-          }
-        ],
+        buttons: buttons,
         cssClass: this.selectedTheme.toString()
       });
       sheet.present();
     } else {
+      if (this.readonly) {
+        return;
+      }
       if (this.platform.is('ios')) {
         this.doCapture(type);
       } else {
@@ -166,6 +145,80 @@ export class BusinessCard extends BaseElement {
         this.startCamera(type)
       }
     }
+  }
+
+  actionsForReadonlyCards(type) {
+    return [
+      {
+        text: 'View Image',
+        handler: () => {
+          this.viewImage(type);
+        }
+      },
+      {
+        text: 'Save to Library',
+        handler: () => {
+          let imageFullPath = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
+
+          let imageName = imageFullPath.split('/').pop();
+          let imagePath = this.imagesFolder() + "/" + imageName;
+
+          this.photoLibrary.requestAuthorization().then(() => {
+            this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
+              this.popup.showAlert('Info', 'Business card was saved to the Photo Library!',[{
+                text: 'Ok',
+                role: 'cancel'
+              }],
+                this.selectedTheme);
+            });
+          });
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel'
+      }
+    ]
+  }
+
+  actionsForCards(type) {
+    return [
+      {
+        text: 'View Image',
+        handler: () => {
+          this.viewImage(type);
+        }
+      },
+      {
+        text: 'Retake',
+        handler: () => {
+          if (this.platform.is('ios')) {
+            this.doCapture(type, 1);
+          } else {
+            this.startCamera(type);
+          }
+        }
+      },
+      {
+        text: 'Choose from Library',
+        handler: () => {
+          this.doCapture(type, 2);
+        }
+      },
+      {
+        text: 'Remove',
+        role: 'destructive',
+        handler: () => {
+          this.zone.run(() =>{
+            this.setValue(type, type == this.FRONT ? this.front : this.back);
+          });
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel'
+      }
+    ]
   }
 
   private doCapture(type: number, captureType: number = 1) {
@@ -196,7 +249,7 @@ export class BusinessCard extends BaseElement {
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.saveData({dataUrl: imageData}, type, shouldRecognize);
+      this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
 
     }, (error) => {
       this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
@@ -208,22 +261,14 @@ export class BusinessCard extends BaseElement {
     }, options);
   }
 
-  private saveData(data, type, shouldRecognize) {
+  private saveData(data, type, shouldRecognize, captureType) {
 
-    let newFolder = this.file.dataDirectory + "leadliaison/images";
+    let newFolder = this.fileService.dataDirectory + "leadliaison/images";
     let newName = new Date().getTime() + '.jpg';
-    let promise = this.file.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
+    let promise = this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
 
     promise.then((entry)=>{
-        this.zone.run(()=>{
-          this.setValue(type, newFolder + "/" + newName);
-          data.dataUrl = newFolder + "/" + newName;
-          this.frontLoading = false;
-          this.backLoading = false;
-          if(shouldRecognize && type == this.FRONT){
-            this.recognizeText(data);
-          }
-        });
+        this.handleImageSaving(type, newFolder, newName, data, shouldRecognize, captureType);
       },
       (err) => {
         console.error(err);
@@ -232,6 +277,39 @@ export class BusinessCard extends BaseElement {
           this.backLoading = false;
         });
       });
+  }
+
+
+  private handleImageSaving(type, folder, name, data, shouldRecognize, captureType) {
+    this.zone.run(() => {
+      this.setValue(type, folder + "/" + name);
+      data.dataUrl = folder + "/" + name;
+      this.frontLoading = false;
+      this.backLoading = false;
+
+      if (captureType == 1) {
+        this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES).subscribe((result) => {
+          if (String(result) == "true") {
+            this.saveImageToGallery(type);
+          }
+        });
+      }
+
+      if (shouldRecognize && type == this.FRONT) {
+        this.recognizeText(data);
+      }
+    });
+  }
+
+  private saveImageToGallery(type) {
+    let imageFullPath = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
+
+    let imageName = imageFullPath.split('/').pop();
+    let imagePath = this.imagesFolder() + "/" + imageName;
+
+    this.photoLibrary.requestAuthorization().then(() => {
+      this.photoLibrary.saveImage(imagePath, 'GoCapture BC');
+    });
   }
 
   recognizeText(info: Info){
@@ -317,7 +395,7 @@ export class BusinessCard extends BaseElement {
     this.imageProc.flip(this.normalizeURL(image)).subscribe( info => {
       let name = image.substr(image.lastIndexOf("/") + 1).replace(/\?.*/, "");
       let folder = image.substr(0, image.lastIndexOf("/"));
-      this.file.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
+      this.fileService.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
         z.run(() => {
           t.setValue(type, folder + "/" + name);
           if (type == this.FRONT) {
@@ -350,8 +428,16 @@ export class BusinessCard extends BaseElement {
   private viewImage(type){
     //const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
     //imageViewer.present();
-    let image = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
-    this.modalCtrl.create(ImageViewer, {image: image}).present();
+    let imageFullPath = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
+
+    let imageName = imageFullPath.split('/').pop();
+    let imagePath = this.imagesFolder() + "/" + imageName;
+
+    if (this.platform.is("windows")) {
+      this.modalCtrl.create(ImageViewer, {image: imagePath}).present();
+    } else {
+      this.photoViewer.show(imagePath);
+    }
   }
 
   private normalizeURL(url: string): string {
@@ -397,15 +483,8 @@ export class BusinessCard extends BaseElement {
           let blob = self.imageProc.dataURItoBlob(data.dataUrl);
           self.file.writeFile(newFolder, newName, blob).then((entry)=>{
               console.log(JSON.stringify(entry));
-              self.zone.run(()=>{
-                self.setValue(type, newFolder + "/" + newName);
-                data.dataUrl = newFolder + "/" + newName;
-                self.frontLoading = false;
-                self.backLoading = false;
-                if(shouldRecognize && type == self.FRONT){
-                  self.recognizeText(data);
-                }
-              });
+
+              self.handleImageSaving(type,newFolder, newName, data, shouldRecognize, 1);
             },
             (err) => {
               console.error(err);
@@ -424,4 +503,9 @@ export class BusinessCard extends BaseElement {
       self.backLoading = false;
     });
   }
+
+  private imagesFolder(): string {
+    return this.fileService.dataDirectory + "leadliaison/images";
+  }
+
 }

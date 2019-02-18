@@ -31,7 +31,7 @@ export class AudioCaptureService {
       let filePath = audioFolder + "/" + this.fileName;
 
       if (this.platform.is("ios")) {
-        filePath = this.adjustFilePath(filePath);
+        filePath = this.utils.adjustFilePath(filePath);
       }
 
       if (this.platform.is("ios")) {
@@ -73,7 +73,7 @@ export class AudioCaptureService {
 
   playRecord(filePath): Observable<MEDIA_STATUS> {
     let fileName = filePath.split('/').pop();
-    this.audioFile = this.media.create(this.adjustFilePath(this.audioFolder() + "/" + fileName ));
+    this.audioFile = this.media.create(this.utils.adjustFilePath(this.audioFolder() + "/" + fileName ));
     this.audioFile.play();
     return this.audioFile.onStatusUpdate;
   }
@@ -116,13 +116,5 @@ export class AudioCaptureService {
 
   private audioFolder(): string {
     return this.fileService.dataDirectory + "leadliaison/audio";
-  }
-
-  private adjustFilePath(filePath) {
-    if (this.platform.is("ios")) {
-
-      return filePath.replace(/^file:\/\//, '');
-    }
-    return filePath;
   }
 }

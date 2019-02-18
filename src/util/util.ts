@@ -198,4 +198,12 @@ export class Util {
         .catch(doMove);
     });
   }
+
+  public adjustFilePath(filePath) {
+    if (this.platform.is("ios")) {
+
+      return filePath.replace(/^file:\/\//, '');
+    }
+    return filePath;
+  }
 }

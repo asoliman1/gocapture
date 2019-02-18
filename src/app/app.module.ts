@@ -42,6 +42,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import {PhotoViewer} from "@ionic-native/photo-viewer";
 
 import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { StatusBar } from "@ionic-native/status-bar";
@@ -60,8 +61,10 @@ import {Ndef, NFC} from "@ionic-native/nfc";
 import {GOCAudio} from "../components/form-view/elements/audio/goc-audio";
 import {AudioCaptureService} from "../services/audio-capture-service";
 import {Media} from "@ionic-native/media";
-import {TimeIntervalPipe} from "../pipes/time-interval-pipe";
 import {StorageProvider} from "../services/storage-provider";
+import {PhotoLibrary} from "@ionic-native/photo-library";
+import {SettingsService} from "../services/settings-service";
+
 
 @NgModule({
   declarations: [
@@ -157,7 +160,10 @@ import {StorageProvider} from "../services/storage-provider";
     LocalStorageProvider,
     AudioCaptureService,
     Media,
-    StorageProvider
+    StorageProvider,
+    PhotoViewer,
+    PhotoLibrary,
+    SettingsService
   ]
 })
 export class AppModule { }

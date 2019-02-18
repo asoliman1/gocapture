@@ -194,3 +194,10 @@ export const Countries = [
   {value:"Zambia", name:"Zambia"},
   {value:"Zimbabwe", name:"Zimbabwe"},
 ];
+
+export const settingsKeys = {
+  AUTOSAVE_BC_CAPTURES : "autosaveBCCaptures",
+  KIOSK_MODE_PASSWORD: "kioskModePassword",
+  ENABLE_LOGGING: "enableLogging",
+  AUTO_UPLOAD: "autoUpload"
+};
