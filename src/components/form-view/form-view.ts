@@ -46,6 +46,7 @@ export class FormView {
   };
 
   constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
+    this.theForm = new FormGroup({});
   }
 
   showSelection(){
@@ -99,9 +100,6 @@ export class FormView {
         setTimeout(()=> {
           this.setupFormGroup();
         }, 1);
-      } else {
-        this.theForm = new FormGroup({});
-        this.displayForm = <any>{};
       }
     } else if (changes['prospect'] && this.prospect) {
       let keys = Object.keys(this.prospect.fields);
@@ -158,8 +156,6 @@ export class FormView {
     }
     let f = this.fb.group({});
 
-    this.updateForm();
-
     this.form.elements.forEach((element) => {
       let identifier = this.elementIdentifier(element);
       let control = this.createFormControl(element, identifier);
@@ -168,6 +164,8 @@ export class FormView {
     });
 
     this.theForm = f;
+
+    this.updateForm();
 
     //console.log(this.form, f);
     this.sub = this.theForm.statusChanges.subscribe(() => {
