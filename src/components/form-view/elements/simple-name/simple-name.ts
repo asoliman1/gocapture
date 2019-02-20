@@ -39,7 +39,7 @@ export class SimpleName extends BaseGroupElement {
 
 	protected config(){
 		super.config();
-		if(this.mapping && this.mapping[0].label == "LastName"){
+		if(this.mapping && this.mapping[0].label == "LastName") {
 			this.mapping.reverse();
 		}
 	}

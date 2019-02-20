@@ -203,11 +203,6 @@ export class RESTClient {
 								    let values = dataItem["value_splitted"];
 								    entry.fields = {...entry.fields, ...values};
                   }
-
-									if (field.type == "simple_name") {
-                    entry.full_name = dataItem.value;
-                  }
-
 									break;
 								case "image":
                 case "business_card":
