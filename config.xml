@@ -158,6 +158,7 @@
         <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value=" " />
     </plugin>
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
+    <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="7.1.4" />
     <engine name="windows" spec="6.0.1" />

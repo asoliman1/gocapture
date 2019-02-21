@@ -22,6 +22,7 @@ import {Colors} from "../constants/colors";
 import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
+import {LocalNotificationsService} from "../services/local-notifications-service";
 
 declare var cordova;
 
@@ -50,7 +51,8 @@ export class MyApp {
     private loading: LoadingController,
     private logger: LogClient,
     public themeProvider: ThemeProvider,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private localNotificationsService: LocalNotificationsService) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
@@ -234,7 +236,6 @@ export class MyApp {
           }
         }
       ];
-
       this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
     }
   }

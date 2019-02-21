@@ -64,6 +64,8 @@ import {Media} from "@ionic-native/media";
 import {StorageProvider} from "../services/storage-provider";
 import {PhotoLibrary} from "@ionic-native/photo-library";
 import {SettingsService} from "../services/settings-service";
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import {LocalNotificationsService} from "../services/local-notifications-service";
 
 
 @NgModule({
@@ -163,7 +165,9 @@ import {SettingsService} from "../services/settings-service";
     StorageProvider,
     PhotoViewer,
     PhotoLibrary,
-    SettingsService
+    SettingsService,
+    LocalNotifications,
+    LocalNotificationsService
   ]
 })
 export class AppModule { }

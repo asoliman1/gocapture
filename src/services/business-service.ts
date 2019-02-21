@@ -14,6 +14,7 @@ import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
 import {StatusResponse} from "../model/protocol/status-response";
 import {FileTransfer} from "@ionic-native/file-transfer";
+import {LocalNotificationsService} from "./local-notifications-service";
 declare var cordova: any;
 
 @Injectable()
@@ -54,7 +55,8 @@ export class BussinessClient {
 				private sync: SyncClient,
 				private push: PushClient,
 				private net: Network,
-				private fileTransfer: FileTransfer) {
+				private fileTransfer: FileTransfer,
+        private localNotificationsService: LocalNotificationsService) {
 
 		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
 		this.network = this.networkSource.asObservable();
@@ -86,6 +88,11 @@ export class BussinessClient {
 
 	public doAutoSync() {
 		console.log('doAutoSync');
+		this.getToSubmitLeads().subscribe(leads => {
+		  if (leads && leads.length > 0) {
+		    this.localNotificationsService.scheduleUnsubmittedLeadsNotification();
+      }
+    });
 		if (this.isOnline()) {
 			this.db.isWorkDbInited() && this.db.getConfig("autoUpload").subscribe((val) => {
 				if (val + "" == "true") {
@@ -295,8 +302,10 @@ export class BussinessClient {
 
 	public saveSubmission(sub: FormSubmission, form: Form): Observable<boolean> {
 		sub.updateFields(form);
+
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.saveSubmission(sub).subscribe((done) => {
+
 				this.doAutoSync();
 				obs.next(done);
 				obs.complete();
@@ -345,6 +354,8 @@ export class BussinessClient {
 
 					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
 						obs.next(true);
+
+						this.localNotificationsService.clearAll();
 						obs.complete();
 					}, (err) => {
 						console.error(err);
@@ -358,6 +369,10 @@ export class BussinessClient {
 			});
 		});
 	}
+
+	getToSubmitLeads() {
+    return this.db.getSubmissionsToSend();
+  }
 
 	public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
     let submissionTime = new Date(submission.sub_date).getTime();
