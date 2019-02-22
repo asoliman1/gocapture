@@ -16,7 +16,8 @@ import {Popup} from "../../providers/popup/popup";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {Observable} from "rxjs";
 import {settingsKeys} from "../../constants/constants";
-//import { OcrSelector } from "../../components/ocr-selector";
+import {NumberPicker} from "../../services/number-picker";
+import {LocalNotificationsService} from "../../services/local-notifications-service";
 declare var screen;
 
 @Component({
@@ -42,16 +43,22 @@ export class Settings {
     public app: App,
     private logger: LogClient,
     private popup: Popup,
-    private themeProvider: ThemeProvider) {
+    private themeProvider: ThemeProvider,
+    private numberPicker: NumberPicker) {
 		this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+    this.settings.remindAboutUnsubmittedLeads = {};
 	}
 
 	ionViewWillEnter() {
-		this.db.getAllConfig().subscribe(settings => {
-			this.settings = settings;
+		this.setConfig();
+	}
+
+	setConfig() {
+    this.db.getAllConfig().subscribe(settings => {
+      this.settings = settings;
 
       if (typeof settings[settingsKeys.ENABLE_LOGGING] == "undefined") {
         this.settings.enableLogging = true;
@@ -61,12 +68,16 @@ export class Settings {
         this.settings.autosaveBCCaptures = true;
       }
 
-			this.db.getRegistration().subscribe(user => {
-				this.user = user;
-				this.shouldSave = false;
-			});
-		});
-	}
+      if (typeof settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] == "undefined") {
+        this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
+      }
+
+      this.db.getRegistration().subscribe(user => {
+        this.user = user;
+        this.shouldSave = false;
+      });
+    });
+  }
 
 	getName(user: User) {
 		let name = "";
@@ -96,22 +107,58 @@ export class Settings {
 		},1)
 	}
 
+  onUnsubmittedLeadsReminderChange() {
+	  if (this.settings.remindAboutUnsubmittedLeads.remind) {
+
+	    let hours = [];
+	    for (let i = 1; i < 24; i++ ) {
+	      hours.push({value: i, label: i + ' h'});
+      }
+
+	    this.numberPicker.show('Remind me about leads', hours, 'label').then(result => {
+	      let selectedOption = result[0];
+	      let selectedIndex = parseInt(selectedOption.index);
+	      this.settings.remindAboutUnsubmittedLeads.interval = hours[selectedIndex].value;
+        this.saveSettings().then(result => {
+          this.client.scheduleUnsubmittedLeadsNotification();
+        });
+      }, error => {
+	      this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
+        this.saveSettings().then(result => {
+          this.client.clearUnsubmittedLeadsNotification();
+        });
+      });
+    } else {
+      this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
+      this.saveSettings().then(result => {
+        this.client.clearUnsubmittedLeadsNotification();
+      });
+
+    }
+  }
+
+
   onChangeEnableLogging() {
 	  this.logger.enableLogging(this.settings.enableLogging);
 	  this.onChange();
   }
 
-	saveSettings() {
+	async saveSettings() {
 
-	  let autoUpload = this.db.saveConfig(settingsKeys.AUTO_UPLOAD, this.settings.autoUpload);
-    let enableLogging = this.db.saveConfig(settingsKeys.ENABLE_LOGGING, this.settings.enableLogging);
-    let kioskModePassword = this.db.saveConfig(settingsKeys.KIOSK_MODE_PASSWORD, this.settings.kioskModePassword);
-    let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
+	  return new Promise((resolve, reject) => {
+      let autoUpload = this.db.saveConfig(settingsKeys.AUTO_UPLOAD, this.settings.autoUpload);
+      let enableLogging = this.db.saveConfig(settingsKeys.ENABLE_LOGGING, this.settings.enableLogging);
+      let kioskModePassword = this.db.saveConfig(settingsKeys.KIOSK_MODE_PASSWORD, this.settings.kioskModePassword);
+      let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
+      let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, this.settings.remindAboutUnsubmittedLeads);
 
-    Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures).subscribe(() => {
-      this.shouldSave = false;
+      Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads).subscribe(() => {
+        this.shouldSave = false;
+        resolve(true);
+      }, error => {
+        reject(error);
+      });
     });
-
 	}
 
 	sync() {

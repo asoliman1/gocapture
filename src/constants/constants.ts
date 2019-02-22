@@ -199,5 +199,6 @@ export const settingsKeys = {
   AUTOSAVE_BC_CAPTURES : "autosaveBCCaptures",
   KIOSK_MODE_PASSWORD: "kioskModePassword",
   ENABLE_LOGGING: "enableLogging",
-  AUTO_UPLOAD: "autoUpload"
+  AUTO_UPLOAD: "autoUpload",
+  REMIND_ABOUT_UNSUBMITTED_LEADS: "remindAboutUnsubmittedLeads",
 };

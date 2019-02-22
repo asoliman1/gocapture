@@ -88,11 +88,7 @@ export class BussinessClient {
 
 	public doAutoSync() {
 		console.log('doAutoSync');
-		this.getToSubmitLeads().subscribe(leads => {
-		  if (leads && leads.length > 0) {
-		    this.localNotificationsService.scheduleUnsubmittedLeadsNotification();
-      }
-    });
+
 		if (this.isOnline()) {
 			this.db.isWorkDbInited() && this.db.getConfig("autoUpload").subscribe((val) => {
 				if (val + "" == "true") {
@@ -105,6 +101,18 @@ export class BussinessClient {
 			});
 		}
 	}
+
+	public scheduleUnsubmittedLeadsNotification() {
+    this.getToSubmitLeads().subscribe(leads => {
+      if (leads && leads.length > 0) {
+        this.localNotificationsService.scheduleUnsubmittedLeadsNotification();
+      }
+    });
+  }
+
+  public clearUnsubmittedLeadsNotification() {
+	  this.localNotificationsService.clearAll();
+  }
 
 	public setupNotifications() {
 		if (!this.setup) {

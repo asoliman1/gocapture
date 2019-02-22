@@ -66,6 +66,8 @@ import {PhotoLibrary} from "@ionic-native/photo-library";
 import {SettingsService} from "../services/settings-service";
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import {LocalNotificationsService} from "../services/local-notifications-service";
+import {WheelSelector} from "@ionic-native/wheel-selector";
+import {NumberPicker} from "../services/number-picker";
 
 
 @NgModule({
@@ -167,7 +169,9 @@ import {LocalNotificationsService} from "../services/local-notifications-service
     PhotoLibrary,
     SettingsService,
     LocalNotifications,
-    LocalNotificationsService
+    LocalNotificationsService,
+    WheelSelector,
+    NumberPicker
   ]
 })
 export class AppModule { }

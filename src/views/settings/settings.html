@@ -40,6 +40,10 @@
       <ion-label>Automatically save all BC captures</ion-label>
       <ion-toggle  [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()" checked="settings.autosaveBCCaptures"></ion-toggle>
     </ion-item>
+    <ion-item class="last">
+      <ion-label>Remind me about Unsubmitted leads</ion-label>
+      <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
+    </ion-item>
 		<ion-list-header>
 			Kiosk Mode
 		</ion-list-header>
