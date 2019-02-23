@@ -59,6 +59,7 @@ export class Settings {
 	setConfig() {
     this.db.getAllConfig().subscribe(settings => {
       this.settings = settings;
+      this.settings.remindAboutUnsubmittedLeads = JSON.parse(settings['remindAboutUnsubmittedLeads']);
 
       if (typeof settings[settingsKeys.ENABLE_LOGGING] == "undefined") {
         this.settings.enableLogging = true;
@@ -125,13 +126,13 @@ export class Settings {
       }, error => {
 	      this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
         this.saveSettings().then(result => {
-          this.client.clearUnsubmittedLeadsNotification();
+          this.client.cancelUnsubmittedLeadsNotification();
         });
       });
     } else {
       this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
       this.saveSettings().then(result => {
-        this.client.clearUnsubmittedLeadsNotification();
+        this.client.cancelUnsubmittedLeadsNotification();
       });
 
     }
@@ -150,7 +151,7 @@ export class Settings {
       let enableLogging = this.db.saveConfig(settingsKeys.ENABLE_LOGGING, this.settings.enableLogging);
       let kioskModePassword = this.db.saveConfig(settingsKeys.KIOSK_MODE_PASSWORD, this.settings.kioskModePassword);
       let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
-      let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, this.settings.remindAboutUnsubmittedLeads);
+      let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, JSON.stringify(this.settings.remindAboutUnsubmittedLeads));
 
       Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads).subscribe(() => {
         this.shouldSave = false;

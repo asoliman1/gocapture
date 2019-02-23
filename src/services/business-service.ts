@@ -110,8 +110,8 @@ export class BussinessClient {
     });
   }
 
-  public clearUnsubmittedLeadsNotification() {
-	  this.localNotificationsService.clearAll();
+  public cancelUnsubmittedLeadsNotification() {
+	  this.localNotificationsService.cancelAll();
   }
 
 	public setupNotifications() {
@@ -363,7 +363,7 @@ export class BussinessClient {
 					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
 						obs.next(true);
 
-						this.localNotificationsService.clearAll();
+						this.localNotificationsService.cancelAll();
 						obs.complete();
 					}, (err) => {
 						console.error(err);

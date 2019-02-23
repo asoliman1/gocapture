@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {ILocalNotification, LocalNotifications} from "@ionic-native/local-notifications";
+import {ELocalNotificationTriggerUnit, ILocalNotification, LocalNotifications} from "@ionic-native/local-notifications";
 import {ISubscription} from "rxjs/Subscription";
 import {Settings} from "../views/settings";
 import {SettingsService} from "./settings-service";
@@ -14,8 +14,8 @@ export class LocalNotificationsService {
 	  this.checkPermissions();
 	}
 
-	clearAll () {
-	  this.localNotifications.clearAll();
+	cancelAll () {
+	  this.localNotifications.cancelAll();
   }
 
   async scheduleUnsubmittedLeadsNotification() {
@@ -26,14 +26,15 @@ export class LocalNotificationsService {
     }
 
 	  this.settingsService.getSetting(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS).subscribe(result => {
-	    if (result && result['remind']) {
+	    let remindObj = JSON.parse(result);
+	    if (remindObj && remindObj['remind']) {
         this.localNotifications.clearAll().then(result => {
 
           let options: ILocalNotification = {
             id: 1,
             text: 'You have leads that have not been submitted. Please open the GoCapture! app and submit them.',
             launch: false,
-            trigger: {every: {minute: result["interval"]}},
+            trigger: { every: ELocalNotificationTriggerUnit.HOUR, count: remindObj['interval'] },
             priority: 2,
             foreground: false
           };
