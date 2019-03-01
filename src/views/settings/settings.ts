@@ -45,7 +45,8 @@ export class Settings {
     private popup: Popup,
     private themeProvider: ThemeProvider,
     private numberPicker: NumberPicker) {
-		this.appVersion.getVersionNumber().then((version) => {
+
+	  this.appVersion.getVersionNumber().then((version) => {
 			this.version = version;
 		});
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -58,8 +59,14 @@ export class Settings {
 
 	setConfig() {
     this.db.getAllConfig().subscribe(settings => {
+
+      if (! settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS]) {
+        settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] = {remind: false, interval: 0};
+      } else {
+        settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] = JSON.parse(settings['remindAboutUnsubmittedLeads']);
+      }
+
       this.settings = settings;
-      this.settings.remindAboutUnsubmittedLeads = JSON.parse(settings['remindAboutUnsubmittedLeads']);
 
       if (typeof settings[settingsKeys.ENABLE_LOGGING] == "undefined") {
         this.settings.enableLogging = true;
@@ -69,9 +76,7 @@ export class Settings {
         this.settings.autosaveBCCaptures = true;
       }
 
-      if (typeof settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] == "undefined") {
-        this.settings.remindAboutUnsubmittedLeads = {remind: false, interval: 0};
-      }
+
 
       this.db.getRegistration().subscribe(user => {
         this.user = user;

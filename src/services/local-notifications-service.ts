@@ -28,13 +28,13 @@ export class LocalNotificationsService {
 	  this.settingsService.getSetting(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS).subscribe(result => {
 	    let remindObj = JSON.parse(result);
 	    if (remindObj && remindObj['remind']) {
-        this.localNotifications.clearAll().then(result => {
+        this.localNotifications.cancelAll().then(result => {
 
           let options: ILocalNotification = {
             id: 1,
             text: 'You have leads that have not been submitted. Please open the GoCapture! app and submit them.',
-            launch: false,
-            trigger: { every: ELocalNotificationTriggerUnit.HOUR, count: remindObj['interval'] },
+            launch: true,
+            trigger: {unit: ELocalNotificationTriggerUnit.HOUR, every: remindObj['interval']},
             priority: 2,
             foreground: false
           };
