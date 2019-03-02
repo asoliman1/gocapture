@@ -118,6 +118,12 @@ export class Badge extends BaseElement implements OnInit {
   private fillElementsWithFetchedData(data) {
     let vals = {};
     for (let id in this.formGroup.controls) {
+      //skip not visible element
+      let element = this.form.getFieldByIdentifier(id);
+      if (!element.isMatchingRules) {
+        continue;
+      }
+
       if (this.formGroup.controls[id]["controls"]) {
         vals[id] = {};
         for (let subid in this.formGroup.controls[id]["controls"]) {
@@ -127,13 +133,21 @@ export class Badge extends BaseElement implements OnInit {
         vals[id] = this.formGroup.controls[id].value;
       }
     }
+
     data.forEach(entry => {
       let id = this.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
       if (!id) {
         return;
       }
+
       let match = /(\w+\_\d+)\_\d+/g.exec(id);
       let ctrl: AbstractControl = null;
+      let elementId = match && match.length > 0 ? match[1] : id;
+      let element = this.form.getFieldByIdentifier(elementId);
+      if (!element.isMatchingRules) {
+        return;
+      }
+
       if (match && match.length > 0) {
         if (!vals[match[1]]) {
           vals[match[1]] = {};

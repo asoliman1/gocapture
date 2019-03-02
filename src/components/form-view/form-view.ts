@@ -383,21 +383,38 @@ export class FormView {
 
   resetField(element) {
     let identifier = this.elementIdentifier(element);
-    let value = this.getDefaultValue(element);
+
     let control = this.theForm && this.theForm.controls[identifier];
     if (!control) {
       return;
     }
-    this.theForm.controls[identifier].patchValue(value, {
+
+    let value = this.getDefaultValue(element);
+
+    let formGroupElement = this.theForm.controls[identifier];
+    let subElements = element["sub_elements"];
+
+    if (subElements && subElements.length > 0) {
+      subElements.forEach(subElement => {
+        let subElementId = identifier + "_" + subElement.sub_element_id;
+        let formGroupSubElement = formGroupElement["controls"][subElementId];
+        this.resetFormGroupElement(formGroupSubElement, value);
+        this.theForm.value[identifier][subElementId] = value;
+      });
+    } else {
+      this.resetFormGroupElement(formGroupElement, value);
+      this.theForm.value[identifier] = value;
+      element.value = value;
+    }
+  }
+
+  resetFormGroupElement(element, value) {
+    element.patchValue(value, {
       onlySelf: true,
       emitEvent: false,
       emitModelToViewChange: false,
       emitViewToModelChange: false,
     });
-
-    element.value = value;
-
-    this.theForm.value[identifier] = value;
   }
 
   private elementIdentifier(element) {
