@@ -154,8 +154,7 @@
     },
     "platforms": [
       "ios",
-      "android",
-      "windows"
+      "android"
     ]
   },
   "config": {
