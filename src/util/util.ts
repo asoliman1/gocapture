@@ -1,5 +1,4 @@
 import { Platform } from "ionic-angular/platform/platform";
-import { normalizeURL } from 'ionic-angular/util/util';
 import {Injectable} from "@angular/core";
 import { File } from '@ionic-native/file';
 import {Observable, Observer} from "rxjs";
@@ -25,6 +24,8 @@ export class Util {
     "[object Error]" : "error",
     "[object Symbol]" : "symbol"
   };
+
+  private win: any = window;
 
   //private static toString : Function = Util.class2type.toString;
   private static hasOwn : Function = Util.class2type.hasOwnProperty;
@@ -158,7 +159,7 @@ export class Util {
   }
 
   public normalizeURL(url: string): string{
-    return this.platform.is('ios') ? normalizeURL(url) : url;
+    return this.platform.is('ios') ? this.win.Ionic.WebView.convertFileSrc(url) : url;
   }
 
   public imageUrl(path) {

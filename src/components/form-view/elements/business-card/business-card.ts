@@ -166,9 +166,9 @@ export class BusinessCard extends BaseElement {
           this.photoLibrary.requestAuthorization().then(() => {
             this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
               this.popup.showAlert('Info', 'Business card was saved to the Photo Library!',[{
-                text: 'Ok',
-                role: 'cancel'
-              }],
+                  text: 'Ok',
+                  role: 'cancel'
+                }],
                 this.selectedTheme);
             });
           });
@@ -228,8 +228,8 @@ export class BusinessCard extends BaseElement {
       correctOrientation: true,
       saveToPhotoAlbum: false,
       encodingType: this.camera.EncodingType.JPEG,
-      targetWidth: 2000,
-      targetHeight:2000,
+      targetWidth: 1000,
+      targetHeight:1000,
       destinationType: this.destinationType(),
       shouldDisplayOverlay: true,
       previewPositionX: 12,
@@ -244,6 +244,8 @@ export class BusinessCard extends BaseElement {
     this.backLoading = type != this.FRONT;
 
     (<any>navigator).camera.getPicture((imageData) => {
+
+      console.log('Picture was taken');
 
       imageData = 'data:image/jpg;base64,' + imageData;
 
@@ -268,6 +270,7 @@ export class BusinessCard extends BaseElement {
     let promise = this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
 
     promise.then((entry)=>{
+        console.log('Image was saved with success');
         this.handleImageSaving(type, newFolder, newName, data, shouldRecognize, captureType);
       },
       (err) => {

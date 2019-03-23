@@ -260,7 +260,7 @@ export class SyncClient {
           }
           val.forEach((url) => {
             if (url) {
-              urlMap[url] = "";
+              urlMap[url] = url;
               hasUrls = true;
             }
           });
@@ -275,16 +275,29 @@ export class SyncClient {
     return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
       let submission = data.submissions[index];
       let urlMap: { [key: string]: string } = {};
-      let hasUrls = this.buildUrlMap(submission, data.urlFields, urlMap);
+      this.buildUrlMap(submission, data.urlFields, urlMap);
+
+      let uploadUrlMap = {};
+      Object.keys(urlMap).forEach((key) => {
+        if (key.startsWith("file://") || key.startsWith("data:image")) {
+          uploadUrlMap[key] = urlMap[key];
+        }
+      });
+
+      let hasUrls = Object.keys(uploadUrlMap).length > 0;
 
       //update status to submitting
       submission.status = SubmissionStatus.Submitting;
       submission.last_sync_date = new Date().toISOString();
       this.db.updateSubmissionStatus(submission).subscribe();
 
-      this.uploadData(urlMap, hasUrls).subscribe((uploadedData) => {
+      this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
 
-        this.updateUrlMapWithData(urlMap, uploadedData);
+        this.updateUrlMapWithData(uploadUrlMap, uploadedData);
+
+        Object.keys(uploadUrlMap).forEach((key) => {
+          urlMap[key] = uploadUrlMap[key];
+        });
 
         this.updateSubmissionFields(submission, data, urlMap);
 
@@ -315,7 +328,9 @@ export class SyncClient {
     urls.forEach((url, index) => {
       if (data) {
         let dataFile = data[index];
-        urlMap[url] = dataFile[0]['url'];
+        if (dataFile && dataFile.length > 0) {
+          urlMap[url] = dataFile[0]['url'];
+        }
       } else {
         urlMap[url] = url;
       }
@@ -468,16 +483,6 @@ export class SyncClient {
           })
         } else {
 
-          if (this.isData(urls, index)) {
-            let data = urls[index];
-            let entry = this.createFile(data, "sig" + new Date().getTime(), 0);
-            request.files.push(entry);
-            filesUploader.push(this.rest.uploadFiles(request));
-            index++;
-            handler();
-            return;
-          }
-
           let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
 
@@ -508,10 +513,6 @@ export class SyncClient {
       };
       handler();
     });
-  }
-
-  private isData(urls, index: number) {
-    return this.dataUrlRegexp.test(urls[index]);
   }
 
   private createFile(data, name, size) {

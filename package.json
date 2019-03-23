@@ -68,7 +68,7 @@
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-gocapture-ocr": "file:cordova-plugin-gocapture-ocr",
     "cordova-plugin-ionic-keyboard": "^2.1.2",
-    "cordova-plugin-ionic-webview": "^1.2.1",
+    "cordova-plugin-ionic-webview": "2.3.1",
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-media": "^5.0.2",
     "cordova-plugin-network-information": "^2.0.1",
@@ -125,7 +125,6 @@
       "cordova-support-google-services": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-file": {},
-      "cordova-plugin-ionic-webview": {},
       "es6-promise-plugin": {},
       "cordova-clipboard": {},
       "cordova-fabric-plugin": {
@@ -150,7 +149,10 @@
       },
       "com-sarriaroman-photoviewer": {},
       "cordova-plugin-local-notification": {},
-      "cordova-wheel-selector-plugin": {}
+      "cordova-wheel-selector-plugin": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      }
     },
     "platforms": [
       "ios",

@@ -7,6 +7,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import { File } from '@ionic-native/file';
 import {Util} from "../../../../util/util";
+import {ImageProcessor} from "../../../../services/image-processor";
 
 declare var screen;
 
@@ -23,7 +24,12 @@ export class Signature extends BaseElement{
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
 
-	constructor(private modalCtrl: ModalController, private screen: ScreenOrientation, public file: File, public util: Util) {
+	constructor(private modalCtrl: ModalController,
+              private screen: ScreenOrientation,
+              public file: File,
+              public util: Util,
+              private fileService: File,
+              private imageProc: ImageProcessor) {
 		super();
 	}
 
@@ -37,18 +43,34 @@ export class Signature extends BaseElement{
     return this.util.normalizeURL(url);
   }
 
-	show(){
-		if(this.readonly){
+	show() {
+		if(this.readonly) {
 			return;
 		}
 		let modal = this.modalCtrl.create(SignatureModal);
-		modal.onDidDismiss((sigStr) => {
+		modal.onDidDismiss(async (sigStr) => {
 			this.screen.unlock();
-			if(sigStr){
-				this.onChange(sigStr);
+
+			if (sigStr) {
+			  try {
+          let entry =  await this.saveData(sigStr);
+          console.log("Signature was saved with success");
+          this.onChange(entry.nativeURL);
+        } catch (e) {
+          console.error(e);
+        }
 			}
 		});
 		modal.present();
 		this.screen.lock(this.screen.ORIENTATIONS.LANDSCAPE);
 	}
+
+
+  private saveData(data) {
+
+    let newFolder = this.fileService.dataDirectory + "leadliaison/images";
+
+    let newName = "sig" + new Date().getTime() + '.jpg';
+    return this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data));
+  }
 }
