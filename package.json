@@ -137,9 +137,6 @@
       },
       "cordova-plugin-advanced-http": {},
       "cordova-plugin-camera": {},
-      "cordova-plugin-camera-preview": {
-        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
-      },
       "cordova-plugin-media": {},
       "phonegap-nfc": {
         "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
@@ -152,6 +149,9 @@
       "cordova-wheel-selector-plugin": {},
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-camera-preview": {
+        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
       }
     },
     "platforms": [

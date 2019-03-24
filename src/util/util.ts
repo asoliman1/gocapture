@@ -159,7 +159,7 @@ export class Util {
   }
 
   public normalizeURL(url: string): string{
-    return this.platform.is('ios') ? this.win.Ionic.WebView.convertFileSrc(url) : url;
+    return this.win.Ionic.WebView.convertFileSrc(url);
   }
 
   public imageUrl(path) {

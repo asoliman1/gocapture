@@ -706,7 +706,7 @@ export class SyncClient {
         obs.complete();
         return;
       }
-      var urls = Object.keys(urlMap);
+      var urls = Object.keys(urlMap).filter((url) => {return url.startsWith("https://")});
       let index = 0;
       let handler = () => {
         if (index == urls.length) {
