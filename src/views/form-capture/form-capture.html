@@ -8,11 +8,11 @@
 				Submit
 			</button>
 
-      <button ion-button *ngIf="isReadOnly(submission) && !isEditing" (click)="doEdit()">
+      <button ion-button *ngIf="isAllowedToEdit(submission) && !isEditing" (click)="doEdit()">
         Edit
       </button>
 
-      <button ion-button *ngIf="isReadOnly(submission) && isEditing" (click)="doSave()">
+      <button ion-button *ngIf="isAllowedToEdit(submission) && isEditing" (click)="doSave()">
         Update
       </button>
 

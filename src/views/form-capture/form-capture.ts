@@ -110,6 +110,12 @@ export class FormCapture {
       submission.status == SubmissionStatus.Submitting)
   }
 
+  isAllowedToEdit(submission: FormSubmission): boolean {
+    return submission &&
+      (submission.status == SubmissionStatus.Submitted ||
+        submission.status == SubmissionStatus.Submitting)
+  }
+
   ionViewDidEnter() {
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
