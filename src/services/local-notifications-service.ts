@@ -3,13 +3,16 @@ import {ELocalNotificationTriggerUnit, ILocalNotification, LocalNotifications} f
 import {ISubscription} from "rxjs/Subscription";
 import {SettingsService} from "./settings-service";
 import {settingsKeys} from "../constants/constants";
+import {Platform} from "ionic-angular";
 
 @Injectable()
 export class LocalNotificationsService {
 
   actionSub: ISubscription;
 
-	constructor(private localNotifications: LocalNotifications, private settingsService: SettingsService) {
+	constructor(private localNotifications: LocalNotifications,
+              private settingsService: SettingsService,
+              private platform: Platform) {
 	  this.checkPermissions();
 	}
 
@@ -32,10 +35,15 @@ export class LocalNotificationsService {
             id: 1,
             text: 'You have leads that have not been submitted. Please open the GoCapture! app and submit them.',
             launch: true,
-            trigger: {every: ELocalNotificationTriggerUnit.HOUR, count:  remindObj['interval']},
             priority: 2,
             foreground: false
           };
+          //IOS doesn't support count for the "every" trigger
+          if (this.platform.is("ios")) {
+            options["trigger"] = {in: remindObj['interval'], unit: ELocalNotificationTriggerUnit.HOUR};
+          } else {
+            options["trigger"] = {every: ELocalNotificationTriggerUnit.HOUR, count:  remindObj['interval']};
+          }
 
           this.localNotifications.schedule(options);
 

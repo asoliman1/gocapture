@@ -27,4 +27,12 @@ export class DynamicFormElementComponent {
     return !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
 
+  setHour(event) {
+
+  }
+
+  setDate(event) {
+    //console.log(event);
+  }
+
 }

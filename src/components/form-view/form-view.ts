@@ -257,14 +257,6 @@ export class FormView {
 
   }
 
-  setHour(event) {
-
-  }
-
-  setDate(event) {
-    //console.log(event);
-  }
-
   //MARK: Private
 
   private composeErrorMessage() {
