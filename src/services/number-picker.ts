@@ -10,11 +10,12 @@ export class NumberPicker {
     //
   }
 
-  show(title, options: any[], key) {
+  show(title, options: any[], defaultOptions: any[], key) {
 
    return this.selector.show({
       title: title,
       items: [options],
+      defaultItems: defaultOptions,
       displayKey: key
    })
   }

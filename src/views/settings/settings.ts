@@ -121,7 +121,9 @@ export class Settings {
 	      hours.push({value: i, label: i + ' h'});
       }
 
-	    this.numberPicker.show('Remind me about leads', hours, 'label').then(result => {
+      let selectedIndex = 1;
+
+	    this.numberPicker.show('Remind me about leads', hours, [{index: 0, value:  hours[selectedIndex]["label"]}], 'label').then(result => {
 	      let selectedOption = result[0];
 	      let selectedIndex = parseInt(selectedOption.index);
 	      this.settings.remindAboutUnsubmittedLeads.interval = hours[selectedIndex].value;

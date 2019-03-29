@@ -1,7 +1,6 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from "@angular/core";
 import {ELocalNotificationTriggerUnit, ILocalNotification, LocalNotifications} from "@ionic-native/local-notifications";
 import {ISubscription} from "rxjs/Subscription";
-import {Settings} from "../views/settings";
 import {SettingsService} from "./settings-service";
 import {settingsKeys} from "../constants/constants";
 
@@ -29,12 +28,11 @@ export class LocalNotificationsService {
 	    let remindObj = JSON.parse(result);
 	    if (remindObj && remindObj['remind']) {
         this.localNotifications.cancelAll().then(result => {
-
           let options: ILocalNotification = {
             id: 1,
             text: 'You have leads that have not been submitted. Please open the GoCapture! app and submit them.',
             launch: true,
-            trigger: {unit: ELocalNotificationTriggerUnit.HOUR, every: remindObj['interval']},
+            trigger: {every: ELocalNotificationTriggerUnit.HOUR, count:  remindObj['interval']},
             priority: 2,
             foreground: false
           };

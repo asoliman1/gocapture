@@ -94,8 +94,11 @@ export class BussinessClient {
 				if (val + "" == "true") {
 					this.doSync().subscribe(() => {
 						console.log("Sync up done");
+						this.scheduleUnsubmittedLeadsNotification();
 					});
-				}
+				} else {
+          this.scheduleUnsubmittedLeadsNotification();
+        }
 			}, err => {
 
 			});
