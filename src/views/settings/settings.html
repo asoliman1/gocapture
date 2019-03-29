@@ -42,7 +42,7 @@
     </ion-item>
     <ion-item class="last">
       <ion-label>Remind about Unsubmitted leads<br>
-        <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">Every {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
+        <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
     </ion-item>

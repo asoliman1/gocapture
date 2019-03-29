@@ -10,7 +10,7 @@ dynamic-form-element, .dynamic-form-element {
   }
   width: 100%;
 
-  ion-label{
+  ion-label {
     font-size: 1em !important;
     color: black !important;
   }
@@ -19,6 +19,9 @@ dynamic-form-element, .dynamic-form-element {
     padding: 20px 0 !important;
   }
 
+  .element-name {
+    font-weight: 600;
+  }
 
   .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
   .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,

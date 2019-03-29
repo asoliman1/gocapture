@@ -38,12 +38,8 @@ export class LocalNotificationsService {
             priority: 2,
             foreground: false
           };
-          //IOS doesn't support count for the "every" trigger
-          if (this.platform.is("ios")) {
-            options["trigger"] = {in: remindObj['interval'], unit: ELocalNotificationTriggerUnit.HOUR};
-          } else {
-            options["trigger"] = {every: ELocalNotificationTriggerUnit.HOUR, count:  remindObj['interval']};
-          }
+
+          options["trigger"] = {in: remindObj['interval'], unit: ELocalNotificationTriggerUnit.HOUR};
 
           this.localNotifications.schedule(options);
 
