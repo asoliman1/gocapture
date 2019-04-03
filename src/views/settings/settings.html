@@ -37,11 +37,11 @@
 			<ion-toggle  [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
     <ion-item class="last">
-      <ion-label>Automatically save all BC captures</ion-label>
+      <ion-label>Save business cards on device</ion-label>
       <ion-toggle  [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()" checked="settings.autosaveBCCaptures"></ion-toggle>
     </ion-item>
     <ion-item class="last">
-      <ion-label>Remind about Unsubmitted leads<br>
+      <ion-label>Reminder for unsubmitted leads<br>
         <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
