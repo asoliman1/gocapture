@@ -19,7 +19,7 @@ export class FormSubmission{
 	fields : {[key: string]: string | string[]} = {};
 	sub_date: string;
   last_sync_date: string;
-  hidden_elements: number[];
+  hidden_elements: string[];
 
 	barcode_processed: BarcodeStatus = 0;
 

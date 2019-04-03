@@ -414,11 +414,20 @@ export class FormCapture {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
-  private getHiddenElementsPerVisibilityRules(): number[] {
-    return this.form.elements.filter(element => {
+  private getHiddenElementsPerVisibilityRules(): string[] {
+    let hiddenElements = this.form.elements.filter(element => {
       return element["visible_conditions"] && !element.isMatchingRules;
-    }).map(hiddenElement => {
-      return hiddenElement.id;
     });
+
+    let elementsIds = [];
+    for (let element of hiddenElements) {
+      let subElements = element["sub_elements"];
+      if (subElements && subElements.length > 0) {
+        elementsIds = elementsIds.concat(subElements.map((subElement) => `element_${element["id"]}_${subElement["sub_element_id"]}`));
+      } else {
+        elementsIds = elementsIds.concat(`element_${element["id"]}`);
+      }
+    }
+    return elementsIds;
   }
 }
