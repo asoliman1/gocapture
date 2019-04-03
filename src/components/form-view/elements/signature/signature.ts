@@ -23,6 +23,7 @@ export class Signature extends BaseElement{
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
+  @Input() isEditing: boolean = false;
 
 	constructor(private modalCtrl: ModalController,
               private screen: ScreenOrientation,
@@ -44,9 +45,10 @@ export class Signature extends BaseElement{
   }
 
 	show() {
-		if(this.readonly) {
+		if (this.readonly || (this.currentVal && this.isEditing)) {
 			return;
 		}
+
 		let modal = this.modalCtrl.create(SignatureModal);
 		modal.onDidDismiss(async (sigStr) => {
 			this.screen.unlock();

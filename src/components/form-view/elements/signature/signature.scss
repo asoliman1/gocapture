@@ -11,7 +11,7 @@ signature, .signature{
 	font-size: 2.5em;
 }
 
-.signature img{
+.signature img {
 	height: 100%;
 	width: auto;
 	position: absolute;
@@ -19,6 +19,8 @@ signature, .signature{
 	left: 0;
 	bottom: 0
 }
+
+.invert { filter: invert(80%); }
 
 .signature-modal .scroll-content{
 	padding: 16px;

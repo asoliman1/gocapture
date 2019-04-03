@@ -130,7 +130,7 @@
     <!--SIGNATURE-->
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <signature [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+      <signature [readonly]="readOnly" [isEditing]="isEditing" item-content [element]="element" [formGroup]="theForm"
                  [formControlName]="element.identifier">
       </signature>
     </ion-item>

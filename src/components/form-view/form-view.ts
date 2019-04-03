@@ -20,6 +20,7 @@ export class FormView {
   @Output() onValidationChange = new EventEmitter();
 
   @Input() readOnly: boolean = false;
+  @Input() isEditing: boolean = false;
 
   @Input() submitAttempt: boolean = false;
 

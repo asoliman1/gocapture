@@ -51,6 +51,7 @@
 						[submission]="submission"
 						(onValidationChange)="onValidationChange($event)"
 						[readOnly]="isReadOnly(submission) && !isEditing"
+            [isEditing]="isEditing"
             [submitAttempt]="submitAttempt"></form-view>
     </ion-row>
 	</ion-grid>
