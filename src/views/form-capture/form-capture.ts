@@ -421,12 +421,7 @@ export class FormCapture {
 
     let elementsIds = [];
     for (let element of hiddenElements) {
-      let subElements = element["sub_elements"];
-      if (subElements && subElements.length > 0) {
-        elementsIds = elementsIds.concat(subElements.map((subElement) => `element_${element["id"]}_${subElement["sub_element_id"]}`));
-      } else {
-        elementsIds = elementsIds.concat(`element_${element["id"]}`);
-      }
+      elementsIds = elementsIds.concat(`element_${element["id"]}`);
     }
     return elementsIds;
   }
