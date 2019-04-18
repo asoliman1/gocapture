@@ -284,11 +284,12 @@ export class FormCapture {
       }
     }
 
-    if (noTranscriptable && !this.valid && !this.submission.id) {
+    if (noTranscriptable && !this.valid) {
       this.errorMessage = this.formView.getError();
       this.content.resize();
       return;
     }
+
     this.submission.fields = this.formView.getValues();
 
     if (!this.submission.id) {
@@ -321,8 +322,8 @@ export class FormCapture {
       } else{
         this.navCtrl.pop();
       }
-    }, err => {
-
+    }, (err) => {
+      console.error(err);
     });
   }
 

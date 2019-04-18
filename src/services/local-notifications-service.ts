@@ -24,7 +24,7 @@ export class LocalNotificationsService {
 	  let hasPermission = await this.localNotifications.hasPermission();
 
 	  if (!hasPermission) {
-	    return
+	    return;
     }
 
 	  this.settingsService.getSetting(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS).subscribe(result => {
@@ -43,13 +43,13 @@ export class LocalNotificationsService {
 
           this.localNotifications.schedule(options);
 
-          if (this.actionSub) {
-            this.actionSub.unsubscribe();
-          }
-
-          this.actionSub = this.localNotifications.on('click').subscribe((success) => {
-            //
-          });
+          // if (this.actionSub) {
+          //   this.actionSub.unsubscribe();
+          // }
+          //
+          // this.actionSub = this.localNotifications.on('click').subscribe((success) => {
+          //   //
+          // });
         });
       }
     });

@@ -393,21 +393,23 @@ export class RESTClient {
 	 *
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<{id:number,message:string, hold_request_id:number}> {
+	public submitForm(data: FormSubmission): Observable<{id:number, message:string, hold_request_id:number, response_status: string}> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				if (resp.status == "200") {
 					return {
 						id: resp.activity_id,
 						hold_request_id: resp.hold_request_id,
-						message: ""
+						message: "",
+            response_status: resp.status
 					};
 				}
 				this.errorSource.next(resp);
 				return {
 						id: resp.activity_id,
 						message: resp.message,
-						hold_request_id: null
+						hold_request_id: null,
+            response_status: resp.status
 					};
 			});
 	}

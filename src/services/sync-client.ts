@@ -222,11 +222,13 @@ export class SyncClient {
       let result = [];
       var index = 0;
       let handler = () => {
+
         if (index == data.submissions.length) {
           obs.next(result);
           obs.complete();
           return;
         }
+
         this.doSubmit(data, index).subscribe((submission) => {
 
           setTimeout(() => {
@@ -408,7 +410,7 @@ export class SyncClient {
 
     this.rest.submitForm(submission).subscribe((d) => {
 
-      if ((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) {
+      if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
         let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
         submission.invalid_fields = 1;
         submission.activity_id = submission.id;

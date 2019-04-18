@@ -10,11 +10,11 @@ import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
 import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
-import { Transfer } from '@ionic-native/transfer';
 import { Network } from '@ionic-native/network';
 import {StatusResponse} from "../model/protocol/status-response";
 import {FileTransfer} from "@ionic-native/file-transfer";
 import {LocalNotificationsService} from "./local-notifications-service";
+import {ToastController} from "ionic-angular";
 declare var cordova: any;
 
 @Injectable()
@@ -56,7 +56,8 @@ export class BussinessClient {
 				private push: PushClient,
 				private net: Network,
 				private fileTransfer: FileTransfer,
-        private localNotificationsService: LocalNotificationsService) {
+        private localNotificationsService: LocalNotificationsService,
+        private toast: ToastController) {
 
 		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
 		this.network = this.networkSource.asObservable();
@@ -88,22 +89,33 @@ export class BussinessClient {
 
 	public doAutoSync() {
 		console.log('doAutoSync');
-
-		if (this.isOnline()) {
-			this.db.isWorkDbInited() && this.db.getConfig("autoUpload").subscribe((val) => {
-				if (val + "" == "true") {
-					this.doSync().subscribe(() => {
-						console.log("Sync up done");
-						this.scheduleUnsubmittedLeadsNotification();
-					});
-				} else {
-          this.scheduleUnsubmittedLeadsNotification();
+    if (this.isOnline()) {
+      this.db.isWorkDbInited() && this.db.getConfig("autoUpload").flatMap((val) => {
+        if (val + "" == "true") {
+          return this.doSync();
         }
-			}, err => {
-
-			});
-		}
+        this.scheduleUnsubmittedLeadsNotification();
+        return Observable.empty();
+      }).subscribe(() => {
+        console.log("Sync up done");
+        this.scheduleUnsubmittedLeadsNotification();
+      }, (error) => {
+        console.error(error);
+      });
+    } else {
+      this.showErrorToast('No internet connection available');
+    }
 	}
+
+	private showErrorToast(errorMessage) {
+    let toaster = this.toast.create({
+      message: errorMessage,
+      duration: 3000,
+      position: "top",
+      cssClass: "error"
+    });
+    toaster.present();
+  }
 
 	public scheduleUnsubmittedLeadsNotification() {
     this.getToSubmitLeads().subscribe(leads => {
@@ -329,7 +341,7 @@ export class BussinessClient {
 	public doSync(formId?: number): Observable<any> {
 		return new Observable<any>((obs: Observer<any>) => {
 			if (!this.online) {
-				obs.complete();
+				obs.error('No internet connection available');
 				return;
 			}
 			this.db.getSubmissionsToSend().subscribe((submissions) => {
@@ -365,7 +377,6 @@ export class BussinessClient {
 
 					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
 						obs.next(true);
-
 						this.localNotificationsService.cancelAll();
 						obs.complete();
 					}, (err) => {
@@ -386,14 +397,7 @@ export class BussinessClient {
   }
 
 	public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
-    let submissionTime = new Date(submission.sub_date).getTime();
-	  if (submission.last_sync_date) {
-      submissionTime = new Date(submission.last_sync_date).getTime();
-    }
-
-    let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.15;
-    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
+    return submission.status == SubmissionStatus.ToSubmit
   }
 
 	public removeSubmission(submission) {
