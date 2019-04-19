@@ -21,6 +21,7 @@ dynamic-form-element, .dynamic-form-element {
 
   .element-name {
     font-weight: 600;
+    white-space: normal !important;
   }
 
   .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,

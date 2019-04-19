@@ -2,6 +2,12 @@ dropdown {
   .select-disabled {
     opacity: 1 !important;
   }
+
+  .gc-select {
+    .select-text {
+      white-space: normal;
+    }
+  }
 }
 
 radios, .radios{
