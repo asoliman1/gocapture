@@ -18,10 +18,10 @@
 <ion-content class="forms">
 	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
 	<ion-list approxItemHeight="77px">
-		<a ion-item detail-none (click)="presentActionSheet(form)" *ngFor="let form of filteredForms">
-			<h1>{{form.name}}</h1>
+		<ion-item detail-none (click)="presentActionSheet(form)" *ngFor="let form of filteredForms">
+			<h1 class="form-title">{{form.name}}</h1>
 			<h2>{{form.total_submissions}} Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ion-text color="secondary">{{form.total_sent}} Sent</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ion-text color="orange" *ngIf="form.total_hold > 0">{{form.total_hold}} Pending</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger" *ngIf="form.total_unsent > 0">{{form.total_unsent}} Unsent</span></h2>
-		</a>
+		</ion-item>
 	</ion-list>
 	<!--ion-refresher (ionRefresh)="doRefresh($event)">
 		<ion-refresher-content pull-max="200"></ion-refresher-content>

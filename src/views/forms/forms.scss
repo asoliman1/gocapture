@@ -1,4 +1,11 @@
-
+.forms {
+  .form-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+  }
+}
 .action{
 	line-height: 30px;
     display: inline-block;
@@ -38,6 +45,8 @@ ion-item, *[ion-item]{
 .forms.content-md .scroll-content{
 	margin-top: 56px !important;
 }
+
+
 //
 //.forms.content-ios .fixed-content{
 //	margin-top: 64px !important;
