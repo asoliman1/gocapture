@@ -738,13 +738,13 @@ export class SyncClient {
           obs.complete();
         } else {
           let ext = urls[index].substr(urls[index].lastIndexOf("."));
+          let name = urls[index].substr(urls[index].lastIndexOf("/") + 1);
           let pathToDownload = encodeURI(urls[index]);
           let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
-          let newName = "dwn_" + new Date().getTime() + ext;
-          let path = newFolder + newName;
+          let path = newFolder + name;
 
           this.http.downloadFile(pathToDownload, {}, {}, path).then(entry => {
-            urlMap[urls[index]] = "/" + entry.nativeURL.split("///")[1];
+            urlMap[urls[index]] = urls[index];
             index++;
             setTimeout(() => {
               handler();
