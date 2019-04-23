@@ -2,6 +2,8 @@ import {Component, Input, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController, Content} from 'ionic-angular';
 import {OptionItem} from "../../model/option-item";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {SettingsService} from "../../services/settings-service";
+import {settingsKeys} from "../../constants/constants";
 
 /**
  * Generated class for the SearchPage page.
@@ -37,14 +39,19 @@ export class SearchPage {
 
   selectedTheme;
 
+  isSingleTap = false;
+
   constructor(public navParams: NavParams,
               public viewCtrl: ViewController,
-              public themeProvider: ThemeProvider) {
+              public themeProvider: ThemeProvider,
+              public settingsService: SettingsService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ionViewDidLoad() {
-    //
+    this.settingsService.getSetting(settingsKeys.SINGLE_TAP_SELECTION).subscribe(result => {
+      this.isSingleTap = !result || JSON.parse(result);
+    });
   }
 
   ionViewDidEnter() {
@@ -74,13 +81,21 @@ export class SearchPage {
     this.content.resize();
   }
 
-  onInput(event){
+  onInput(event) {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
     this.filteredItems = this.items.filter(item => {
 
       return !val || regexp.test(item[this.fieldToSearch()]);
     });
+  }
+
+  onSelect(item) {
+    this.selectedItem = item;
+
+    if (this.isSingleTap) {
+      this.viewCtrl.dismiss(this.selectedItem.value);
+    }
   }
 
   fieldToSearch() {

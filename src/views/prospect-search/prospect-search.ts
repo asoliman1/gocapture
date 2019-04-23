@@ -6,6 +6,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import {OptionItem} from "../../model/option-item";
 import {SearchPage} from "../search/search";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {SettingsService} from "../../services/settings-service";
 
 @Component({
   selector: 'prospect-search',
@@ -23,8 +24,9 @@ export class ProspectSearch extends SearchPage {
     public navParams: NavParams,
     public client: BussinessClient,
     public zone: NgZone,
-    public themeProvider: ThemeProvider) {
-    super(navParams, viewCtrl, themeProvider);
+    public themeProvider: ThemeProvider,
+    public settingsService: SettingsService) {
+    super(navParams, viewCtrl, themeProvider, settingsService);
 
     //
   }

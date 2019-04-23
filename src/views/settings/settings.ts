@@ -76,7 +76,9 @@ export class Settings {
         this.settings.autosaveBCCaptures = true;
       }
 
-
+      if (typeof settings[settingsKeys.SINGLE_TAP_SELECTION] == "undefined") {
+        this.settings.singleTapSelection = true;
+      }
 
       this.db.getRegistration().subscribe(user => {
         this.user = user;
@@ -159,8 +161,9 @@ export class Settings {
       let kioskModePassword = this.db.saveConfig(settingsKeys.KIOSK_MODE_PASSWORD, this.settings.kioskModePassword);
       let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
       let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, JSON.stringify(this.settings.remindAboutUnsubmittedLeads));
+      let singleTapSelection = this.db.saveConfig(settingsKeys.SINGLE_TAP_SELECTION, this.settings.singleTapSelection);
 
-      Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads).subscribe(() => {
+      Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads, singleTapSelection).subscribe(() => {
         this.shouldSave = false;
         resolve(true);
       }, error => {

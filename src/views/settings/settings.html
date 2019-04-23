@@ -46,6 +46,13 @@
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
     </ion-item>
+    <ion-list-header>
+      Dropdown
+    </ion-list-header>
+    <ion-item class="last">
+      <ion-label>Single tap selection</ion-label>
+      <ion-toggle  [(ngModel)]="settings.singleTapSelection" (ionChange)="onChange()" checked="settings.singleTapSelection"></ion-toggle>
+    </ion-item>
 		<ion-list-header>
 			Kiosk Mode
 		</ion-list-header>

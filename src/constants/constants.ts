@@ -201,4 +201,5 @@ export const settingsKeys = {
   ENABLE_LOGGING: "enableLogging",
   AUTO_UPLOAD: "autoUpload",
   REMIND_ABOUT_UNSUBMITTED_LEADS: "remindAboutUnsubmittedLeads",
+  SINGLE_TAP_SELECTION: "singleTapSelection",
 };
