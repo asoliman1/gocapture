@@ -138,7 +138,7 @@
     <!--BADGE-->
     <badge padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
               [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
-              [class.hidden]="element.is_hidden">
+              [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
     </badge>
 
     <!--HTML-BLOCK-->

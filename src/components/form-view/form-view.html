@@ -10,7 +10,8 @@
                             [readOnly]="readOnly"
                             [isEditing]="isEditing"
                             [form]="form"
-                            [submission]="submission">
+                            [submission]="submission"
+                            (onProcessingEvent)="onProcessing($event)">
       </dynamic-form-element>
     </div>
 

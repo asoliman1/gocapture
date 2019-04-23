@@ -18,6 +18,7 @@ export class FormView {
   @Input() prospect: DeviceFormMembership;
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
+  @Output() onProcessingEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
@@ -412,6 +413,10 @@ export class FormView {
 
   private elementIdentifier(element) {
     return "element_" + element.id;
+  }
+
+  onProcessing(event) {
+    this.onProcessingEvent.emit(event);
   }
 
 }

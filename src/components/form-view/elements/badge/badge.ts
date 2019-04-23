@@ -1,5 +1,5 @@
 import { RESTClient } from '../../../../services/rest-client';
-import {Component, Input, forwardRef, OnInit} from '@angular/core';
+import {Component, Input, forwardRef, OnInit, Output} from '@angular/core';
 import { Form, FormElement, FormSubmission, BarcodeStatus } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { BaseElement } from "../base-element";
@@ -55,8 +55,11 @@ export class Badge extends BaseElement implements OnInit {
       return;
     }
 
+    this.onProcessingEvent.emit('true');
+
     console.log("Badge scan started");
     this.scanner.scan().then(response => {
+
       console.log("Badge scan finished: " + response.scannedId);
       if (response.isCancelled) {
         return;
@@ -78,6 +81,7 @@ export class Badge extends BaseElement implements OnInit {
 
 	private processData(scannedId: string) {
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe( data => {
+      this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));
       if(!data || data.length == 0){
@@ -88,7 +92,7 @@ export class Badge extends BaseElement implements OnInit {
       this.fillElementsWithFetchedData(data);
 
     }, err => {
-
+      this.onProcessingEvent.emit('false');
       this.scanner.restart();
 
       console.error("Could not fetch badge data: " + (typeof err == "string" ? err : JSON.stringify(err)));

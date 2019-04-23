@@ -1,7 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {FormElement} from "../../../model";
-import {FormView} from "../form-view";
 import {Form} from "../../../model";
 import {FormSubmission} from "../../../model";
 
@@ -19,9 +18,15 @@ export class DynamicFormElementComponent {
   @Input() form: Form;
   @Input() submission: FormSubmission;
 
+  @Output() onProcessingEvent = new EventEmitter();
+
 
   constructor() {
     //
+  }
+
+  onProcessing(event) {
+    this.onProcessingEvent.emit(event);
   }
 
   isControlInvalid() {

@@ -1,4 +1,4 @@
-import { OnChanges, SimpleChanges } from '@angular/core';
+import {EventEmitter, OnChanges, Output, SimpleChanges} from '@angular/core';
 import { FormElement } from "../../../model";
 import { ControlValueAccessor } from "@angular/forms";
 import { Observable } from "rxjs/Observable";
@@ -12,6 +12,8 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
   formControlName: string;
 
   readonly: boolean = false;
+
+  @Output() onProcessingEvent = new EventEmitter();
 
   propagateChange:any = () => {};
   validateFn:any = () => {};

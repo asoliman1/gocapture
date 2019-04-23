@@ -4,7 +4,7 @@
     <ion-title>{{form ? form.name : ''}}</ion-title>
 
     <ion-buttons end>
-			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing">
+			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
 				Submit
 			</button>
 
@@ -52,7 +52,8 @@
 						(onValidationChange)="onValidationChange($event)"
 						[readOnly]="isReadOnly(submission) && !isEditing"
             [isEditing]="isEditing"
-            [submitAttempt]="submitAttempt"></form-view>
+            [submitAttempt]="submitAttempt"
+            (onProcessingEvent)="onProcessing($event)"></form-view>
     </ion-row>
 	</ion-grid>
 </ion-content>

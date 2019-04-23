@@ -52,6 +52,8 @@ export class FormCapture {
 
   isEditing: boolean = false;
 
+  isProcessing: boolean = false;
+
   private backUnregister;
 
   private selectedTheme;
@@ -337,6 +339,10 @@ export class FormCapture {
     this.content.resize();
   }
 
+  onProcessing(event) {
+    this.isProcessing = JSON.parse(event);
+  }
+
   searchProspect() {
     let search = this.modal.create(ProspectSearch, { form: this.form });
     search.onDidDismiss((data: DeviceFormMembership) => {
@@ -426,4 +432,5 @@ export class FormCapture {
     }
     return elementsIds;
   }
+
 }
