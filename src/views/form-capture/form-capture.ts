@@ -195,7 +195,9 @@ export class FormCapture {
                 let password = data.passcode;
                 this.client.validateKioskPassword(password).subscribe((valid) => {
                   if (valid) {
-                    this.internalBack();
+                    setTimeout(() => {
+                      this.internalBack();
+                    }, 500);
                   } else {
                     return false;
                   }

@@ -16,7 +16,7 @@ export class Popup {
   showAlert(title, message, buttons, theme?) {
     if (this.alert) {
       this.alert.dismiss();
-	}
+    }
     this.alert = this.alertCtrl.create({
       title: title,
       message: message,
@@ -25,7 +25,7 @@ export class Popup {
       cssClass: theme ? theme.toString() : ""
     });
 
-    this.alert.present();
+    return this.alert.present();
   }
 
   showPrompt(title, message, inputs, buttons, theme?) {
@@ -41,7 +41,7 @@ export class Popup {
       buttons: buttons,
       cssClass: theme
     });
-    this.alert.present();
+    return this.alert.present();
   }
 
   dismissAll() {
