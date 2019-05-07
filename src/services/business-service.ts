@@ -1,20 +1,21 @@
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { Subscription } from "rxjs/Subscription";
-import { Config } from '../config';
+import {Injectable} from "@angular/core";
+import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Subscription} from "rxjs/Subscription";
+import {Config} from '../config';
 import {DeviceFormMembership, DispatchOrder, Form, FormSubmission, SubmissionStatus, User} from '../model';
-import { AuthenticationRequest } from '../model/protocol';
-import { DBClient } from './db-client';
-import { RESTClient } from './rest-client';
-import { SyncClient } from './sync-client';
-import { PushClient } from "./push-client";
-import { Network } from '@ionic-native/network';
+import {AuthenticationRequest} from '../model/protocol';
+import {DBClient} from './db-client';
+import {RESTClient} from './rest-client';
+import {SyncClient} from './sync-client';
+import {PushClient} from "./push-client";
+import {Network} from '@ionic-native/network';
 import {StatusResponse} from "../model/protocol/status-response";
 import {FileTransfer} from "@ionic-native/file-transfer";
 import {LocalNotificationsService} from "./local-notifications-service";
 import {ToastController} from "ionic-angular";
+
 declare var cordova: any;
 
 @Injectable()
@@ -403,6 +404,18 @@ export class BussinessClient {
 	public removeSubmission(submission) {
     return this.db.deleteSubmission(submission)
   }
+
+  public updateSubmittingStatusForSubmissions() {
+	  return this.db.getSubmissionsWithStatus(SubmissionStatus.Submitting).flatMap((submissions) => {
+	    let observables = [];
+	    submissions.forEach((submission) => {
+	      submission.status = SubmissionStatus.ToSubmit;
+        observables.push(this.db.updateSubmissionStatus(submission))
+      });
+      return Observable.zip(...observables);
+    })
+  }
+
 
 	//MARK: Private
 

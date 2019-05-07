@@ -74,7 +74,7 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
-				"toSend": "SELECT * FROM submissions where status in (4,5)",
+				"toSend": "SELECT * FROM submissions where status = 4",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
 				"delete": "DELETE from submissions where id=?",
@@ -83,7 +83,8 @@ export class DBClient {
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
         "updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
 				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
-				"deleteAll": "delete from submissions"
+				"deleteAll": "delete from submissions",
+        "selectWithStatus": "SELECT * FROM submissions where status=?"
 			}
 		},
 		{
@@ -690,6 +691,27 @@ export class DBClient {
 			});
 		});
 	}
+
+  public getSubmissionsWithStatus(status): Observable<FormSubmission[]> {
+    return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("submissions", "selectWithStatus"), [status])
+          .then((data) => {
+            var resp = [];
+            for (let i = 0; i < data.rows.length; i++) {
+              let dbForm = data.rows.item(i);
+
+              let form = this.submissonFromDBEntry(dbForm);
+              resp.push(form);
+            }
+            responseObserver.next(resp);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occured: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
 
   private submissonFromDBEntry(dbForm) {
     let form = new FormSubmission();

@@ -2,7 +2,7 @@ import {Component, ViewChild, NgZone} from '@angular/core';
 import { Forms } from "../forms";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
-import { User, SyncStatus } from "../../model";
+import {User, SyncStatus, SubmissionStatus} from "../../model";
 import { Subscription } from "rxjs/Subscription";
 import { SyncClient } from "../../services/sync-client";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
@@ -81,21 +81,26 @@ export class Main {
 			this.currentSyncForm = this.getCurrentUploadingForm();
 		}
 		this.sub = this.handleSync();
-		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
-			console.log(response);
-		}, function(reason) {
-			console.error(reason);
-		});
-		this.client.getUpdates().subscribe(done => {
-			setTimeout(()=>{
-				this.client.doAutoSync();
-			}, 350);
-		}, (err) =>{
-			setTimeout(()=>{
-				this.client.doAutoSync();
-			}, 350);
+
+		this.initiateTesseractPlugin();
+
+		this.client.getUpdates().flatMap((done) => {
+      //update submissions status
+      return this.client.updateSubmittingStatusForSubmissions();
+		}).subscribe(()=> {
+      this.client.doAutoSync();
+    }, (err) =>{
+      console.error(err);
 		});
 	}
+
+	private initiateTesseractPlugin() {
+    window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
+      console.log(response);
+    }, function(reason) {
+      console.error(reason);
+    });
+  }
 
 	handleSync() : Subscription{
 		let timer = null;

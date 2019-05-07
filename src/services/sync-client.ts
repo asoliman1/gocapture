@@ -1,26 +1,27 @@
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { DBClient } from './db-client';
-import { RESTClient } from './rest-client';
+import {Injectable} from "@angular/core";
+import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {DBClient} from './db-client';
+import {RESTClient} from './rest-client';
 
-import {DirectoryEntry, Entry, File, FileEntry, IFile} from '@ionic-native/file';
+import {File} from '@ionic-native/file';
 import {
-  SyncStatus,
   BarcodeStatus,
-  FormElementType,
-  Form,
+  DeviceFormMembership,
   Dispatch,
   DispatchOrder,
-  DeviceFormMembership,
+  Form,
+  FormElementType,
   FormSubmission,
+  FormSubmissionType,
   SubmissionStatus,
-  FormSubmissionType
+  SyncStatus
 } from "../model";
-import { FileUploadRequest, FileInfo } from "../model/protocol";
-import { HTTP } from '@ionic-native/http';
+import {FileInfo, FileUploadRequest} from "../model/protocol";
+import {HTTP} from '@ionic-native/http';
 import {StorageProvider} from "./storage-provider";
+
 declare var cordova: any;
 
 
@@ -291,35 +292,32 @@ export class SyncClient {
       //update status to submitting
       submission.status = SubmissionStatus.Submitting;
       submission.last_sync_date = new Date().toISOString();
-      this.db.updateSubmissionStatus(submission).subscribe();
+      this.db.updateSubmissionStatus(submission)
+        .flatMap(() => {
+          return this.uploadData(uploadUrlMap, hasUrls);
+        })
+        .flatMap((uploadedData) => {
+          this.updateUrlMapWithData(uploadUrlMap, uploadedData);
 
-      this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
+          Object.keys(uploadUrlMap).forEach((key) => {
+            urlMap[key] = uploadUrlMap[key];
+          });
 
-        this.updateUrlMapWithData(uploadUrlMap, uploadedData);
-
-        Object.keys(uploadUrlMap).forEach((key) => {
-          urlMap[key] = uploadUrlMap[key];
-        });
-
-        this.updateSubmissionFields(submission, data, urlMap);
-
-        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          if (submission.barcode_processed == BarcodeStatus.Queued) {
-            this.processBarcode(data, submission, obs);
-          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs);
-          } else {
-            this.actuallySubmitForm(data.form.name, submission, obs);
-          }
-        }, (err) => {
-          obs.error(err);
-          this.errorSource.next("Could not save updated submission for form " + data.form.name);
-        });
-
+          this.updateSubmissionFields(submission, data, urlMap);
+          return this.db.updateSubmissionFields(data.form, submission);
+        }).subscribe((done) => {
+        if (submission.barcode_processed == BarcodeStatus.Queued) {
+          this.processBarcode(data, submission, obs);
+        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
+          this.processBarcode(data, submission, obs);
+        } else {
+          this.actuallySubmitForm(data.form.name, submission, obs);
+        }
       }, (err) => {
         obs.error(err);
-        // let msg = "Could not process submission for form " + data.form.name;
-        // this.errorSource.next(msg);
+        let msg = "Could not process submission for form " + data.form.name;
+        this.errorSource.next(msg);
+        this.errorSource.next("Could not save updated submission for form " + data.form.name);
       });
     });
   }
@@ -415,6 +413,7 @@ export class SyncClient {
         submission.invalid_fields = 1;
         submission.activity_id = submission.id;
         submission.hold_request_id = 0;
+        submission.status = SubmissionStatus.ToSubmit;
         this.db.updateSubmissionId(submission).subscribe((ok) => {
           obs.error(msg);
           this.errorSource.next(msg);
@@ -425,6 +424,7 @@ export class SyncClient {
         });
         return;
       }
+
       if (d.id > 0) {
         submission.activity_id = d.id;
         submission.status = SubmissionStatus.Submitted;
