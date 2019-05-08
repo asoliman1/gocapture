@@ -21,9 +21,6 @@ import {ImageViewer} from "./image-viewer";
 import {SettingsService} from "../../../../services/settings-service";
 import {settingsKeys} from "../../../../constants/constants";
 
-
-declare var screen;
-
 declare var CameraPreview;
 
 @Component({
@@ -223,6 +220,8 @@ export class BusinessCard extends BaseElement {
 
   private doCapture(type: number, captureType: number = 1) {
 
+    let width = Math.min(this.platform.width(), this.platform.height());
+
     let options = {
       sourceType: this.device.isVirtual && this.platform.is("ios") ? 2 : captureType,
       correctOrientation: true,
@@ -234,8 +233,8 @@ export class BusinessCard extends BaseElement {
       shouldDisplayOverlay: true,
       previewPositionX: 12,
       previewPositionY: 150,
-      previewWidth: this.platform.width() - 24,
-      previewHeight: (this.platform.width() - 24) / 1.75,
+      previewWidth: width - 24,
+      previewHeight: (width - 24) / 1.75,
       quality: 100,
       needCrop: true
     };
@@ -319,7 +318,7 @@ export class BusinessCard extends BaseElement {
     let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
     modal.onDidDismiss((changedValues) => {
       //this.currentVal.front = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
-      screen.orientation.unlock && screen.orientation.unlock();
+      // this.screen.unlock && this.screen.unlock();
       if(changedValues){
         var vals = {};
         for(let id in this.formGroup.controls){
@@ -456,6 +455,7 @@ export class BusinessCard extends BaseElement {
   }
 
   public startCamera(type: number) {
+
     let self = this;
 
     self.frontLoading = type == self.FRONT;
@@ -497,11 +497,11 @@ export class BusinessCard extends BaseElement {
         self.frontLoading = false;
         self.backLoading = false;
       }
-      screen.orientation.unlock();
+      // self.screen.unlock();
     }, function (error) {
       console.log(error);
       self.popup.showAlert('Error', error, ['Ok']);
-      screen.orientation.unlock();
+      // self.screen.unlock();
       self.frontLoading = false;
       self.backLoading = false;
     });
