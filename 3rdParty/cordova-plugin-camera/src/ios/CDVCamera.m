@@ -204,7 +204,9 @@ static NSString* toBase64(NSData* data) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (pictureOptions.sourceType == UIImagePickerControllerSourceTypeCamera && pictureOptions.shouldDisplayOverlay) {
                 cameraPicker.showsCameraControls = NO;
-                CGRect rect = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+                CGFloat width = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+                CGFloat height = MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+                CGRect rect = CGRectMake(0, 0, width, height);
                 CameraOverlayView *overlay = [[CameraOverlayView alloc] initWithFrame:rect];
                 cameraPicker.cameraOverlayView = overlay;
                 [overlay setupCaptureView: pictureOptions.previewBox];
@@ -226,6 +228,9 @@ static NSString* toBase64(NSData* data) {
                 [[[weakSelf pickerController] pickerPopoverController] setDelegate:nil];
                 [[weakSelf pickerController] setPickerPopoverController:nil];
             }
+
+            [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+            [UINavigationController attemptRotationToDeviceOrientation];
 
             if ([weakSelf popoverSupported] && (pictureOptions.sourceType != UIImagePickerControllerSourceTypeCamera)) {
                 if (cameraPicker.pickerPopoverController == nil) {
