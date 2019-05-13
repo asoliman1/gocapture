@@ -6,16 +6,26 @@ export class GOCBarcodeScanner implements Scanner {
   readonly name: string = 'barcode';
   statusMessage: string = "Scan barcode";
 
-  constructor(public barcodeScanner: BarcodeScanner) {
+  constructor(public barcodeScanner: BarcodeScanner, private barcodeFormat: string) {
     //
+  }
+
+  getSupportedBarcodeFormat() {
+    if (this.barcodeFormat && this.barcodeFormat != 'Default') {
+      return this.barcodeFormat;
+    }
+    return 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI';
   }
 
   scan(): Promise<ScannerResponse> {
 
     this.statusMessage = "Scanning " + this.name;
 
+    let formats = this.getSupportedBarcodeFormat();
+    console.log('Barcode formats - ' + formats);
+
     let options: BarcodeScannerOptions = {
-      formats: 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI'
+      formats: formats
     };
 
     return new Promise<ScannerResponse>((resolve, reject) => {
