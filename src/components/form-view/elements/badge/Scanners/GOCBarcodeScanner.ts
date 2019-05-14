@@ -11,7 +11,7 @@ export class GOCBarcodeScanner implements Scanner {
   }
 
   getSupportedBarcodeFormat() {
-    if (this.barcodeFormat && this.barcodeFormat != 'Default') {
+    if (this.barcodeFormat) {
       return this.barcodeFormat;
     }
     return 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI';
