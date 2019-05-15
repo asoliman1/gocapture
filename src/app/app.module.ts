@@ -68,6 +68,7 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
 import {LocalNotificationsService} from "../services/local-notifications-service";
 import {WheelSelector} from "@ionic-native/wheel-selector";
 import {NumberPicker} from "../services/number-picker";
+import {Vibration} from "@ionic-native/vibration";
 
 
 @NgModule({
@@ -171,7 +172,8 @@ import {NumberPicker} from "../services/number-picker";
     LocalNotifications,
     LocalNotificationsService,
     WheelSelector,
-    NumberPicker
+    NumberPicker,
+    Vibration
   ]
 })
 export class AppModule { }

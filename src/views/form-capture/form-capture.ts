@@ -26,6 +26,7 @@ import moment from "moment";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
+import {Vibration} from "@ionic-native/vibration";
 
 @Component({
   selector: 'form-capture',
@@ -68,7 +69,8 @@ export class FormCapture {
               private toast: ToastController,
               private popup: Popup,
               private themeProvider: ThemeProvider,
-              private localStorage: LocalStorageProvider) {
+              private localStorage: LocalStorageProvider,
+              private vibration: Vibration) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -254,7 +256,9 @@ export class FormCapture {
       }
     ];
 
-    this.popup.showAlert('Confirm exit', 'You have unsaved changes. Are you sure you want to go back?', buttons, this.selectedTheme);
+    this.vibration.vibrate(500);
+
+    this.popup.showAlert("<div class='warning-title'>WARNING</div>", 'You have unsubmitted data on this form. If you go back, this submission will not be saved. If you wish to save this submission, tap the Submit button instead.', buttons, this.selectedTheme);
   }
 
   private clear() {
