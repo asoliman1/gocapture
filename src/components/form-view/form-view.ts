@@ -365,10 +365,6 @@ export class FormView {
     }
 
     element.isMatchingRules = isMatchingRules;
-
-    if (!element.isMatchingRules && !element.is_filled_from_barcode) {
-      this.resetField(element);
-    }
   }
 
   private shouldElementBeDisplayed(element) {
