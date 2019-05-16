@@ -284,7 +284,7 @@ export class FormCapture {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (isNotScanned && noTranscriptable ) {
+    if (isNotScanned && noTranscriptable && !this.submission.is_filled_from_list) {
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
@@ -353,6 +353,7 @@ export class FormCapture {
     let search = this.modal.create(ProspectSearch, { form: this.form });
     search.onDidDismiss((data: DeviceFormMembership) => {
       if (data) {
+        this.submission.is_filled_from_list = true;
         this.prospect = data;
         this.submission.prospect_id = data.prospect_id;
         this.submission.email = data.fields["Email"];
