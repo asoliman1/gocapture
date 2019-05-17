@@ -1,6 +1,6 @@
 import { FormElement, Form } from '../model';
 
-export class FormUtils{
+export class FormUtils {
 
 	public static getLabelByIdentifier(identifier: string, form: Form): string{
 		let nameMap = {

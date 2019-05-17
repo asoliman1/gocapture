@@ -18,6 +18,7 @@ import {
   FormSubmission,
   SubmissionStatus
 } from "../../model";
+
 import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
 import {Popup} from "../../providers/popup/popup";
@@ -27,6 +28,7 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
+import {AbstractControl} from "@angular/forms";
 
 @Component({
   selector: 'form-capture',
@@ -360,16 +362,29 @@ export class FormCapture {
         this.submission.first_name = data.fields["FirstName"];
         this.submission.last_name = data.fields["LastName"];
         let id = null;
+        let vals = [];
         for (let field in data.fields) {
           id = this.form.getIdByUniqueFieldName(field);
           if (id) {
             this.submission.fields[id] = data.fields[field];
+
+            let index = id.indexOf("_") + 1;
+            let parentId = id.substring(index, index + 1);
+            console.log(`parentId - ${parentId}`);
+
+            let element = this.getElementForId(parentId);
+            element.is_filled_from_list = true;
+
+            vals.push({id: id, value: data.fields[field]});
           }
         }
+
+        Form.fillFormGroupData(vals, this.formView.getFormGroup());
       }
     });
     search.present();
   }
+
 
   isEmailOrNameInputted() {
     let firstName = "";
@@ -397,6 +412,15 @@ export class FormCapture {
   private getElementForType(type) {
     for (let element of this.form.elements) {
       if (element.type == type) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  private getElementForId(identifier) {
+    for (let element of this.form.elements) {
+      if (element.id == identifier) {
         return element;
       }
     }

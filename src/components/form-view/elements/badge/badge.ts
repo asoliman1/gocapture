@@ -120,44 +120,17 @@ export class Badge extends BaseElement implements OnInit {
   }
 
   private fillElementsWithFetchedData(data) {
-    let vals = {};
-    for (let id in this.formGroup.controls) {
 
-      if (this.formGroup.controls[id]["controls"]) {
-        vals[id] = {};
-        for (let subid in this.formGroup.controls[id]["controls"]) {
-          vals[id][subid] = this.formGroup.controls[id]["controls"][subid].value;
-        }
-      } else {
-        vals[id] = this.formGroup.controls[id].value;
-      }
-    }
-
+	  let vals = [];
     data.forEach(entry => {
       let id = this.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
-      if (!id) {
-        return;
+      console.log(`element id - ${id}`);
+      if (id) {
+        vals.push({id: id, value: entry.value});
       }
 
-      let match = /(\w+\_\d+)\_\d+/g.exec(id);
-      let ctrl: AbstractControl = null;
-
-      if (match && match.length > 0) {
-        if (!vals[match[1]]) {
-          vals[match[1]] = {};
-        }
-        vals[match[1]][id] = entry.value;
-        ctrl = this.formGroup.get(match[1]).get(id);
-        ctrl.markAsTouched();
-        ctrl.markAsDirty();
-      } else {
-        vals[id] = entry.value;
-        ctrl = this.formGroup.get(id);
-        ctrl.markAsTouched();
-        ctrl.markAsDirty();
-      }
     });
-    this.formGroup.setValue(vals);
+    Form.fillFormGroupData(vals, this.formGroup);
   }
 
   private getScanner(): Scanner {

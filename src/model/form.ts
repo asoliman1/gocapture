@@ -1,6 +1,7 @@
 import {FormElement} from "./form-element";
 import {BarcodeStatus} from "./form-submission";
 import {BaseForm} from "./base-form";
+import {AbstractControl} from "@angular/forms";
 
 export class Form extends BaseForm{
 	created_at : string;
@@ -52,6 +53,50 @@ export class Form extends BaseForm{
 		}
 		return null;
 	}
+
+  public static fillFormGroupData(data, formGroup) {
+
+    let vals = {};
+    let controls = formGroup.controls;
+    for (let id in controls) {
+
+      if (controls[id]["controls"]) {
+        vals[id] = {};
+        for (let subid in controls[id]["controls"]) {
+          vals[id][subid] = controls[id]["controls"][subid].value;
+        }
+      } else {
+        vals[id] = controls[id].value;
+      }
+    }
+
+    data.forEach(entry => {
+      let id = entry.id;
+      console.log(`element id - ${id}`);
+      if (!id) {
+        return;
+      }
+
+      let match = /(\w+\_\d+)\_\d+/g.exec(id);
+      let ctrl: AbstractControl = null;
+
+      if (match && match.length > 0) {
+        if (!vals[match[1]]) {
+          vals[match[1]] = {};
+        }
+        vals[match[1]][id] = entry.value;
+        ctrl = formGroup.get(match[1]).get(id);
+        ctrl.markAsTouched();
+        ctrl.markAsDirty();
+      } else {
+        vals[id] = entry.value;
+        ctrl = formGroup.get(id);
+        ctrl.markAsTouched();
+        ctrl.markAsDirty();
+      }
+    });
+    formGroup.setValue(vals);
+  }
 
 	public getUrlFields() : string[]{
 		let res = [];

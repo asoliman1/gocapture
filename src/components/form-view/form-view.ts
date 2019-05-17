@@ -72,6 +72,10 @@ export class FormView {
     return this.theForm.dirty;
   }
 
+  public getFormGroup() {
+    return this.theForm;
+  }
+
   public getError(): String {
     return this.composeErrorMessage();
   }
@@ -366,7 +370,7 @@ export class FormView {
 
     element.isMatchingRules = isMatchingRules;
 
-    if (!element.isMatchingRules && !element.is_filled_from_barcode) {
+    if (!element.isMatchingRules && !element.is_filled_from_barcode && !element.is_filled_from_list) {
       this.resetField(element);
     }
 
