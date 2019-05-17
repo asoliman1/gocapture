@@ -413,7 +413,6 @@ export class SyncClient {
       if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
         let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
         submission.invalid_fields = 1;
-        submission.activity_id = submission.id;
         submission.hold_request_id = 0;
         this.db.updateSubmissionId(submission).subscribe((ok) => {
           obs.error(msg);
@@ -429,7 +428,6 @@ export class SyncClient {
         submission.activity_id = d.id;
         submission.status = SubmissionStatus.Submitted;
       } else {
-        submission.activity_id = submission.id;
         submission.hold_request_id = d.hold_request_id;
         submission.status = SubmissionStatus.OnHold;
       }
