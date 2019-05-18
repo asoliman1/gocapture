@@ -80,14 +80,12 @@ export class SyncClient {
       var map: { [key: string]: SyncStatus } = {
         forms: new SyncStatus(true, false, 0, "Forms", 10),
         contacts: new SyncStatus(false, false, 0, "Contacts", 0),
-        dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
         submissions: new SyncStatus(false, false, 0, "Submissions", 0)
       };
       this._isSyncing = true;
       this.lastSyncStatus = [
         map["forms"],
         map["contacts"],
-        map["dispatches"],
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
@@ -105,8 +103,6 @@ export class SyncClient {
             }
           });
           this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
-            obs.next(result);
-            this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
               obs.next(result);
               console.log("Downloading contacts 1");
 
@@ -135,10 +131,6 @@ export class SyncClient {
                 this.syncCleanup();
               });
             }, (err) => {
-              obs.error(err);
-              this.syncCleanup();
-            });
-          }, (err) => {
             obs.error(err);
             this.syncCleanup();
           });
@@ -611,6 +603,7 @@ export class SyncClient {
     });
   }
 
+  /*
   private downloadDispatches(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
       let mapEntry = map["dispatches"];
@@ -651,6 +644,7 @@ export class SyncClient {
       });
     });
   }
+   */
 
   private downloadSubmissions(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
@@ -775,7 +769,6 @@ export class SyncClient {
 
 export class DownloadData {
   forms: Form[] = [];
-  dispatches: Dispatch[] = [];
   memberships: DeviceFormMembership[] = [];
   submissions: FormSubmission[] = [];
   newFormIds: number[] = [];

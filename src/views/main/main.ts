@@ -178,4 +178,8 @@ export class Main {
 		}
 		return formName;
 	}
+
+  shouldShowSyncBar() {
+	  return true;
+  }
 }

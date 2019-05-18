@@ -116,10 +116,8 @@ export class RESTClient {
 			return result;
 		});
 	}
-	/**
-	 *
-	 * @returns Observable
-	 */
+
+	/*
 	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
 		var opts: any = {
 		};
@@ -160,6 +158,7 @@ export class RESTClient {
 					return resp;
 				});
 	}
+	 */
 
 	public fetchBadgeData(barcodeId: string, providerId: string): Observable<ItemData[]>{
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json", {barcode_id: barcodeId, provider_id: providerId})
