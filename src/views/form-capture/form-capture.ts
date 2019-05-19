@@ -28,7 +28,6 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
-import {AbstractControl} from "@angular/forms";
 
 @Component({
   selector: 'form-capture',

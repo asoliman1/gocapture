@@ -79,6 +79,7 @@ import {Dispatches} from "../views/dispatches";
     Dashboard,
     Forms,
     Settings,
+    Dispatches,
     IonPullUpComponent,
     FormSummary,
     FormReview,

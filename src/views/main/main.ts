@@ -11,6 +11,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {App} from "ionic-angular";
 
 @Component({
 	selector: 'main',
@@ -36,6 +37,8 @@ export class Main {
 
 	pages: Array<{ title: string, component: any, icon: string }>;
 
+	shouldShowSyncBar: boolean = false;
+
 	@ViewChild('pullup') pullup: IonPullUpComponent;
 
 	constructor(
@@ -44,13 +47,14 @@ export class Main {
 		public client: BussinessClient,
 		private syncClient: SyncClient,
     private util: Util,
-    private themeProvider: ThemeProvider) {
+    private themeProvider: ThemeProvider,
+    private app: App) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Events', component: Forms, icon: "document" },
 			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
 			{ title: 'Settings', component: Settings, icon: "cog" }
-		]
+		];
 	}
 
 	openPage(page) {
@@ -64,6 +68,10 @@ export class Main {
 			let theme = this.user.theme ? this.user.theme : 'default';
 			this.themeProvider.setActiveTheme(theme + '-theme');
 		});
+
+    this.app.viewWillEnter.subscribe(viewCtrl => {
+      this.shouldShowSyncBar = viewCtrl.name != 'FormCapture';
+    })
 	}
 
 	footerExpanded() {
@@ -178,8 +186,4 @@ export class Main {
 		}
 		return formName;
 	}
-
-  shouldShowSyncBar() {
-	  return true;
-  }
 }

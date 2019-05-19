@@ -88,7 +88,7 @@ export class IonPullUpComponent  {
       height: 0,
       posY:  0,
       lastPosY: 0
-    }
+    };
     this._currentViewMeta = {};  
     this.state = IonPullUpFooterState.Minimized;
     // sets initial state
