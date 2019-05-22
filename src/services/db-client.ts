@@ -802,7 +802,8 @@ export class DBClient {
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
+    let formId = form.activity_id || form.id;
+		return this.updateById(WORK, "submissions", [formId, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
   public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {
