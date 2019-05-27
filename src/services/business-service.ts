@@ -308,9 +308,11 @@ export class BussinessClient {
 		return this.db.getForms();
 	}
 
+	/*
 	public getDispatches(): Observable<DispatchOrder[]> {
 		return this.db.getDispatches();
 	}
+	 */
 
 	public getContacts(form: Form): Observable<DeviceFormMembership[]> {
 		return this.db.getMemberships(form.form_id);

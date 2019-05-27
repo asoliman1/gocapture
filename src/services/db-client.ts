@@ -551,6 +551,7 @@ export class DBClient {
 			});
 	}
 
+	/*
 	public getDispatches(): Observable<DispatchOrder[]> {
 		return this.getAll<any[]>(WORK, "forms", [true, true, true, true])
 			.map((data) => {
@@ -573,6 +574,7 @@ export class DBClient {
 				return forms;
 			});
 	}
+	 */
 
 	public saveDispatchOrder(order: DispatchOrder): Observable<boolean> {
 		//console.log("saving");
@@ -580,9 +582,12 @@ export class DBClient {
 		return this.save(WORK, "forms", [order.id, order.form_id, order.name, order.form.title, order.description || order.form.description, order.form.success_message, order.form.submit_error_message, order.form.submit_button_text, order.date_created, order.date_last_modified, JSON.stringify(order.form.elements), true, JSON.stringify(order), null, null]);
 	}
 
+	/*
 	public saveDispatches(forms: DispatchOrder[]): Observable<boolean> {
 		return this.saveAll<DispatchOrder>(forms, "DispatchOrder");
 	}
+
+	 */
 
 	public getMemberships(form_id: number): Observable<DeviceFormMembership[]> {
 		return this.getAll<any[]>(WORK, "contacts", [form_id])
@@ -819,7 +824,8 @@ export class DBClient {
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
 		//id, formId, data, sub_date, status, isDispatch, dispatchId
-		return this.updateById(WORK, "submissions", [form.activity_id, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
+    let formId = form.activity_id || form.id;
+		return this.updateById(WORK, "submissions", [formId, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
 
   public updateSubmissionStatus(form: FormSubmission): Observable<boolean> {

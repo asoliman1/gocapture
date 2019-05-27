@@ -4,7 +4,7 @@ import { Form, FormElement, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AudioCaptureService } from "../../../../services/audio-capture-service";
 import { ThemeProvider } from "../../../../providers/theme/theme";
-import { ActionSheetController } from "ionic-angular";
+import {ActionSheetController, Content} from "ionic-angular";
 import { Popup } from "../../../../providers/popup/popup";
 import { MEDIA_STATUS } from "@ionic-native/media";
 
@@ -47,13 +47,15 @@ export class GOCAudio extends BaseElement {
 		private themeProvider: ThemeProvider,
 		private actionCtrl: ActionSheetController,
 		private popup: Popup,
-		private zone: NgZone) {
+		private zone: NgZone,
+    private content:Content) {
 		super();
 
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	startRecording() {
+    this.onProcessingEvent.emit('true');
 		this.trackDuration = 0;
 		this.audioCaptureService.startRecord().subscribe(status => {
 			if (status == MEDIA_STATUS.RUNNING) {
@@ -71,6 +73,7 @@ export class GOCAudio extends BaseElement {
 	stopRecording() {
 
 		this.audioCaptureService.stopRecord().then(filePath => {
+      this.onProcessingEvent.emit('false');
 			this.isRecording = false;
 			this.onChange([filePath]);
 			this.updateRecordDuration(true);
@@ -185,6 +188,7 @@ export class GOCAudio extends BaseElement {
 						if (result) {
 							console.log('Audio file was removed');
 							this.onChange(null);
+							this.content.resize();
 						}
 					}).catch(error => {
 						console.log('Audio file can\'t be removed');

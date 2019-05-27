@@ -103,6 +103,8 @@ public class CameraActivity extends Fragment {
     // Inflate the layout for this fragment
     view = inflater.inflate(getResources().getIdentifier("camera_activity", "layout", appResourcesPackage), container, false);
     createCameraPreview();
+
+    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     return view;
   }
 
@@ -325,6 +327,8 @@ public class CameraActivity extends Fragment {
   @Override
   public void onPause() {
     super.onPause();
+
+    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
     // Because the Camera object is a shared resource, it's very important to release it when the activity is paused.
     if (mCamera != null) {

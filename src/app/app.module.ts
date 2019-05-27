@@ -6,7 +6,6 @@ import { Login, UrlChoose } from "../views/login";
 import { Main } from "../views/main";
 import { Dashboard } from "../views/dashboard";
 import { Forms } from "../views/forms";
-import { Dispatches } from "../views/dispatches";
 import { Settings } from "../views/settings";
 import { LogView } from "../views/log";
 import { FormSummary } from "../views/form-summary";
@@ -68,6 +67,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
 import {LocalNotificationsService} from "../services/local-notifications-service";
 import {WheelSelector} from "@ionic-native/wheel-selector";
 import {NumberPicker} from "../services/number-picker";
+import {Vibration} from "@ionic-native/vibration";
+import {Dispatches} from "../views/dispatches";
 
 
 @NgModule({
@@ -77,8 +78,8 @@ import {NumberPicker} from "../services/number-picker";
     Main,
     Dashboard,
     Forms,
-    Dispatches,
     Settings,
+    Dispatches,
     IonPullUpComponent,
     FormSummary,
     FormReview,
@@ -171,7 +172,8 @@ import {NumberPicker} from "../services/number-picker";
     LocalNotifications,
     LocalNotificationsService,
     WheelSelector,
-    NumberPicker
+    NumberPicker,
+    Vibration
   ]
 })
 export class AppModule { }

@@ -20,11 +20,10 @@ import {PhotoLibrary} from "@ionic-native/photo-library";
 import {ImageViewer} from "./image-viewer";
 import {SettingsService} from "../../../../services/settings-service";
 import {settingsKeys} from "../../../../constants/constants";
-
-
-declare var screen;
+import {ScreenOrientation} from "@ionic-native/screen-orientation";
 
 declare var CameraPreview;
+declare var screen;
 
 @Component({
   selector: 'business-card',
@@ -75,7 +74,8 @@ export class BusinessCard extends BaseElement {
               private popup: Popup,
               private photoViewer: PhotoViewer,
               private photoLibrary: PhotoLibrary,
-              private settingsService: SettingsService) {
+              private settingsService: SettingsService,
+              private screen: ScreenOrientation) {
     super();
     this.currentVal = {
       front: this.front,
@@ -89,19 +89,6 @@ export class BusinessCard extends BaseElement {
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
-
-  private cameraPreviewOpts = {
-    x: 0,
-    y: 0,
-    width: this.platform.width(),
-    height: this.platform.height(),
-    camera: 'rear',
-    tapPhoto: false,
-    previewDrag: false,
-    toBack: false,
-    alpha: 1,
-    tapFocus: true
-  };
 
   // picture options
   private pictureOpts = {
@@ -221,7 +208,11 @@ export class BusinessCard extends BaseElement {
     ]
   }
 
-  private doCapture(type: number, captureType: number = 1) {
+  private async doCapture(type: number, captureType: number = 1) {
+
+    await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
+
+    let width = Math.min(this.platform.width(), this.platform.height());
 
     let options = {
       sourceType: this.device.isVirtual && this.platform.is("ios") ? 2 : captureType,
@@ -234,8 +225,8 @@ export class BusinessCard extends BaseElement {
       shouldDisplayOverlay: true,
       previewPositionX: 12,
       previewPositionY: 150,
-      previewWidth: this.platform.width() - 24,
-      previewHeight: (this.platform.width() - 24) / 1.75,
+      previewWidth: width - 24,
+      previewHeight: (width - 24) / 1.75,
       quality: 100,
       needCrop: true
     };
@@ -253,7 +244,10 @@ export class BusinessCard extends BaseElement {
 
       this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
 
+      this.screen.unlock();
+
     }, (error) => {
+      this.screen.unlock();
       this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
       console.error(error);
       this.zone.run(()=>{
@@ -319,7 +313,7 @@ export class BusinessCard extends BaseElement {
     let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
     modal.onDidDismiss((changedValues) => {
       //this.currentVal.front = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
-      screen.orientation.unlock && screen.orientation.unlock();
+      // this.screen.unlock && this.screen.unlock();
       if(changedValues){
         var vals = {};
         for(let id in this.formGroup.controls){
@@ -455,25 +449,45 @@ export class BusinessCard extends BaseElement {
     return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
   }
 
-  public startCamera(type: number) {
+  public async startCamera(type: number) {
+
+    await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
+
+    let width = Math.min(screen.width, screen.height);
+    let height = Math.max(screen.width, screen.height);
+
+    let cameraPreviewOpts = {
+      x: 0,
+      y: 0,
+      width: width,
+      height: height,
+      camera: 'rear',
+      tapPhoto: false,
+      previewDrag: false,
+      toBack: false,
+      alpha: 1,
+      tapFocus: true
+    };
+
     let self = this;
 
-    self.frontLoading = type == self.FRONT;
-    self.backLoading = type != self.FRONT;
+    this.frontLoading = type == this.FRONT;
+    this.backLoading = type != this.FRONT;
 
-    CameraPreview.startCamera(self.cameraPreviewOpts, function(result) {
+    CameraPreview.startCamera(cameraPreviewOpts, function(result) {
 
       let imageData = result["picture"];
 
       if (imageData) {
+        self.screen.unlock();
 
         imageData = 'data:image/jpg;base64,' + imageData;
 
         let crop = {
           x: 0,
           y: 150,
-          width: self.cameraPreviewOpts.width,
-          height: self.cameraPreviewOpts.width / 1.75
+          width: cameraPreviewOpts.width,
+          height: cameraPreviewOpts.width / 1.75
         };
 
         self.imageProc.crop(imageData, crop).subscribe(data => {
@@ -496,12 +510,12 @@ export class BusinessCard extends BaseElement {
       } else if (result["cameraBack"]) {
         self.frontLoading = false;
         self.backLoading = false;
+        self.screen.unlock();
       }
-      screen.orientation.unlock();
     }, function (error) {
+      self.screen.unlock();
       console.log(error);
       self.popup.showAlert('Error', error, ['Ok']);
-      screen.orientation.unlock();
       self.frontLoading = false;
       self.backLoading = false;
     });

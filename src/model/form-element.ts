@@ -21,10 +21,13 @@ export class FormElement {
 	barcode_provider_id: string;
 	barcode_provider_name: string;
   badge_type: string;
+  //specify the barcode format ()
+  barcode_type: string;
 	identifier?: string;
 	placeholder: string = "";
   accept_invalid_barcode: boolean;
   isMatchingRules: boolean;
+  is_filled_from_list: boolean;
 }
 
 export class Option{

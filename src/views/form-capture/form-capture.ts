@@ -18,6 +18,7 @@ import {
   FormSubmission,
   SubmissionStatus
 } from "../../model";
+
 import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
 import {Popup} from "../../providers/popup/popup";
@@ -26,6 +27,7 @@ import moment from "moment";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
+import {Vibration} from "@ionic-native/vibration";
 
 @Component({
   selector: 'form-capture',
@@ -68,7 +70,8 @@ export class FormCapture {
               private toast: ToastController,
               private popup: Popup,
               private themeProvider: ThemeProvider,
-              private localStorage: LocalStorageProvider) {
+              private localStorage: LocalStorageProvider,
+              private vibration: Vibration) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -254,7 +257,9 @@ export class FormCapture {
       }
     ];
 
-    this.popup.showAlert('Confirm exit', 'You have unsaved changes. Are you sure you want to go back?', buttons, this.selectedTheme);
+    this.vibration.vibrate(500);
+
+    this.popup.showAlert("<div class='warning-title'>WARNING</div>", 'You have unsubmitted data on this form. If you go back, this submission will not be saved. If you wish to save this submission, tap the Submit button instead.', buttons, this.selectedTheme);
   }
 
   private clear() {
@@ -280,7 +285,7 @@ export class FormCapture {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (isNotScanned && noTranscriptable ) {
+    if (isNotScanned && noTranscriptable && !this.submission.is_filled_from_list) {
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
@@ -349,22 +354,36 @@ export class FormCapture {
     let search = this.modal.create(ProspectSearch, { form: this.form });
     search.onDidDismiss((data: DeviceFormMembership) => {
       if (data) {
+        this.submission.is_filled_from_list = true;
         this.prospect = data;
         this.submission.prospect_id = data.prospect_id;
         this.submission.email = data.fields["Email"];
         this.submission.first_name = data.fields["FirstName"];
         this.submission.last_name = data.fields["LastName"];
         let id = null;
+        let vals = [];
         for (let field in data.fields) {
           id = this.form.getIdByUniqueFieldName(field);
           if (id) {
             this.submission.fields[id] = data.fields[field];
+
+            let index = id.indexOf("_") + 1;
+            let parentId = id.substring(index, index + 1);
+            console.log(`parentId - ${parentId}`);
+
+            let element = this.getElementForId(parentId);
+            element.is_filled_from_list = true;
+
+            vals.push({id: id, value: data.fields[field]});
           }
         }
+
+        Form.fillFormGroupData(vals, this.formView.getFormGroup());
       }
     });
     search.present();
   }
+
 
   isEmailOrNameInputted() {
     let firstName = "";
@@ -392,6 +411,15 @@ export class FormCapture {
   private getElementForType(type) {
     for (let element of this.form.elements) {
       if (element.type == type) {
+        return element;
+      }
+    }
+    return null;
+  }
+
+  private getElementForId(identifier) {
+    for (let element of this.form.elements) {
+      if (element.id == identifier) {
         return element;
       }
     }

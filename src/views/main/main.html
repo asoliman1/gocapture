@@ -24,7 +24,7 @@
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
 
 
-<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()">
+<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [hidden]="!shouldShowSyncBar">
 
   <ion-toolbar #toolbar class="sync-header">
     <ion-spinner></ion-spinner>

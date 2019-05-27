@@ -27,6 +27,11 @@
 
     <resource-file src="src/android/images/drawable-port-xhdpi/camera_icon.png" target="res/drawable-port-xhdpi/camera_icon.png" />
     <resource-file src="src/android/images/drawable-port-xhdpi/close_icon.png" target="res/drawable-port-xhdpi/close_icon.png" />
+    <resource-file src="src/android/images/drawable-port-xhdpi/business_card_overlay.png" target="res/drawable-port-xhdpi/business_card_overlay.png" />
+
+    <resource-file src="src/android/images/drawable-land-xhdpi/camera_icon.png" target="res/drawable-land-xhdpi/camera_icon.png" />
+    <resource-file src="src/android/images/drawable-land-xhdpi/close_icon.png" target="res/drawable-land-xhdpi/close_icon.png" />
+    <resource-file src="src/android/images/drawable-land-xhdpi/business_card_overlay.png" target="res/drawable-land-xhdpi/business_card_overlay.png" />
 
     <preference name="ANDROID_SUPPORT_LIBRARY_VERSION" default="25+"/>
     <framework src="com.android.support:exifinterface:$ANDROID_SUPPORT_LIBRARY_VERSION" />

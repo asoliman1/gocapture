@@ -81,14 +81,12 @@ export class SyncClient {
       var map: { [key: string]: SyncStatus } = {
         forms: new SyncStatus(true, false, 0, "Forms", 10),
         contacts: new SyncStatus(false, false, 0, "Contacts", 0),
-        dispatches: new SyncStatus(false, false, 0, "Dispatches", 0),
         submissions: new SyncStatus(false, false, 0, "Submissions", 0)
       };
       this._isSyncing = true;
       this.lastSyncStatus = [
         map["forms"],
         map["contacts"],
-        map["dispatches"],
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
@@ -106,8 +104,6 @@ export class SyncClient {
             }
           });
           this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
-            obs.next(result);
-            this.downloadDispatches(lastSyncDate, map, result).subscribe(() => {
               obs.next(result);
               console.log("Downloading contacts 1");
 
@@ -136,10 +132,6 @@ export class SyncClient {
                 this.syncCleanup();
               });
             }, (err) => {
-              obs.error(err);
-              this.syncCleanup();
-            });
-          }, (err) => {
             obs.error(err);
             this.syncCleanup();
           });
@@ -411,7 +403,6 @@ export class SyncClient {
       if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
         let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
         submission.invalid_fields = 1;
-        submission.activity_id = submission.id;
         submission.hold_request_id = 0;
         submission.status = SubmissionStatus.ToSubmit;
         this.db.updateSubmissionId(submission).subscribe((ok) => {
@@ -429,7 +420,6 @@ export class SyncClient {
         submission.activity_id = d.id;
         submission.status = SubmissionStatus.Submitted;
       } else {
-        submission.activity_id = submission.id;
         submission.hold_request_id = d.hold_request_id;
         submission.status = SubmissionStatus.OnHold;
       }
@@ -613,6 +603,7 @@ export class SyncClient {
     });
   }
 
+  /*
   private downloadDispatches(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
       let mapEntry = map["dispatches"];
@@ -653,6 +644,7 @@ export class SyncClient {
       });
     });
   }
+   */
 
   private downloadSubmissions(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
@@ -777,7 +769,6 @@ export class SyncClient {
 
 export class DownloadData {
   forms: Form[] = [];
-  dispatches: Dispatch[] = [];
   memberships: DeviceFormMembership[] = [];
   submissions: FormSubmission[] = [];
   newFormIds: number[] = [];

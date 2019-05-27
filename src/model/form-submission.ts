@@ -20,6 +20,7 @@ export class FormSubmission{
 	sub_date: string;
   last_sync_date: string;
   hidden_elements: string[];
+  is_filled_from_list: boolean = false;
 
 	barcode_processed: BarcodeStatus = 0;
 

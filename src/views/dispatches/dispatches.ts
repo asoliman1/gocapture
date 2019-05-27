@@ -11,7 +11,7 @@ import {
 } from '@angular/animations';
 
 import { BussinessClient } from "../../services/business-service";
-import { DispatchOrder } from "../../model/dispatch-order";
+import { DispatchOrder } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormSummary } from "../form-summary";
 import { FormReview } from "../form-review";
@@ -62,12 +62,12 @@ export class Dispatches {
 	}
 
 	doRefresh(refresher?) {
-		this.client.getDispatches().subscribe(forms => {
-			this.dispatches = forms;
-			if (refresher) {
-				refresher.complete();
-			}
-		});
+		// this.client.getDispatches().subscribe(forms => {
+		// 	this.dispatches = forms;
+		// 	if (refresher) {
+		// 		refresher.complete();
+		// 	}
+		// });
 	}
 
 	toggleSearch() {
@@ -76,12 +76,12 @@ export class Dispatches {
 	}
 
 	doInfinite(infiniteScroll?: InfiniteScroll) {
-		this.client.getDispatches().subscribe(forms => {
-			this.dispatches = this.dispatches.concat(forms);
-			if (infiniteScroll) {
-				infiniteScroll.complete();
-			}
-		});
+		// this.client.getDispatches().subscribe(forms => {
+		// 	this.dispatches = this.dispatches.concat(forms);
+		// 	if (infiniteScroll) {
+		// 		infiniteScroll.complete();
+		// 	}
+		// });
 	}
 
 	getItems(event) {

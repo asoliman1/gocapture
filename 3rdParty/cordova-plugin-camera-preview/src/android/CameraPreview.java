@@ -1,6 +1,8 @@
 package com.cordovaplugincamerapreview;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -258,7 +260,6 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     cordova.getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-
 
         //create or update the layout params for the container view
         FrameLayout containerView = (FrameLayout)cordova.getActivity().findViewById(containerViewId);
@@ -836,7 +837,6 @@ private boolean getSupportedFocusModes(CallbackContext callbackContext) {
     fragmentTransaction.commit();
     fragment = null;
 
-    callbackContext.success();
     return true;
   }
 
@@ -929,7 +929,7 @@ private boolean getSupportedFocusModes(CallbackContext callbackContext) {
 
     JSONObject data = new JSONObject();
     try {
-      data.put("result", "cameraBack");
+      data.put("cameraBack", "true");
     } catch (JSONException e) {
       e.printStackTrace();
     }
