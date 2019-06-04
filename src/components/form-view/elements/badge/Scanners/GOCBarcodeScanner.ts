@@ -1,12 +1,15 @@
 import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
 import { Scanner, ScannerResponse } from "./Scanner";
+import {ToastController} from "ionic-angular";
 
 export class GOCBarcodeScanner implements Scanner {
 
   readonly name: string = 'barcode';
   statusMessage: string = "Scan barcode";
 
-  constructor(public barcodeScanner: BarcodeScanner, private barcodeFormat: string) {
+  constructor(public barcodeScanner: BarcodeScanner,
+              private barcodeFormat: string,
+              private toast: ToastController,) {
     //
   }
 
@@ -25,11 +28,21 @@ export class GOCBarcodeScanner implements Scanner {
     console.log('Barcode formats - ' + formats);
 
     let options: BarcodeScannerOptions = {
-      formats: formats
+      formats: formats,
     };
+
+    options["rapidMode"] = true;
 
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {
+        if (options["rapidMode"]) {
+          let toaster = this.toast.create({
+            message: "Scanned",
+            duration: 3000,
+            position: "top"
+          });
+          toaster.present();
+        }
         if (scannedData.cancelled) {
           this.statusMessage = "Scan " + this.name;
           resolve({isCancelled: true});
