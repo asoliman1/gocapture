@@ -36,15 +36,14 @@
 </ion-header>
 
 <ion-content class="form-summary">
-
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
 				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Search List</button>
 			</ion-col>
 		</ion-row>
-		<ion-row >
 
+		<ion-row>
       <form-view *ngIf="form"
 						[form]="form"
 						[prospect]="prospect"
@@ -55,5 +54,14 @@
             [submitAttempt]="submitAttempt"
             (onProcessingEvent)="onProcessing($event)"></form-view>
     </ion-row>
+
+    <ion-item  [hidden]="true" *ngIf="form && form.stations">
+      <ion-label >Stations</ion-label>
+      <ion-select #stationsSelect color="primary"
+                  [ngModel]="formStation">
+        <ion-option *ngFor="let station of form.stations" [value]="station.id">{{station.name}}</ion-option>
+      </ion-select>
+    </ion-item>
+
 	</ion-grid>
 </ion-content>

@@ -1,4 +1,4 @@
-import {Component, NgZone, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 import {
   Content,
   MenuController,
@@ -6,7 +6,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
+  Platform, Select,
   ToastController
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -28,6 +28,7 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
+import {Station} from "../../model/station";
 
 @Component({
   selector: 'form-capture',
@@ -44,6 +45,11 @@ export class FormCapture {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
+  private stationsSelect : Select;
+
+  @ViewChild("stationsSelect") set select(select: Select) {
+    this.stationsSelect = select;
+  }
 
   valid: boolean = true;
   errorMessage: String;
@@ -55,6 +61,8 @@ export class FormCapture {
   isEditing: boolean = false;
 
   isProcessing: boolean = false;
+
+  formStation: Station;
 
   private backUnregister;
 
@@ -106,6 +114,17 @@ export class FormCapture {
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
     }
+
+    this.form.stations = [];
+
+    this.form.stations.push({id: 1, name: 'Station 1'});
+    this.form.stations.push({id: 2, name: 'Station 2'});
+
+    setTimeout(() => {
+      if (this.stationsSelect) {
+        this.stationsSelect.open();
+      }
+    }, 500);
   }
 
   isReadOnly(submission: FormSubmission): boolean {
