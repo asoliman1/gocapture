@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
+import {Component, NgZone, ViewChild} from '@angular/core';
 import {
   Content,
   MenuController,
@@ -34,6 +34,7 @@ import {Station} from "../../model/station";
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
 })
+
 export class FormCapture {
 
   form: Form;
@@ -62,7 +63,7 @@ export class FormCapture {
 
   isProcessing: boolean = false;
 
-  formStation: Station;
+  selectedStation: string;
 
   private backUnregister;
 
@@ -115,17 +116,14 @@ export class FormCapture {
       });
     }
 
-    this.form.stations = [];
-
-    this.form.stations.push({id: 1, name: 'Station 1'});
-    this.form.stations.push({id: 2, name: 'Station 2'});
-
     setTimeout(() => {
       if (this.stationsSelect) {
-        this.stationsSelect.open();
+
+        this.stationsSelect.open(new UIEvent('touch'));
       }
     }, 500);
   }
+
 
   isReadOnly(submission: FormSubmission): boolean {
     return submission &&
@@ -329,6 +327,10 @@ export class FormCapture {
     }
 
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+
+    if (this.form.stations) {
+      this.submission.station = this.selectedStation;
+    }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
