@@ -335,7 +335,7 @@ export class DBClient {
       },
       17: {
         queries: [
-          "alter table forms add column stations text"
+          "alter table forms add column event_stations text"
         ]
       },
       18: {
@@ -424,7 +424,7 @@ export class DBClient {
 		form.submit_error_message = dbForm.submit_error_message;
 		form.submit_button_text = dbForm.submit_button_text;
 		form.elements = typeof dbForm.elements == "string" ? JSON.parse(dbForm.elements) : dbForm.elements;
-    form.stations = typeof dbForm.stations == "string" ? JSON.parse(dbForm.stations) : dbForm.stations;
+    form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
 				if (e1.position < e2.position) {
@@ -493,7 +493,7 @@ export class DBClient {
       form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
       JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0,
       form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
-      form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.stations)]);
+      form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations)]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {

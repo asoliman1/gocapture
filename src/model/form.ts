@@ -21,7 +21,7 @@ export class Form extends BaseForm{
 	barcode_processed? : BarcodeStatus;
   instructions_content: string;
   is_enforce_instructions_initially: boolean;
-  stations: Station[];
+  event_stations: Station[];
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;

@@ -328,7 +328,7 @@ export class FormCapture {
 
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
-    if (this.form.stations) {
+    if (this.form.event_stations) {
       this.submission.station = this.selectedStation;
     }
 
