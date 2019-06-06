@@ -2,6 +2,7 @@ import {FormElement} from "./form-element";
 import {BarcodeStatus} from "./form-submission";
 import {BaseForm} from "./base-form";
 import {AbstractControl} from "@angular/forms";
+import {Station} from "./station";
 
 export class Form extends BaseForm{
 	created_at : string;
@@ -20,7 +21,7 @@ export class Form extends BaseForm{
 	barcode_processed? : BarcodeStatus;
   instructions_content: string;
   is_enforce_instructions_initially: boolean;
-  is_mobile_rapid_scan_mode: boolean;
+  event_stations: Station[];
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;

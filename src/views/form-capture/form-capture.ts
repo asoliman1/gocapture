@@ -6,7 +6,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
+  Platform, Select,
   ToastController
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -28,11 +28,13 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
+import {Station} from "../../model/station";
 
 @Component({
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
 })
+
 export class FormCapture {
 
   form: Form;
@@ -44,6 +46,11 @@ export class FormCapture {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
+  private stationsSelect : Select;
+
+  @ViewChild("stationsSelect") set select(select: Select) {
+    this.stationsSelect = select;
+  }
 
   valid: boolean = true;
   errorMessage: String;
@@ -55,6 +62,8 @@ export class FormCapture {
   isEditing: boolean = false;
 
   isProcessing: boolean = false;
+
+  selectedStation: string;
 
   private backUnregister;
 
@@ -106,7 +115,15 @@ export class FormCapture {
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
     }
+
+    setTimeout(() => {
+      if (this.stationsSelect) {
+
+        this.stationsSelect.open(new UIEvent('touch'));
+      }
+    }, 500);
   }
+
 
   isReadOnly(submission: FormSubmission): boolean {
     return submission &&
@@ -310,6 +327,10 @@ export class FormCapture {
     }
 
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+
+    if (this.form.event_stations) {
+      this.submission.station = this.selectedStation;
+    }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
