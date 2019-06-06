@@ -8,8 +8,7 @@ export class GOCBarcodeScanner implements Scanner {
   statusMessage: string = "Scan barcode";
 
   constructor(public barcodeScanner: BarcodeScanner,
-              private barcodeFormat: string,
-              private toast: ToastController,) {
+              private barcodeFormat: string) {
     //
   }
 
@@ -35,14 +34,7 @@ export class GOCBarcodeScanner implements Scanner {
 
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {
-        if (options["rapidMode"]) {
-          let toaster = this.toast.create({
-            message: "Scanned",
-            duration: 3000,
-            position: "top"
-          });
-          toaster.present();
-        }
+
         if (scannedData.cancelled) {
           this.statusMessage = "Scan " + this.name;
           resolve({isCancelled: true});

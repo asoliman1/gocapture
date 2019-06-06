@@ -20,6 +20,7 @@ export class Form extends BaseForm{
 	barcode_processed? : BarcodeStatus;
   instructions_content: string;
   is_enforce_instructions_initially: boolean;
+  is_mobile_rapid_scan_mode: boolean;
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;
