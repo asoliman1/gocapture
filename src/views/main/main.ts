@@ -12,6 +12,7 @@ import { NavController } from 'ionic-angular/navigation/nav-controller';
 import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {App} from "ionic-angular";
+import {FormCapture} from "../form-capture";
 
 @Component({
 	selector: 'main',
@@ -70,7 +71,12 @@ export class Main {
 		});
 
     this.app.viewWillEnter.subscribe(viewCtrl => {
-      this.shouldShowSyncBar = viewCtrl.name != 'FormCapture';
+
+      let view = this.nav.getActive();
+      let isFormCaptureView = view.instance instanceof FormCapture;
+
+      this.shouldShowSyncBar = !isFormCaptureView;
+
     })
 	}
 
