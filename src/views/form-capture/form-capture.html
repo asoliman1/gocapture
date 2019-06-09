@@ -52,7 +52,8 @@
 						[readOnly]="isReadOnly(submission) && !isEditing"
             [isEditing]="isEditing"
             [submitAttempt]="submitAttempt"
-            (onProcessingEvent)="onProcessing($event)"></form-view>
+            (onProcessingEvent)="onProcessing($event)">
+      </form-view>
     </ion-row>
 
     <ion-item  [hidden]="true" *ngIf="form && form.event_stations">

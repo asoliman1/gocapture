@@ -1,5 +1,5 @@
 import { RESTClient } from '../../../../services/rest-client';
-import {Component, Input, forwardRef, OnInit, Output} from '@angular/core';
+import {Component, Input, forwardRef, OnInit, Output, OnDestroy} from '@angular/core';
 import { Form, FormElement, FormSubmission, BarcodeStatus } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { BaseElement } from "../base-element";
@@ -12,6 +12,7 @@ import {Util} from "../../../../util/util";
 import {Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import { Scanner, ScannerType } from './Scanners/Scanner';
+import {ActionService} from "../../../../services/action-service";
 
 @Component({
 	selector: 'badge',
@@ -20,7 +21,7 @@ import { Scanner, ScannerType } from './Scanners/Scanner';
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Badge), multi: true }
 	]
 })
-export class Badge extends BaseElement implements OnInit {
+export class Badge extends BaseElement implements OnInit, OnDestroy {
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
@@ -36,12 +37,25 @@ export class Badge extends BaseElement implements OnInit {
               public utils: Util,
               public platform: Platform,
               public nfc: NFC,
-              public ndef: Ndef) {
+              public ndef: Ndef,
+              public actionService: ActionService) {
 		super();
+
+		this.actionSubscription = this.actionService.action.subscribe((elementId) => {
+		  if (elementId == this.element.id) {
+		    this.scan();
+      }
+    })
 	}
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
+  }
+
+  ngOnDestroy(): void {
+	  if (this.actionSubscription) {
+	    this.actionSubscription.unsubscribe();
+    }
   }
 
   scannerStatusMessage() {
@@ -59,21 +73,29 @@ export class Badge extends BaseElement implements OnInit {
     console.log("Badge scan started");
     this.scanner.scan().then(response => {
 
+      if (this.form.is_mobile_rapid_scan_mode) {
+
+      } else {
+        this.toast.create({
+          message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
+          duration: 1500,
+          position: "bottom",
+          cssClass: "success"
+        }).present();
+      }
+
       console.log("Badge scan finished: " + response.scannedId);
+
       if (response.isCancelled) {
+        this.onProcessingEvent.emit('false');
         return;
       }
 
       this.onChange(response.scannedId);
 
-      this.toast.create({
-        message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
-        duration: 1500,
-        position: "bottom",
-        cssClass: "success"
-      }).present();
       this.processData(response.scannedId);
     }, (error) => {
+      this.onProcessingEvent.emit('false');
       console.error("Could not scan badge: " + (typeof error == "string" ? error : JSON.stringify(error)));
     });
 	}
@@ -142,7 +164,6 @@ export class Badge extends BaseElement implements OnInit {
   }
 
   setDisabledState(isDisabled: boolean): void {
+	  //
   }
-
-
 }

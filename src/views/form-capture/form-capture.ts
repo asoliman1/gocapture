@@ -28,6 +28,7 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
+import {ActionService} from "../../services/action-service";
 
 @Component({
   selector: 'form-capture',
@@ -87,7 +88,9 @@ export class FormCapture {
               private popup: Popup,
               private themeProvider: ThemeProvider,
               private localStorage: LocalStorageProvider,
-              private vibration: Vibration) {
+              private vibration: Vibration,
+              private actionService: ActionService) {
+
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -133,14 +136,32 @@ export class FormCapture {
       }
     }, 500);
 
+    this.handleRapidScanMode();
+  }
+
+  //Rapid scan
+  private handleRapidScanMode() {
+    if (this.isReadOnly(this.submission)) {
+      return;
+    }
     this.scanSources = this.getScanSources();
 
     //open the rapid scan source chooser
     setTimeout(() => {
-      if (this.rapidScanSourceSelect) {
+      if (this.rapidScanSourceSelect && this.scanSources.length > 1) {
         this.rapidScanSourceSelect.open(new UIEvent('touch'));
+      } else if (this.scanSources.length > 0) {
+        this.onScanSourceChoose(this.scanSources[0].id)
       }
     }, 500);
+  }
+
+  onScanSourceChoose(source) {
+    this.startRapidScanModeForSource(source);
+  }
+
+  private startRapidScanModeForSource(source: string) {
+    this.actionService.performAction(source);
   }
 
   getScanSources() {
@@ -150,26 +171,18 @@ export class FormCapture {
     let nfcElement = this.getElementForType("nfc");
 
     if (businessCardElement) {
-      sources.push({id:"bcSource", name: "Business card scan"});
+      sources.push({id: businessCardElement.id, name: "Business card scan"});
     }
 
     if (barcodeElement) {
-      sources.push({id:"barcodeSource", name: "Barcode scan"});
+      sources.push({id: barcodeElement.id, name: "Barcode scan"});
     }
 
     if (nfcElement) {
-      sources.push({id:"nfcSource", name: "NFC scan"});
+      sources.push({id: nfcElement.id, name: "NFC scan"});
     }
 
     return sources;
-  }
-
-  onScanSourceChoose(source) {
-    this.startRapidScanModeForSource(source);
-  }
-
-  private startRapidScanModeForSource(source: string) {
-    alert(source);
   }
 
   isReadOnly(submission: FormSubmission): boolean {

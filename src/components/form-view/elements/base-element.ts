@@ -4,6 +4,7 @@ import { ControlValueAccessor } from "@angular/forms";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
 import { File } from '@ionic-native/file';
+import {Subscription} from "rxjs";
 
 export class BaseElement implements OnChanges, ControlValueAccessor {
 
@@ -14,6 +15,8 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
   readonly: boolean = false;
 
   @Output() onProcessingEvent = new EventEmitter();
+
+  actionSubscription: Subscription;
 
   propagateChange:any = () => {};
   validateFn:any = () => {};
@@ -94,7 +97,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
           .catch(err => {
             obs.error(err);
           });
-      }
+      };
       //console.log(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1));
       this.file.createDir(newFolder.substring(0, newFolder.lastIndexOf("/")), newFolder.substr(newFolder.lastIndexOf("/") + 1), false)
         .then(doCopy)

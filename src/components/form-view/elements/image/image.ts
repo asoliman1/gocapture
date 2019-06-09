@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
 import { Camera } from '@ionic-native/camera';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
-import { normalizeURL } from 'ionic-angular/util/util';
 import { Platform } from 'ionic-angular/platform/platform';
 import {Util} from "../../../../util/util";
 import {ImageProcessor} from "../../../../services/image-processor";
