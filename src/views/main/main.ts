@@ -70,6 +70,7 @@ export class Main {
 			this.themeProvider.setActiveTheme(theme + '-theme');
 		});
 
+		//TODO: move pullup to the forms view and remove this checking
     this.app.viewWillEnter.subscribe(viewCtrl => {
 
       let view = this.nav.getActive();

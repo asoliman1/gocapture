@@ -28,7 +28,6 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
-import {Station} from "../../model/station";
 
 @Component({
   selector: 'form-capture',
@@ -48,8 +47,14 @@ export class FormCapture {
   @ViewChild(Content) content: Content;
   private stationsSelect : Select;
 
-  @ViewChild("stationsSelect") set select(select: Select) {
+  @ViewChild("stationsSelect") set stationsChooser(select: Select) {
     this.stationsSelect = select;
+  }
+
+  private rapidScanSourceSelect : Select;
+
+  @ViewChild("rapidScanSourceSelect") set rapidScanSourceChooser(select: Select) {
+    this.rapidScanSourceSelect = select;
   }
 
   valid: boolean = true;
@@ -68,6 +73,8 @@ export class FormCapture {
   private backUnregister;
 
   private selectedTheme;
+
+  private scanSources = [];
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -116,14 +123,54 @@ export class FormCapture {
       });
     }
 
+    //TODO: test
+    this.form.is_mobile_rapid_scan_mode = true;
+
+    //open the event stations chooser
     setTimeout(() => {
       if (this.stationsSelect) {
-
         this.stationsSelect.open(new UIEvent('touch'));
+      }
+    }, 500);
+
+    this.scanSources = this.getScanSources();
+
+    //open the rapid scan source chooser
+    setTimeout(() => {
+      if (this.rapidScanSourceSelect) {
+        this.rapidScanSourceSelect.open(new UIEvent('touch'));
       }
     }, 500);
   }
 
+  getScanSources() {
+    let sources = [];
+    let businessCardElement = this.getElementForType("business_card");
+    let barcodeElement = this.getElementForType("barcode");
+    let nfcElement = this.getElementForType("nfc");
+
+    if (businessCardElement) {
+      sources.push({id:"bcSource", name: "Business card scan"});
+    }
+
+    if (barcodeElement) {
+      sources.push({id:"barcodeSource", name: "Barcode scan"});
+    }
+
+    if (nfcElement) {
+      sources.push({id:"nfcSource", name: "NFC scan"});
+    }
+
+    return sources;
+  }
+
+  onScanSourceChoose(source) {
+    this.startRapidScanModeForSource(source);
+  }
+
+  private startRapidScanModeForSource(source: string) {
+    alert(source);
+  }
 
   isReadOnly(submission: FormSubmission): boolean {
     return submission &&
