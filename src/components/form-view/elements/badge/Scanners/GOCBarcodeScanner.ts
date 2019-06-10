@@ -19,7 +19,7 @@ export class GOCBarcodeScanner implements Scanner {
     return 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI';
   }
 
-  scan(): Promise<ScannerResponse> {
+  scan(isRapidScan): Promise<ScannerResponse> {
 
     this.statusMessage = "Scanning " + this.name;
 
@@ -30,7 +30,7 @@ export class GOCBarcodeScanner implements Scanner {
       formats: formats,
     };
 
-    options["rapidMode"] = true;
+    options["rapidMode"] = isRapidScan;
 
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {

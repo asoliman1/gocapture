@@ -5,16 +5,28 @@ import {Subject} from "rxjs";
 
 export class ActionService {
 
-  private actionSource: Subject<any> = new Subject();
+  private performActionSource: Subject<any> = new Subject();
+  private completedActionSource: Subject<any> = new Subject();
+  private intermediaryCompletedActionSource: Subject<any> = new Subject();
 
-  action = this.actionSource.asObservable();
+  actionStart = this.performActionSource.asObservable();
+  actionComplete = this.completedActionSource.asObservable();
+  actionCompleteIntermediary = this.intermediaryCompletedActionSource.asObservable();
+
 
   constructor() {
     //
   }
 
   performAction(action) {
-    this.actionSource.next(action);
+    this.performActionSource.next(action);
+  }
 
+  completeAction() {
+    this.completedActionSource.next('');
+  }
+
+  intermediaryCompleteAction() {
+    this.intermediaryCompletedActionSource.next('');
   }
 }

@@ -161,7 +161,16 @@ export class FormCapture {
   }
 
   private startRapidScanModeForSource(source: string) {
+
     this.actionService.performAction(source);
+
+    this.actionService.actionCompleteIntermediary.subscribe(() => {
+      this.doSave();
+    });
+
+    this.actionService.actionComplete.subscribe(() => {
+      //
+    });
   }
 
   getScanSources() {

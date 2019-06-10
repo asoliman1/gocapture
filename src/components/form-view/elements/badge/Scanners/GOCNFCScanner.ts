@@ -14,7 +14,7 @@ export class GOCNFCScanner implements Scanner{
     //
   }
 
-  scan(): Promise<ScannerResponse> {
+  scan(isRapidScan): Promise<ScannerResponse> {
     return new Promise<ScannerResponse>(((resolve, reject) => {
       this.nfc.enabled().then(() => {
         this.readNfc(resolve, reject);

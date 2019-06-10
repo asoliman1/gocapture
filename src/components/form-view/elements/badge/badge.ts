@@ -41,9 +41,9 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
               public actionService: ActionService) {
 		super();
 
-		this.actionSubscription = this.actionService.action.subscribe((elementId) => {
+		this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
 		  if (elementId == this.element.id) {
-		    this.scan();
+		    this.scan(true);
       }
     })
 	}
@@ -62,7 +62,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 	  return this.scanner ? this.scanner.statusMessage : "";
   }
 
-  scan() {
+  scan(isRapidScan: boolean) {
 
     if (this.readonly) {
       return;
@@ -71,19 +71,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
     this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
-    this.scanner.scan().then(response => {
-
-      if (this.form.is_mobile_rapid_scan_mode) {
-
-      } else {
-        this.toast.create({
-          message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
-          duration: 1500,
-          position: "bottom",
-          cssClass: "success"
-        }).present();
-      }
-
+    this.scanner.scan(isRapidScan).then(response => {
       console.log("Badge scan finished: " + response.scannedId);
 
       if (response.isCancelled) {
@@ -93,14 +81,24 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 
       this.onChange(response.scannedId);
 
-      this.processData(response.scannedId);
+      if (!isRapidScan) {
+        this.toast.create({
+          message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
+          duration: 1500,
+          position: "bottom",
+          cssClass: "success"
+        }).present();
+      }
+
+      this.processData(response.scannedId, isRapidScan);
+
     }, (error) => {
       this.onProcessingEvent.emit('false');
       console.error("Could not scan badge: " + (typeof error == "string" ? error : JSON.stringify(error)));
     });
 	}
 
-	private processData(scannedId: string) {
+	private processData(scannedId: string, isRapidScan: boolean) {
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe( data => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
@@ -113,6 +111,10 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
       this.form["barcode_processed"] = BarcodeStatus.Processed;
       this.fillElementsWithFetchedData(data);
       this.onProcessingEvent.emit('false');
+
+      if (isRapidScan) {
+        this.actionService.intermediaryCompleteAction();
+      }
 
     }, err => {
       this.onProcessingEvent.emit('false');
