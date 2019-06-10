@@ -94,7 +94,6 @@ export class FormCapture {
 
   private setupForm() {
     this.form = this.navParams.get("form");
-    this.form["event_stations"] = [{name: "station 1", id: "station1"}, {name: "station 2", id: "station2"}];
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
     if (this.dispatch) {
