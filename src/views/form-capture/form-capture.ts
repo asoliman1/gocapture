@@ -1,4 +1,4 @@
-import {Component, NgZone, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 import {
   Content,
   MenuController,
@@ -46,6 +46,9 @@ export class FormCapture {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
+
+  @ViewChild("formTitle") formTitle: ElementRef;
+
   private stationsSelect : Select;
 
   @ViewChild("stationsSelect") set select(select: Select) {
@@ -63,7 +66,7 @@ export class FormCapture {
 
   isProcessing: boolean = false;
 
-  selectedStation: string;
+  selectedStation: Station;
 
   private backUnregister;
 
@@ -91,6 +94,7 @@ export class FormCapture {
 
   private setupForm() {
     this.form = this.navParams.get("form");
+    this.form["event_stations"] = [{name: "station 1", id: "station1"}, {name: "station 2", id: "station2"}];
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
     if (this.dispatch) {
@@ -115,13 +119,6 @@ export class FormCapture {
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
     }
-
-    setTimeout(() => {
-      if (this.stationsSelect) {
-
-        this.stationsSelect.open(new UIEvent('touch'));
-      }
-    }, 500);
   }
 
 
@@ -139,6 +136,11 @@ export class FormCapture {
   }
 
   ionViewDidEnter() {
+
+    if (this.stationsSelect) {
+      this.formTitle.nativeElement.click();
+    }
+
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -329,7 +331,7 @@ export class FormCapture {
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.form.event_stations) {
-      this.submission.station = this.selectedStation;
+      this.submission.station = this.selectedStation.id;
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
@@ -482,6 +484,12 @@ export class FormCapture {
       elementsIds = elementsIds.concat(`element_${element["id"]}`);
     }
     return elementsIds;
+  }
+
+  openStations(event) {
+    if (this.form.event_stations) {
+      this.stationsSelect.open(event);
+    }
   }
 
 }
