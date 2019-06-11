@@ -1,3 +1,4 @@
+import { Countries } from './../../../../constants/constants';
 import { RESTClient } from '../../../../services/rest-client';
 import {Component, Input, forwardRef, OnInit, Output} from '@angular/core';
 import { Form, FormElement, FormSubmission, BarcodeStatus } from "../../../../model";
@@ -124,9 +125,25 @@ export class Badge extends BaseElement implements OnInit {
 	  let vals = [];
     data.forEach(entry => {
       let id = this.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
-      console.log(`element id - ${id}`);
       if (id) {
-        vals.push({id: id, value: entry.value});
+        let value = entry.value;
+
+        if (entry.ll_field_unique_identifier === "Country") {
+          for (let country of Countries) {
+            // check the name
+            if (country.name === entry.value) {
+              break;
+            }
+
+            // check the aliases for that country
+            if (country.aliases && (country.aliases as any).includes(entry.value)) {
+              value = country.name;
+              break;
+            }
+          }
+        }
+
+        vals.push({id, value});
       }
 
     });
