@@ -1,4 +1,4 @@
-import {Component, NgZone, ViewChild} from '@angular/core';
+import {Component, NgZone, OnDestroy, ViewChild} from '@angular/core';
 import {
   Content,
   MenuController,
@@ -35,7 +35,7 @@ import {ActionService} from "../../services/action-service";
   templateUrl: 'form-capture.html'
 })
 
-export class FormCapture {
+export class FormCapture implements OnDestroy {
 
   form: Form;
 
@@ -77,6 +77,11 @@ export class FormCapture {
 
   private scanSources = [];
 
+  private selectedScanSource;
+
+  private intermediateActionSubscription;
+  private actionSubscription;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -99,7 +104,16 @@ export class FormCapture {
     this.setupForm();
   }
 
-  private setupForm() {
+  ngOnDestroy(): void {
+    if (this.intermediateActionSubscription) {
+      this.intermediateActionSubscription.unsubscribe();
+    }
+    if (this.actionSubscription) {
+      this.actionSubscription.unsubscribe();
+    }
+  }
+
+  private setupForm(isInitialSetup = true) {
     this.form = this.navParams.get("form");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
@@ -126,9 +140,6 @@ export class FormCapture {
       });
     }
 
-    //TODO: test
-    this.form.is_mobile_rapid_scan_mode = true;
-
     //open the event stations chooser
     setTimeout(() => {
       if (this.stationsSelect) {
@@ -136,7 +147,13 @@ export class FormCapture {
       }
     }, 500);
 
-    this.handleRapidScanMode();
+    if (isInitialSetup) {
+      this.handleRapidScanMode();
+    } else if (this.selectedScanSource) {
+      setTimeout(() => {
+        this.actionService.performAction(this.selectedScanSource);
+      }, 500);
+    }
   }
 
   //Rapid scan
@@ -161,15 +178,21 @@ export class FormCapture {
   }
 
   private startRapidScanModeForSource(source: string) {
-
+    this.selectedScanSource = source;
     this.actionService.performAction(source);
 
-    this.actionService.actionCompleteIntermediary.subscribe(() => {
-      this.doSave();
+    this.intermediateActionSubscription = this.actionService.actionCompleteIntermediary.subscribe(() => {
+      this.doSave(false);
     });
 
-    this.actionService.actionComplete.subscribe(() => {
-      //
+    this.actionSubscription = this.actionService.actionComplete.subscribe(() => {
+      this.client.doSync(this.form.form_id).subscribe(() => {
+        console.log('Barcodes are processed (rapid scan mode)');
+      }, (error) => {
+        //
+        console.error('Error when processing barcodes (rapid scan mode) - ' + error);
+      });
+      this.navCtrl.pop();
     });
   }
 
@@ -361,7 +384,7 @@ export class FormCapture {
   }
 
 
-  doSave() {
+  doSave(shouldSyncData = true) {
     this.submitAttempt = true;
 
     /*
@@ -401,7 +424,7 @@ export class FormCapture {
       this.submission.station = this.selectedStation;
     }
 
-    this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
+    this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.submission = null;
         this.form = null;
@@ -415,10 +438,23 @@ export class FormCapture {
         successToast.present();
         setTimeout(()=>{
           this.zone.run(()=>{
-            this.ionViewWillEnter();
+            this.setupForm(false);
           });
         }, 10);
-      } else{
+      } else if (this.form.is_enable_rapid_scan_mode) {
+
+        console.log('save submission with id - ' + this.submission.id);
+
+        this.submission = null;
+        this.form = null;
+        this.dispatch = null;
+
+        setTimeout(()=>{
+          this.zone.run(()=>{
+            this.setupForm(false);
+          });
+        }, 10);
+      } else {
         this.navCtrl.pop();
       }
     }, (err) => {

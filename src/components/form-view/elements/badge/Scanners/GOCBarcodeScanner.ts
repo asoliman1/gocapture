@@ -1,6 +1,5 @@
 import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
 import { Scanner, ScannerResponse } from "./Scanner";
-import {ToastController} from "ionic-angular";
 
 export class GOCBarcodeScanner implements Scanner {
 
@@ -29,8 +28,6 @@ export class GOCBarcodeScanner implements Scanner {
     let options: BarcodeScannerOptions = {
       formats: formats,
     };
-
-    options["rapidMode"] = isRapidScan;
 
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {

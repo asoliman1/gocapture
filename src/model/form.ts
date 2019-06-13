@@ -22,7 +22,7 @@ export class Form extends BaseForm{
   instructions_content: string;
   is_enforce_instructions_initially: boolean;
   event_stations: Station[];
-  is_mobile_rapid_scan_mode: boolean;
+  is_enable_rapid_scan_mode: boolean;
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;

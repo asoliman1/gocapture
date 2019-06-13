@@ -66,9 +66,10 @@
       </ion-select>
     </ion-item>
 
-    <ion-item  [hidden]="true" *ngIf="form && form.is_mobile_rapid_scan_mode">
+    <ion-item  [hidden]="true" *ngIf="form && form.is_enable_rapid_scan_mode">
       <ion-label >Choose the scan source</ion-label>
       <ion-select #rapidScanSourceSelect color="primary"
+                  [selectOptions]="{cssClass: 'gc-alert'}"
                   [(ngModel)]="selectedStation"
                   (ionChange)="onScanSourceChoose($event)">
         <ion-option *ngFor="let source of scanSources" [value]="source.id">{{source.name}}</ion-option>

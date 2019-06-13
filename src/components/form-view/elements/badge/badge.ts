@@ -43,7 +43,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 
 		this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
 		  if (elementId == this.element.id) {
-		    this.scan(true);
+        this.scan(true);
       }
     })
 	}
@@ -76,29 +76,35 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 
       if (response.isCancelled) {
         this.onProcessingEvent.emit('false');
+
+        if (isRapidScan) {
+          this.actionService.completeAction();
+        }
         return;
       }
 
       this.onChange(response.scannedId);
 
-      if (!isRapidScan) {
-        this.toast.create({
-          message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
-          duration: 1500,
-          position: "bottom",
-          cssClass: "success"
-        }).present();
+      if (isRapidScan) {
+        this.form["barcode_processed"] = BarcodeStatus.Queued;
+        this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+        this.actionService.intermediaryCompleteAction();
+      } else {
+        this.processData(response.scannedId);
       }
-
-      this.processData(response.scannedId, isRapidScan);
-
+      this.toast.create({
+        message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
+        duration: 1500,
+        position: "bottom",
+        cssClass: "success"
+      }).present();
     }, (error) => {
       this.onProcessingEvent.emit('false');
       console.error("Could not scan badge: " + (typeof error == "string" ? error : JSON.stringify(error)));
     });
 	}
 
-	private processData(scannedId: string, isRapidScan: boolean) {
+	private processData(scannedId: string) {
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe( data => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
@@ -111,10 +117,6 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
       this.form["barcode_processed"] = BarcodeStatus.Processed;
       this.fillElementsWithFetchedData(data);
       this.onProcessingEvent.emit('false');
-
-      if (isRapidScan) {
-        this.actionService.intermediaryCompleteAction();
-      }
 
     }, err => {
       this.onProcessingEvent.emit('false');

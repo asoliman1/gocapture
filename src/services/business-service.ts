@@ -4,7 +4,7 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Subscription } from "rxjs/Subscription";
 import { Config } from '../config';
-import {DeviceFormMembership, DispatchOrder, Form, FormSubmission, SubmissionStatus, User} from '../model';
+import {DeviceFormMembership, Form, FormSubmission, SubmissionStatus, User} from '../model';
 import { AuthenticationRequest } from '../model/protocol';
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
@@ -325,13 +325,16 @@ export class BussinessClient {
 		return this.db.getSubmissions(form.form_id, isDispatch);
 	}
 
-	public saveSubmission(sub: FormSubmission, form: Form): Observable<boolean> {
+	public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
 		sub.updateFields(form);
 
 		return new Observable<boolean>((obs: Observer<boolean>) => {
 			this.db.saveSubmission(sub).subscribe((done) => {
 
-				this.doAutoSync();
+			  if (syncData) {
+			    this.doAutoSync();
+        }
+
 				obs.next(done);
 				obs.complete();
 			}, (err) => {
