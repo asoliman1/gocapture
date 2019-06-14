@@ -330,7 +330,7 @@ export class FormCapture {
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.form.event_stations) {
-      this.submission.station = this.selectedStation.id;
+      this.submission.station = this.selectedStation.id + '';
     }
 
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
