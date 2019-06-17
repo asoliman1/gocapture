@@ -144,20 +144,6 @@ export class FormCapture implements OnDestroy {
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
     }
-
-    //open the event stations chooser
-
-    if (this.form.event_stations && !this.selectedStation) {
-      setTimeout(() => {
-        if (this.stationsSelect) {
-          this.stationsSelect.open(new UIEvent('touch'));
-        }
-      }, 500);
-    }
-
-    if (!this.form.event_stations) {
-      this.initiateRapidScanMode(isInitialSetup);
-    }
   }
 
   private initiateRapidScanMode(isInitialScan) {
@@ -252,6 +238,10 @@ export class FormCapture implements OnDestroy {
 
     if (this.stationsSelect) {
       this.formTitle.nativeElement.click();
+    }
+
+    if (!this.stationsSelect) {
+      this.initiateRapidScanMode(true);
     }
 
     this.backUnregister = this.platform.registerBackButtonAction(() => {
