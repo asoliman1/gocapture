@@ -21,6 +21,7 @@ import {ImageViewer} from "./image-viewer";
 import {SettingsService} from "../../../../services/settings-service";
 import {settingsKeys} from "../../../../constants/constants";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {ActionService} from "../../../../services/action-service";
 
 declare var CameraPreview;
 declare var screen;
@@ -75,7 +76,8 @@ export class BusinessCard extends BaseElement {
               private photoViewer: PhotoViewer,
               private photoLibrary: PhotoLibrary,
               private settingsService: SettingsService,
-              private screen: ScreenOrientation) {
+              private screen: ScreenOrientation,
+              private actionService: ActionService) {
     super();
     this.currentVal = {
       front: this.front,
@@ -88,6 +90,20 @@ export class BusinessCard extends BaseElement {
     };
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
+    this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
+      if (elementId == this.element.id) {
+        if (this.readonly) {
+          return;
+        }
+        if (this.platform.is('ios')) {
+          this.doCapture(this.FRONT);
+        } else {
+          // this.showBusinessCardOverlay(type);
+          this.startCamera(this.FRONT)
+        }
+      }
+    })
   }
 
   // picture options
@@ -208,7 +224,7 @@ export class BusinessCard extends BaseElement {
     ]
   }
 
-  private async doCapture(type: number, captureType: number = 1) {
+  private async doCapture(type: number, captureType: number = 1, isRapidScanMode: boolean = false) {
 
     await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
 
@@ -228,7 +244,8 @@ export class BusinessCard extends BaseElement {
       previewWidth: width - 24,
       previewHeight: (width - 24) / 1.75,
       quality: 100,
-      needCrop: true
+      needCrop: true,
+      isRapidScan: isRapidScanMode
     };
 
     this.frontLoading = type == this.FRONT;

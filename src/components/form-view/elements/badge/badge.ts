@@ -1,4 +1,4 @@
-import { Countries } from './../../../../constants/constants';
+import { Countries } from '../../../../constants/constants';
 import { RESTClient } from '../../../../services/rest-client';
 import {Component, Input, forwardRef, OnInit, Output, OnDestroy} from '@angular/core';
 import { Form, FormElement, FormSubmission, BarcodeStatus } from "../../../../model";
@@ -89,6 +89,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
       if (isRapidScan) {
         this.form["barcode_processed"] = BarcodeStatus.Queued;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
+        this.fillInElementsWithPlaceholderValue("Scanned");
         this.actionService.intermediaryCompleteAction();
       } else {
         this.processData(response.scannedId);
@@ -124,14 +125,19 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
       this.scanner.restart();
 
       console.error("Could not fetch badge data: " + (typeof err == "string" ? err : JSON.stringify(err)));
-      this.form.elements.forEach((element) => {
 
-        if (element.is_filled_from_barcode) {
-          element.placeholder = "Scanned";
-        }
-      });
+      this.fillInElementsWithPlaceholderValue("Scanned");
 
       this.handleAcceptingInvalidBadgeData(err);
+    });
+  }
+
+  fillInElementsWithPlaceholderValue(value) {
+    this.form.elements.forEach((element) => {
+
+      if (element.is_filled_from_barcode) {
+        element.placeholder = value;
+      }
     });
   }
 

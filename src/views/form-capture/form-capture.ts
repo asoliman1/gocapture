@@ -441,7 +441,7 @@ export class FormCapture implements OnDestroy {
             this.setupForm(false);
           });
         }, 10);
-      } else if (this.form.is_enable_rapid_scan_mode) {
+      } else if (this.isRapidModeSelected()) {
 
         console.log('save submission with id - ' + this.submission.id);
 
@@ -460,6 +460,10 @@ export class FormCapture implements OnDestroy {
     }, (err) => {
       console.error(err);
     });
+  }
+
+  isRapidModeSelected() {
+    return this.form.is_enable_rapid_scan_mode && this.selectedScanSource;
   }
 
 
