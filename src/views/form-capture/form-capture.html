@@ -66,7 +66,8 @@
       <ion-label >Stations</ion-label>
       <ion-select #stationsSelect color="primary" interface="popover"
                   [selectOptions]="{cssClass: 'gc-popover', title: 'Select station'}"
-                  [(ngModel)]="selectedStation">
+                  [(ngModel)]="selectedStation"
+                  (ionChange)="onStationSelect($event)">>
         <ion-option *ngFor="let station of form.event_stations" [value]="station">{{station.name}}</ion-option>
       </ion-select>
     </ion-item>
