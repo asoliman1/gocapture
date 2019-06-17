@@ -22,6 +22,8 @@ export class FormSubmission{
   hidden_elements: string[];
   is_filled_from_list: boolean = false;
 
+  station: string;
+
 	barcode_processed: BarcodeStatus = 0;
 
 	submission_type: FormSubmissionType = FormSubmissionType.normal;

@@ -1,4 +1,4 @@
-import {Component, NgZone, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 import {
   Content,
   MenuController,
@@ -6,7 +6,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
+  Platform, Select,
   ToastController
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -28,11 +28,13 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
+import {Station} from "../../model/station";
 
 @Component({
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
 })
+
 export class FormCapture {
 
   form: Form;
@@ -45,6 +47,14 @@ export class FormCapture {
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
 
+  @ViewChild("formTitle") formTitle: ElementRef;
+
+  private stationsSelect : Select;
+
+  @ViewChild("stationsSelect") set select(select: Select) {
+    this.stationsSelect = select;
+  }
+
   valid: boolean = true;
   errorMessage: String;
 
@@ -55,6 +65,8 @@ export class FormCapture {
   isEditing: boolean = false;
 
   isProcessing: boolean = false;
+
+  selectedStation: Station;
 
   private backUnregister;
 
@@ -108,6 +120,7 @@ export class FormCapture {
     }
   }
 
+
   isReadOnly(submission: FormSubmission): boolean {
     return submission &&
       (submission.status == SubmissionStatus.Submitted ||
@@ -122,6 +135,11 @@ export class FormCapture {
   }
 
   ionViewDidEnter() {
+
+    if (this.stationsSelect) {
+      this.formTitle.nativeElement.click();
+    }
+
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -311,6 +329,10 @@ export class FormCapture {
 
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
+    if (this.form.event_stations) {
+      this.submission.station = this.selectedStation.id + '';
+    }
+
     this.client.saveSubmission(this.submission, this.form).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.submission = null;
@@ -461,6 +483,12 @@ export class FormCapture {
       elementsIds = elementsIds.concat(`element_${element["id"]}`);
     }
     return elementsIds;
+  }
+
+  openStations(event) {
+    if (this.form.event_stations) {
+      this.stationsSelect.open(event);
+    }
   }
 
 }
