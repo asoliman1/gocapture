@@ -1,5 +1,5 @@
 import { Device } from '@ionic-native/device';
-import { Component, Input, forwardRef, NgZone, ViewChild } from '@angular/core';
+import {Component, Input, forwardRef, NgZone, ViewChild, OnDestroy} from '@angular/core';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
@@ -33,7 +33,7 @@ declare var screen;
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BusinessCard), multi: true }
   ]
 })
-export class BusinessCard extends BaseElement {
+export class BusinessCard extends BaseElement implements OnDestroy{
 
   @ViewChild("frontImage")
   private frontImage:any;
@@ -92,17 +92,30 @@ export class BusinessCard extends BaseElement {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 
     this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
+
       if (elementId == this.element.id) {
         if (this.readonly) {
           return;
         }
+
+        const buttons = [
+          {
+            text: 'Ok'
+          }
+        ];
+        this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
+
+        /*
         if (this.platform.is('ios')) {
           this.doCapture(this.FRONT);
         } else {
           // this.showBusinessCardOverlay(type);
           this.startCamera(this.FRONT)
         }
+        */
       }
+
+
     })
   }
 
@@ -118,6 +131,12 @@ export class BusinessCard extends BaseElement {
       front: this.util.imageUrl(this.currentVal.front),
       back: this.util.imageUrl(this.currentVal.back)
     };
+  }
+
+  ngOnDestroy(): void {
+    if (this.actionSubscription) {
+      this.actionSubscription.unsubscribe();
+    }
   }
 
   captureImage(type: number) {

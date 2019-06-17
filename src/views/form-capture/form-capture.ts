@@ -147,12 +147,15 @@ export class FormCapture implements OnDestroy {
   }
 
   private initiateRapidScanMode(isInitialScan) {
-    if (isInitialScan) {
-      this.handleRapidScanModeSources();
-    } else if (this.selectedScanSource) {
-      setTimeout(() => {
-        this.actionService.performAction(this.selectedScanSource);
-      }, 500);
+
+    if (this.form.is_enable_rapid_scan_mode) {
+      if (isInitialScan) {
+        this.handleRapidScanModeSources();
+      } else if (this.selectedScanSource) {
+        setTimeout(() => {
+          this.actionService.performAction(this.selectedScanSource);
+        }, 500);
+      }
     }
   }
 
@@ -165,10 +168,12 @@ export class FormCapture implements OnDestroy {
 
     //open the rapid scan source chooser
     setTimeout(() => {
-      if (this.rapidScanSourceSelect && this.scanSources.length > 1) {
-        this.rapidScanSourceSelect.open(new UIEvent('touch'));
-      } else if (this.scanSources.length > 0) {
-        this.onScanSourceChoose(this.scanSources[0].id)
+      if (this.rapidScanSourceSelect) {
+        if (this.scanSources.length > 1) {
+          this.rapidScanSourceSelect.open(new UIEvent('touch'));
+        } else if (this.scanSources.length > 0) {
+          this.onScanSourceChoose(this.scanSources[0].id)
+        }
       }
     }, 500);
   }

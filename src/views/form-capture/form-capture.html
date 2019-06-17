@@ -62,7 +62,7 @@
       </form-view>
     </ion-row>
 
-    <ion-item  [hidden]="true" *ngIf="form && form.event_stations">
+    <ion-item  [hidden]="true" *ngIf="form && form.event_stations && form.event_stations.length">
       <ion-label >Stations</ion-label>
       <ion-select #stationsSelect color="primary" interface="popover"
                   [selectOptions]="{cssClass: 'gc-popover', title: 'Select station'}"
