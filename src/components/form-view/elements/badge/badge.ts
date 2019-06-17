@@ -25,7 +25,7 @@ export class Badge extends BaseElement implements OnInit {
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
-	@Input() form: Form;
+	@Input() form: Form; 
 	@Input() submission: FormSubmission;
 	@Input() readonly: boolean = false;
 
@@ -60,14 +60,14 @@ export class Badge extends BaseElement implements OnInit {
 
     console.log("Badge scan started");
     this.scanner.scan().then(response => {
-
+ 
       console.log("Badge scan finished: " + response.scannedId);
       if (response.isCancelled) {
         this.onProcessingEvent.emit('false');
         return;
       }
 
-      this.onChange(response.scannedId);
+      this.onChange(response.scannedId); 
 
       this.toast.create({
         message: this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully",
@@ -75,15 +75,29 @@ export class Badge extends BaseElement implements OnInit {
         position: "bottom",
         cssClass: "success"
       }).present();
+
+      if (this.element.post_show_reconciliation) {
+          this.submission.hold_submission = 1;
+          this.submission.hold_submission_reason = "Post-Show Reconciliation";
+
+          this.form.elements.forEach((element) => {
+            if (element.is_filled_from_barcode) {
+              element.placeholder = "Scanned";
+            }
+          });
+
+        return;
+      }
+
       this.processData(response.scannedId);
     }, (error) => {
       this.onProcessingEvent.emit('false');
       console.error("Could not scan badge: " + (typeof error == "string" ? error : JSON.stringify(error)));
     });
-	}
+  }
 
 	private processData(scannedId: string) {
-    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe( data => {
+    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));
@@ -91,8 +105,9 @@ export class Badge extends BaseElement implements OnInit {
         this.onProcessingEvent.emit('false');
         return;
       }
+
       this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
-      this.form["barcode_processed"] = BarcodeStatus.Processed;
+      this.form["barcode_processed"] = BarcodeStatus.Processed; 
       this.fillElementsWithFetchedData(data);
       this.onProcessingEvent.emit('false');
 
@@ -151,6 +166,7 @@ export class Badge extends BaseElement implements OnInit {
       }
 
     });
+
     Form.fillFormGroupData(vals, this.formGroup);
   }
 
@@ -158,7 +174,7 @@ export class Badge extends BaseElement implements OnInit {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type); 
   }
 
   setDisabledState(isDisabled: boolean): void {
