@@ -1,4 +1,5 @@
-import {Component, NgZone, OnDestroy, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
+
 import {
   Content,
   MenuController,
@@ -29,6 +30,7 @@ import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
 import {ActionService} from "../../services/action-service";
+import {Station} from "../../model/station";
 
 @Component({
   selector: 'form-capture',
@@ -46,6 +48,9 @@ export class FormCapture implements OnDestroy {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
+
+  @ViewChild("formTitle") formTitle: ElementRef;
+
   private stationsSelect : Select;
 
   @ViewChild("stationsSelect") set stationsChooser(select: Select) {
@@ -69,7 +74,7 @@ export class FormCapture implements OnDestroy {
 
   isProcessing: boolean = false;
 
-  selectedStation: string;
+  selectedStation: Station;
 
   private backUnregister;
 
@@ -231,6 +236,11 @@ export class FormCapture implements OnDestroy {
   }
 
   ionViewDidEnter() {
+
+    if (this.stationsSelect) {
+      this.formTitle.nativeElement.click();
+    }
+
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -421,7 +431,7 @@ export class FormCapture implements OnDestroy {
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.form.event_stations) {
-      this.submission.station = this.selectedStation;
+      this.submission.station = this.selectedStation.id + '';
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
@@ -591,6 +601,12 @@ export class FormCapture implements OnDestroy {
       elementsIds = elementsIds.concat(`element_${element["id"]}`);
     }
     return elementsIds;
+  }
+
+  openStations(event) {
+    if (this.form.event_stations) {
+      this.stationsSelect.open(event);
+    }
   }
 
 }
