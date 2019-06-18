@@ -438,7 +438,7 @@ export class FormCapture implements OnDestroy {
 
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
-    if (this.form.event_stations) {
+    if (this.selectedStation) {
       this.submission.station = this.selectedStation.id + '';
     }
 
@@ -612,7 +612,7 @@ export class FormCapture implements OnDestroy {
   }
 
   openStations(event) {
-    if (this.form.event_stations) {
+    if (this.form.event_stations && this.form.event_stations.length > 0) {
       this.stationsSelect.open(event);
     }
   }

@@ -98,20 +98,22 @@ export class BusinessCard extends BaseElement implements OnDestroy{
           return;
         }
 
-        // const buttons = [
-        //   {
-        //     text: 'Ok'
-        //   }
-        // ];
-        // this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
+        const buttons = [
+          {
+            text: 'Ok'
+          }
+        ];
+        this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
 
 
+        /*
         if (this.platform.is('ios')) {
           this.doCapture(this.FRONT);
         } else {
           // this.showBusinessCardOverlay(type);
           this.startCamera(this.FRONT)
         }
+         */
       }
     })
   }
