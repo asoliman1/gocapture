@@ -98,22 +98,19 @@ export class BusinessCard extends BaseElement implements OnDestroy{
           return;
         }
 
-        const buttons = [
-          {
-            text: 'Ok'
-          }
-        ];
-        this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
+        // const buttons = [
+        //   {
+        //     text: 'Ok'
+        //   }
+        // ];
+        // this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
 
-
-        /*
         if (this.platform.is('ios')) {
-          this.doCapture(this.FRONT);
+          this.doCapture(this.FRONT, 1, true);
         } else {
           // this.showBusinessCardOverlay(type);
           this.startCamera(this.FRONT)
         }
-         */
       }
     })
   }
@@ -271,16 +268,19 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
     (<any>navigator).camera.getPicture((imageData) => {
 
-      console.log('Picture was taken');
+      if (isRapidScanMode) {
+        //
+      } else {
+        console.log('Picture was taken');
 
-      imageData = 'data:image/jpg;base64,' + imageData;
+        imageData = 'data:image/jpg;base64,' + imageData;
 
-      let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
+        let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
+        this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
 
-      this.screen.unlock();
-
+        this.screen.unlock();
+      }
     }, (error) => {
       this.screen.unlock();
       this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);

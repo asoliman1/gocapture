@@ -71,6 +71,9 @@ typedef NSUInteger CDVMediaType;
 
 @property (assign) BOOL needCrop;
 
+@property (assign) BOOL isRapidScanMode;
+
+
 + (instancetype) createFromTakePictureArguments:(CDVInvokedUrlCommand*)command;
 
 @end

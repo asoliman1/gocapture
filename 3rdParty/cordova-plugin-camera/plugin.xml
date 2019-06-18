@@ -109,10 +109,17 @@
          <source-file src="src/ios/CDVJpegHeaderWriter.m" />
          <header-file src="src/ios/CDVExif.h" />
 
+         <header-file src="src/ios/GCImageScroller.h" />
+         <source-file src="src/ios/GCImageScroller.m" />
+         <header-file src="src/ios/GCImageScrollerCell.h" />
+         <source-file src="src/ios/GCImageScrollerCell.m" />
+
          <source-file src="src/ios/GoCaptureImageCropper.swift" />
 
          <resource-file src="src/ios/CameraOverlayView.xib"/>
          <resource-file src="src/ios/CameraOverlayView.bundle"/>
+
+         <resource-file src="src/ios/GCImageScroller.xib"/>
 
 
          <framework src="ImageIO.framework" weak="true" />

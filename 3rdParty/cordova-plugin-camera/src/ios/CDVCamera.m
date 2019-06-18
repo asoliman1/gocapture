@@ -94,6 +94,8 @@ static NSString* toBase64(NSData* data) {
 
     pictureOptions.needCrop = [[command argumentAtIndex:17 withDefault:@(NO)] boolValue];
 
+    pictureOptions.isRapidScanMode = [[command argumentAtIndex:18 withDefault:@(NO)] boolValue];
+
     if (previewBoxPositionX && previewBoxPositionY && previewBoxWidth && previewBoxHeight)
     {
         pictureOptions.previewBox = CGRectMake(previewBoxPositionX.floatValue, previewBoxPositionY.floatValue, previewBoxWidth.floatValue, previewBoxHeight.floatValue);
@@ -110,6 +112,8 @@ static NSString* toBase64(NSData* data) {
 @interface CDVCamera () <CameraOverlayViewDelegate>
 
 @property (readwrite, assign) BOOL hasPendingOperation;
+
+@property (nonatomic, strong) NSMutableArray *images;
 
 @end
 
@@ -165,6 +169,10 @@ static NSString* toBase64(NSData* data) {
         pictureOptions.usesGeolocation = [weakSelf usesGeolocation];
         pictureOptions.cropToSize = NO;
 
+        if (pictureOptions.isRapidScanMode) {
+            self.images = [NSMutableArray array];
+        }
+
         BOOL hasCamera = [UIImagePickerController isSourceTypeAvailable:pictureOptions.sourceType];
         if (!hasCamera) {
             NSLog(@"Camera.getPicture: source type %lu not available.", (unsigned long)pictureOptions.sourceType);
@@ -209,7 +217,7 @@ static NSString* toBase64(NSData* data) {
                 CGRect rect = CGRectMake(0, 0, width, height);
                 CameraOverlayView *overlay = [[CameraOverlayView alloc] initWithFrame:rect];
                 cameraPicker.cameraOverlayView = overlay;
-                [overlay setupCaptureView: pictureOptions.previewBox];
+                [overlay setupCaptureView: pictureOptions.previewBox isRapidScan:pictureOptions.isRapidScanMode];
                 overlay.delegate = weakSelf;
             }
         });
@@ -575,6 +583,48 @@ static NSString* toBase64(NSData* data) {
     return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:moviePath];
 }
 
+- (void)imageFor:(CDVPictureOptions*)options info:(NSDictionary*)info completion:(void (^)(UIImage* image))completion
+{
+    UIImage* image = nil;
+
+    switch (options.destinationType) {
+        case DestinationTypeNativeUri:
+        {
+            //
+        }
+            break;
+        case DestinationTypeFileUri:
+        {
+            //
+        }
+            break;
+        case DestinationTypeDataUrl:
+        {
+            image = [self retrieveImage:info options:options];
+
+            if (options.needCrop) {
+                GoCaptureImageCropper *cropper = [[GoCaptureImageCropper alloc] init];
+
+                [cropper cropWithUiImage:image completionHandler:^(UIImage *image, NSString *error) {
+
+                    if (error) {
+                        //
+                    } else {
+                        completion(image);
+                    }
+
+                }];
+                return;
+            } else {
+                completion(image);
+            }
+        }
+            break;
+        default:
+            break;
+    };
+}
+
 - (void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary*)info
 {
     __weak CDVCameraPicker* cameraPicker = (CDVCameraPicker*)picker;
@@ -585,6 +635,7 @@ static NSString* toBase64(NSData* data) {
 
         NSString* mediaType = [info objectForKey:UIImagePickerControllerMediaType];
         if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
+
             [weakSelf resultForImage:cameraPicker.pictureOptions info:info completion:^(CDVPluginResult* res) {
                 if (![self usesGeolocation] || picker.sourceType != UIImagePickerControllerSourceTypeCamera) {
                     [weakSelf.commandDelegate sendPluginResult:res callbackId:cameraPicker.callbackId];
@@ -592,8 +643,7 @@ static NSString* toBase64(NSData* data) {
                     weakSelf.pickerController = nil;
                 }
             }];
-        }
-        else {
+        } else {
             result = [weakSelf resultForVideo:info];
             [weakSelf.commandDelegate sendPluginResult:result callbackId:cameraPicker.callbackId];
             weakSelf.hasPendingOperation = NO;
@@ -606,6 +656,11 @@ static NSString* toBase64(NSData* data) {
         cameraPicker.pickerPopoverController.delegate = nil;
         cameraPicker.pickerPopoverController = nil;
         invoke();
+    } else if (cameraPicker.pictureOptions.isRapidScanMode) {
+        [weakSelf imageFor:cameraPicker.pictureOptions info:info completion:^(UIImage *image) {
+            [self.images addObject:image];
+            [(CameraOverlayView *)cameraPicker.cameraOverlayView reloadImageScrollerWithImages:self.images];
+        }];
     } else {
         [[cameraPicker presentingViewController] dismissViewControllerAnimated:YES completion:invoke];
     }
@@ -796,6 +851,27 @@ static NSString* toBase64(NSData* data) {
     [self.pickerController.delegate imagePickerControllerDidCancel:self.pickerController];
 }
 
+- (void)onItemActions:(NSInteger)index
+{
+    UIAlertController *actionsMenu = [UIAlertController alertControllerWithTitle:nil message:@"Choose option" preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self.images removeObjectAtIndex:index];
+         [(CameraOverlayView *)self.pickerController.cameraOverlayView reloadImageScrollerWithImages:self.images];
+    }];
+
+    [actionsMenu addAction:deleteAction];
+
+    [self.pickerController presentViewController:actionsMenu animated:YES completion:nil];
+}
+
+- (void)onSubmit
+{
+    [[self.pickerController presentingViewController] dismissViewControllerAnimated:YES completion:^{
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:self.images];
+        [self.commandDelegate sendPluginResult:result callbackId:self.pickerController.callbackId];
+    }];
+}
 
 @end
 
