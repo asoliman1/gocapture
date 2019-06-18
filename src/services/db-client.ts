@@ -340,7 +340,11 @@ export class DBClient {
       },
       18: {
         queries: [
-          "alter table submissions add column station text",
+          "alter table submissions add column station text"
+        ]
+      },
+      19: {
+        queries: [
           "alter table forms add column is_enable_rapid_scan_mode integer default 0"
         ]
       },
