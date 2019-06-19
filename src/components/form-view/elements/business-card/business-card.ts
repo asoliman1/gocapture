@@ -269,7 +269,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     (<any>navigator).camera.getPicture((imageData) => {
 
       if (isRapidScanMode) {
-        //
+        this.handleRapidScanSubmit(imageData);
       } else {
         console.log('Picture was taken');
 
@@ -278,9 +278,8 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
         this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
-
-        this.screen.unlock();
       }
+      this.screen.unlock();
     }, (error) => {
       this.screen.unlock();
       this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
@@ -290,6 +289,23 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         this.backLoading = false;
       });
     }, options);
+  }
+
+  private handleRapidScanSubmit(data) {
+    let promises = [];
+    for (let item of data) {
+      let imageItemData = 'data:image/jpg;base64,' + item;
+      promises.push(this.saveFileLocally({dataUrl: imageItemData}));
+    }
+    Promise.all(promises).then((paths) => {
+      this.actionService.completeAction(this.element.id)
+    });
+  }
+
+  private saveFileLocally(data) {
+    let newFolder = this.fileService.dataDirectory + "leadliaison/images";
+    let newName = new Date().getTime() + '.jpg';
+    return this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
   }
 
   private saveData(data, type, shouldRecognize, captureType) {

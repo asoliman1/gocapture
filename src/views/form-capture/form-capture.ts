@@ -190,18 +190,22 @@ export class FormCapture implements OnDestroy {
     this.selectedScanSource = source;
     this.actionService.performAction(source);
 
-    this.intermediateActionSubscription = this.actionService.actionCompleteIntermediary.subscribe(() => {
+    this.intermediateActionSubscription = this.actionService.actionCompleteIntermediary.subscribe((action) => {
       this.doSave(false);
     });
 
-    this.actionSubscription = this.actionService.actionComplete.subscribe(() => {
-      this.client.doSync(this.form.form_id).subscribe(() => {
-        console.log('Barcodes are processed (rapid scan mode)');
-      }, (error) => {
+    this.actionSubscription = this.actionService.actionComplete.subscribe((action) => {
+      if (action == this.getElementForType("barcode").id || action == this.getElementForType("nfc").id) {
+        this.client.doSync(this.form.form_id).subscribe(() => {
+          console.log('Barcodes are processed (rapid scan mode)');
+        }, (error) => {
+          //
+          console.error('Error when processing barcodes (rapid scan mode) - ' + error);
+        });
+        this.navCtrl.pop();
+      } else if (action == this.getElementForType("business_card").id) {
         //
-        console.error('Error when processing barcodes (rapid scan mode) - ' + error);
-      });
-      this.navCtrl.pop();
+      }
     });
   }
 
@@ -459,7 +463,8 @@ export class FormCapture implements OnDestroy {
             this.setupForm(false);
           });
         }, 10);
-      } else if (this.isRapidModeSelected()) {
+      } else if (this.isRapidModeSelected() && this.selectedScanSource == this.getElementForType("barcode").id ||
+        this.selectedScanSource == this.getElementForType("nfc").id) {
 
         console.log('save submission with id - ' + this.submission.id);
 

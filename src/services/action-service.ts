@@ -22,11 +22,11 @@ export class ActionService {
     this.performActionSource.next(action);
   }
 
-  completeAction() {
-    this.completedActionSource.next('');
+  completeAction(action) {
+    this.completedActionSource.next(action);
   }
 
-  intermediaryCompleteAction() {
-    this.intermediaryCompletedActionSource.next('');
+  intermediaryCompleteAction(action ) {
+    this.intermediaryCompletedActionSource.next(action);
   }
 }

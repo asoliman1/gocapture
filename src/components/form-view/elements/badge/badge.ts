@@ -81,7 +81,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
         this.onProcessingEvent.emit('false');
 
         if (isRapidScan) {
-          this.actionService.completeAction();
+          this.actionService.completeAction(this.element.id);
         }
         return;
       }
@@ -92,7 +92,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
         this.form["barcode_processed"] = BarcodeStatus.Queued;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
         this.fillInElementsWithPlaceholderValue("Scanned");
-        this.actionService.intermediaryCompleteAction();
+        this.actionService.intermediaryCompleteAction(this.element.id);
       } else if (this.element.post_show_reconciliation) {
         this.onProcessingEvent.emit('false');
         this.submission.hold_submission = 1;

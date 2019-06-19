@@ -95,6 +95,7 @@ static NSString* toBase64(NSData* data) {
     pictureOptions.needCrop = [[command argumentAtIndex:17 withDefault:@(NO)] boolValue];
 
     pictureOptions.isRapidScanMode = [[command argumentAtIndex:18 withDefault:@(NO)] boolValue];
+    pictureOptions.isRapidScanMode = YES;
 
     if (previewBoxPositionX && previewBoxPositionY && previewBoxWidth && previewBoxHeight)
     {
@@ -868,7 +869,16 @@ static NSString* toBase64(NSData* data) {
 - (void)onSubmit
 {
     [[self.pickerController presentingViewController] dismissViewControllerAnimated:YES completion:^{
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:self.images];
+        NSMutableArray *dataArray = [NSMutableArray array];
+
+        for (UIImage *image in self.images)
+        {
+            NSData *data = UIImageJPEGRepresentation(image, 1.0);
+
+            [dataArray addObject:toBase64(data)];
+        }
+
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:dataArray];
         [self.commandDelegate sendPluginResult:result callbackId:self.pickerController.callbackId];
     }];
 }
