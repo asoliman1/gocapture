@@ -29,12 +29,20 @@ export class GOCBarcodeScanner implements Scanner {
       formats: formats,
     };
 
+    options["isRapidScanMode"] = isRapidScan;
+    options["rapidScanModeDelay"] = 2;
+
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {
 
         if (scannedData.cancelled) {
           this.statusMessage = "Scan " + this.name;
           resolve({isCancelled: true});
+          return;
+        }
+
+        if (scannedData["barcodes"]) {
+          resolve({barcodes: scannedData["barcodes"]})
           return;
         }
 

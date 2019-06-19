@@ -25,8 +25,4 @@ export class ActionService {
   completeAction(action) {
     this.completedActionSource.next(action);
   }
-
-  intermediaryCompleteAction(action ) {
-    this.intermediaryCompletedActionSource.next(action);
-  }
 }

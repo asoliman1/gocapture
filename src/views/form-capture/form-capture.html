@@ -77,7 +77,7 @@
 
       <ion-select #rapidScanSourceSelect color="primary"
                   [selectOptions]="{cssClass: 'gc-alert'}"
-                  [(ngModel)]="selectedStation"
+                  [(ngModel)]="selectedScanSource"
                   (ionChange)="onScanSourceChoose($event)">
         <ion-option *ngFor="let source of scanSources" [value]="source.id">{{source.name}}</ion-option>
       </ion-select>

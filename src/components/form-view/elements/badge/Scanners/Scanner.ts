@@ -1,6 +1,7 @@
 export interface ScannerResponse {
   scannedId?: string;
   isCancelled?: boolean;
+  barcodes?: string[];
 }
 
 export const enum ScannerType {

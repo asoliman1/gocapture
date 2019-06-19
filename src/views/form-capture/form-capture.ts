@@ -7,18 +7,12 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform, Select,
+  Platform,
+  Select,
   ToastController
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
-import {
-  BarcodeStatus,
-  DeviceFormMembership,
-  DispatchOrder,
-  Form,
-  FormSubmission,
-  SubmissionStatus
-} from "../../model";
+import {BarcodeStatus, DeviceFormMembership, DispatchOrder, Form, FormSubmission, SubmissionStatus} from "../../model";
 
 import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
@@ -29,8 +23,10 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
-import {ActionService} from "../../services/action-service";
 import {Station} from "../../model/station";
+import {RapidCaptureService} from "../../services/rapid-capture-service";
+import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Scanner";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'form-capture',
@@ -99,7 +95,7 @@ export class FormCapture implements OnDestroy {
               private themeProvider: ThemeProvider,
               private localStorage: LocalStorageProvider,
               private vibration: Vibration,
-              private actionService: ActionService) {
+              private rapidCaptureService: RapidCaptureService) {
 
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -152,12 +148,15 @@ export class FormCapture implements OnDestroy {
       if (isInitialScan) {
         this.handleRapidScanModeSources();
       } else if (this.selectedScanSource) {
-        setTimeout(() => {
-          this.actionService.performAction(this.selectedScanSource);
-        }, 500);
+        // setTimeout(() => {
+        //   this.rapidScanner.scan(this.form.form_id, this.getElementForId(this.selectedScanSource));
+        //   // this.actionService.performAction(this.selectedScanSource);
+        // }, 500);
       }
     }
   }
+
+
 
   //Rapid scan
   private handleRapidScanModeSources() {
@@ -188,25 +187,50 @@ export class FormCapture implements OnDestroy {
 
   private startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
-    this.actionService.performAction(source);
 
-    this.intermediateActionSubscription = this.actionService.actionCompleteIntermediary.subscribe((action) => {
-      this.doSave(false);
-    });
-
-    this.actionSubscription = this.actionService.actionComplete.subscribe((action) => {
-      if (action == this.getElementForType("barcode").id || action == this.getElementForType("nfc").id) {
-        this.client.doSync(this.form.form_id).subscribe(() => {
-          console.log('Barcodes are processed (rapid scan mode)');
-        }, (error) => {
-          //
-          console.error('Error when processing barcodes (rapid scan mode) - ' + error);
-        });
-        this.navCtrl.pop();
-      } else if (action == this.getElementForType("business_card").id) {
-        //
+    let element = this.getElementForId(this.selectedScanSource);
+    this.rapidCaptureService.start(element).then((items) => {
+      let submissions = [];
+      for (let item of items) {
+        let saveSubmObservable = this.saveSubmissionWithData(item, element);
+        submissions.push(saveSubmObservable);
       }
+      Observable.zip(...submissions).subscribe(() => {
+        this.navCtrl.pop().then(()=> {
+          this.client.doSync(this.form.form_id).subscribe(()=> {
+            console.log('rapid scan synced barcodes');
+          }, (error) => {
+            console.error(error);
+          });
+        });
+      }, (error) => {
+        console.error(error);
+        this.navCtrl.pop();
+      })
     });
+  }
+
+  private saveSubmissionWithData(data, element) {
+    let submission = new FormSubmission();
+    submission.fields = this.formView.getValues();
+    let elementId = "element_" + element.id;
+    submission.fields[elementId] = data;
+    submission.id = new Date().getTime();
+    submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
+
+    submission.status = SubmissionStatus.ToSubmit;
+
+    submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+
+    if (this.selectedStation) {
+      submission.station = this.selectedStation.id + '';
+    }
+
+    if (element.badge_type == ScannerType.NFC || element.badge_type == ScannerType.Barcode) {
+      //put the submission to the queue to process badges
+      submission.barcode_processed = BarcodeStatus.Queued;
+    }
+    return this.client.saveSubmission(submission, this.form, false);
   }
 
   getScanSources() {
@@ -463,20 +487,6 @@ export class FormCapture implements OnDestroy {
             this.setupForm(false);
           });
         }, 10);
-      } else if (this.isRapidModeSelected() && this.selectedScanSource == this.getElementForType("barcode").id ||
-        this.selectedScanSource == this.getElementForType("nfc").id) {
-
-        console.log('save submission with id - ' + this.submission.id);
-
-        this.submission = null;
-        this.form = null;
-        this.dispatch = null;
-
-        setTimeout(()=>{
-          this.zone.run(()=>{
-            this.setupForm(false);
-          });
-        }, 10);
       } else {
         this.navCtrl.pop();
       }
@@ -484,11 +494,6 @@ export class FormCapture implements OnDestroy {
       console.error(err);
     });
   }
-
-  isRapidModeSelected() {
-    return this.form.is_enable_rapid_scan_mode && this.selectedScanSource;
-  }
-
 
   onValidationChange(valid: boolean) {
     this.valid = valid;

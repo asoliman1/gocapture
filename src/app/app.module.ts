@@ -70,6 +70,9 @@ import {NumberPicker} from "../services/number-picker";
 import {Vibration} from "@ionic-native/vibration";
 import {Dispatches} from "../views/dispatches";
 import {ActionService} from "../services/action-service";
+import {RapidCaptureService} from "../services/rapid-capture-service";
+import {BadgeRapidCapture} from "../services/badge-rapid-capture";
+import {BCRapidCapture} from "../services/bc-rapid-capture";
 
 
 @NgModule({
@@ -175,7 +178,10 @@ import {ActionService} from "../services/action-service";
     WheelSelector,
     NumberPicker,
     Vibration,
-    ActionService
+    ActionService,
+    RapidCaptureService,
+    BadgeRapidCapture,
+    BCRapidCapture
   ]
 })
 export class AppModule { }

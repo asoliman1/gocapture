@@ -22,7 +22,7 @@ import {ActionService} from "../../../../services/action-service";
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Badge), multi: true }
 	]
 })
-export class Badge extends BaseElement implements OnInit, OnDestroy {
+export class Badge extends BaseElement implements OnInit {
 
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
@@ -41,29 +41,17 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
               public ndef: Ndef,
               public actionService: ActionService) {
 		super();
-
-		this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
-		  if (elementId == this.element.id) {
-        this.scan(true);
-      }
-    })
 	}
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
   }
 
-  ngOnDestroy(): void {
-	  if (this.actionSubscription) {
-	    this.actionSubscription.unsubscribe();
-    }
-  }
-
   scannerStatusMessage() {
 	  return this.scanner ? this.scanner.statusMessage : "";
   }
 
-  scan(isRapidScan: boolean) {
+  scan() {
 
     if (this.readonly) {
       return;
@@ -73,27 +61,19 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 
     console.log("Badge scan started");
 
-    this.scanner.scan(isRapidScan).then(response => {
+    this.scanner.scan(false).then((response) => {
 
       console.log("Badge scan finished: " + response.scannedId);
 
       if (response.isCancelled) {
         this.onProcessingEvent.emit('false');
 
-        if (isRapidScan) {
-          this.actionService.completeAction(this.element.id);
-        }
         return;
       }
 
-      this.onChange(response.scannedId); 
+      this.onChange(response.scannedId);
 
-      if (isRapidScan) {
-        this.form["barcode_processed"] = BarcodeStatus.Queued;
-        this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
-        this.fillInElementsWithPlaceholderValue("Scanned");
-        this.actionService.intermediaryCompleteAction(this.element.id);
-      } else if (this.element.post_show_reconciliation) {
+      if (this.element.post_show_reconciliation) {
         this.onProcessingEvent.emit('false');
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";
@@ -199,7 +179,7 @@ export class Badge extends BaseElement implements OnInit, OnDestroy {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type); 
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type);
   }
 
   setDisabledState(isDisabled: boolean): void {
