@@ -24,5 +24,6 @@ form-capture {
 .gc-popover, .gc-alert {
   ion-backdrop {
     pointer-events: none;
+    opacity: 0.5 !important;
   }
 }

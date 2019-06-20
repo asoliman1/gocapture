@@ -157,7 +157,6 @@ export class FormCapture implements OnDestroy {
   }
 
 
-
   //Rapid scan
   private handleRapidScanModeSources() {
     if (this.isReadOnly(this.submission)) {
@@ -269,13 +268,15 @@ export class FormCapture implements OnDestroy {
 
   ionViewDidEnter() {
 
-    if (this.stationsSelect) {
-      this.formTitle.nativeElement.click();
-    }
+    setTimeout(() => {
+      if (this.stationsSelect) {
+        // this.formTitle.nativeElement.click();
+        this.stationsSelect.open(new UIEvent('touch'));
+      } else {
+        this.initiateRapidScanMode(true);
+      }
 
-    if (!this.stationsSelect) {
-      this.initiateRapidScanMode(true);
-    }
+    }, 500);
 
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
@@ -623,7 +624,8 @@ export class FormCapture implements OnDestroy {
 
   openStations(event) {
     if (this.form.event_stations && this.form.event_stations.length > 0) {
-      this.stationsSelect.open(event);
+      // this.stationsSelect.open(event);
+      this.stationsSelect.open(new UIEvent('touch'));
     }
   }
 

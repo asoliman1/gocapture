@@ -18,6 +18,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.pm.PackageManager;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -46,6 +50,7 @@ public class BarcodeScanner extends CordovaPlugin {
     private static final String PREFER_FRONTCAMERA = "preferFrontCamera";
     private static final String ORIENTATION = "orientation";
     private static final String SHOW_FLIP_CAMERA_BUTTON = "showFlipCameraButton";
+    private static final String CONTINUOUS_MODE = "continuousMode";
     private static final String RESULTDISPLAY_DURATION = "resultDisplayDuration";
     private static final String SHOW_TORCH_BUTTON = "showTorchButton";
     private static final String TORCH_ON = "torchOn";
@@ -64,6 +69,9 @@ public class BarcodeScanner extends CordovaPlugin {
 
     private JSONArray requestArgs;
     private CallbackContext callbackContext;
+
+    private LocalBroadcastManager broadcastManager;
+    private BroadcastReceiver continuousModeBroadcastReceiver;
 
     /**
      * Constructor.
@@ -117,9 +125,9 @@ public class BarcodeScanner extends CordovaPlugin {
 
             //android permission auto add
             if(!hasPermisssion()) {
-              requestPermissions(0);
+                requestPermissions(0);
             } else {
-              scan(args);
+                scan(args);
             }
         } else {
             return false;
@@ -194,6 +202,38 @@ public class BarcodeScanner extends CordovaPlugin {
                         if (obj.has(ORIENTATION)) {
                             intentScan.putExtra(Intents.Scan.ORIENTATION_LOCK, obj.optString(ORIENTATION));
                         }
+
+                        boolean isContinuous = obj.optBoolean(CONTINUOUS_MODE, false);
+
+                        isContinuous = true;
+
+                        if (isContinuous) {
+                            intentScan.putExtra(Intents.Scan.BULK_SCAN, true);
+                            BarcodeScanner.this.continuousModeBroadcastReceiver = new BroadcastReceiver() {
+                                @Override
+                                public void onReceive(Context context, Intent intent) {
+                                    JSONObject obj = new JSONObject();
+                                    try {
+                                        obj.put(TEXT, intent.getStringExtra(Intents.Scan.RESULT));
+                                        obj.put(FORMAT, intent.getStringExtra(Intents.Scan.RESULT_FORMAT));
+                                        obj.put(CANCELLED, false);
+                                    } catch (JSONException e) {
+                                        Log.d(LOG_TAG, "This should never happen");
+                                    }
+                                    PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
+                                    result.setKeepCallback(true);
+                                    callbackContext.sendPluginResult(result);
+                                }
+                            };
+                            IntentFilter filter = new IntentFilter("bulk-barcode-result");
+
+                            if (BarcodeScanner.this.broadcastManager == null) {
+                                BarcodeScanner.this.broadcastManager = LocalBroadcastManager
+                                        .getInstance(that.cordova.getActivity());
+                            }
+                            BarcodeScanner.this.broadcastManager
+                                    .registerReceiver(BarcodeScanner.this.continuousModeBroadcastReceiver, filter);
+                        }
                     }
 
                 }
@@ -243,6 +283,10 @@ public class BarcodeScanner extends CordovaPlugin {
                 //this.error(new PluginResult(PluginResult.Status.ERROR), this.callback);
                 this.callbackContext.error("Unexpected error");
             }
+
+            if (this.broadcastManager != null && this.continuousModeBroadcastReceiver != null) {
+                this.broadcastManager.unregisterReceiver(this.continuousModeBroadcastReceiver);
+            }
         }
     }
 
@@ -266,16 +310,16 @@ public class BarcodeScanner extends CordovaPlugin {
     /**
      * check application's permissions
      */
-   public boolean hasPermisssion() {
-       for(String p : permissions)
-       {
-           if(!PermissionHelper.hasPermission(this, p))
-           {
-               return false;
-           }
-       }
-       return true;
-   }
+    public boolean hasPermisssion() {
+        for(String p : permissions)
+        {
+            if(!PermissionHelper.hasPermission(this, p))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * We override this so that we can access the permissions variable, which no longer exists in
@@ -283,38 +327,38 @@ public class BarcodeScanner extends CordovaPlugin {
      *
      * @param requestCode The code to get request action
      */
-   public void requestPermissions(int requestCode)
-   {
-       PermissionHelper.requestPermissions(this, requestCode, permissions);
-   }
+    public void requestPermissions(int requestCode)
+    {
+        PermissionHelper.requestPermissions(this, requestCode, permissions);
+    }
 
-   /**
-   * processes the result of permission request
-   *
-   * @param requestCode The code to get request action
-   * @param permissions The collection of permissions
-   * @param grantResults The result of grant
-   */
-  public void onRequestPermissionResult(int requestCode, String[] permissions,
-                                         int[] grantResults) throws JSONException
-   {
-       PluginResult result;
-       for (int r : grantResults) {
-           if (r == PackageManager.PERMISSION_DENIED) {
-               Log.d(LOG_TAG, "Permission Denied!");
-               result = new PluginResult(PluginResult.Status.ILLEGAL_ACCESS_EXCEPTION);
-               this.callbackContext.sendPluginResult(result);
-               return;
-           }
-       }
+    /**
+     * processes the result of permission request
+     *
+     * @param requestCode The code to get request action
+     * @param permissions The collection of permissions
+     * @param grantResults The result of grant
+     */
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) throws JSONException
+    {
+        PluginResult result;
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_DENIED) {
+                Log.d(LOG_TAG, "Permission Denied!");
+                result = new PluginResult(PluginResult.Status.ILLEGAL_ACCESS_EXCEPTION);
+                this.callbackContext.sendPluginResult(result);
+                return;
+            }
+        }
 
-       switch(requestCode)
-       {
-           case 0:
-               scan(this.requestArgs);
-               break;
-       }
-   }
+        switch(requestCode)
+        {
+            case 0:
+                scan(this.requestArgs);
+                break;
+        }
+    }
 
     /**
      * This plugin launches an external Activity when the camera is opened, so we
