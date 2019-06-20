@@ -42,7 +42,7 @@ export class GOCBarcodeScanner implements Scanner {
         }
 
         if (scannedData["barcodes"]) {
-          resolve({barcodes: scannedData["barcodes"]})
+          resolve({barcodes: scannedData["barcodes"]});
           return;
         }
 
