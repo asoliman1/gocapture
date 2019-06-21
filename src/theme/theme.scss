@@ -68,15 +68,18 @@
     color: $theme-color;
   }
 
-  .checkbox-checked {
+  .checkbox-checked,
+  .alert-radio-inner,
+  .radio-inner,
+  .radio-md .radio-inner{
     border-color: $theme-color !important;
     background-color: $theme-color !important;
   }
 
   .radio-checked .radio-inner,
   [aria-checked=true] .alert-radio-inner,
-  .alert-md [aria-checked=true] .alert-radio-icon {
+  [aria-checked=true] .alert-radio-icon,
+  .radio-md .radio-checked {
     border-color: $theme-color !important;
   }
-
 }
