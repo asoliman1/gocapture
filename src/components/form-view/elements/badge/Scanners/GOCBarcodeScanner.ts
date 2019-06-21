@@ -1,5 +1,6 @@
 import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
 import { Scanner, ScannerResponse } from "./Scanner";
+import {Platform} from "ionic-angular";
 
 export class GOCBarcodeScanner implements Scanner {
 
@@ -7,7 +8,8 @@ export class GOCBarcodeScanner implements Scanner {
   statusMessage: string = "Scan barcode";
 
   constructor(public barcodeScanner: BarcodeScanner,
-              private barcodeFormat: string) {
+              public barcodeFormat: string,
+              public platform: Platform) {
     //
   }
 
@@ -42,7 +44,7 @@ export class GOCBarcodeScanner implements Scanner {
         }
 
         if (scannedData["barcodes"]) {
-          resolve({barcodes: scannedData["barcodes"]});
+          resolve({barcodes: this.platform.is("ios") ? scannedData["barcodes"] : scannedData["barcodes"].split(",")});
           return;
         }
 

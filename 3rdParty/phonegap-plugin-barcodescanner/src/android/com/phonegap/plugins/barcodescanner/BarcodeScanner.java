@@ -16,6 +16,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.content.pm.PackageManager;
 import android.content.BroadcastReceiver;
@@ -31,6 +32,9 @@ import org.apache.cordova.PermissionHelper;
 import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.encode.EncodeActivity;
 import com.google.zxing.client.android.Intents;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This calls out to the ZXing barcode reader and returns the result.
@@ -50,7 +54,7 @@ public class BarcodeScanner extends CordovaPlugin {
     private static final String PREFER_FRONTCAMERA = "preferFrontCamera";
     private static final String ORIENTATION = "orientation";
     private static final String SHOW_FLIP_CAMERA_BUTTON = "showFlipCameraButton";
-    private static final String CONTINUOUS_MODE = "continuousMode";
+    private static final String CONTINUOUS_MODE = "isRapidScanMode";
     private static final String RESULTDISPLAY_DURATION = "resultDisplayDuration";
     private static final String SHOW_TORCH_BUTTON = "showTorchButton";
     private static final String TORCH_ON = "torchOn";
@@ -73,10 +77,14 @@ public class BarcodeScanner extends CordovaPlugin {
     private LocalBroadcastManager broadcastManager;
     private BroadcastReceiver continuousModeBroadcastReceiver;
 
+    private ArrayList<String> barcodes;
+    private boolean isContinuesMode;
+
     /**
      * Constructor.
      */
     public BarcodeScanner() {
+
     }
 
     /**
@@ -99,6 +107,8 @@ public class BarcodeScanner extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
         this.requestArgs = args;
+
+        this.barcodes = new ArrayList<String>();
 
         if (action.equals(ENCODE)) {
             JSONObject obj = args.optJSONObject(0);
@@ -203,37 +213,39 @@ public class BarcodeScanner extends CordovaPlugin {
                             intentScan.putExtra(Intents.Scan.ORIENTATION_LOCK, obj.optString(ORIENTATION));
                         }
 
-                        boolean isContinuous = obj.optBoolean(CONTINUOUS_MODE, false);
-
-                        isContinuous = true;
-
-                        if (isContinuous) {
-                            intentScan.putExtra(Intents.Scan.BULK_SCAN, true);
-                            BarcodeScanner.this.continuousModeBroadcastReceiver = new BroadcastReceiver() {
-                                @Override
-                                public void onReceive(Context context, Intent intent) {
-                                    JSONObject obj = new JSONObject();
-                                    try {
-                                        obj.put(TEXT, intent.getStringExtra(Intents.Scan.RESULT));
-                                        obj.put(FORMAT, intent.getStringExtra(Intents.Scan.RESULT_FORMAT));
-                                        obj.put(CANCELLED, false);
-                                    } catch (JSONException e) {
-                                        Log.d(LOG_TAG, "This should never happen");
-                                    }
-                                    PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                                    result.setKeepCallback(true);
-                                    callbackContext.sendPluginResult(result);
-                                }
-                            };
-                            IntentFilter filter = new IntentFilter("bulk-barcode-result");
-
-                            if (BarcodeScanner.this.broadcastManager == null) {
-                                BarcodeScanner.this.broadcastManager = LocalBroadcastManager
-                                        .getInstance(that.cordova.getActivity());
-                            }
-                            BarcodeScanner.this.broadcastManager
-                                    .registerReceiver(BarcodeScanner.this.continuousModeBroadcastReceiver, filter);
+                        if (obj.has(CONTINUOUS_MODE)) {
+                            isContinuesMode = obj.optBoolean(CONTINUOUS_MODE, false);
                         }
+//
+//                        isContinuous = true;
+//
+//                        if (isContinuous) {
+//                            intentScan.putExtra(Intents.Scan.BULK_SCAN, true);
+//                            BarcodeScanner.this.continuousModeBroadcastReceiver = new BroadcastReceiver() {
+//                                @Override
+//                                public void onReceive(Context context, Intent intent) {
+//                                    JSONObject obj = new JSONObject();
+//                                    try {
+//                                        obj.put(TEXT, intent.getStringExtra(Intents.Scan.RESULT));
+//                                        obj.put(FORMAT, intent.getStringExtra(Intents.Scan.RESULT_FORMAT));
+//                                        obj.put(CANCELLED, false);
+//                                    } catch (JSONException e) {
+//                                        Log.d(LOG_TAG, "This should never happen");
+//                                    }
+//                                    PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
+//                                    result.setKeepCallback(true);
+//                                    callbackContext.sendPluginResult(result);
+//                                }
+//                            };
+//                            IntentFilter filter = new IntentFilter("bulk-barcode-result");
+//
+//                            if (BarcodeScanner.this.broadcastManager == null) {
+//                                BarcodeScanner.this.broadcastManager = LocalBroadcastManager
+//                                        .getInstance(that.cordova.getActivity());
+//                            }
+//                            BarcodeScanner.this.broadcastManager
+//                                    .registerReceiver(BarcodeScanner.this.continuousModeBroadcastReceiver, filter);
+//                        }
                     }
 
                 }
@@ -258,26 +270,51 @@ public class BarcodeScanner extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE && this.callbackContext != null) {
             if (resultCode == Activity.RESULT_OK) {
-                JSONObject obj = new JSONObject();
-                try {
-                    obj.put(TEXT, intent.getStringExtra("SCAN_RESULT"));
-                    obj.put(FORMAT, intent.getStringExtra("SCAN_RESULT_FORMAT"));
-                    obj.put(CANCELLED, false);
-                } catch (JSONException e) {
-                    Log.d(LOG_TAG, "This should never happen");
+                if (this.isContinuesMode) {
+                    // Handle successful scan. In this example add contents to ArrayList
+
+                    String barcode = intent.getStringExtra("SCAN_RESULT");
+
+                    if (!this.barcodes.contains(barcode)) {
+                        this.barcodes.add(intent.getStringExtra("SCAN_RESULT"));
+                    }
+
+                    this.scan(this.requestArgs);
+                } else {
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put(TEXT, intent.getStringExtra("SCAN_RESULT"));
+                        obj.put(FORMAT, intent.getStringExtra("SCAN_RESULT_FORMAT"));
+                        obj.put(CANCELLED, false);
+                    } catch (JSONException e) {
+                        Log.d(LOG_TAG, "This should never happen");
+                    }
+                    //this.success(new PluginResult(PluginResult.Status.OK, obj), this.callback);
+                    this.callbackContext.success(obj);
                 }
-                //this.success(new PluginResult(PluginResult.Status.OK, obj), this.callback);
-                this.callbackContext.success(obj);
+
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 JSONObject obj = new JSONObject();
-                try {
-                    obj.put(TEXT, "");
-                    obj.put(FORMAT, "");
-                    obj.put(CANCELLED, true);
-                } catch (JSONException e) {
-                    Log.d(LOG_TAG, "This should never happen");
+
+                if (this.isContinuesMode && this.barcodes.size() > 0) {
+
+                    try {
+                        obj.put("barcodes", TextUtils.join(",", this.barcodes));
+                        obj.put(CANCELLED, false);
+                    } catch (JSONException e) {
+                        Log.d(LOG_TAG, "This should never happen");
+                    }
+                } else {
+                    try {
+                        obj.put(TEXT, "");
+                        obj.put(FORMAT, "");
+                        obj.put(CANCELLED, true);
+                    } catch (JSONException e) {
+                        Log.d(LOG_TAG, "This should never happen");
+                    }
+                    //this.success(new PluginResult(PluginResult.Status.OK, obj), this.callback);
                 }
-                //this.success(new PluginResult(PluginResult.Status.OK, obj), this.callback);
+
                 this.callbackContext.success(obj);
             } else {
                 //this.error(new PluginResult(PluginResult.Status.ERROR), this.callback);

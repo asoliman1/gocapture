@@ -623,7 +623,7 @@ export class FormCapture implements OnDestroy {
   }
 
   openStations(event) {
-    if (this.form.event_stations && this.form.event_stations.length > 0) {
+    if (this.form.event_stations && this.form.event_stations.length > 0 && !this.isReadOnly(this.submission)) {
       // this.stationsSelect.open(event);
       this.stationsSelect.open(new UIEvent('touch'));
     }

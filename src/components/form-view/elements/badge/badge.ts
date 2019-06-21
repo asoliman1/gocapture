@@ -179,7 +179,7 @@ export class Badge extends BaseElement implements OnInit {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform);
   }
 
   setDisabledState(isDisabled: boolean): void {
