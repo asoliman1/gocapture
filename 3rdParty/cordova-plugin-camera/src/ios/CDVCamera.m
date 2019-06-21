@@ -95,7 +95,6 @@ static NSString* toBase64(NSData* data) {
     pictureOptions.needCrop = [[command argumentAtIndex:17 withDefault:@(NO)] boolValue];
 
     pictureOptions.isRapidScanMode = [[command argumentAtIndex:18 withDefault:@(NO)] boolValue];
-    pictureOptions.isRapidScanMode = YES;
 
     if (previewBoxPositionX && previewBoxPositionY && previewBoxWidth && previewBoxHeight)
     {

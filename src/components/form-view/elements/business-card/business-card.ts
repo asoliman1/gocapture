@@ -21,7 +21,6 @@ import {ImageViewer} from "./image-viewer";
 import {SettingsService} from "../../../../services/settings-service";
 import {settingsKeys} from "../../../../constants/constants";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
-import {ActionService} from "../../../../services/action-service";
 
 declare var CameraPreview;
 declare var screen;
@@ -76,8 +75,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
               private photoViewer: PhotoViewer,
               private photoLibrary: PhotoLibrary,
               private settingsService: SettingsService,
-              private screen: ScreenOrientation,
-              private actionService: ActionService) {
+              private screen: ScreenOrientation) {
     super();
     this.currentVal = {
       front: this.front,
@@ -90,29 +88,6 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     };
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
-
-    this.actionSubscription = this.actionService.actionStart.subscribe((elementId) => {
-
-      if (elementId == this.element.id) {
-        if (this.readonly) {
-          return;
-        }
-
-        // const buttons = [
-        //   {
-        //     text: 'Ok'
-        //   }
-        // ];
-        // this.popup.showAlert('Warning', "To be implemented", buttons, this.selectedTheme);
-
-        if (this.platform.is('ios')) {
-          this.doCapture(this.FRONT, 1, true);
-        } else {
-          // this.showBusinessCardOverlay(type);
-          this.startCamera(this.FRONT)
-        }
-      }
-    })
   }
 
   // picture options
@@ -239,7 +214,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     ]
   }
 
-  private async doCapture(type: number, captureType: number = 1, isRapidScanMode: boolean = false) {
+  private async doCapture(type: number, captureType: number = 1) {
 
     await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
 
@@ -259,8 +234,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
       previewWidth: width - 24,
       previewHeight: (width - 24) / 1.75,
       quality: 100,
-      needCrop: true,
-      isRapidScan: isRapidScanMode
+      needCrop: true
     };
 
     this.frontLoading = type == this.FRONT;
@@ -268,17 +242,14 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
     (<any>navigator).camera.getPicture((imageData) => {
 
-      if (isRapidScanMode) {
-        this.handleRapidScanSubmit(imageData);
-      } else {
-        console.log('Picture was taken');
+      console.log('Picture was taken');
 
-        imageData = 'data:image/jpg;base64,' + imageData;
+      imageData = 'data:image/jpg;base64,' + imageData;
 
-        let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
+      let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-        this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
-      }
+      this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
+
       this.screen.unlock();
     }, (error) => {
       this.screen.unlock();
@@ -289,23 +260,6 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         this.backLoading = false;
       });
     }, options);
-  }
-
-  private handleRapidScanSubmit(data) {
-    let promises = [];
-    for (let item of data) {
-      let imageItemData = 'data:image/jpg;base64,' + item;
-      promises.push(this.saveFileLocally({dataUrl: imageItemData}));
-    }
-    Promise.all(promises).then((paths) => {
-      this.actionService.completeAction(this.element.id)
-    });
-  }
-
-  private saveFileLocally(data) {
-    let newFolder = this.fileService.dataDirectory + "leadliaison/images";
-    let newName = new Date().getTime() + '.jpg';
-    return this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
   }
 
   private saveData(data, type, shouldRecognize, captureType) {
@@ -326,7 +280,6 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         });
       });
   }
-
 
   private handleImageSaving(type, folder, name, data, shouldRecognize, captureType) {
     this.zone.run(() => {

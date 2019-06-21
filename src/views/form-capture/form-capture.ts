@@ -33,7 +33,7 @@ import {Observable} from "rxjs";
   templateUrl: 'form-capture.html'
 })
 
-export class FormCapture implements OnDestroy {
+export class FormCapture {
 
   form: Form;
 
@@ -80,9 +80,6 @@ export class FormCapture implements OnDestroy {
 
   private selectedScanSource;
 
-  private intermediateActionSubscription;
-  private actionSubscription;
-
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -105,16 +102,7 @@ export class FormCapture implements OnDestroy {
     this.setupForm();
   }
 
-  ngOnDestroy(): void {
-    if (this.intermediateActionSubscription) {
-      this.intermediateActionSubscription.unsubscribe();
-    }
-    if (this.actionSubscription) {
-      this.actionSubscription.unsubscribe();
-    }
-  }
-
-  private setupForm(isInitialSetup = true) {
+  private setupForm() {
     this.form = this.navParams.get("form");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
@@ -485,7 +473,7 @@ export class FormCapture implements OnDestroy {
         successToast.present();
         setTimeout(()=>{
           this.zone.run(()=>{
-            this.setupForm(false);
+            this.setupForm();
           });
         }, 10);
       } else {
