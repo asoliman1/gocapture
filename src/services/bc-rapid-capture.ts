@@ -37,7 +37,7 @@ export class BCRapidCapture implements RapidCapture {
         previewHeight: (width - 24) / 1.75,
         quality: 100,
         needCrop: true,
-        isRapidScan: true
+        isRapidScanMode: true
       };
 
       (<any>navigator).camera.getPicture((imageData) => {

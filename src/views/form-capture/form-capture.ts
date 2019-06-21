@@ -234,9 +234,9 @@ export class FormCapture {
       sources.push({id: barcodeElement.id, name: "Barcode scan"});
     }
 
-    if (nfcElement) {
-      sources.push({id: nfcElement.id, name: "NFC scan"});
-    }
+    // if (nfcElement) {
+    //   sources.push({id: nfcElement.id, name: "NFC scan"});
+    // }
 
     return sources;
   }
@@ -259,7 +259,7 @@ export class FormCapture {
     setTimeout(() => {
       if (this.stationsSelect) {
         // this.formTitle.nativeElement.click();
-        this.stationsSelect.open(new UIEvent('touch'));
+        this.openStations(new UIEvent('touch'));
       } else {
         this.initiateRapidScanMode(true);
       }
@@ -611,7 +611,12 @@ export class FormCapture {
   }
 
   openStations(event) {
-    if (this.form.event_stations && this.form.event_stations.length > 0 && !this.isReadOnly(this.submission)) {
+
+    if (this.isReadOnly(this.submission)) {
+      return;
+    }
+
+    if (this.form.event_stations && this.form.event_stations.length > 0) {
       // this.stationsSelect.open(event);
       this.stationsSelect.open(new UIEvent('touch'));
     }

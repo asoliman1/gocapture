@@ -15,7 +15,8 @@
   }
 
   .alert-button,
-  .action-sheet-button {
+  .action-sheet-button,
+  [aria-checked=true] .alert-radio-label {
     color: $theme-color !important;
   }
 
@@ -37,7 +38,9 @@
     color: $theme-color;
   }
 
-  ion-input.ng-dirty {
+  ion-input.ng-dirty,
+  .item-radio-checked.item-ios ion-label,
+  .item-radio-checked.item-md ion-label {
     color: $theme-color;
   }
 
@@ -70,7 +73,9 @@
     background-color: $theme-color !important;
   }
 
-  .radio-checked .radio-inner {
+  .radio-checked .radio-inner,
+  [aria-checked=true] .alert-radio-inner,
+  .alert-md [aria-checked=true] .alert-radio-icon {
     border-color: $theme-color !important;
   }
 

@@ -33,6 +33,7 @@ export class GOCBarcodeScanner implements Scanner {
 
     options["isRapidScanMode"] = isRapidScan;
     options["rapidScanModeDelay"] = 2;
+    options["RESULTDISPLAY_DURATION"] = 500;
 
     return new Promise<ScannerResponse>((resolve, reject) => {
       this.barcodeScanner.scan(options).then((scannedData) => {
