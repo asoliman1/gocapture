@@ -12,7 +12,7 @@ import {Camera} from "@ionic-native/camera";
 import {Util} from "../util/util";
 
 export interface RapidCapture {
-  capture(element: FormElement): Promise<string[]>;
+  capture(element: FormElement): Promise<any[]>;
 }
 
 @Injectable()
@@ -32,7 +32,7 @@ export class RapidCaptureService {
     //
   }
 
-  start(element: FormElement) {
+  start(element: FormElement): Promise<any[]> {
     if (element.type == "business_card") {
       this.captureService = new BCRapidCapture(this.imageProc, this.fileService, this.platform, this.camera, this.util);
     } else {

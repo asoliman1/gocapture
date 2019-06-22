@@ -18,9 +18,9 @@ export class BCRapidCapture implements RapidCapture {
 	  //
 	}
 
-  capture(element: FormElement): Promise<string[]> {
+  capture(element: FormElement): Promise<any[]> {
 
-    return new Promise<string[]>((resolve, reject) => {
+    return new Promise<any[]>((resolve, reject) => {
       let width = Math.min(this.platform.width(), this.platform.height());
 
       let options = {
@@ -44,11 +44,11 @@ export class BCRapidCapture implements RapidCapture {
       (<any>navigator).camera.getPicture((imageData) => {
         this.handleRapidScanSubmit(imageData).then((paths) => {
 
-          paths.map((path) => {
-            return this.util.adjustImagePath(path)
+          let values = paths.map((path) => {
+            return {"front": path, back: null};
           });
 
-          resolve(paths);
+          resolve(values);
         });
       }, (error) => {
         console.error(error);
