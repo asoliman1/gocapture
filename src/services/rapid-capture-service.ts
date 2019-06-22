@@ -9,6 +9,7 @@ import {ImageProcessor} from "./image-processor";
 import {File} from "@ionic-native/file";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Camera} from "@ionic-native/camera";
+import {Util} from "../util/util";
 
 export interface RapidCapture {
   capture(element: FormElement): Promise<string[]>;
@@ -26,13 +27,14 @@ export class RapidCaptureService {
               public ndef: Ndef,
               public imageProc: ImageProcessor,
               public fileService: File,
-              private camera: Camera) {
+              public camera: Camera,
+              public util: Util) {
     //
   }
 
   start(element: FormElement) {
     if (element.type == "business_card") {
-      this.captureService = new BCRapidCapture(this.imageProc, this.fileService, this.platform, this.camera);
+      this.captureService = new BCRapidCapture(this.imageProc, this.fileService, this.platform, this.camera, this.util);
     } else {
       this.captureService = new BadgeRapidCapture(this.barcodeScanner, this.platform, this.nfc, this.ndef);
     }

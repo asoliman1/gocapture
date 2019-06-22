@@ -207,4 +207,11 @@ export class Util {
     }
     return filePath;
   }
+
+  public adjustImagePath(path) {
+    if (!path) {
+      return "";
+    }
+    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "")
+  }
 }

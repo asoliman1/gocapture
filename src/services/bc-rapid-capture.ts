@@ -3,17 +3,18 @@ import {FormElement} from "../model";
 import {RapidCapture} from "./rapid-capture-service";
 import {ImageProcessor} from "./image-processor";
 import {File} from "@ionic-native/file";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Platform} from "ionic-angular";
 import {Camera} from "@ionic-native/camera";
+import {Util} from "../util/util";
 
 @Injectable()
 
 export class BCRapidCapture implements RapidCapture {
-	constructor(private imageProc: ImageProcessor,
+	constructor(public imageProc: ImageProcessor,
               public fileService: File,
-              private platform: Platform,
-              private camera: Camera) {
+              public platform: Platform,
+              public camera: Camera,
+              public util: Util) {
 	  //
 	}
 
@@ -42,6 +43,11 @@ export class BCRapidCapture implements RapidCapture {
 
       (<any>navigator).camera.getPicture((imageData) => {
         this.handleRapidScanSubmit(imageData).then((paths) => {
+
+          paths.map((path) => {
+            return this.util.adjustImagePath(path)
+          });
+
           resolve(paths);
         });
       }, (error) => {
@@ -63,7 +69,9 @@ export class BCRapidCapture implements RapidCapture {
   private saveFileLocally(data) {
     let newFolder = this.fileService.dataDirectory + "leadliaison/images";
     let newName = new Date().getTime() + '.jpg';
-    return this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
+    return this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl)).then((entry) => {
+      return entry.nativeURL;
+    });
   }
 
   private destinationType() {

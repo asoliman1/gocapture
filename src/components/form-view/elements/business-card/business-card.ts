@@ -358,10 +358,10 @@ export class BusinessCard extends BaseElement implements OnDestroy{
   setValue(type, newPath){
     if (type == this.FRONT) {
       this.currentVal.front = newPath;
-      this.theVal.front = this.adjustImagePath(this.currentVal.front);
+      this.theVal.front = this.util.adjustImagePath(this.currentVal.front);
     } else {
       this.currentVal.back = newPath;
-      this.theVal.back = this.adjustImagePath(this.currentVal.back);
+      this.theVal.back = this.util.adjustImagePath(this.currentVal.back);
     }
     var v = {
       front: null,
