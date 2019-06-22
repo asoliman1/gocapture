@@ -658,7 +658,7 @@ static NSString* toBase64(NSData* data) {
         invoke();
     } else if (cameraPicker.pictureOptions.isRapidScanMode) {
         [weakSelf imageFor:cameraPicker.pictureOptions info:info completion:^(UIImage *image) {
-            [self.images addObject:image];
+            [self.images insertObject:image atIndex:0];
             [(CameraOverlayView *)cameraPicker.cameraOverlayView reloadImageScrollerWithImages:self.images];
         }];
     } else {
@@ -860,7 +860,12 @@ static NSString* toBase64(NSData* data) {
          [(CameraOverlayView *)self.pickerController.cameraOverlayView reloadImageScrollerWithImages:self.images];
     }];
 
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        //
+    }];
+
     [actionsMenu addAction:deleteAction];
+    [actionsMenu addAction:cancelAction];
 
     [self.pickerController presentViewController:actionsMenu animated:YES completion:nil];
 }

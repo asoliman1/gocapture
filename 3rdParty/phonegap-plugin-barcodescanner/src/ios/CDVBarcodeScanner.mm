@@ -453,7 +453,7 @@ parentViewController:(UIViewController*)parentViewController
                 [self.barcodes addObject:text];
             }
 
-            [self.viewController.view makeToast:@"Barcode scanned"
+            [self.viewController.view makeToast:@"Badge scanned"
                         duration:self.viewController.processor.rapidScanModeDelay
                         position:CSToastPositionTop];
 
