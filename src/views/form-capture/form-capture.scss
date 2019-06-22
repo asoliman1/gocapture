@@ -27,3 +27,13 @@ form-capture {
     opacity: 0.5 !important;
   }
 }
+
+.gc-alert {
+  &.remove-cancel {
+    .alert-button-group {
+      .alert-button:nth-child(1) {
+        display: none;
+      }
+    }
+  }
+}
