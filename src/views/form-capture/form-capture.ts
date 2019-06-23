@@ -185,7 +185,7 @@ export class FormCapture {
     submission.fields = this.formView.getValues();
     let elementId = "element_" + element.id;
     submission.fields[elementId] = data;
-    submission.id = new Date().getTime();
+    submission.id = new Date().getTime() + Math.floor(Math.random() * 100000);
     submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;
