@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 
 import {
   AlertController,
@@ -26,6 +26,7 @@ import {Vibration} from "@ionic-native/vibration";
 import {RapidCaptureService} from "../../services/rapid-capture-service";
 import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Scanner";
 import {Observable} from "rxjs";
+import {ProgressHud} from "../../services/progress-hud";
 
 @Component({
   selector: 'form-capture',
@@ -85,7 +86,8 @@ export class FormCapture {
               private localStorage: LocalStorageProvider,
               private vibration: Vibration,
               private rapidCaptureService: RapidCaptureService,
-              private alertCtrl: AlertController) {
+              private alertCtrl: AlertController,
+              private progressHud: ProgressHud) {
 
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -151,13 +153,17 @@ export class FormCapture {
   private startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
 
+    this.progressHud.showLoader("Scanner is loading...", 2000);
+
     let element = this.getElementForId(this.selectedScanSource);
     this.rapidCaptureService.start(element).then((items) => {
+      this.progressHud.hideLoader();
       let submissions = [];
       for (let item of items) {
         let saveSubmObservable = this.saveSubmissionWithData(item, element);
         submissions.push(saveSubmObservable);
       }
+
       Observable.zip(...submissions).subscribe(() => {
         this.navCtrl.pop().then(()=> {
           this.client.doSync(this.form.form_id).subscribe(()=> {
@@ -169,6 +175,7 @@ export class FormCapture {
       }, (error) => {
         console.error(error);
         this.navCtrl.pop();
+        this.progressHud.hideLoader();
       })
     });
   }
@@ -205,12 +212,12 @@ export class FormCapture {
     //TODO: add business card rapid scan mode for android
     if (this.platform.is("ios")) {
       if (businessCardElement) {
-        sources.push({id: businessCardElement.id, name: "Business card scan"});
+        sources.push({id: businessCardElement.id, name: "Business card"});
       }
     }
 
     if (barcodeElement) {
-      sources.push({id: barcodeElement.id, name: "Barcode scan"});
+      sources.push({id: barcodeElement.id, name: "Badge scan"});
     }
 
     // if (nfcElement) {
@@ -629,7 +636,7 @@ export class FormCapture {
         this.startRapidScanModeForSource(this.scanSources[0].id);
       } else if (this.scanSources.length > 1) {
         let alert = this.alertCtrl.create({
-          title: 'Choose the scan source:',
+          title: 'Scan mode:',
           buttons: [
             {
               text: 'Ok',

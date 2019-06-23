@@ -73,6 +73,7 @@ import {ActionService} from "../services/action-service";
 import {RapidCaptureService} from "../services/rapid-capture-service";
 import {BadgeRapidCapture} from "../services/badge-rapid-capture";
 import {BCRapidCapture} from "../services/bc-rapid-capture";
+import {ProgressHud} from "../services/progress-hud";
 
 
 @NgModule({
@@ -181,7 +182,8 @@ import {BCRapidCapture} from "../services/bc-rapid-capture";
     ActionService,
     RapidCaptureService,
     BadgeRapidCapture,
-    BCRapidCapture
+    BCRapidCapture,
+    ProgressHud
   ]
 })
 export class AppModule { }
