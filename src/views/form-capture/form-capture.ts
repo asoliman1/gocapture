@@ -118,10 +118,17 @@ export class FormCapture {
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
 
     if (this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
-      this.modal.create(FormInstructions, {form: this.form, isModal: true}).present().then((result) => {
+      let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
+      instructionsModal.present().then((result) => {
         formsInstructions.push(this.form.id);
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       });
+
+      instructionsModal.onDidDismiss(()=>{
+        this.openStations();
+      })
+    } else {
+      this.openStations();
     }
   }
 
@@ -179,7 +186,7 @@ export class FormCapture {
     submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      submission.station = this.selectedStation;
+      submission.station_id = this.selectedStation;
     }
 
     if (element.badge_type == ScannerType.NFC || element.badge_type == ScannerType.Barcode) {
@@ -227,12 +234,6 @@ export class FormCapture {
   }
 
   ionViewDidEnter() {
-
-    if (this.form.event_stations && this.form.event_stations.length > 0) {
-      this.openStations();
-    } else {
-      this.initiateRapidScanMode();
-    }
 
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
@@ -613,6 +614,8 @@ export class FormCapture {
       }
 
       alert.present();
+    } else {
+      this.initiateRapidScanMode();
     }
   }
 
