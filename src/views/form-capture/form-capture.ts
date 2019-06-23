@@ -424,7 +424,7 @@ export class FormCapture {
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      this.submission.station = this.selectedStation;
+      this.submission.station_id = this.selectedStation;
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {

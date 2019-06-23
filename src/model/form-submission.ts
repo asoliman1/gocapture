@@ -22,7 +22,7 @@ export class FormSubmission{
   hidden_elements: string[];
   is_filled_from_list: boolean = false;
 
-  station: string;
+  station_id: string;
 
 	barcode_processed: BarcodeStatus = 0;
 

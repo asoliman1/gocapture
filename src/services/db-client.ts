@@ -75,7 +75,7 @@ export class DBClient {
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -340,7 +340,7 @@ export class DBClient {
       },
       18: {
         queries: [
-          "alter table submissions add column station text"
+          "alter table submissions add column station_id text"
         ]
       },
       19: {
@@ -735,7 +735,7 @@ export class DBClient {
     form.hold_submission = dbForm.hold_submission;
     form.hold_submission_reason = dbForm.hold_submission_reason;
     form.hidden_elements = JSON.parse(dbForm.hidden_elements);
-    form.station = dbForm.station;
+    form.station_id = dbForm.station_id;
     return form;
   }
 
@@ -819,7 +819,7 @@ export class DBClient {
       form.hold_submission,
       form.hold_submission_reason,
       JSON.stringify(form.hidden_elements),
-      form.station];
+      form.station_id];
   }
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
