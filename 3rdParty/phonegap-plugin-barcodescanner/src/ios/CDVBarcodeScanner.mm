@@ -105,6 +105,7 @@
 @property (nonatomic, retain) IBOutlet UIView* overlayView;
 @property (nonatomic, retain) UIToolbar * toolbar;
 @property (nonatomic, retain) UIView * reticleView;
+
 // unsafe_unretained is equivalent to assign - used to prevent retain cycles in the property below
 @property (nonatomic, unsafe_unretained) id orientationDelegate;
 
@@ -116,6 +117,8 @@
 - (IBAction)cancelButtonPressed:(id)sender;
 - (IBAction)flipCameraButtonPressed:(id)sender;
 - (IBAction)torchButtonPressed:(id)sender;
+
+- (NSArray *)toolbarButtons:(BOOL)shouldShowDoneBtn;
 
 @end
 
@@ -453,6 +456,10 @@ parentViewController:(UIViewController*)parentViewController
                 [self.barcodes addObject:text];
             }
 
+            if (self.barcodes.count > 0) {
+                self.viewController.toolbar.items = [self.viewController toolbarButtons: YES];
+            }
+
             [self.viewController.view makeToast:@"Badge scanned"
                         duration:self.viewController.processor.rapidScanModeDelay
                         position:CSToastPositionTop];
@@ -497,6 +504,16 @@ parentViewController:(UIViewController*)parentViewController
     if (self.isFlipped) {
         self.isFlipped = NO;
     }
+}
+
+//--------------------------------------------------------------------------
+- (void)barcodeScanRapidScanDone {
+    [self barcodeScanDone:^{
+        if (self.isRapidScanMode)
+        {
+            [self.plugin returnBarcodes:self.barcodes callback:self.callback];
+        }
+    }];
 }
 
 - (void)flipCamera {
@@ -869,6 +886,11 @@ parentViewController:(UIViewController*)parentViewController
     [self.processor performSelector:@selector(barcodeScanCancelled) withObject:nil afterDelay:0];
 }
 
+//--------------------------------------------------------------------------
+- (IBAction)doneButtonPressed:(id)sender {
+    [self.processor performSelector:@selector(barcodeScanRapidScanDone) withObject:nil afterDelay:0];
+}
+
 - (IBAction)flipCameraButtonPressed:(id)sender
 {
     [self.processor performSelector:@selector(flipCamera) withObject:nil afterDelay:0];
@@ -920,67 +942,7 @@ parentViewController:(UIViewController*)parentViewController
     self.toolbar = [[UIToolbar alloc] init];
     self.toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
-    id cancelButton = [[UIBarButtonItem alloc]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                       target:(id)self
-                       action:@selector(cancelButtonPressed:)
-                       ];
-
-
-    id flexSpace = [[UIBarButtonItem alloc]
-                    initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                    target:nil
-                    action:nil
-                    ];
-
-    id flipCamera = [[UIBarButtonItem alloc]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                       target:(id)self
-                       action:@selector(flipCameraButtonPressed:)
-                       ];
-
-
-    NSMutableArray *items;
-
-#if USE_SHUTTER
-    id shutterButton = [[UIBarButtonItem alloc]
-                        initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                        target:(id)self
-                        action:@selector(shutterButtonPressed)
-                        ];
-
-    if (_processor.isShowFlipCameraButton) {
-      items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, flipCamera, shutterButton, nil];
-    } else {
-      items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, shutterButton, nil];
-    }
-#else
-    if (_processor.isShowFlipCameraButton) {
-      items = [@[flexSpace, cancelButton, flexSpace, flipCamera] mutableCopy];
-    } else {
-      items = [@[flexSpace, cancelButton, flexSpace] mutableCopy];
-    }
-#endif
-
-    if (_processor.isShowTorchButton && !_processor.isFrontCamera) {
-      AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-      if ([device hasTorch] && [device hasFlash]) {
-        NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"CDVBarcodeScanner" withExtension:@"bundle"];
-        NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
-        NSString *imagePath = [bundle pathForResource:@"torch" ofType:@"png"];
-        UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
-
-        id torchButton = [[UIBarButtonItem alloc]
-                           initWithImage:image
-                                   style:UIBarButtonItemStylePlain
-                                  target:(id)self
-                                  action:@selector(torchButtonPressed:)
-                           ];
-
-      [items insertObject:torchButton atIndex:0];
-    }
-  }
-    self.toolbar.items = items;
+    self.toolbar.items = [self toolbarButtons: NO];
     [overlayView addSubview: self.toolbar];
 
     UIImage* reticleImage = [self buildReticleImage];
@@ -998,6 +960,78 @@ parentViewController:(UIViewController*)parentViewController
     [overlayView addSubview: self.reticleView];
     [self resizeElements];
     return overlayView;
+}
+
+- (NSArray *)toolbarButtons:(BOOL)shouldShowDoneBtn
+{
+    id cancelButton = [[UIBarButtonItem alloc]
+                       initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                       target:(id)self
+                       action:@selector(cancelButtonPressed:)
+                       ];
+
+    id doneButton = [[UIBarButtonItem alloc]
+                       initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                       target:(id)self
+                       action:@selector(doneButtonPressed:)
+                       ];
+
+    id flexSpace = [[UIBarButtonItem alloc]
+                    initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                    target:nil
+                    action:nil
+                    ];
+
+    id flipCamera = [[UIBarButtonItem alloc]
+                     initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                     target:(id)self
+                     action:@selector(flipCameraButtonPressed:)
+                     ];
+
+
+    NSMutableArray *items;
+
+#if USE_SHUTTER
+    id shutterButton = [[UIBarButtonItem alloc]
+                        initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                        target:(id)self
+                        action:@selector(shutterButtonPressed)
+                        ];
+
+    if (_processor.isShowFlipCameraButton) {
+        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, flipCamera, shutterButton, nil];
+    } else {
+        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, shutterButton, nil];
+    }
+#else
+    if (_processor.isShowFlipCameraButton) {
+        items = [@[flexSpace, cancelButton, flexSpace, flipCamera] mutableCopy];
+    } else if (shouldShowDoneBtn) {
+        items = [@[flexSpace, doneButton, flexSpace] mutableCopy];
+    } else {
+        items = [@[flexSpace, cancelButton, flexSpace] mutableCopy];
+    }
+#endif
+
+    if (_processor.isShowTorchButton && !_processor.isFrontCamera) {
+        AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        if ([device hasTorch] && [device hasFlash]) {
+            NSURL *bundleURL = [[NSBundle mainBundle] URLForResource:@"CDVBarcodeScanner" withExtension:@"bundle"];
+            NSBundle *bundle = [NSBundle bundleWithURL:bundleURL];
+            NSString *imagePath = [bundle pathForResource:@"torch" ofType:@"png"];
+            UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
+
+            id torchButton = [[UIBarButtonItem alloc]
+                              initWithImage:image
+                              style:UIBarButtonItemStylePlain
+                              target:(id)self
+                              action:@selector(torchButtonPressed:)
+                              ];
+
+            [items insertObject:torchButton atIndex:0];
+        }
+    }
+    return items;
 }
 
 //--------------------------------------------------------------------------

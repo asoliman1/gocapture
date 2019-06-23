@@ -29,11 +29,10 @@ form-capture {
 }
 
 .gc-alert {
-  &.remove-cancel {
+  &.remove-btns {
     .alert-button-group {
-      .alert-button:nth-child(1) {
-        display: none;
-      }
+      display: none;
     }
   }
+
 }

@@ -2,10 +2,10 @@
 	<ion-navbar color="primary" #navbar>
 
     <ion-title>
-      <div #formTitle (click)="openStations($event)">
+      <div #formTitle (click)="openStations()">
         {{form ? form.name : ''}}
         <br>
-        <span *ngIf="selectedStation" >{{selectedStation.name}}</span>
+        <span *ngIf="selectedStation" >{{stationTitle(selectedStation)}}</span>
       </div>
     </ion-title>
 
@@ -61,27 +61,6 @@
             (onProcessingEvent)="onProcessing($event)">
       </form-view>
     </ion-row>
-
-    <ion-item  [hidden]="true" *ngIf="form && form.event_stations && form.event_stations.length > 0">
-      <ion-label >Stations</ion-label>
-      <ion-select #stationsSelect color="primary"
-                  [selectOptions]="{cssClass: selectedTheme +' gc-alert remove-cancel', title: 'Select Station:'}"
-                  [(ngModel)]="selectedStation"
-                  (ionChange)="onStationSelect($event)">
-        <ion-option *ngFor="let station of form.event_stations" [value]="station">{{station.name}}</ion-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item  [hidden]="true" *ngIf="form && form.is_enable_rapid_scan_mode">
-      <ion-label>Choose the scan source</ion-label>
-
-      <ion-select #rapidScanSourceSelect color="primary"
-                  [selectOptions]="{cssClass: selectedTheme + ' gc-alert'}"
-                  [(ngModel)]="selectedScanSource"
-                  (ionChange)="onScanSourceChoose($event)">
-        <ion-option *ngFor="let source of scanSources" [value]="source.id">{{source.name}}</ion-option>
-      </ion-select>
-    </ion-item>
 
 	</ion-grid>
 </ion-content>

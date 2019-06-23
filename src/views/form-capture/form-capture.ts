@@ -1,6 +1,7 @@
 import {Component, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
 
 import {
+  AlertController,
   Content,
   MenuController,
   ModalController,
@@ -8,7 +9,6 @@ import {
   NavController,
   NavParams,
   Platform,
-  Select,
   ToastController
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -23,7 +23,6 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
 import {Vibration} from "@ionic-native/vibration";
-import {Station} from "../../model/station";
 import {RapidCaptureService} from "../../services/rapid-capture-service";
 import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Scanner";
 import {Observable} from "rxjs";
@@ -47,17 +46,6 @@ export class FormCapture {
 
   @ViewChild("formTitle") formTitle: ElementRef;
 
-  private stationsSelect : Select;
-
-  @ViewChild("stationsSelect") set stationsChooser(select: Select) {
-    this.stationsSelect = select;
-  }
-
-  private rapidScanSourceSelect : Select;
-
-  @ViewChild("rapidScanSourceSelect") set rapidScanSourceChooser(select: Select) {
-    this.rapidScanSourceSelect = select;
-  }
 
   valid: boolean = true;
   errorMessage: String;
@@ -70,7 +58,7 @@ export class FormCapture {
 
   isProcessing: boolean = false;
 
-  selectedStation: Station;
+  selectedStation: string;
 
   private backUnregister;
 
@@ -79,6 +67,10 @@ export class FormCapture {
   private scanSources = [];
 
   private selectedScanSource;
+
+  isRapidScanMode: boolean = false;
+
+  stationsSelectOptions: string = '';
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -92,7 +84,8 @@ export class FormCapture {
               private themeProvider: ThemeProvider,
               private localStorage: LocalStorageProvider,
               private vibration: Vibration,
-              private rapidCaptureService: RapidCaptureService) {
+              private rapidCaptureService: RapidCaptureService,
+              private alertCtrl: AlertController) {
 
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -104,6 +97,7 @@ export class FormCapture {
 
   private setupForm() {
     this.form = this.navParams.get("form");
+    this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
     if (this.dispatch) {
@@ -117,6 +111,7 @@ export class FormCapture {
         this.prospect = contact;
       });
     }
+
     this.menuCtrl.enable(false);
 
     let instructions = this.localStorage.get("FormInstructions");
@@ -130,20 +125,11 @@ export class FormCapture {
     }
   }
 
-  private initiateRapidScanMode(isInitialScan) {
-
-    if (this.form.is_enable_rapid_scan_mode) {
-      if (isInitialScan) {
-        this.handleRapidScanModeSources();
-      } else if (this.selectedScanSource) {
-        // setTimeout(() => {
-        //   this.rapidScanner.scan(this.form.form_id, this.getElementForId(this.selectedScanSource));
-        //   // this.actionService.performAction(this.selectedScanSource);
-        // }, 500);
-      }
+  private initiateRapidScanMode() {
+    if (this.isRapidScanMode) {
+      this.handleRapidScanModeSources();
     }
   }
-
 
   //Rapid scan
   private handleRapidScanModeSources() {
@@ -152,24 +138,7 @@ export class FormCapture {
     }
     this.scanSources = this.getScanSources();
 
-    //open the rapid scan source chooser
-    setTimeout(() => {
-      if (this.rapidScanSourceSelect) {
-        if (this.scanSources.length > 1) {
-          this.rapidScanSourceSelect.open(new UIEvent('touch'));
-        } else if (this.scanSources.length > 0) {
-          this.onScanSourceChoose(this.scanSources[0].id)
-        }
-      }
-    }, 500);
-  }
-
-  onStationSelect(station) {
-    this.initiateRapidScanMode(true);
-  }
-
-  onScanSourceChoose(source) {
-    this.startRapidScanModeForSource(source);
+    this.openRapidScanMode();
   }
 
   private startRapidScanModeForSource(source: string) {
@@ -210,7 +179,7 @@ export class FormCapture {
     submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      submission.station = this.selectedStation.id + '';
+      submission.station = this.selectedStation;
     }
 
     if (element.badge_type == ScannerType.NFC || element.badge_type == ScannerType.Barcode) {
@@ -226,8 +195,11 @@ export class FormCapture {
     let barcodeElement = this.getElementForType("barcode");
     let nfcElement = this.getElementForType("nfc");
 
-    if (businessCardElement) {
-      sources.push({id: businessCardElement.id, name: "Business card scan"});
+    //TODO: add business card rapid scan mode for android
+    if (this.platform.is("ios")) {
+      if (businessCardElement) {
+        sources.push({id: businessCardElement.id, name: "Business card scan"});
+      }
     }
 
     if (barcodeElement) {
@@ -256,15 +228,11 @@ export class FormCapture {
 
   ionViewDidEnter() {
 
-    setTimeout(() => {
-      if (this.stationsSelect) {
-        // this.formTitle.nativeElement.click();
-        this.openStations(new UIEvent('touch'));
-      } else {
-        this.initiateRapidScanMode(true);
-      }
-
-    }, 500);
+    if (this.form.event_stations && this.form.event_stations.length > 0) {
+      this.openStations();
+    } else {
+      this.initiateRapidScanMode();
+    }
 
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
@@ -456,7 +424,7 @@ export class FormCapture {
     this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      this.submission.station = this.selectedStation.id + '';
+      this.submission.station = this.selectedStation;
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
@@ -610,7 +578,7 @@ export class FormCapture {
     return elementsIds;
   }
 
-  openStations(event) {
+  openStations() {
 
     if (this.isReadOnly(this.submission)) {
       return;
@@ -618,8 +586,83 @@ export class FormCapture {
 
     if (this.form.event_stations && this.form.event_stations.length > 0) {
       // this.stationsSelect.open(event);
-      this.stationsSelect.open(new UIEvent('touch'));
+      // this.stationsSelect.open(new UIEvent('touch'));
+
+      let alert = this.alertCtrl.create({
+        title: 'Select station:',
+        buttons: [
+
+          {
+            text: 'Ok',
+            handler: (station) => {
+              if (!station) {
+                return false;
+              }
+              this.selectedStation = station;
+              alert.didLeave.subscribe(() => {
+                this.initiateRapidScanMode();
+              });
+            }
+          }
+        ],
+        cssClass: this.selectedTheme + ' gc-alert'
+      });
+
+      for (let station of this.form.event_stations) {
+        alert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
+      }
+
+      alert.present();
     }
+  }
+
+  openRapidScanMode() {
+    if (this.isReadOnly(this.submission)) {
+      return;
+    }
+
+    if (this.isRapidScanMode && this.scanSources) {
+      if (this.scanSources.length == 1) {
+        this.startRapidScanModeForSource(this.scanSources[0].id);
+      } else if (this.scanSources.length > 1) {
+        let alert = this.alertCtrl.create({
+          title: 'Choose the scan source:',
+          buttons: [
+            {
+              text: 'Ok',
+              handler: (scanSource) => {
+                if (!scanSource) {
+                  return false;
+                }
+                this.selectedScanSource = scanSource;
+                this.startRapidScanModeForSource(this.selectedScanSource);
+              }
+            }
+          ],
+          cssClass: this.selectedTheme + ' gc-alert'
+        });
+
+        for (let scanSource of this.scanSources) {
+          alert.addInput({
+            label: scanSource.name,
+            value: scanSource.id,
+            type: 'radio',
+            checked: scanSource.id == this.selectedStation
+          });
+        }
+
+        alert.present();
+      }
+    }
+  }
+
+  stationTitle(stationId) {
+    for (let station of this.form.event_stations) {
+      if (station.id == stationId) {
+        return station.name;
+      }
+    }
+    return '';
   }
 
 }
