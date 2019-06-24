@@ -61,6 +61,7 @@
     "cordova-plugin-badge": "0.8.8",
     "cordova-plugin-camera": "file:3rdParty/cordova-plugin-camera",
     "cordova-plugin-camera-preview": "file:3rdParty/cordova-plugin-camera-preview",
+    "cordova-plugin-cocoapod-support": "^1.6.2",
     "cordova-plugin-device": "^1.1.7",
     "cordova-plugin-file": "^6.0.1",
     "cordova-plugin-file-transfer": "^1.7.1",
@@ -134,7 +135,6 @@
         "FCM_VERSION": "11.6.2"
       },
       "cordova-plugin-advanced-http": {},
-      "cordova-plugin-camera": {},
       "cordova-plugin-media": {},
       "phonegap-nfc": {
         "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
@@ -153,7 +153,8 @@
       },
       "phonegap-plugin-barcodescanner": {},
       "cordova-plugin-vibration": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-add-swift-support": {},
+      "cordova-plugin-camera": {}
     },
     "platforms": [
       "ios",

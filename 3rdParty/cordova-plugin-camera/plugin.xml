@@ -114,6 +114,8 @@
          <header-file src="src/ios/GCImageScrollerCell.h" />
          <source-file src="src/ios/GCImageScrollerCell.m" />
 
+         <resource-file src="src/ios/GCImageScrollerCell.xib"/>
+
          <source-file src="src/ios/GoCaptureImageCropper.swift" />
 
          <resource-file src="src/ios/CameraOverlayView.xib"/>
@@ -130,6 +132,7 @@
          <framework src="CoreGraphics.framework" />
          <framework src="AVFoundation.framework" />
 
+         <pod name="Toast"/>
      </platform>
 
     <!-- browser -->
