@@ -69,7 +69,8 @@
   }
 
   .checkbox-checked,
-  .radio-md .radio-inner{
+  .radio-md .radio-inner,
+  .alert-radio-inner {
     border-color: $theme-color !important;
     background-color: $theme-color !important;
   }

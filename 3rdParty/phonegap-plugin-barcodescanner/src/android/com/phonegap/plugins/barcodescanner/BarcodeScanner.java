@@ -217,7 +217,7 @@ public class BarcodeScanner extends CordovaPlugin {
                             isContinuesMode = obj.optBoolean(CONTINUOUS_MODE, false);
                         }
 //
-//                        isContinuous = true;
+//                        boolean isContinuous = true;
 //
 //                        if (isContinuous) {
 //                            intentScan.putExtra(Intents.Scan.BULK_SCAN, true);
@@ -254,6 +254,7 @@ public class BarcodeScanner extends CordovaPlugin {
                 intentScan.setPackage(that.cordova.getActivity().getApplicationContext().getPackageName());
 
                 that.cordova.startActivityForResult(that, intentScan, REQUEST_CODE);
+                that.cordova.getActivity().overridePendingTransition(0, 0);
             }
         });
     }

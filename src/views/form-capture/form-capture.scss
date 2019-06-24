@@ -34,5 +34,12 @@ form-capture {
       display: none;
     }
   }
+}
 
+.platform-ios {
+  .gc-alert {
+    .alert-radio-inner {
+      background-color: transparent !important;
+    }
+  }
 }
