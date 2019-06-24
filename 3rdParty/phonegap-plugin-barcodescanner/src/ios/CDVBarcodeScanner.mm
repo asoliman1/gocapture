@@ -454,15 +454,17 @@ parentViewController:(UIViewController*)parentViewController
             if (![self.barcodes containsObject:text])
             {
                 [self.barcodes addObject:text];
+
+                [self.viewController.view makeToast:@"Badge scanned"
+                                           duration:self.viewController.processor.rapidScanModeDelay
+                                           position:CSToastPositionTop];
+
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
             }
 
             if (self.barcodes.count > 0) {
                 self.viewController.toolbar.items = [self.viewController toolbarButtons: YES];
             }
-
-            [self.viewController.view makeToast:@"Badge scanned"
-                        duration:self.viewController.processor.rapidScanModeDelay
-                        position:CSToastPositionTop];
 
             [self performSelector:@selector(continueScanning) withObject:nil afterDelay:self.viewController.processor.rapidScanModeDelay];
         }

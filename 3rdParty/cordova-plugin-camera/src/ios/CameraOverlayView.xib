@@ -18,6 +18,7 @@
                 <outlet property="containerView" destination="vMP-Vx-rwC" id="ZFc-Sm-WvA"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="ngG-4H-Pxe"/>
                 <outlet property="imageScroller" destination="xBU-sF-h39" id="put-ld-ovR"/>
+                <outlet property="imageScrollerTopConstraint" destination="rIB-z7-gnk" id="Yis-O1-tLS"/>
                 <outlet property="submitBtn" destination="ZQX-Ge-7YL" id="1Yb-TP-Mlz"/>
             </connections>
         </placeholder>
@@ -70,7 +71,7 @@
                             </connections>
                         </button>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xBU-sF-h39" customClass="GCImageScroller">
-                            <rect key="frame" x="0.0" y="357" width="375" height="70"/>
+                            <rect key="frame" x="0.0" y="350" width="375" height="70"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="70" id="EIh-yQ-dTq"/>
@@ -87,7 +88,7 @@
                         <constraint firstAttribute="bottom" secondItem="xVp-xD-3Ut" secondAttribute="bottom" constant="40" id="ZrS-Si-YrM"/>
                         <constraint firstAttribute="trailing" secondItem="Euq-A9-eNr" secondAttribute="trailing" constant="30" id="lqs-Ft-etv"/>
                         <constraint firstItem="ZQX-Ge-7YL" firstAttribute="centerX" secondItem="vMP-Vx-rwC" secondAttribute="centerX" id="oZz-Uv-fA7"/>
-                        <constraint firstItem="ZQX-Ge-7YL" firstAttribute="top" secondItem="xBU-sF-h39" secondAttribute="bottom" constant="30" id="tBB-ko-nQl"/>
+                        <constraint firstItem="xBU-sF-h39" firstAttribute="top" secondItem="vMP-Vx-rwC" secondAttribute="top" constant="350" id="rIB-z7-gnk"/>
                     </constraints>
                 </view>
             </subviews>

@@ -153,7 +153,7 @@ export class FormCapture {
   private startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
 
-    this.progressHud.showLoader("Scanner is loading...", 2000);
+    this.progressHud.showLoader("Loading scanner...", 2000);
 
     let element = this.getElementForId(this.selectedScanSource);
     this.rapidCaptureService.start(element).then((items) => {
@@ -597,7 +597,7 @@ export class FormCapture {
       // this.stationsSelect.open(new UIEvent('touch'));
 
       let alert = this.alertCtrl.create({
-        title: 'Select station:',
+        title: 'Select Station:',
         buttons: [
 
           {
@@ -636,7 +636,7 @@ export class FormCapture {
         this.startRapidScanModeForSource(this.scanSources[0].id);
       } else if (this.scanSources.length > 1) {
         let alert = this.alertCtrl.create({
-          title: 'Scan mode:',
+          title: 'Scan Mode:',
           buttons: [
             {
               text: 'Ok',
