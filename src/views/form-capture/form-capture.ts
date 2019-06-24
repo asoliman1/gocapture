@@ -95,24 +95,6 @@ export class FormCapture {
 
   ionViewWillEnter() {
     this.setupForm();
-  }
-
-  private setupForm() {
-    this.form = this.navParams.get("form");
-    this.isRapidScanMode = this.navParams.get("isRapidScanMode");
-    this.submission = this.navParams.get("submission");
-    this.dispatch = this.navParams.get("dispatch");
-    if (this.dispatch) {
-      this.form = this.dispatch.form;
-    }
-    if (!this.submission) {
-      this.submission = new FormSubmission();
-      this.submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
-    } else {
-      this.client.getContact(this.form, this.submission.prospect_id).subscribe(contact => {
-        this.prospect = contact;
-      });
-    }
 
     this.menuCtrl.enable(false);
 
@@ -131,6 +113,24 @@ export class FormCapture {
       })
     } else {
       this.openStations();
+    }
+  }
+
+  private setupForm() {
+    this.form = this.navParams.get("form");
+    this.isRapidScanMode = this.navParams.get("isRapidScanMode");
+    this.submission = this.navParams.get("submission");
+    this.dispatch = this.navParams.get("dispatch");
+    if (this.dispatch) {
+      this.form = this.dispatch.form;
+    }
+    if (!this.submission) {
+      this.submission = new FormSubmission();
+      this.submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
+    } else {
+      this.client.getContact(this.form, this.submission.prospect_id).subscribe(contact => {
+        this.prospect = contact;
+      });
     }
   }
 
