@@ -71,7 +71,7 @@ export class Main {
 		});
 
 		//TODO: move sync bar to the separate components
-    this.app.viewWillEnter.subscribe(viewCtrl => {
+    this.app.viewWillEnter.subscribe((viewCtrl) => {
 
       let isFormCaptureView = viewCtrl.instance instanceof FormCapture;
 
