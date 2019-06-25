@@ -1,3 +1,4 @@
+import { SettingsService } from './settings-service';
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
@@ -21,6 +22,7 @@ import {
 import { FileUploadRequest, FileInfo } from "../model/protocol";
 import { HTTP } from '@ionic-native/http';
 import {StorageProvider} from "./storage-provider";
+import { settingsKeys } from '../constants/constants';
 declare var cordova: any;
 
 
@@ -45,6 +47,12 @@ export class SyncClient {
    */
   entitySynced: Observable<string>;
 
+  /**
+   * Duplicate lead event
+   */
+  private duplicateLeadSource: BehaviorSubject<any>;
+  duplicateLead: Observable<any>;
+
   private _isSyncing: boolean = false;
 
   private lastSyncStatus: SyncStatus[];
@@ -55,14 +63,16 @@ export class SyncClient {
               private db: DBClient,
               private file: File,
               private http: HTTP,
-              private storageProvider: StorageProvider) {
+              private storageProvider: StorageProvider,
+              private settingsService: SettingsService) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
     this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
     this.onSync = this.syncSource.asObservable();
     this.entitySyncedSource = new BehaviorSubject<string>(null);
     this.entitySynced = this.entitySyncedSource.asObservable();
-
+    this.duplicateLeadSource = new BehaviorSubject<any>(null);
+    this.duplicateLead = this.duplicateLeadSource.asObservable();
   }
 
   public isSyncing(): boolean {
@@ -401,45 +411,59 @@ export class SyncClient {
     }
 
     this.rest.submitForm(submission).subscribe((d) => {
+      this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
+        const autoUpload = String(setting) == "true";
 
-      if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
-        let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
-        submission.invalid_fields = 1;
-        submission.hold_request_id = 0;
+        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
+          d.id = submission.id;
+          d.form_id = d.form_id;
+
+          obs.complete();
+          this.duplicateLeadSource.next(d);
+          this.duplicateLeadSource.next(null);
+          return;
+        }
+
+        if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
+          let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
+          submission.invalid_fields = 1;
+          submission.hold_request_id = 0;
+          this.db.updateSubmissionId(submission).subscribe((ok) => {
+            obs.error(msg);
+            this.errorSource.next(msg);
+          }, err => {
+            obs.error(err);
+            let msg = "Could not process submission for form " + formName;
+            this.errorSource.next(msg);
+          });
+          return;
+        }
+
+        if (d.id > 0) {
+          submission.activity_id = d.id;
+          submission.status = SubmissionStatus.Submitted;
+        } else {
+          submission.hold_request_id = d.hold_request_id;
+          submission.status = SubmissionStatus.OnHold;
+        }
+  
         this.db.updateSubmissionId(submission).subscribe((ok) => {
-          obs.error(msg);
-          this.errorSource.next(msg);
+          if(d.id > 0){
+            submission.id = submission.activity_id;
+          }
+          obs.next(submission);
+          obs.complete();
         }, err => {
           obs.error(err);
           let msg = "Could not process submission for form " + formName;
           this.errorSource.next(msg);
-        });
-        return;
-      }
-      if (d.id > 0) {
-        submission.activity_id = d.id;
-        submission.status = SubmissionStatus.Submitted;
-      } else {
-        submission.hold_request_id = d.hold_request_id;
-        submission.status = SubmissionStatus.OnHold;
-      }
-
-      this.db.updateSubmissionId(submission).subscribe((ok) => {
-        if(d.id > 0){
-          submission.id = submission.activity_id;
-        }
-        obs.next(submission);
-        obs.complete();
+        })
       }, err => {
         obs.error(err);
         let msg = "Could not process submission for form " + formName;
         this.errorSource.next(msg);
-      })
-    }, err => {
-      obs.error(err);
-      let msg = "Could not process submission for form " + formName;
-      this.errorSource.next(msg);
-    });
+      });
+      }) 
   }
 
   private isSubmissionValid(submission: FormSubmission) {

@@ -8,11 +8,18 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
-  ToastController
+  Platform, 
+  ToastController,
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
-import {BarcodeStatus, DeviceFormMembership, DispatchOrder, Form, FormSubmission, SubmissionStatus} from "../../model";
+import {
+  BarcodeStatus,
+  DeviceFormMembership,
+  DispatchOrder,
+  Form,
+  FormSubmission,
+  SubmissionStatus
+} from "../../model";
 
 import {FormView} from "../../components/form-view";
 import {ProspectSearch} from "../prospect-search";
@@ -72,7 +79,6 @@ export class FormCapture {
   isRapidScanMode: boolean = false;
 
   stationsSelectOptions: string = '';
-
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -88,7 +94,6 @@ export class FormCapture {
               private rapidCaptureService: RapidCaptureService,
               private alertCtrl: AlertController,
               private progressHud: ProgressHud) {
-
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -131,6 +136,10 @@ export class FormCapture {
       this.client.getContact(this.form, this.submission.prospect_id).subscribe(contact => {
         this.prospect = contact;
       });
+    }
+
+    if (this.navParams.get("openEdit") && !this.isEditing) {
+      this.doEdit();
     }
   }
 
@@ -241,7 +250,6 @@ export class FormCapture {
   }
 
   ionViewDidEnter() {
-
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -391,9 +399,9 @@ export class FormCapture {
     this.form = null;
     setTimeout(()=> {
       this.setupForm();
+      this.content.resize();
     });
   }
-
 
   doSave(shouldSyncData = true) {
     this.submitAttempt = true;
@@ -421,7 +429,7 @@ export class FormCapture {
 
     this.submission.fields = this.formView.getValues();
 
-    if (!this.submission.id) {
+    if (!this.submission.id) { 
       this.submission.id = new Date().getTime();
     }
 

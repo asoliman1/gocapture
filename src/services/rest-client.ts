@@ -392,7 +392,15 @@ export class RESTClient {
 	 *
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<{id:number, message:string, hold_request_id:number, response_status: string}> {
+	public submitForm(data: FormSubmission): Observable<{
+		id:number, 
+		message:string, 
+		hold_request_id:number, 
+		response_status: string, 
+		form_id: number;
+		duplicate_action?: string,
+		submission?: FormSubmission
+	}> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				if (resp.status == "200") {
@@ -400,7 +408,8 @@ export class RESTClient {
 						id: resp.activity_id,
 						hold_request_id: resp.hold_request_id,
 						message: "",
-            response_status: resp.status
+						response_status: resp.status,
+						form_id: data.form_id
 					};
 				}
 				this.errorSource.next(resp);
@@ -408,7 +417,10 @@ export class RESTClient {
 						id: resp.activity_id,
 						message: resp.message,
 						hold_request_id: null,
-            response_status: resp.status
+						response_status: resp.status,
+						duplicate_action: resp.duplicate_action,
+						submission: resp.submission,
+						form_id: data.form_id
 					};
 			});
 	}
