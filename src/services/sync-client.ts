@@ -296,7 +296,7 @@ export class SyncClient {
         this.updateSubmissionFields(submission, data, urlMap);
 
         this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          if (submission.barcode_processed == BarcodeStatus.Queued) {
+          if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
             this.processBarcode(data, submission, obs);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
             this.processBarcode(data, submission, obs);

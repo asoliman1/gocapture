@@ -75,9 +75,11 @@ export class Badge extends BaseElement implements OnInit {
 
       if (this.element.post_show_reconciliation) {
         this.onProcessingEvent.emit('false');
+        this.scanner.restart();
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";
         this.fillInElementsWithPlaceholderValue("Scanned");
+        this.submission.barcode_processed = BarcodeStatus.PostShowReconsilation;
         return;
       }
 

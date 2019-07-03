@@ -437,6 +437,7 @@ export class FormCapture {
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+        this.clearPlaceholders();
         this.submission = null;
         this.form = null;
         this.dispatch = null;
@@ -626,6 +627,12 @@ export class FormCapture {
     }
   }
 
+  clearPlaceholders() {
+    this.form.elements.forEach((element) => {
+      element.placeholder = '';
+    });
+  }
+
   openRapidScanMode() {
     if (this.isReadOnly(this.submission)) {
       return;
@@ -674,5 +681,4 @@ export class FormCapture {
     }
     return '';
   }
-
 }
