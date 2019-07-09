@@ -76,7 +76,7 @@ export class DBClient {
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=? where id=?",
+				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
@@ -834,7 +834,7 @@ export class DBClient {
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
-		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.id]);
+		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
 	}
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {

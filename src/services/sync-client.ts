@@ -385,9 +385,19 @@ export class SyncClient {
         this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
       });
     }, (err) => {
-      obs.error(err);
-      let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
-      this.errorSource.next(msg);
+
+      if (form.accept_invalid_barcode) {
+        submission.hold_submission = 1;
+        submission.hold_submission_reason = err.message ? err.message : "";
+        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          this.actuallySubmitForm(data.form.name, submission, obs);
+        });
+      } else {
+        obs.error(err);
+        let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
+        this.errorSource.next(msg);
+      }
+
     });
   }
 

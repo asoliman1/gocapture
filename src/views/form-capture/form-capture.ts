@@ -179,7 +179,7 @@ export class FormCapture {
       Observable.zip(...submissions).subscribe(() => {
         this.navCtrl.pop().then(()=> {
           this.client.doSync(this.form.form_id).subscribe(()=> {
-            console.log('rapid scan synced barcodes');
+            console.log('rapid scan synced items');
           }, (error) => {
             console.error(error);
           });
@@ -212,6 +212,7 @@ export class FormCapture {
       //put the submission to the queue to process badges
       submission.barcode_processed = BarcodeStatus.Queued;
     }
+
     return this.client.saveSubmission(submission, this.form, false);
   }
 
