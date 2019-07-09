@@ -346,6 +346,11 @@ export class FormView {
 
   private isValueEqual(ruleValue: [any], value) {
     let isEqual = false;
+
+    if (!ruleValue) {
+      return isEqual;
+    }
+
     for (let i = 0; i < ruleValue.length; i++) {
       let v1 = ruleValue[i];
       isEqual = value == v1;

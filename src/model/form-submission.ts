@@ -59,7 +59,8 @@ export class FormSubmission{
 export enum BarcodeStatus {
 	None = 0,
 	Processed = 1,
-	Queued = 2
+	Queued = 2,
+  PostShowReconsilation = 3
 }
 
 export enum SubmissionStatus {

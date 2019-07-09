@@ -184,6 +184,7 @@ export class SyncClient {
       let formIds = Object.keys(map);
       let index = 0;
       map[formIds[index]].status.loading = true;
+
       this.syncSource.next(this.lastSyncStatus);
 
       let onError = (err) => {
@@ -290,11 +291,6 @@ export class SyncClient {
 
       let hasUrls = Object.keys(uploadUrlMap).length > 0;
 
-      //update status to submitting
-      submission.status = SubmissionStatus.Submitting;
-      submission.last_sync_date = new Date().toISOString();
-      this.db.updateSubmissionStatus(submission).subscribe();
-
       this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
 
         this.updateUrlMapWithData(uploadUrlMap, uploadedData);
@@ -306,7 +302,7 @@ export class SyncClient {
         this.updateSubmissionFields(submission, data, urlMap);
 
         this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          if (submission.barcode_processed == BarcodeStatus.Queued) {
+          if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
             this.processBarcode(data, submission, obs);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
             this.processBarcode(data, submission, obs);
@@ -397,6 +393,11 @@ export class SyncClient {
 
   private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
 
+    //update status to SUBMITTING
+    submission.status = SubmissionStatus.Submitting;
+    submission.last_sync_date = new Date().toISOString();
+    this.db.updateSubmissionStatus(submission).subscribe();
+
     console.log("Submit form: " + JSON.stringify(submission));
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
@@ -428,6 +429,7 @@ export class SyncClient {
           let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
           submission.invalid_fields = 1;
           submission.hold_request_id = 0;
+          submission.status = SubmissionStatus.ToSubmit;
           this.db.updateSubmissionId(submission).subscribe((ok) => {
             obs.error(msg);
             this.errorSource.next(msg);
@@ -462,8 +464,18 @@ export class SyncClient {
         obs.error(err);
         let msg = "Could not process submission for form " + formName;
         this.errorSource.next(msg);
-      });
-      }) 
+        msg += ". Error - " + err;
+        console.error(msg);
+      })
+    }, err => {
+      obs.error(err);
+      submission.status = SubmissionStatus.ToSubmit;
+      this.db.updateSubmissionId(submission).subscribe();
+      let msg = "Could not process submission for form " + formName;
+      this.errorSource.next(msg);
+      msg += ". Error - " + err;
+      console.error(msg);
+    });
   }
 
   private isSubmissionValid(submission: FormSubmission) {
