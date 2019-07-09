@@ -73,6 +73,8 @@ export class FormCapture {
 
   stationsSelectOptions: string = '';
 
+  private stationsAlert;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -300,6 +302,9 @@ export class FormCapture {
   }
 
   doBack() {
+    if (this.stationsAlert) {
+      this.stationsAlert.dismiss();
+    }
     let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
     if (isKioskMode) {
       this.client.hasKioskPassword().subscribe((hasPas) => {
@@ -489,16 +494,35 @@ export class FormCapture {
         for (let field in data.fields) {
           id = this.form.getIdByUniqueFieldName(field);
           if (id) {
-            this.submission.fields[id] = data.fields[field];
 
-            let index = id.indexOf("_") + 1;
-            let parentId = id.substring(index, index + 1);
+            //skip prefilling if audio element
+            let audioRecorderEl = this.getElementForType("audio");
+
+            let isAudio = audioRecorderEl.identifier == id;
+
+            //reset prospect audio field
+            if (isAudio) {
+              this.prospect.fields[field] = "";
+            }
+
+            this.submission.fields[id] =  isAudio ? "" : data.fields[field];
+
+            let identifier = id.replace("element_", "");
+
+            let index = identifier.indexOf("_");
+            let parentId = identifier.substring(0, index);
+
+            if (!parentId) {
+              parentId = identifier;
+            }
+
             console.log(`parentId - ${parentId}`);
 
             let element = this.getElementForId(parentId);
             element.is_filled_from_list = true;
 
-            vals.push({id: id, value: data.fields[field]});
+
+            vals.push({id: id, value: isAudio ? "" : data.fields[field]});
           }
         }
 
@@ -597,7 +621,7 @@ export class FormCapture {
       // this.stationsSelect.open(event);
       // this.stationsSelect.open(new UIEvent('touch'));
 
-      let alert = this.alertCtrl.create({
+      this.stationsAlert = this.alertCtrl.create({
         title: 'Select Station:',
         buttons: [
 
@@ -608,7 +632,7 @@ export class FormCapture {
                 return false;
               }
               this.selectedStation = station;
-              alert.didLeave.subscribe(() => {
+              this.stationsAlert.didLeave.subscribe(() => {
                 this.initiateRapidScanMode();
               });
             }
@@ -618,10 +642,9 @@ export class FormCapture {
       });
 
       for (let station of this.form.event_stations) {
-        alert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
+        this.stationsAlert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
       }
-
-      alert.present();
+      this.stationsAlert.present();
     } else {
       this.initiateRapidScanMode();
     }
