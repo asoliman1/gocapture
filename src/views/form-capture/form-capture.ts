@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild} from '@angular/core';
 
 import {
   AlertController,
@@ -40,7 +40,7 @@ import {ProgressHud} from "../../services/progress-hud";
   templateUrl: 'form-capture.html'
 })
 
-export class FormCapture {
+export class FormCapture implements AfterViewInit {
 
   form: Form;
 
@@ -101,7 +101,7 @@ export class FormCapture {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
-  ionViewWillEnter() {
+  ngAfterViewInit() {
     this.setupForm();
 
     this.menuCtrl.enable(false);
@@ -142,7 +142,7 @@ export class FormCapture {
     }
 
     if (this.navParams.get("openEdit") && !this.isEditing) {
-      this.doEdit();
+      this.isEditing = true;
     }
   }
 
@@ -451,7 +451,11 @@ export class FormCapture {
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
-      if(this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+      if (this.isEditing) {
+        this.navCtrl.pop();
+        return;
+      }
+      if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.clearPlaceholders();
         this.submission = null;
         this.form = null;
@@ -623,7 +627,7 @@ export class FormCapture {
 
   openStations() {
 
-    if (this.isReadOnly(this.submission)) {
+    if (this.isReadOnly(this.submission) || this.isEditing) {
       return;
     }
 

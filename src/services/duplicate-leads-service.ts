@@ -57,9 +57,7 @@ export class DuplicateLeadsService {
                 this.client.removeSubmission({id: data.id}).subscribe((_) => {
                   const form = forms.find((f) => f.form_id == data.form_id);
                   const submission = this.mapDuplicateResponseToSubmission(data);
-                  this.app.getActiveNav().popToRoot({animate: false}).then(() => {
-                    this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
-                  });
+                  this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
                 }, (err) => {
                   console.log("ERR ", err);
                 })
