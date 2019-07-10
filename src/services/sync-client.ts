@@ -427,7 +427,7 @@ export class SyncClient {
 
         if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
           d.id = submission.id;
-          d.form_id = d.form_id;
+          d.form_id = submission.form_id;
 
           obs.complete();
           this.duplicateLeadSource.next(d);

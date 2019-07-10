@@ -1,6 +1,5 @@
 import { ToastController } from 'ionic-angular/components/toast/toast-controller';
-import { Popup } from './../../providers/popup/popup';
-import { BarcodeStatus, FormSubmissionType } from './../../model/form-submission';
+import { Popup } from '../../providers/popup/popup';
 import {
   Component, ViewChild, NgZone
 } from '@angular/core';
@@ -28,7 +27,7 @@ import { ActionSheetController } from 'ionic-angular/components/action-sheet/act
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
-import * as moment from 'moment';
+import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
 
 
 @Component({
@@ -73,7 +72,7 @@ export class Forms {
   private filterPipe: FormControlPipe = new FormControlPipe();
 
   private selectedTheme;
-  private duplicateLeadSubscription: Subscription;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -82,7 +81,8 @@ export class Forms {
               private syncClient: SyncClient,
               private themeProvider: ThemeProvider,
               private popup: Popup,
-              private toast: ToastController) {
+              private toast: ToastController,
+              private duplicateLeadsService: DuplicateLeadsService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
@@ -138,6 +138,7 @@ export class Forms {
         icon: "magnet",
         handler: () => {
           //console.log('capture clicked');
+          this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
           this.navCtrl.push(FormCapture, { form: form });
         }
       }];
@@ -193,7 +194,6 @@ export class Forms {
 
   ionViewDidEnter() {
     this.doRefresh();
-    this.registerDuplicateLeadHandler();
     this.sub = this.syncClient.entitySynced.subscribe((type)=>{
       if(type == "Forms" || type == "Submissions") {
         this.doRefresh();
@@ -201,81 +201,10 @@ export class Forms {
     });
   }
 
-  private registerDuplicateLeadHandler() {
-    this.duplicateLeadSubscription = this.syncClient.duplicateLead
-      .subscribe((data) => {
-        if (!data) {
-          return;
-        }
 
-        const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
-        this.popup.showAlert('Duplicate Lead', 
-          `This lead has already been captured on ${date}. Do you want to edit it?`, 
-          [{ text: 'Remove', handler: () => {
-            this.client.removeSubmission({id: data.id}).subscribe((_) => {
-              this.doRefresh();
-
-              this.toast.create({
-                message: "Duplicate lead removed successfully.",
-                duration: 1500,
-                position: "bottom",
-                cssClass: "success"
-              }).present();
-            }, (err) => {
-              console.log("ERR ", err);
-            })
-          }},
-          { text: 'Edit', handler: () => {
-            this.client.removeSubmission({id: data.id}).subscribe((_) => {
-              const form = this.forms.find((f) => f.form_id == data.form_id);
-              const submission = this.mapDuplicateResponseToSubmission(data);
-              this.navCtrl.push(FormCapture, { form: form, submission: submission, openEdit: true });
-            }, (err) => {
-              console.log("ERR ", err);
-            })
-          }}
-        ]);
-      });
-  }
-
-
-  private mapDuplicateResponseToSubmission(data: any) {
-    const submission = new FormSubmission;
-    submission.id = data.submission.activity_id;
-    submission.form_id = parseInt(data.form_id);
-    submission.activity_id = data.submission.activity_id;
-    submission.prospect_id = data.submission.prospect_id;
-    submission.email = data.submission.email;
-    submission.sub_date = data.submission.submission_date;
-    submission.status = SubmissionStatus.Submitted;
-    submission.barcode_processed = data.submission.barcode_processed || BarcodeStatus.None;
-    submission.submission_type = data.submission.submission_type || FormSubmissionType.normal;
-    
-    submission.fields = {};
-    data.submission.data.forEach((el) => {
-      if (el.value_splitted) {
-        Object.keys(el.value_splitted).forEach((key) => {
-          submission.fields[key] = el.value_splitted[key];
-        });
-      } else {
-        if (el["value"]) {
-          submission.fields["element_" + el['element_id']] = el["value"];
-        }
-      }
-    });
-
-    return submission;
-  }
 
   ionViewDidLeave() {
     this.sub.unsubscribe();
-    this.duplicateLeadSubscription.unsubscribe();
-  }
-
-  ngOnDestroy() {
-    if (this.duplicateLeadSubscription) {
-      this.duplicateLeadSubscription.unsubscribe();
-    }
   }
 
   getUnsentSubmissions(form: Form) {
@@ -285,5 +214,4 @@ export class Forms {
       }).length;
     });
   }
-
 }

@@ -23,6 +23,7 @@ import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
 import {LocalNotificationsService} from "../services/local-notifications-service";
+import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 
 declare var cordova;
 
@@ -51,8 +52,7 @@ export class MyApp {
     private loading: LoadingController,
     private logger: LogClient,
     public themeProvider: ThemeProvider,
-    private settingsService: SettingsService,
-    private localNotificationsService: LocalNotificationsService) {
+    private settingsService: SettingsService) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;

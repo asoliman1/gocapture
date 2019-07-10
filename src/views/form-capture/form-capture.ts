@@ -109,7 +109,7 @@ export class FormCapture {
     let instructions = this.localStorage.get("FormInstructions");
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
 
-    if (this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
+    if (this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
       let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
       instructionsModal.present().then((result) => {
         formsInstructions.push(this.form.id);
@@ -241,7 +241,7 @@ export class FormCapture {
   }
 
   isReadOnly(submission: FormSubmission): boolean {
-    return submission &&
+    return !this.isEditing && submission &&
       (submission.status == SubmissionStatus.Submitted ||
       submission.status == SubmissionStatus.OnHold ||
       submission.status == SubmissionStatus.Submitting)
