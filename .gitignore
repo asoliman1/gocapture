@@ -30,6 +30,7 @@ plugins/ios.json
 www/
 .analysis/
 !3rdParty/**/*
+!cordova-plugin-gocapture-ocr/www
 
 $RECYCLE.BIN/
 
