@@ -102,7 +102,7 @@ export class Badge extends BaseElement implements OnInit {
   }
 
 	private processData(scannedId: string) {
-    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, this.form.form_id + '').subscribe((data) => {
+    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, 0, this.form.form_id + '').subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));

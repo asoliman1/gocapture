@@ -361,7 +361,7 @@ export class SyncClient {
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
-    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe(barcodeData => {
+    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '').subscribe(barcodeData => {
       if (!barcodeData || barcodeData.length == 0) {
         return;
       }
@@ -422,43 +422,61 @@ export class SyncClient {
     }
 
     this.rest.submitForm(submission).subscribe((d) => {
+      this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
+        const autoUpload = String(setting) == "true";
 
-      if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
-        let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
-        submission.invalid_fields = 1;
-        submission.hold_request_id = 0;
-        submission.status = SubmissionStatus.ToSubmit;
+        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
+          d.id = submission.id;
+          d.form_id = submission.form_id;
+
+          obs.complete();
+          this.duplicateLeadSource.next(d);
+          this.duplicateLeadSource.next(null);
+          return;
+        }
+
+        if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
+          let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
+          submission.invalid_fields = 1;
+          submission.hold_request_id = 0;
+          submission.status = SubmissionStatus.ToSubmit;
+          this.db.updateSubmissionId(submission).subscribe((ok) => {
+            obs.error(msg);
+            this.errorSource.next(msg);
+          }, err => {
+            obs.error(err);
+            let msg = "Could not process submission for form " + formName;
+            this.errorSource.next(msg);
+          });
+          return;
+        }
+
+        if (d.id > 0) {
+          submission.activity_id = d.id;
+          submission.status = SubmissionStatus.Submitted;
+        } else {
+          submission.hold_request_id = d.hold_request_id;
+          submission.status = SubmissionStatus.OnHold;
+        }
+
         this.db.updateSubmissionId(submission).subscribe((ok) => {
-          obs.error(msg);
-          this.errorSource.next(msg);
+          if(d.id > 0){
+            submission.id = submission.activity_id;
+          }
+          obs.next(submission);
+          obs.complete();
         }, err => {
           obs.error(err);
           let msg = "Could not process submission for form " + formName;
           this.errorSource.next(msg);
-        });
-        return;
-      }
-
-      if (d.id > 0) {
-        submission.activity_id = d.id;
-        submission.status = SubmissionStatus.Submitted;
-      } else {
-        submission.hold_request_id = d.hold_request_id;
-        submission.status = SubmissionStatus.OnHold;
-      }
-
-      this.db.updateSubmissionId(submission).subscribe((ok) => {
-        if(d.id > 0){
-          submission.id = submission.activity_id;
-        }
-        obs.next(submission);
-        obs.complete();
+          msg += ". Error - " + err;
+          console.error(msg);
+        })
       }, err => {
         obs.error(err);
         let msg = "Could not process submission for form " + formName;
         this.errorSource.next(msg);
-        msg += ". Error - " + err;
-        console.error(msg);
+
       })
     }, err => {
       obs.error(err);
