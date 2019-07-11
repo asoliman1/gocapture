@@ -361,7 +361,11 @@ export class SyncClient {
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
-    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '').subscribe(barcodeData => {
+    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '')
+      .subscribe((fetchedData) => {
+
+        let barcodeData = fetchedData.info;
+
       if (!barcodeData || barcodeData.length == 0) {
         return;
       }

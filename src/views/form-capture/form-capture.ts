@@ -455,9 +455,14 @@ export class FormCapture implements AfterViewInit {
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       if (this.isEditing) {
-        this.navCtrl.pop();
+        if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+          this.navCtrl.pop();
+        } else {
+          this.navCtrl.popToRoot();
+        }
         return;
       }
+
       if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.clearPlaceholders();
         this.submission = null;

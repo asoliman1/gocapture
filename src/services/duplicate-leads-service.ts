@@ -9,6 +9,7 @@ import {Popup} from "../providers/popup/popup";
 import {App} from 'ionic-angular';
 
 import * as moment from 'moment';
+import {ThemeProvider} from "../providers/theme/theme";
 
 @Injectable()
 
@@ -20,7 +21,8 @@ export class DuplicateLeadsService {
               private syncClient: SyncClient,
               private popup: Popup,
               private toast: ToastController,
-              private app: App) {
+              private app: App,
+              private themeProvider: ThemeProvider) {
     //
   }
 
@@ -37,37 +39,52 @@ export class DuplicateLeadsService {
         }
 
         const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
-        this.popup.showAlert('Duplicate Lead',
-          `This lead has already been captured on ${date}. Do you want to edit it?`,
-          [{ text: 'Remove', handler: () => {
-              this.client.removeSubmission({id: data.id}).subscribe((_) => {
-                // this.doRefresh();
 
-                this.toast.create({
-                  message: "Duplicate lead removed successfully.",
-                  duration: 1500,
-                  position: "bottom",
-                  cssClass: "success"
-                }).present();
-              }, (err) => {
-                console.log("ERR ", err);
-              })
-            }},
-            { text: 'Edit', handler: () => {
+        this.themeProvider.getActiveTheme().subscribe((theme) => {
+          this.popup.showAlert('Duplicate Lead',
+            `This lead has already been captured on ${date}. Do you want to edit it?`,
+            [{ text: 'Remove', handler: () => {
                 this.client.removeSubmission({id: data.id}).subscribe((_) => {
-                  const form = forms.find((f) => f.form_id == data.form_id);
-                  const submission = this.mapDuplicateResponseToSubmission(data);
-                  this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
+                  // this.doRefresh();
+
+                  this.toast.create({
+                    message: "Duplicate lead removed successfully.",
+                    duration: 1500,
+                    position: "bottom",
+                    cssClass: "success"
+                  }).present();
                 }, (err) => {
                   console.log("ERR ", err);
                 })
-              }}
-          ]);
+              }},
+              { text: 'Edit', handler: () => {
+                  this.client.removeSubmission({id: data.id}).subscribe((_) => {
+                    const form = forms.find((f) => f.form_id == data.form_id);
+                    const submission = this.mapDuplicateResponseToSubmission(data);
+                    this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
+                  }, (err) => {
+                    console.log("ERR ", err);
+                  })
+                }}
+            ], theme);
+        });
+
       });
   }
 
   public handleDuplicateLeads(form, data) {
-    this.app.getActiveNav().push(FormCapture, { form: form, submission: this.mapDuplicateResponseToSubmission(data), openEdit: true });
+    this.app.getActiveNav().push(FormCapture, { form: form, submission: this.mapDuplicateResponseToSubmission(data), openEdit: true }).then(() => {
+      const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
+
+      setTimeout(()=>{
+        this.toast.create({
+          message: `Lead already scanned on ${date}. Edit the submission as needed.`,
+          duration: 2500,
+          position: "bottom",
+          cssClass: "success"
+        }).present();
+      }, 2000);
+    });
   }
 
   private mapDuplicateResponseToSubmission(data: any) {

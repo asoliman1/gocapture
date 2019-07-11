@@ -93,6 +93,7 @@ export class Badge extends BaseElement implements OnInit {
         cssClass: "success"
       }).present();
 
+
       this.processData(response.scannedId);
 
     }, (error) => {
@@ -106,7 +107,9 @@ export class Badge extends BaseElement implements OnInit {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));
-      if(!data || data.length == 0) {
+      let barcodeData = data.info;
+
+      if(!barcodeData || barcodeData.length == 0) {
         this.onProcessingEvent.emit('false');
         return;
       }
@@ -118,7 +121,7 @@ export class Badge extends BaseElement implements OnInit {
       } else {
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
-        this.fillElementsWithFetchedData(data["info"]);
+        this.fillElementsWithFetchedData(barcodeData);
       }
     }, err => {
       this.onProcessingEvent.emit('false');
