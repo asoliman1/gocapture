@@ -138,7 +138,6 @@ export class Forms {
         icon: "magnet",
         handler: () => {
           //console.log('capture clicked');
-          this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
           this.navCtrl.push(FormCapture, { form: form });
         }
       }];

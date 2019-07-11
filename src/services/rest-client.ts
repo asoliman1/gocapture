@@ -160,8 +160,9 @@ export class RESTClient {
 	}
 	 */
 
-	public fetchBadgeData(barcodeId: string, providerId: string): Observable<ItemData[]>{
-		return this.call<BadgeResponse>("GET", "/barcode/scan.json", {barcode_id: barcodeId, provider_id: providerId})
+	public fetchBadgeData(barcodeId: string, providerId: string, formId?: string): Observable<ItemData[]>{
+		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
+      {barcode_id: barcodeId, provider_id: providerId, form_id: formId})
 		.map( resp => {
 			return resp.info;
 		});

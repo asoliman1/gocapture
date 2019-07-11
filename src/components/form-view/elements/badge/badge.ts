@@ -10,10 +10,12 @@ import {GOCNFCScanner} from "./Scanners/GOCNFCScanner";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
 import {Util} from "../../../../util/util";
-import {Platform} from "ionic-angular";
+import {NavController, Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import { Scanner, ScannerType } from './Scanners/Scanner';
 import {ActionService} from "../../../../services/action-service";
+import {FormCapture} from "../../../../views/form-capture";
+import {DuplicateLeadsService} from "../../../../services/duplicate-leads-service";
 
 @Component({
 	selector: 'badge',
@@ -39,7 +41,8 @@ export class Badge extends BaseElement implements OnInit {
               public platform: Platform,
               public nfc: NFC,
               public ndef: Ndef,
-              public actionService: ActionService) {
+              public actionService: ActionService,
+              public duplicateLeadsService: DuplicateLeadsService) {
 		super();
 	}
 
@@ -99,7 +102,7 @@ export class Badge extends BaseElement implements OnInit {
   }
 
 	private processData(scannedId: string) {
-    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe((data) => {
+    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, this.form.form_id + '').subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));
@@ -108,11 +111,14 @@ export class Badge extends BaseElement implements OnInit {
         return;
       }
 
-      this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
-      this.form["barcode_processed"] = BarcodeStatus.Processed; 
-      this.fillElementsWithFetchedData(data);
-      this.onProcessingEvent.emit('false');
-
+      //manage duplicate submissions
+      if (data["action"] == "edit_submission") {
+        this.duplicateLeadsService.handleDuplicateLeads(this.form, data["submission"]);
+      } else {
+        this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
+        this.form["barcode_processed"] = BarcodeStatus.Processed;
+        this.fillElementsWithFetchedData(data);
+      }
     }, err => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();

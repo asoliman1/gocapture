@@ -192,6 +192,7 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
+  //saving subm from rapid scan mode
   private saveSubmissionWithData(data, element) {
     let submission = new FormSubmission();
     submission.fields = this.formView.getValues();
@@ -201,6 +202,8 @@ export class FormCapture implements AfterViewInit {
     submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;
+
+    submission.is_rapid_scan = 1;
 
     submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
 
