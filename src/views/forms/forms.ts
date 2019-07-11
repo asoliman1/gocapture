@@ -28,6 +28,7 @@ import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinit
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
+import {DocumentsListPage} from "../../pages/documents-list/documents-list";
 
 
 @Component({
@@ -163,6 +164,16 @@ export class Forms {
       }
     });
 
+    // TODO: replace this with with the correct check example (form.documents)
+    if (1) {
+      buttons.push({
+        text: 'Documents',
+        icon: 'bookmarks',
+        handler: () => {
+          this.navCtrl.push("DocumentsListPage", { form });
+        }
+      })
+    }
 
     if (form.instructions_content && form.instructions_content.length > 0) {
       buttons.push({

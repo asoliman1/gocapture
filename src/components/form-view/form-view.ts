@@ -5,7 +5,7 @@ import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Vali
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
-import { ModalController } from 'ionic-angular/components/modal/modal-controller';
+import {ModalController} from "ionic-angular";
 
 @Component({
   selector: 'form-view',
@@ -47,12 +47,12 @@ export class FormView {
     2 : "queued"
   };
 
-  constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
+  constructor(private fb: FormBuilder, private zone: NgZone, private modal: ModalController) {
     this.theForm = new FormGroup({});
   }
 
   showSelection(){
-    let modal = this.modalCtrl.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
+    let modal = this.modal.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
     modal.present();
   }
 
@@ -429,4 +429,8 @@ export class FormView {
     this.onProcessingEvent.emit(event);
   }
 
+  async openDocuments() {
+    const modal = this.modal.create('Documents', {});
+    await modal.present();
+  }
 }

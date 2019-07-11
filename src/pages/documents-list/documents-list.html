@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-buttons start>
+      <button ion-button>
+        <ion-icon name="back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>{{form ? form.name : 'Document Categories'}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-label text-center>Select a Document Category</ion-label>
+  <section *ngFor="let document of documentCategories">
+    <button color="primary" ion-button full (click)="openDocuments(document.id)">{{document.name}}</button>
+  </section>
+</ion-content>

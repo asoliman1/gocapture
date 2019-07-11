@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-buttons start navPop>
+      <button ion-button>
+        Cancel
+      </button>
+    </ion-buttons>
+    <ion-title>{{documentsSource.name}}</ion-title>
+    <ion-buttons end (click)="send()">
+      <button ion-button>
+        Send
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-label text-center>Tap to select documents. Long press to view</ion-label>
+
+  <div class="documents-list">
+    <document *ngFor="let document of documentsSource.documents" [document]="document" (click)="select(document)" (onOpen)="openDocument(document.url)"></document>
+  </div>
+</ion-content>

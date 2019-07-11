@@ -1,0 +1,13 @@
+document {
+  .preview {
+    position: relative;
+
+    ion-icon {
+      position: absolute;
+      bottom: 5px;
+      right: 15px;
+      color: green;
+      font-size: 30px;
+    }
+  }
+}

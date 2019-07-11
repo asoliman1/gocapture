@@ -75,7 +75,7 @@ import {BadgeRapidCapture} from "../services/badge-rapid-capture";
 import {BCRapidCapture} from "../services/bc-rapid-capture";
 import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
-
+import { LongPressModule } from 'ionic-long-press';
 
 @NgModule({
   declarations: [
@@ -95,7 +95,21 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, GOCAudio, ImageViewer, UrlChoose,
+    BusinessCard,
+    Image,
+    SimpleName,
+    Signature,
+    SignatureModal,
+    Gps,
+    Address,
+    Checkboxes,
+    Radios,
+    Dropdown,
+    Badge,
+    HTMLBlock,
+    GOCAudio,
+    ImageViewer,
+    UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -107,9 +121,10 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
     IonicImageViewerModule,
-	TextMaskModule, 
-	PipesModule,
-	BusinessCardOverlayPageModule,
+	  TextMaskModule,
+	  PipesModule,
+	  BusinessCardOverlayPageModule,
+    LongPressModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -129,7 +144,20 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, GOCAudio, ImageViewer, UrlChoose,
+    BusinessCard,
+    Image,
+    SimpleName,
+    Signature,
+    SignatureModal,
+    Gps,
+    Address,
+    Checkboxes,
+    Radios,
+    Dropdown,
+    Badge,
+    GOCAudio,
+    ImageViewer,
+    UrlChoose,
     ProspectSearch,
     OcrSelector
   ],

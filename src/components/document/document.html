@@ -1,0 +1,8 @@
+<div class="document">
+  <ion-label>{{document.name}}</ion-label>
+  <div class="preview" ion-long-press [interval]="350" (onPressEnd)="openDocument()">
+    <img src="../../assets/images/doc-placeholder.png" />
+    <ion-icon *ngIf="document.selected" name="checkmark-circle"></ion-icon>
+  </div>
+
+</div>
