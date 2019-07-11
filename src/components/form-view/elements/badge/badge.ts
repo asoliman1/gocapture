@@ -112,7 +112,7 @@ export class Badge extends BaseElement implements OnInit {
       }
 
       //manage duplicate submissions
-      if (data["action"] == "edit_submission") {
+      if (data["action"] && data["action"] == "edit_submission") {
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data["submission"]);
       } else {
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);

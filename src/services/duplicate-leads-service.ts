@@ -3,7 +3,7 @@ import {FormCapture} from "../views/form-capture";
 import {BarcodeStatus, FormSubmission, FormSubmissionType, SubmissionStatus} from "../model";
 import {BussinessClient} from "./business-service";
 import {Subscription} from "rxjs";
-import {NavController, ToastController} from "ionic-angular";
+import {ToastController} from "ionic-angular";
 import {SyncClient} from "./sync-client";
 import {Popup} from "../providers/popup/popup";
 import {App} from 'ionic-angular';
