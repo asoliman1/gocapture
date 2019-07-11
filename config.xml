@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203440" id="com.leadliaison.mobilitease" ios-CFBundleVersion="344" version="2.4.17" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2203450" id="com.leadliaison.mobilitease" ios-CFBundleVersion="345" version="2.4.17" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
@@ -150,9 +150,6 @@
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
     <plugin name="cordova-wheel-selector-plugin" spec="1.1.2" />
-    <plugin name="cordova-plugin-ionic-webview" spec="2.3.1">
-        <variable name="ANDROID_SUPPORT_ANNOTATIONS_VERSION" value="27.+" />
-    </plugin>
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="7.1.4" />
     <plugin name="cordova-plugin-camera-preview" spec="3rdParty/cordova-plugin-camera-preview">
