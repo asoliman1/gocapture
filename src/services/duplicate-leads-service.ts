@@ -66,8 +66,8 @@ export class DuplicateLeadsService {
       });
   }
 
-  public handleDuplicateLeads(form, submission) {
-    this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
+  public handleDuplicateLeads(form, data) {
+    this.app.getActiveNav().push(FormCapture, { form: form, submission: this.mapDuplicateResponseToSubmission(data), openEdit: true });
   }
 
   private mapDuplicateResponseToSubmission(data: any) {
