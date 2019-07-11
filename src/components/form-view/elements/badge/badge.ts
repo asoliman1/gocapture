@@ -113,11 +113,12 @@ export class Badge extends BaseElement implements OnInit {
 
       //manage duplicate submissions
       if (data["action"] && data["action"] == "edit_submission") {
-        this.duplicateLeadsService.handleDuplicateLeads(this.form, data["submission"]);
+        data["form_id"] = this.form.form_id;
+        this.duplicateLeadsService.handleDuplicateLeads(this.form, data);
       } else {
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
-        this.fillElementsWithFetchedData(data);
+        this.fillElementsWithFetchedData(data["info"]);
       }
     }, err => {
       this.onProcessingEvent.emit('false');
