@@ -1,25 +1,30 @@
-import { Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActionSheetController, IonicPage, NavController, NavParams} from 'ionic-angular';
-import {IDocument, IDocumentCategory} from "../../pages/documents-list/documents-list";
 import {Util} from "../../util/util";
+import {ThemeProvider} from "../../providers/theme/theme";
+import {IDocument, IDocumentCategory} from "../../model";
 
 @IonicPage()
 @Component({
   selector: 'documents',
   templateUrl: 'documents.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Documents {
   documentsSource: IDocumentCategory;
   selectedDocuments: {};
+  private selectedTheme;
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public util: Util,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private themeProvider: ThemeProvider
   ) {
     this.documentsSource = this.navParams.get('documentSource');
     this.selectedDocuments = [];
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   select(document: IDocument) {

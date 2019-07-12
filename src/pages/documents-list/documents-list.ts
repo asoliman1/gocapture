@@ -1,20 +1,8 @@
 import { Component } from '@angular/core';
 import {IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
-import {Form} from "../../model";
+import {documentCategoriesMock, Form} from "../../model";
+import {IDocumentCategory, IDocument} from "../../model";
 
-export interface IDocument {
-  name: string;
-  url?: string;
-  size?: number;
-  type?: string;
-  selected?: boolean;
-}
-
-export interface IDocumentCategory {
-  id: number;
-  name: string;
-  documents: IDocument[];
-}
 
 @IonicPage()
 @Component({
@@ -35,19 +23,7 @@ export class DocumentsListPage {
    * Mockup, remove when the form will return back the documents list
    */
   private mockupDocuments() {
-    const documents: IDocument[] = [
-      {name: "ELM Datasheet"},
-      {name: "Barcode vs Badge"},
-      {name: "ELM Datasheet"},
-      {name: "Barcode vs Badge"}
-    ];
-
-    this.documentCategories = [
-      {id: 1, name: "ELM Documents", documents},
-      {id: 2, name: "LMA Documents", documents},
-      {id: 3, name: "Category 3", documents},
-      {id: 4, name: "Category 4", documents}
-    ]
+    this.documentCategories = documentCategoriesMock;
   }
 
   openDocuments(categoryId: number) {

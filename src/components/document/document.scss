@@ -1,6 +1,22 @@
 document {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  ion-label {
+    max-width: 125px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .preview {
     position: relative;
+
+    img {
+      width: 100px;
+      height: 125px;
+    }
 
     ion-icon {
       position: absolute;

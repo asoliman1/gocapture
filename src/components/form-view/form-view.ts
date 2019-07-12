@@ -1,6 +1,15 @@
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
-import { Form, BarcodeStatus, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
+import {
+  Form,
+  BarcodeStatus,
+  FormElement,
+  DeviceFormMembership,
+  FormSubmission,
+  FormElementType,
+  ElementMapping,
+  documentCategoriesMock
+} from "../../model";
 import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
@@ -430,7 +439,7 @@ export class FormView {
   }
 
   async openDocuments() {
-    const modal = this.modal.create('Documents', {});
+    const modal = this.modal.create('Documents', {documentSource: documentCategoriesMock[0]});
     await modal.present();
   }
 }

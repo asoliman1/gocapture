@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {IDocument} from "../../pages/documents-list/documents-list";
+import {ThemeProvider} from "../../providers/theme/theme";
+import {IDocument} from "../../model";
 
 @Component({
   selector: 'document',
@@ -9,11 +10,20 @@ import {IDocument} from "../../pages/documents-list/documents-list";
 export class Document {
   @Input() document: IDocument;
   @Output() onOpen = new EventEmitter();
+  @Output() onSelect = new EventEmitter();
 
-  constructor() {}
+  private selectedTheme: String;
+
+  constructor(private themeProvider: ThemeProvider) {
+    this.themeProvider.getActiveTheme().subscribe((theme) => this.selectedTheme = theme);
+  }
+
+  select() {
+    this.onSelect.emit(null);
+  }
 
   openDocument() {
-    this.onOpen.emit();
+    this.onOpen.emit(null);
   }
 
 }
