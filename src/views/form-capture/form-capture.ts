@@ -129,6 +129,7 @@ export class FormCapture implements AfterViewInit {
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
+    this.submitAttempt = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
