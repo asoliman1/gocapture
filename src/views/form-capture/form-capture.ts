@@ -646,7 +646,12 @@ export class FormCapture implements AfterViewInit {
       this.stationsAlert = this.alertCtrl.create({
         title: 'Select Station:',
         buttons: [
-
+          {
+            text: 'Cancel',
+            handler: () => {
+              this.navCtrl.pop();
+            }
+          },
           {
             text: 'Ok',
             handler: (station) => {
