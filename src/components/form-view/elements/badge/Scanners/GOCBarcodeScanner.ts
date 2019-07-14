@@ -4,8 +4,8 @@ import {Platform} from "ionic-angular";
 
 export class GOCBarcodeScanner implements Scanner {
 
-  readonly name: string = 'barcode';
-  statusMessage: string = "Scan barcode";
+  readonly name: string = 'badge';
+  statusMessage: string = "Scan badge";
 
   constructor(public barcodeScanner: BarcodeScanner,
               public barcodeFormat: string,
@@ -59,7 +59,7 @@ export class GOCBarcodeScanner implements Scanner {
   }
 
   restart() {
-    this.statusMessage = "Rescan " + this.name;
+    this.statusMessage = "Scan " + this.name;
   }
 
 
