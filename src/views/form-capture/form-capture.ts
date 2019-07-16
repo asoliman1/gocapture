@@ -636,7 +636,7 @@ export class FormCapture implements AfterViewInit {
 
   openStations() {
 
-    if (this.isReadOnly(this.submission) || this.isEditing) {
+    if (this.submission.id) {
       return;
     }
 

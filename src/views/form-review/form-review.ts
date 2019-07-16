@@ -141,8 +141,10 @@ export class FormReview {
   }
 
   displayedName(submission) {
-	  let hasFullName = submission.full_name && submission.full_name.length > 0;
-	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
+	  let fullName = submission.full_name.trim();
+    let hasFullName = fullName && fullName.length > 0;
+    let firstName = submission.first_name.trim();
+	  let hasFirstLastName = firstName && firstName.length > 0;
 	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
 	  let isScannedAndPending = submission.barcode_processed = BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
 	  if (hasFullName) {
@@ -153,6 +155,11 @@ export class FormReview {
 	    return "Scanned";
     }
     return "";
+  }
+
+  isNoProcessedRapidScan(submission) {
+    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+    return submission.is_rapid_scan == 1 && isScannedAndNoProcessed;
   }
 
   displayedProperty(submission, key) {

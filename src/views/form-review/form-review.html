@@ -40,11 +40,15 @@
         <ion-item (click)="goToEntry(submission)">
           <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
 
-          <div *ngIf="!shouldShowBusinessCard(submission)">
+          <div *ngIf="!shouldShowBusinessCard(submission) && !isNoProcessedRapidScan(submission)">
             <h1>{{displayedName(submission)}}</h1>
             <h2>{{submission.company}}</h2>
             <h2>{{displayedProperty(submission, "email")}}</h2>
             <h2>{{submission.telephone}}</h2>
+          </div>
+
+          <div *ngIf="!shouldShowBusinessCard(submission) && isNoProcessedRapidScan(submission)">
+            <h1><i>Processing scan...</i></h1>
           </div>
 
           <button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">

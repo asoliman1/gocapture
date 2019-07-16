@@ -443,7 +443,7 @@ export class SyncClient {
           let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
           submission.invalid_fields = 1;
           submission.hold_request_id = 0;
-          submission.status = SubmissionStatus.ToSubmit;
+          submission.status = SubmissionStatus.InvalidFields;
           this.db.updateSubmissionId(submission).subscribe((ok) => {
             obs.error(msg);
             this.errorSource.next(msg);
