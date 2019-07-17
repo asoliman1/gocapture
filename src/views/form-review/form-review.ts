@@ -90,7 +90,7 @@ export class FormReview {
 
 	isSubmissionRemovable(submission: FormSubmission) {
 	  return (submission.status != SubmissionStatus.OnHold) &&
-      (submission.status != SubmissionStatus.Submitted);
+      (submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission));
   }
 
 	getColor(submission: FormSubmission) {

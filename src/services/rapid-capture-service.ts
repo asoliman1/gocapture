@@ -83,10 +83,13 @@ export class RapidCaptureService {
   private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme) {
     const buttons = [
       {
-        text: 'Cancel',
+        text: 'Delete',
         role: 'cancel',
         handler: () => {
           this.isProcessing = false;
+          this.appPreferences.remove(this.dictKey(selectedForm.form_id), selectedForm.form_id + "");
+          this.appPreferences.remove(this.dictKey(selectedForm.form_id), "stationId");
+          this.appPreferences.remove(this.dictKey(selectedForm.form_id), "elementId");
         }
       },
       {
@@ -95,7 +98,7 @@ export class RapidCaptureService {
           this.processRapidScanResult(barcodes, selectedForm, stationId, elementId);
         }
       }];
-    this.popup.showAlert("Important", "You have leads that have not been submitted yet. Do you want to submit them?", buttons, theme);
+    this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.title + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
   }
 
 
