@@ -124,7 +124,10 @@ export class FormReview {
 
 
 	goToEntry(submission) {
-		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+	  if (this.isNoProcessedRapidScan(submission)) {
+     return;
+    }
+    this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
 
 	hasOnlyBusinessCard(submission: FormSubmission){

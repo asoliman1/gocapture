@@ -160,4 +160,16 @@ export class Form extends BaseForm{
 			}
 		});
 	}
+
+  public getHiddenElementsPerVisibilityRules(): string[] {
+    let hiddenElements = this.elements.filter(element => {
+      return element["visible_conditions"] && !element.isMatchingRules;
+    });
+
+    let elementsIds = [];
+    for (let element of hiddenElements) {
+      elementsIds = elementsIds.concat(`element_${element["id"]}`);
+    }
+    return elementsIds;
+  }
 }

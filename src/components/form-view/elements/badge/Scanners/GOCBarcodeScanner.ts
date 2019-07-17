@@ -1,15 +1,20 @@
 import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scanner";
 import { Scanner, ScannerResponse } from "./Scanner";
 import {Platform} from "ionic-angular";
+import {AppPreferences} from "@ionic-native/app-preferences";
+
+declare var cordova;
 
 export class GOCBarcodeScanner implements Scanner {
 
   readonly name: string = 'badge';
   statusMessage: string = "Scan badge";
 
+
   constructor(public barcodeScanner: BarcodeScanner,
               public barcodeFormat: string,
-              public platform: Platform) {
+              public platform: Platform,
+              public appPreferences: AppPreferences) {
     //
   }
 
@@ -20,7 +25,7 @@ export class GOCBarcodeScanner implements Scanner {
     return 'QR_CODE,DATA_MATRIX,UPC_E,UPC_A,EAN_8,EAN_13,CODE_128,CODE_39,CODE_93,CODABAR,ITF,RSS14,RSS_EXPANDED,PDF_417,AZTEC,MSI';
   }
 
-  scan(isRapidScan): Promise<ScannerResponse> {
+   async scan(isRapidScan, id): Promise<ScannerResponse> {
 
     this.statusMessage = "Scanning " + this.name;
 
@@ -36,25 +41,32 @@ export class GOCBarcodeScanner implements Scanner {
     options["resultDisplayDuration"] = 100;
 
     return new Promise<ScannerResponse>((resolve, reject) => {
-      this.barcodeScanner.scan(options).then((scannedData) => {
+      let self = this;
 
+      cordova.plugins.barcodeScanner.scan(function(scannedData) {
         if (scannedData.cancelled) {
-          this.statusMessage = "Scan " + this.name;
+          self.statusMessage = "Scan " + self.name;
           resolve({isCancelled: true});
           return;
         }
 
         if (scannedData["barcodes"]) {
-          resolve({barcodes: this.platform.is("ios") ? scannedData["barcodes"] : scannedData["barcodes"].split(",")});
+          if (scannedData["persist"]) {
+            self.appPreferences.store("rapidScan-"+id, id, self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])).then((result)=> {
+              console.log('badges are saved to the defaults - ' + JSON.stringify(scannedData["barcodes"]));
+            }, (error) => {
+              console.error("Can't save badges to the defaults - " + error);
+            });
+          } else {
+            resolve({barcodes: self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])});
+          }
           return;
         }
-
         resolve({scannedId: scannedData.text});
-
-      }, error => {
-        this.statusMessage = "Could not scan " + this.name;
+      }, function(error) {
+        self.statusMessage = "Could not scan " + self.name;
         reject(error);
-      });
+      }, options);
     })
   }
 

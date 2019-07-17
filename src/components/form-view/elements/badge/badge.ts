@@ -14,8 +14,8 @@ import {NavController, Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import { Scanner, ScannerType } from './Scanners/Scanner';
 import {ActionService} from "../../../../services/action-service";
-import {FormCapture} from "../../../../views/form-capture";
 import {DuplicateLeadsService} from "../../../../services/duplicate-leads-service";
+import {AppPreferences} from "@ionic-native/app-preferences";
 
 @Component({
 	selector: 'badge',
@@ -42,7 +42,8 @@ export class Badge extends BaseElement implements OnInit {
               public nfc: NFC,
               public ndef: Ndef,
               public actionService: ActionService,
-              public duplicateLeadsService: DuplicateLeadsService) {
+              public duplicateLeadsService: DuplicateLeadsService,
+              public appPreferences: AppPreferences) {
 		super();
 	}
 
@@ -191,7 +192,7 @@ export class Badge extends BaseElement implements OnInit {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences);
   }
 
   setDisabledState(isDisabled: boolean): void {

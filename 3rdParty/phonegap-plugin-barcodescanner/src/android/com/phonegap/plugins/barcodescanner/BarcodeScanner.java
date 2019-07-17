@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,8 +34,11 @@ import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.encode.EncodeActivity;
 import com.google.zxing.client.android.Intents;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This calls out to the ZXing barcode reader and returns the result.
@@ -276,8 +280,22 @@ public class BarcodeScanner extends CordovaPlugin {
 
                     String barcode = intent.getStringExtra("SCAN_RESULT");
 
+                    barcode = "\"" + barcode + "\"";
+
                     if (!this.barcodes.contains(barcode)) {
-                        this.barcodes.add(intent.getStringExtra("SCAN_RESULT"));
+                        this.barcodes.add(barcode);
+
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put("barcodes", this.barcodes);
+                            obj.put(CANCELLED, false);
+                            obj.put("persist", true);
+                        } catch (JSONException e) {
+                            Log.d(LOG_TAG, "This should never happen");
+                        }
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
+                        result.setKeepCallback(true);
+                        callbackContext.sendPluginResult(result);
                     }
 
                     this.scan(this.requestArgs);
@@ -300,7 +318,7 @@ public class BarcodeScanner extends CordovaPlugin {
                 if (this.isContinuesMode && this.barcodes.size() > 0) {
 
                     try {
-                        obj.put("barcodes", TextUtils.join(",", this.barcodes));
+                        obj.put("barcodes", this.barcodes);
                         obj.put(CANCELLED, false);
                     } catch (JSONException e) {
                         Log.d(LOG_TAG, "This should never happen");

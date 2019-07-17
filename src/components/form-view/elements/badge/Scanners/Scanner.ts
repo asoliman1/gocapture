@@ -11,7 +11,7 @@ export const enum ScannerType {
 
 export interface Scanner {
   readonly name: string;
-  scan(isRapidScan: boolean): Promise<ScannerResponse>;
+  scan(isRapidScan: boolean, id?: string): Promise<ScannerResponse>;
   restart();
   statusMessage: string;
 }

@@ -13,6 +13,7 @@ import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {App} from "ionic-angular";
 import {FormCapture} from "../form-capture";
+import {RapidCaptureService} from "../../services/rapid-capture-service";
 
 @Component({
 	selector: 'main',
@@ -49,7 +50,8 @@ export class Main {
 		private syncClient: SyncClient,
     private util: Util,
     private themeProvider: ThemeProvider,
-    private app: App) {
+    private app: App,
+    private rapidCaptureService: RapidCaptureService) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Events', component: Forms, icon: "document" },
@@ -89,17 +91,27 @@ export class Main {
 	}
 
 	ionViewDidEnter() {
+
+    this.client.getForms().subscribe((forms)=>{
+      setTimeout(()=>{
+        this.rapidCaptureService.processUnsentBadges(forms, this.user.theme ? this.user.theme : 'default');
+      }, 2000);
+    });
+
 		if (this.syncClient.isSyncing) {
 			this.pullup.collapse();
 			this.statuses = this.syncClient.getLastSync();
 			this.currentSyncForm = this.getCurrentUploadingForm();
 		}
-		this.sub = this.handleSync();
+
+    this.sub = this.handleSync();
+
 		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
 			console.log(response);
 		}, function(reason) {
 			console.error(reason);
 		});
+
 		this.client.getUpdates().subscribe(done => {
 			setTimeout(()=>{
 				this.client.doAutoSync();
@@ -109,6 +121,8 @@ export class Main {
 				this.client.doAutoSync();
 			}, 350);
 		});
+
+
 	}
 
 	handleSync() : Subscription{
