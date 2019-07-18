@@ -194,11 +194,11 @@ export class FormCapture implements AfterViewInit {
     }
 
     Observable.zip(...submissions).subscribe(() => {
+      //barcodes are saved to the database so we can clear the defaults
+      this.appPreferences.remove("rapidScan", this.form.form_id + "");
       this.navCtrl.pop().then(()=> {
         this.client.doSync(this.form.form_id).subscribe(()=> {
           console.log('rapid scan synced items');
-          //clear the defaults
-          this.appPreferences.remove("rapidScan", this.form.form_id + "");
         }, (error) => {
           console.error(error);
         });

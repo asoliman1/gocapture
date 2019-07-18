@@ -96,8 +96,8 @@ export class DuplicateLeadsService {
     submission.email = data.submission.email;
     submission.sub_date = data.submission.submission_date;
     submission.status = SubmissionStatus.Submitted;
-    submission.barcode_processed = data.submission.barcode_processed || BarcodeStatus.None;
-    submission.submission_type = data.submission.submission_type || FormSubmissionType.normal;
+    submission.barcode_processed = data.submission.barcode_processed ? data.submission.barcode_processed : BarcodeStatus.None;
+    submission.submission_type = data.submission.submission_type ? data.submission.submission_type : FormSubmissionType.normal;
 
     submission.fields = {};
     data.submission.data.forEach((el) => {

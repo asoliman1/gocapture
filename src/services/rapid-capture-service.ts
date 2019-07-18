@@ -67,6 +67,8 @@ export class RapidCaptureService {
         return form.form_id == formId;
       })[0];
 
+      // console.log('Form - ' + JSON.stringify(selectedForm));
+
       let stationId = await this.appPreferences.fetch(this.dictKey(formId), "stationId");
 
       console.log('Station id - ' + stationId);
@@ -98,7 +100,7 @@ export class RapidCaptureService {
           this.processRapidScanResult(barcodes, selectedForm, stationId, elementId);
         }
       }];
-    this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.title + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
+    this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.name + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
   }
 
 
@@ -115,12 +117,12 @@ export class RapidCaptureService {
     }
 
     Observable.zip(...submissions).subscribe(() => {
+      this.appPreferences.remove(this.dictKey(form.form_id), form.form_id + "").then(() => {
+        this.isProcessing = false;
+      });
       this.client.doSync(form.form_id).subscribe(() => {
         console.log('rapid scan synced items');
         //clear the defaults
-        this.appPreferences.remove(this.dictKey(form.form_id), form.form_id + "").then(() => {
-          this.isProcessing = false;
-        });
       }, (error) => {
         console.error(error);
         this.isProcessing = false;

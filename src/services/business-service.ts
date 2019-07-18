@@ -4,7 +4,15 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Subscription } from "rxjs/Subscription";
 import { Config } from '../config';
-import {DeviceFormMembership, Form, FormSubmission, SubmissionStatus, User} from '../model';
+import {
+  BarcodeStatus,
+  DeviceFormMembership,
+  Form,
+  FormSubmission,
+  FormSubmissionType,
+  SubmissionStatus,
+  User
+} from '../model';
 import { AuthenticationRequest } from '../model/protocol';
 import { DBClient } from './db-client';
 import { RESTClient } from './rest-client';
@@ -27,68 +35,68 @@ declare var cordova: any;
  */
 export class BussinessClient {
 
-	protected networkSource: BehaviorSubject<"ON" | "OFF">;
-    /**
-     * Error event
-     */
-	network: Observable<"ON" | "OFF">;
+  protected networkSource: BehaviorSubject<"ON" | "OFF">;
+  /**
+   * Error event
+   */
+  network: Observable<"ON" | "OFF">;
 
-	private networkOn: Subscription;
-	private networkOff: Subscription;
+  private networkOn: Subscription;
+  private networkOff: Subscription;
 
-	private online: boolean = true;
+  private online: boolean = true;
 
-	private registration: User;
+  private registration: User;
 
-	private setup: boolean = false;
+  private setup: boolean = false;
 
-	private errorSource: BehaviorSubject<any>;
+  private errorSource: BehaviorSubject<any>;
 
-	private pushSubs: Subscription[] = [];
-    /**
-     * Error event
-     */
-	error: Observable<any>;
+  private pushSubs: Subscription[] = [];
+  /**
+   * Error event
+   */
+  error: Observable<any>;
 
-	constructor(private db: DBClient,
-				private rest: RESTClient,
-				private sync: SyncClient,
-				private push: PushClient,
-				private net: Network,
-				private fileTransfer: FileTransfer,
-        private localNotificationsService: LocalNotificationsService,
-        private toast: ToastController) {
+  constructor(private db: DBClient,
+              private rest: RESTClient,
+              private sync: SyncClient,
+              private push: PushClient,
+              private net: Network,
+              private fileTransfer: FileTransfer,
+              private localNotificationsService: LocalNotificationsService,
+              private toast: ToastController) {
 
-		this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
-		this.network = this.networkSource.asObservable();
+    this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
+    this.network = this.networkSource.asObservable();
 
-		this.networkOff = this.net.onDisconnect().subscribe(() => {
-			console.log("network was disconnected :-(");
-			this.setOnline(false);
-		});
+    this.networkOff = this.net.onDisconnect().subscribe(() => {
+      console.log("network was disconnected :-(");
+      this.setOnline(false);
+    });
 
-		this.networkOn = this.net.onConnect().subscribe(() => {
-			console.log("network was connected");
-			this.setOnline(true);
-		});
+    this.networkOn = this.net.onConnect().subscribe(() => {
+      console.log("network was connected");
+      this.setOnline(true);
+    });
 
-		this.errorSource = new BehaviorSubject<any>(null);
-		this.error = this.errorSource.asObservable();
-	}
+    this.errorSource = new BehaviorSubject<any>(null);
+    this.error = this.errorSource.asObservable();
+  }
 
-	public isOnline(): boolean {
-		return this.online;
-	}
+  public isOnline(): boolean {
+    return this.online;
+  }
 
-	private setOnline(val: boolean) {
-		this.online = val;
-		this.networkSource.next(val ? "ON" : "OFF");
-		this.rest.setOnline(val);
-		this.doAutoSync();
-	}
+  private setOnline(val: boolean) {
+    this.online = val;
+    this.networkSource.next(val ? "ON" : "OFF");
+    this.rest.setOnline(val);
+    this.doAutoSync();
+  }
 
-	public doAutoSync() {
-		console.log('doAutoSync');
+  public doAutoSync() {
+    console.log('doAutoSync');
     if (this.isOnline()) {
       this.db.isWorkDbInited() && this.db.getConfig("autoUpload").flatMap((val) => {
         if (val + "" == "true") {
@@ -105,9 +113,9 @@ export class BussinessClient {
     } else {
       this.showErrorToast('No internet connection available');
     }
-	}
+  }
 
-	private showErrorToast(errorMessage) {
+  private showErrorToast(errorMessage) {
     let toaster = this.toast.create({
       message: errorMessage,
       duration: 3000,
@@ -117,7 +125,7 @@ export class BussinessClient {
     toaster.present();
   }
 
-	public scheduleUnsubmittedLeadsNotification() {
+  public scheduleUnsubmittedLeadsNotification() {
     this.getToSubmitLeads().subscribe(leads => {
       if (leads && leads.length > 0) {
         this.localNotificationsService.scheduleUnsubmittedLeadsNotification();
@@ -126,104 +134,104 @@ export class BussinessClient {
   }
 
   public cancelUnsubmittedLeadsNotification() {
-	  this.localNotificationsService.cancelAll();
+    this.localNotificationsService.cancelAll();
   }
 
-	public setupNotifications() {
-		if (!this.setup) {
-			this.setup = true;
-			this.pushSubs.push(this.push.error.subscribe((err) => {
-				console.error("notification", err);
-				console.error(JSON.stringify(err));
-			}));
+  public setupNotifications() {
+    if (!this.setup) {
+      this.setup = true;
+      this.pushSubs.push(this.push.error.subscribe((err) => {
+        console.error("notification", err);
+        console.error(JSON.stringify(err));
+      }));
 
-			this.pushSubs.push(this.push.notification.subscribe((note) => {
+      this.pushSubs.push(this.push.notification.subscribe((note) => {
 
-				if (!note) {
-					return;
-				}
+        if (!note) {
+          return;
+        }
 
-				this.handlePush(note);
+        this.handlePush(note);
 
-			}));
+      }));
 
-			this.pushSubs.push(this.push.registration.subscribe((regId) => {
-				if (!regId) {
-					return;
-				}
-				this.db.updateRegistration(regId).subscribe((ok) => {
-					this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
-						if (done) {
-							this.registration.pushRegistered = 1;
-							this.db.saveRegistration(this.registration).subscribe(() => {
-								//done
-							});
-						}
-					});
-				});
-			}));
-			this.push.initialize();
-		}
-	}
+      this.pushSubs.push(this.push.registration.subscribe((regId) => {
+        if (!regId) {
+          return;
+        }
+        this.db.updateRegistration(regId).subscribe((ok) => {
+          this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
+            if (done) {
+              this.registration.pushRegistered = 1;
+              this.db.saveRegistration(this.registration).subscribe(() => {
+                //done
+              });
+            }
+          });
+        });
+      }));
+      this.push.initialize();
+    }
+  }
 
-	public getRegistration(registerForPush?: boolean): Observable<User> {
-		return new Observable<User>((obs: Observer<User>) => {
-			this.db.getRegistration().subscribe((user) => {
-				if (user) {
-					this.registration = user;
-					this.db.setupWorkDb(user.db);
-					this.rest.token = user.access_token;
-					obs.next(user);
-					obs.complete();
-				} else {
-					obs.next(user);
-					obs.complete();
-				}
-			})
-		});
-	}
+  public getRegistration(registerForPush?: boolean): Observable<User> {
+    return new Observable<User>((obs: Observer<User>) => {
+      this.db.getRegistration().subscribe((user) => {
+        if (user) {
+          this.registration = user;
+          this.db.setupWorkDb(user.db);
+          this.rest.token = user.access_token;
+          obs.next(user);
+          obs.complete();
+        } else {
+          obs.next(user);
+          obs.complete();
+        }
+      })
+    });
+  }
 
-	public validateKioskPassword(password: string): Observable<boolean> {
-		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
-				obs.next(pwd && password && password == pwd);
-				obs.complete();
-			}, err => {
-				obs.error(err);
-			});
-		});
-	}
+  public validateKioskPassword(password: string): Observable<boolean> {
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.db.getConfig("kioskModePassword").subscribe((pwd) => {
+        obs.next(pwd && password && password == pwd);
+        obs.complete();
+      }, err => {
+        obs.error(err);
+      });
+    });
+  }
 
-	public setKioskPassword(password: string): Observable<boolean> {
-		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.saveConfig("kioskModePassword", password).subscribe((done) => {
-				obs.next(done);
-				obs.complete();
-			}, err => {
-				obs.error(err);
-			});
-		});
-	}
+  public setKioskPassword(password: string): Observable<boolean> {
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.db.saveConfig("kioskModePassword", password).subscribe((done) => {
+        obs.next(done);
+        obs.complete();
+      }, err => {
+        obs.error(err);
+      });
+    });
+  }
 
-	public hasKioskPassword(): Observable<boolean> {
-		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.getConfig("kioskModePassword").subscribe((pwd) => {
-				obs.next(pwd != null && pwd.length > 0);
-				obs.complete();
-			}, err => {
-				obs.error(err);
-			});
-		});
-	}
+  public hasKioskPassword(): Observable<boolean> {
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.db.getConfig("kioskModePassword").subscribe((pwd) => {
+        obs.next(pwd != null && pwd.length > 0);
+        obs.complete();
+      }, err => {
+        obs.error(err);
+      });
+    });
+  }
 
-	public authenticate(email, authCode): Observable<{ user: User, message: string }> {
-		return new Observable<{ user: User, message: string }>((obs: Observer<{ user: User, message: string }>) => {
-			let req = new AuthenticationRequest();
-			req.invitation_code = authCode;
-			req.device_name = email;
-			this.rest.authenticate(req).subscribe(reply => {
-				let ext = reply.user_profile_picture.split('.').pop();
-				let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
+  public authenticate(email, authCode): Observable<{ user: User, message: string }> {
+    return new Observable<{ user: User, message: string }>((obs: Observer<{ user: User, message: string }>) => {
+      let req = new AuthenticationRequest();
+      req.invitation_code = authCode;
+      req.device_name = email;
+      this.rest.authenticate(req).subscribe(reply => {
+        let ext = reply.user_profile_picture.split('.').pop();
+        let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
 
         this.registration = reply;
         reply.pushRegistered = 1;
@@ -235,176 +243,180 @@ export class BussinessClient {
             obs.complete();
           });
         });
-			}, err =>{
-				obs.error("Invalid authentication code");
-			});
-		});
-	}
+      }, err =>{
+        obs.error("Invalid authentication code");
+      });
+    });
+  }
 
-	public unregister(user: User): Observable<User> {
-		return new Observable<User>((obs: Observer<User>) => {
-			this.rest.unauthenticate(user.access_token).subscribe((done) => {
-				if (done) {
-					this.db.deleteRegistration(user.id + "").subscribe(() => {
-						this.push.shutdown();
-						this.pushSubs.forEach(sub => {
-							sub.unsubscribe();
-						});
-						this.pushSubs = [];
-						this.setup = false;
-						obs.next(user);
-						obs.complete();
-					}, err => {
-						obs.error(err);
-					});
-				} else {
-					obs.error("Could not unauthenticate");
-				}
-			}, err => {
-				obs.error(err);
-			});
-		});
-	}
+  public unregister(user: User): Observable<User> {
+    return new Observable<User>((obs: Observer<User>) => {
+      this.rest.unauthenticate(user.access_token).subscribe((done) => {
+        if (done) {
+          this.db.deleteRegistration(user.id + "").subscribe(() => {
+            this.push.shutdown();
+            this.pushSubs.forEach(sub => {
+              sub.unsubscribe();
+            });
+            this.pushSubs = [];
+            this.setup = false;
+            obs.next(user);
+            obs.complete();
+          }, err => {
+            obs.error(err);
+          });
+        } else {
+          obs.error("Could not unauthenticate");
+        }
+      }, err => {
+        obs.error(err);
+      });
+    });
+  }
 
-	public getDeviceStatus(user: User) {
-		return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
-			this.rest.validateAccessToken(user.access_token).subscribe((status) => {
-				obs.next(status);
-				obs.complete();
-			})
-		});
-	}
+  public getDeviceStatus(user: User) {
+    return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
+      this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+        obs.next(status);
+        obs.complete();
+      })
+    });
+  }
 
-	public getUpdates(): Observable<boolean> {
-		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.getConfig("lastSyncDate").subscribe(time => {
-				this.db.getConfig("getAllContacts").subscribe(getAllContacts => {
-					let d = new Date();
-					if (time) {
-						d.setTime(parseInt(time));
-					}
-					let newD = new Date();
-					this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-						//
-					},
-						(err) => {
-							obs.error(err);
-						},
-						() => {
-							this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
-								this.db.saveConfig("getAllContacts", "true").subscribe(() => {
-									obs.next(true);
-									obs.complete();
-								});
-							})
-						});
-				});
-			});
-		});
-	}
+  public getUpdates(): Observable<boolean> {
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.db.getConfig("lastSyncDate").subscribe(time => {
+        this.db.getConfig("getAllContacts").subscribe(getAllContacts => {
+          let d = new Date();
+          if (time) {
+            d.setTime(parseInt(time));
+          }
+          let newD = new Date();
+          this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
+              //
+            },
+            (err) => {
+              obs.error(err);
+            },
+            () => {
+              this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
+                this.db.saveConfig("getAllContacts", "true").subscribe(() => {
+                  obs.next(true);
+                  obs.complete();
+                });
+              })
+            });
+        });
+      });
+    });
+  }
 
-	public getForms(): Observable<Form[]> {
-		return this.db.getForms();
-	}
+  public getForms(): Observable<Form[]> {
+    return this.db.getForms();
+  }
 
-	/*
-	public getDispatches(): Observable<DispatchOrder[]> {
-		return this.db.getDispatches();
-	}
-	 */
+  /*
+    public getDispatches(): Observable<DispatchOrder[]> {
+        return this.db.getDispatches();
+    }
+     */
 
-	public getContacts(form: Form): Observable<DeviceFormMembership[]> {
-		return this.db.getMemberships(form.form_id);
-	}
+  public getContacts(form: Form): Observable<DeviceFormMembership[]> {
+    return this.db.getMemberships(form.form_id);
+  }
 
-	public getContact(form: Form, prospectId: number): Observable<DeviceFormMembership> {
-		return this.db.getMembership(form.form_id, prospectId);
-	}
+  public getContact(form: Form, prospectId: number): Observable<DeviceFormMembership> {
+    return this.db.getMembership(form.form_id, prospectId);
+  }
 
-	public getSubmissions(form: Form, isDispatch): Observable<FormSubmission[]> {
-		return this.db.getSubmissions(form.form_id, isDispatch);
-	}
+  public getSubmissions(form: Form, isDispatch): Observable<FormSubmission[]> {
+    return this.db.getSubmissions(form.form_id, isDispatch);
+  }
 
-	public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
-		sub.updateFields(form);
+  public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
+    sub.updateFields(form);
 
-		return new Observable<boolean>((obs: Observer<boolean>) => {
-			this.db.saveSubmission(sub).subscribe((done) => {
+    return new Observable<boolean>((obs: Observer<boolean>) => {
+      this.db.saveSubmission(sub).subscribe((done) => {
 
-			  if (syncData) {
-			    this.doAutoSync();
+        if (syncData) {
+          this.doAutoSync();
         }
 
-				obs.next(done);
-				obs.complete();
-			}, (err) => {
-				obs.error(err);
-			});
-		});
-	}
+        obs.next(done);
+        obs.complete();
+      }, (err) => {
+        obs.error(err);
+      });
+    });
+  }
 
-	public doSync(formId?: number): Observable<any> {
-		return new Observable<any>((obs: Observer<any>) => {
-			if (!this.online) {
-				obs.error('No internet connection available');
-				return;
-			}
-			this.db.getSubmissionsToSend().subscribe((submissions) => {
+  public doSync(formId?: number): Observable<any> {
+    return new Observable<any>((obs: Observer<any>) => {
+      if (!this.online) {
+        obs.error('No internet connection available');
+        return;
+      }
+      this.db.getSubmissionsToSend().subscribe((submissions) => {
 
-			  console.log("Submissions to submit - " + JSON.stringify(submissions));
+        console.log("Submissions to submit - " + JSON.stringify(submissions));
 
-				if (submissions.length == 0) {
-					obs.complete();
-					return;
-				}
-				let formIds = [];
+        if (submissions.length == 0) {
+          obs.complete();
+          return;
+        }
+        let formIds = [];
 
-				if (formId > 0) {
-					formIds.push(formId);
-					var tmp = [];
-					submissions.forEach(sub => {
-						if (sub.form_id + "" == formId + "") {
-							tmp.push(sub);
-						}
-					});
-					submissions = tmp;
-				} else {
-					submissions.forEach(sub => {
-						if (formIds.indexOf(sub.form_id) == -1) {
-							formIds.push(sub.form_id);
-						}
-					});
-				}
-				this.db.getFormsByIds(formIds).subscribe(forms => {
+        if (formId > 0) {
+          formIds.push(formId);
+          var tmp = [];
+          submissions.forEach(sub => {
+            if (sub.form_id + "" == formId + "") {
+              tmp.push(sub);
+            }
+          });
+          submissions = tmp;
+        } else {
+          submissions.forEach(sub => {
+            if (formIds.indexOf(sub.form_id) == -1) {
+              formIds.push(sub.form_id);
+            }
+          });
+        }
+        this.db.getFormsByIds(formIds).subscribe(forms => {
 
-				   //sync submissions with status "ToSubmit"
-           //sync submissions with status "Submitting" in case the first attempt was 9 min ago
-				   let filteredSubmissions = submissions.filter(submission => {
-				    return this.isSubmissionNeedToBeSubmitted(submission)
+          //sync submissions with status "ToSubmit"
+          //sync submissions with status "Submitting" in case the first attempt was 9 min ago
+          let filteredSubmissions = submissions.filter(submission => {
+            return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
-					this.sync.sync(filteredSubmissions, forms).subscribe(submitted => {
-						obs.next(true);
-						this.localNotificationsService.cancelAll();
-						obs.complete();
-					}, (err) => {
-						console.error(err);
-						obs.error(err);
-						this.errorSource.next(err);
-					});
-				}, (err) => {
-					obs.error(err);
-					this.errorSource.next(err);
-				});
-			});
-		});
-	}
+          console.log("Submissions date - " + new Date().getTime());
 
-	getToSubmitLeads() {
+          console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
+
+          this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
+            obs.next(true);
+            this.localNotificationsService.cancelAll();
+            obs.complete();
+          }, (err) => {
+            console.error(err);
+            obs.error(err);
+            this.errorSource.next(err);
+          });
+        }, (err) => {
+          obs.error(err);
+          this.errorSource.next(err);
+        });
+      });
+    });
+  }
+
+  getToSubmitLeads() {
     return this.db.getSubmissionsToSend();
   }
 
-  public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
+  public isSubmissionNeedToBeSubmitted(submission: any) {
     let submissionTime = new Date(submission.sub_date).getTime();
     if (submission.last_sync_date) {
       submissionTime = new Date(submission.last_sync_date).getTime();
@@ -415,14 +427,14 @@ export class BussinessClient {
     return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 
-	public removeSubmission(submission) {
+  public removeSubmission(submission) {
     return this.db.deleteSubmission(submission)
   }
 
-	//MARK: Private
+  //MARK: Private
 
-	private handlePush(note) {
-		console.log('Push received - ' + JSON.stringify(note));
+  private handlePush(note) {
+    console.log('Push received - ' + JSON.stringify(note));
 
     if (note.action == 'sync') {
       this.getUpdates().subscribe();
