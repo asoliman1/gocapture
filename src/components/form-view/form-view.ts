@@ -7,8 +7,6 @@ import {
   DeviceFormMembership,
   FormSubmission,
   FormElementType,
-  ElementMapping,
-  documentCategoriesMock
 } from "../../model";
 import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
@@ -194,6 +192,22 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
+        this.displayForm.elements = [
+          ...this.displayForm.elements,
+          {
+            ...this.displayForm.elements[0],
+            id: 999,
+            type: 'document',
+            title: 'ELM Documents'
+          },
+          {
+            ...this.displayForm.elements[0],
+            id: 9999,
+            type: 'document',
+            title: 'POST SHOW Docs'
+          }
+        ];
+        console.log(this.displayForm);
       });
     }, 150);
   }
@@ -436,10 +450,5 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
-  }
-
-  async openDocuments() {
-    const modal = this.modal.create('Documents', {documentSource: documentCategoriesMock[0]});
-    await modal.present();
   }
 }

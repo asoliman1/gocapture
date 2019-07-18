@@ -16,7 +16,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import {Form, FormSubmission, SubmissionStatus} from "../../model";
+import {documentCategoriesMock, Form, FormSubmission, SubmissionStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { FormControlPipe } from "../../pipes/form-control-pipe";
@@ -29,6 +29,7 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
 import {DocumentsListPage} from "../../pages/documents-list/documents-list";
+import {ModalController} from "ionic-angular";
 
 
 @Component({
@@ -83,7 +84,8 @@ export class Forms {
               private themeProvider: ThemeProvider,
               private popup: Popup,
               private toast: ToastController,
-              private duplicateLeadsService: DuplicateLeadsService) {
+              private duplicateLeadsService: DuplicateLeadsService,
+              private modalCtrl: ModalController) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
@@ -165,7 +167,17 @@ export class Forms {
     });
 
     // TODO: replace this with with the correct check example (form.documents)
-    if (1) {
+    const hasOnlyOneDocumentCategory = false;
+
+    if (hasOnlyOneDocumentCategory || form.name == "Duplicate Lead BugT") {
+      buttons.push({
+        text: 'Documents',
+        icon: 'bookmarks',
+        handler: () => {
+          this.modalCtrl.create('Documents', { documentSource: documentCategoriesMock[0] }).present();
+        }
+      })
+    } else {
       buttons.push({
         text: 'Documents',
         icon: 'bookmarks',

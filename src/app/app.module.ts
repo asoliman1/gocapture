@@ -22,7 +22,22 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer} from "../components/form-view/elements";
+import {
+  BusinessCard,
+  Image,
+  SimpleName,
+  Signature,
+  SignatureModal,
+  SignaturePad,
+  Gps,
+  Address,
+  Checkboxes,
+  Radios,
+  Dropdown,
+  Badge,
+  ImageViewer,
+  Document
+} from "../components/form-view/elements";
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
 //import { CustomFormsModule } from 'ng2-validation';
@@ -75,7 +90,6 @@ import {BadgeRapidCapture} from "../services/badge-rapid-capture";
 import {BCRapidCapture} from "../services/bc-rapid-capture";
 import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
-import { LongPressModule } from 'ionic-long-press';
 
 @NgModule({
   declarations: [
@@ -102,6 +116,7 @@ import { LongPressModule } from 'ionic-long-press';
     SignatureModal,
     Gps,
     Address,
+    Document,
     Checkboxes,
     Radios,
     Dropdown,
@@ -123,8 +138,7 @@ import { LongPressModule } from 'ionic-long-press';
     IonicImageViewerModule,
 	  TextMaskModule,
 	  PipesModule,
-	  BusinessCardOverlayPageModule,
-    LongPressModule
+	  BusinessCardOverlayPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -151,6 +165,7 @@ import { LongPressModule } from 'ionic-long-press';
     SignatureModal,
     Gps,
     Address,
+    Document,
     Checkboxes,
     Radios,
     Dropdown,
