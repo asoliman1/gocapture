@@ -416,7 +416,7 @@ export class BussinessClient {
     return this.db.getSubmissionsToSend();
   }
 
-  public isSubmissionNeedToBeSubmitted(submission: any) {
+  public isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
     let submissionTime = new Date(submission.sub_date).getTime();
     if (submission.last_sync_date) {
       submissionTime = new Date(submission.last_sync_date).getTime();

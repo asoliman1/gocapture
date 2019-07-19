@@ -2,6 +2,7 @@ import {BarcodeScanner, BarcodeScannerOptions} from "@ionic-native/barcode-scann
 import { Scanner, ScannerResponse } from "./Scanner";
 import {Platform} from "ionic-angular";
 import {AppPreferences} from "@ionic-native/app-preferences";
+import {RapidCaptureService} from "../../../../../services/rapid-capture-service";
 
 declare var cordova;
 
@@ -52,7 +53,7 @@ export class GOCBarcodeScanner implements Scanner {
 
         if (scannedData["barcodes"]) {
           if (scannedData["persist"]) {
-            self.appPreferences.store("rapidScan-"+id, id, self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])).then((result)=> {
+            self.appPreferences.store(RapidCaptureService.dictKey(id), id, self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])).then((result)=> {
               console.log('badges are saved to the defaults - ' + JSON.stringify(scannedData["barcodes"]));
             }, (error) => {
               console.error("Can't save badges to the defaults - " + error);

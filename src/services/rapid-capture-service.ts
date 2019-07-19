@@ -60,7 +60,7 @@ export class RapidCaptureService {
     let formId = await this.appPreferences.fetch("rapidScan", "formId");
     console.log('FORM ID - ' + formId);
     if (formId) {
-      let barcodes = await this.appPreferences.fetch(this.dictKey(formId), formId + "");
+      let barcodes = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), formId + "");
       console.log('BARCODES - ' + JSON.stringify(barcodes));
 
       let selectedForm = forms.filter((form) => {
@@ -69,10 +69,10 @@ export class RapidCaptureService {
 
       // console.log('Form - ' + JSON.stringify(selectedForm));
 
-      let stationId = await this.appPreferences.fetch(this.dictKey(formId), "stationId");
+      let stationId = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "stationId");
 
       console.log('Station id - ' + stationId);
-      let elementId = await this.appPreferences.fetch(this.dictKey(formId), "elementId");
+      let elementId = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "elementId");
 
       console.log('Element id - ' + elementId);
 
@@ -89,9 +89,7 @@ export class RapidCaptureService {
         role: 'cancel',
         handler: () => {
           this.isProcessing = false;
-          this.appPreferences.remove(this.dictKey(selectedForm.form_id), selectedForm.form_id + "");
-          this.appPreferences.remove(this.dictKey(selectedForm.form_id), "stationId");
-          this.appPreferences.remove(this.dictKey(selectedForm.form_id), "elementId");
+          this.removeDefaults(selectedForm.form_id + '');
         }
       },
       {
@@ -103,8 +101,15 @@ export class RapidCaptureService {
     this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.name + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
   }
 
+  removeDefaults(formId) {
+    this.appPreferences.remove("rapidScan", "formId");
+    this.appPreferences.remove(RapidCaptureService.dictKey(formId), formId);
+    this.appPreferences.remove(RapidCaptureService.dictKey(formId), "stationId");
+    this.appPreferences.remove(RapidCaptureService.dictKey(formId), "elementId");
+  }
 
-  private dictKey(formId) {
+
+  public static dictKey(formId) {
     return "rapidScan-" + formId + "";
   }
 
@@ -117,9 +122,8 @@ export class RapidCaptureService {
     }
 
     Observable.zip(...submissions).subscribe(() => {
-      this.appPreferences.remove(this.dictKey(form.form_id), form.form_id + "").then(() => {
-        this.isProcessing = false;
-      });
+      this.removeDefaults(form.form_id);
+      this.isProcessing = false;
       this.client.doSync(form.form_id).subscribe(() => {
         console.log('rapid scan synced items');
         //clear the defaults
