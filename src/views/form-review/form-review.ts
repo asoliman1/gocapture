@@ -90,7 +90,7 @@ export class FormReview {
 
 	isSubmissionRemovable(submission: FormSubmission) {
 	  return (submission.status != SubmissionStatus.OnHold) &&
-      (submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission));
+      (submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
   }
 
 	getColor(submission: FormSubmission) {
@@ -124,7 +124,7 @@ export class FormReview {
 
 
 	goToEntry(submission) {
-	  if (this.isNoProcessedRapidScan(submission)) {
+	  if (this.isNoProcessedRapidScan(submission) || submission.id == -1) {
      return;
     }
     this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
@@ -215,6 +215,12 @@ export class FormReview {
 			}).length > 0;
 
 			console.log(this.hasSubmissionsToSend);
+
+			if (this.filteredSubmissions.length == 0) {
+			  let fakeSubmission = new FormSubmission();
+			  fakeSubmission.id = -1;
+			  this.filteredSubmissions.push(fakeSubmission);
+      }
 
       this.content.resize();
 		});
