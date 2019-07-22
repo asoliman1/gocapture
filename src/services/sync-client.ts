@@ -461,6 +461,12 @@ export class SyncClient {
           return;
         }
 
+        if (d.is_new_submission == false) {
+          this.db.deleteSubmission(submission).subscribe();
+          obs.complete();
+          return;
+        }
+
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;

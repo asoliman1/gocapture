@@ -400,7 +400,8 @@ export class RESTClient {
 		response_status: string, 
 		form_id: number;
 		duplicate_action?: string,
-		submission?: FormSubmission
+		submission?: FormSubmission,
+    is_new_submission: boolean
 	}> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
@@ -410,7 +411,8 @@ export class RESTClient {
 						hold_request_id: resp.hold_request_id,
 						message: "",
 						response_status: resp.status,
-						form_id: data.form_id
+						form_id: data.form_id,
+            is_new_submission: resp.is_new_submission
 					};
 				}
 				this.errorSource.next(resp);
@@ -421,7 +423,8 @@ export class RESTClient {
 						response_status: resp.status,
 						duplicate_action: resp.duplicate_action,
 						submission: resp.submission,
-						form_id: data.form_id
+						form_id: data.form_id,
+            is_new_submission: resp.is_new_submission
 					};
 			});
 	}

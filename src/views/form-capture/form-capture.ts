@@ -188,8 +188,13 @@ export class FormCapture implements AfterViewInit {
 
   private processRapidScanResult(items, element) {
     let submissions = [];
+
+    let i = 100;
+    let timestamp = new Date().getTime();
     for (let item of items) {
-      let saveSubmObservable = this.saveSubmissionWithData(item, element);
+      let submId = parseInt( timestamp + "" + i);
+      let saveSubmObservable = this.saveSubmissionWithData(item, element, submId);
+      i++;
       submissions.push(saveSubmObservable);
     }
 
@@ -212,12 +217,12 @@ export class FormCapture implements AfterViewInit {
   }
 
   //saving subm from rapid scan mode
-  private saveSubmissionWithData(data, element) {
+  private saveSubmissionWithData(data, element, submId) {
     let submission = new FormSubmission();
     submission.fields = this.formView.getValues();
     let elementId = "element_" + element.id;
     submission.fields[elementId] = data;
-    submission.id = new Date().getTime() + Math.floor(Math.random() * 100000);
+    submission.id = submId;
     submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;

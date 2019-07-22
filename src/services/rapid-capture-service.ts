@@ -116,8 +116,12 @@ export class RapidCaptureService {
   private processRapidScanResult(items, form, station, elementId) {
     let submissions = [];
 
+    let i = 100;
+    let timestamp = new Date().getTime();
     for (let item of items) {
-      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId);
+      let submId = parseInt( timestamp + "" + i);
+      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId, submId);
+      i++;
       submissions.push(saveSubmObservable);
     }
 
@@ -138,11 +142,11 @@ export class RapidCaptureService {
   }
 
   //saving subm from rapid scan mode
-  private saveSubmissionWithData(data, form, station, element) {
+  private saveSubmissionWithData(data, form, station, element, submId) {
     let submission = new FormSubmission();
     let elementId = "element_" + element;
     submission.fields[elementId] = data;
-    submission.id = new Date().getTime() + Math.floor(Math.random() * 100000);
+    submission.id = submId;
     submission.form_id = form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;
