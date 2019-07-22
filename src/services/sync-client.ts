@@ -113,34 +113,34 @@ export class SyncClient {
             }
           });
           this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
-              obs.next(result);
-              console.log("Downloading contacts 1");
+            obs.next(result);
+            console.log("Downloading contacts 1");
 
-              let formsWithList = filteredForms.filter((form) => {
-                return form.list_id > 0;
+            let formsWithList = filteredForms.filter((form) => {
+              return form.list_id > 0;
+            });
+
+            this.downloadContacts(formsWithList, map, result).subscribe(() => {
+
+              formsWithList.forEach((form) => {
+                form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
               });
 
-              this.downloadContacts(formsWithList, map, result).subscribe(() => {
-
-                formsWithList.forEach((form) => {
-                  form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
-                });
-
-                this.db.saveForms(formsWithList).subscribe(result => {
-                  //
-                }, (err) => {
-                  console.error(err);
-                }, () => {
-                  obs.next(result);
-                  obs.complete();
-                  this.syncCleanup();
-                });
-
+              this.db.saveForms(formsWithList).subscribe(result => {
+                //
               }, (err) => {
-                obs.error(err);
+                console.error(err);
+              }, () => {
+                obs.next(result);
+                obs.complete();
                 this.syncCleanup();
               });
+
             }, (err) => {
+              obs.error(err);
+              this.syncCleanup();
+            });
+          }, (err) => {
             obs.error(err);
             this.syncCleanup();
           });
@@ -374,44 +374,46 @@ export class SyncClient {
 
         let barcodeData = fetchedData.info;
 
-      if (!barcodeData || barcodeData.length == 0) {
-        return;
-      }
-
-      console.log("Barcode data: " + JSON.stringify(barcodeData));
-
-      submission.barcode_processed = BarcodeStatus.Processed;
-
-      barcodeData.forEach(entry => {
-        let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
-        if (!id) {
+        if (!barcodeData || barcodeData.length == 0) {
           return;
         }
-        submission.fields[id] = entry.value;
-      });
 
-      this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-        this.actuallySubmitForm(data.form.name, submission, obs, JSON.stringify(barcodeData));
+        console.log("Barcode data: " + JSON.stringify(barcodeData));
+
+        submission.barcode_processed = BarcodeStatus.Processed;
+
+        barcodeData.forEach(entry => {
+          let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
+          if (!id) {
+            return;
+          }
+          submission.fields[id] = entry.value;
+        });
+
+        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          this.actuallySubmitForm(data.form.name, submission, obs, JSON.stringify(barcodeData));
+        }, (err) => {
+          obs.error(err);
+          this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
+        });
       }, (err) => {
-        obs.error(err);
-        this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
-      });
-    }, (err) => {
         console.error(err);
 
-      if (form.accept_invalid_barcode) {
-        submission.hold_submission = 1;
-        submission.hold_submission_reason = err.message ? err.message : "";
-        submission.barcode_processed = BarcodeStatus.Processed;
-        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          this.actuallySubmitForm(data.form.name, submission, obs);
-        });
-      } else {
-        obs.error(err);
-        let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
-        this.errorSource.next(msg);
-      }
-    });
+        console.log('Process barcode error - ' + JSON.stringify(err));
+
+        if (err && err.status == 400 && form.accept_invalid_barcode) {
+          submission.hold_submission = 1;
+          submission.hold_submission_reason = err.message ? err.message : "";
+          submission.barcode_processed = BarcodeStatus.Processed;
+          this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+            this.actuallySubmitForm(data.form.name, submission, obs);
+          });
+        } else {
+          obs.error(err);
+          let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
+          this.errorSource.next(msg);
+        }
+      });
   }
 
   private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
