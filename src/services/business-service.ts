@@ -5,11 +5,9 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Subscription } from "rxjs/Subscription";
 import { Config } from '../config';
 import {
-  BarcodeStatus,
   DeviceFormMembership,
   Form,
   FormSubmission,
-  FormSubmissionType,
   SubmissionStatus,
   User
 } from '../model';
@@ -357,6 +355,13 @@ export class BussinessClient {
         obs.error('No internet connection available');
         return;
       }
+
+      if (this.sync.isSyncing()) {
+        console.log("Sync is in progress. Skip...");
+        obs.complete();
+        return;
+      }
+
       this.db.getSubmissionsToSend().subscribe((submissions) => {
 
         console.log("Submissions to submit - " + JSON.stringify(submissions));
@@ -387,7 +392,7 @@ export class BussinessClient {
 
           //sync submissions with status "ToSubmit"
           //sync submissions with status "Submitting" in case the first attempt was 9 min ago
-          let filteredSubmissions = submissions.filter(submission => {
+          let filteredSubmissions = submissions.filter((submission) => {
             return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
@@ -395,19 +400,33 @@ export class BussinessClient {
 
           console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
 
-          this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
-            obs.next(true);
-            this.localNotificationsService.cancelAll();
-            obs.complete();
-          }, (err) => {
-            console.error(err);
-            obs.error(err);
-            this.errorSource.next(err);
+          let dbUpdates = [];
+          filteredSubmissions.forEach((sub) => {
+            sub.status = SubmissionStatus.Submitting;
+            sub.last_sync_date = new Date().toISOString();
+            let subUpdateObs =  this.db.updateSubmissionStatus(sub);
+            dbUpdates.push(subUpdateObs);
+          });
+
+          Observable.zip(...dbUpdates).subscribe(() => {
+            this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
+              console.log("Sync process is completed");
+              obs.next(true);
+              this.localNotificationsService.cancelAll();
+              obs.complete();
+            }, (err) => {
+              console.error(err);
+              obs.error(err);
+              this.errorSource.next(err);
+            });
           });
         }, (err) => {
           obs.error(err);
           this.errorSource.next(err);
         });
+      }, (error) => {
+        obs.error(error);
+        this.errorSource.next(error);
       });
     });
   }

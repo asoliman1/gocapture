@@ -152,12 +152,12 @@
       },
       "phonegap-plugin-barcodescanner": {},
       "cordova-plugin-vibration": {},
-      "cordova-plugin-add-swift-support": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
-      "cordova-plugin-app-preferences": {}
+      "cordova-plugin-app-preferences": {},
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
       "ios",
