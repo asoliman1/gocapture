@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { BaseGroupElement} from "../base-group-element";
 import {documentCategoriesMock} from "../../../../model";
 import {ModalController} from "ionic-angular";
+import {DocumentShareMode} from "../../../../views/documents/documents";
 
 @Component({
   selector: 'document',
@@ -10,6 +11,7 @@ import {ModalController} from "ionic-angular";
 export class Document extends BaseGroupElement {
 
   @Input() element: any = {};
+  @Input() shareMode: DocumentShareMode;
 
   constructor(private modalCtrl: ModalController) {
     super();
@@ -24,7 +26,9 @@ export class Document extends BaseGroupElement {
   }
 
   openDocuments() {
-    console.log("OPENING DOCUMENTS PAGE...", this.element);
-    this.modalCtrl.create("Documents", { documentSource: this.element.documentSource }).present();
+    console.log("OPENING DOCUMENTS PAGE...", this.element, this.shareMode);
+    this.modalCtrl
+      .create("Documents", { documentSource: this.element.documentSource, shareMode: this.shareMode })
+      .present();
   }
 }

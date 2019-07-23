@@ -20,7 +20,7 @@
   <ion-grid class="documents-list">
     <ion-row>
       <ion-col col-6 *ngFor="let document of documentsSource.documents">
-        <document [document]="document" (onSelect)="select(document)" (onOpen)="openDocument(document.url)"></document>
+        <document [document]="document" (onSelect)="select(document)" (onOpen)="openDocument(document)"></document>
       </ion-col>
     </ion-row>
   </ion-grid>

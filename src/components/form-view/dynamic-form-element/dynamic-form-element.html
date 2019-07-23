@@ -154,7 +154,7 @@
 
     <!-- DOCUMENT -->
     <ion-item *ngSwitchCase="'document'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <document [element]="element"></document>
+      <document [element]="element" [shareMode]="0"></document>
     </ion-item>
 
     <ion-item *ngSwitchDefault>

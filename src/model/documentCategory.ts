@@ -7,10 +7,10 @@ export interface IDocumentCategory {
 }
 
 const documents: IDocument[] = [
-  {name: "ELM Datasheet"},
-  {name: "Barcode vs Badge"},
-  {name: "ELM Datasheet"},
-  {name: "Barcode vs Badge"}
+  {name: "ELM Datasheet", url: 'assets/documents/Form_delega_Isee_parificato.pdf'},
+  {name: "Barcode vs Badge", url: 'assets/documents/domande.pdf'},
+  {name: "ELM Datasheet", url: 'assets/documents/Form_delega_Isee_parificato.pdf'},
+  {name: "Barcode vs Badge", url: 'assets/documents/domande.pdf'}
 ];
 
 export const documentCategoriesMock = [
