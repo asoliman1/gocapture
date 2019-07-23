@@ -113,34 +113,34 @@ export class SyncClient {
             }
           });
           this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
-              obs.next(result);
-              console.log("Downloading contacts 1");
+            obs.next(result);
+            console.log("Downloading contacts 1");
 
-              let formsWithList = filteredForms.filter((form) => {
-                return form.list_id > 0;
+            let formsWithList = filteredForms.filter((form) => {
+              return form.list_id > 0;
+            });
+
+            this.downloadContacts(formsWithList, map, result).subscribe(() => {
+
+              formsWithList.forEach((form) => {
+                form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
               });
 
-              this.downloadContacts(formsWithList, map, result).subscribe(() => {
-
-                formsWithList.forEach((form) => {
-                  form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
-                });
-
-                this.db.saveForms(formsWithList).subscribe(result => {
-                  //
-                }, (err) => {
-                  console.error(err);
-                }, () => {
-                  obs.next(result);
-                  obs.complete();
-                  this.syncCleanup();
-                });
-
+              this.db.saveForms(formsWithList).subscribe(result => {
+                //
               }, (err) => {
-                obs.error(err);
+                console.error(err);
+              }, () => {
+                obs.next(result);
+                obs.complete();
                 this.syncCleanup();
               });
+
             }, (err) => {
+              obs.error(err);
+              this.syncCleanup();
+            });
+          }, (err) => {
             obs.error(err);
             this.syncCleanup();
           });
@@ -224,6 +224,7 @@ export class SyncClient {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
+      console.log("DoSubmitAll");
       let handler = () => {
 
         if (index == data.submissions.length) {
@@ -282,6 +283,8 @@ export class SyncClient {
       let urlMap: { [key: string]: string } = {};
       this.buildUrlMap(submission, data.urlFields, urlMap);
 
+      console.log("Do submit");
+
       let uploadUrlMap = {};
       Object.keys(urlMap).forEach((key) => {
         if (key.startsWith("file://") || key.startsWith("data:image")) {
@@ -291,7 +294,11 @@ export class SyncClient {
 
       let hasUrls = Object.keys(uploadUrlMap).length > 0;
 
+      console.log("Submission has urls - " + JSON.stringify(hasUrls));
+
       this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
+
+        console.log("Submission uploaded data");
 
         this.updateUrlMapWithData(uploadUrlMap, uploadedData);
 
@@ -302,6 +309,7 @@ export class SyncClient {
         this.updateSubmissionFields(submission, data, urlMap);
 
         this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          console.log("Updated submission fields - " + JSON.stringify(submission));
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
             this.processBarcode(data, submission, obs);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
@@ -361,52 +369,54 @@ export class SyncClient {
   private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
-    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id).subscribe(barcodeData => {
-      if (!barcodeData || barcodeData.length == 0) {
-        return;
-      }
+    this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '')
+      .subscribe((fetchedData) => {
 
-      console.log("Barcode data: " + JSON.stringify(barcodeData));
+        let barcodeData = fetchedData.info;
 
-      submission.barcode_processed = BarcodeStatus.Processed;
-
-      barcodeData.forEach(entry => {
-        let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
-        if (!id) {
+        if (!barcodeData || barcodeData.length == 0) {
           return;
         }
-        submission.fields[id] = entry.value;
-      });
 
-      this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-        this.actuallySubmitForm(data.form.name, submission, obs, JSON.stringify(barcodeData));
-      }, (err) => {
-        obs.error(err);
-        this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
-      });
-    }, (err) => {
+        console.log("Barcode data: " + JSON.stringify(barcodeData));
 
-      if (form.accept_invalid_barcode) {
-        submission.hold_submission = 1;
-        submission.hold_submission_reason = err.message ? err.message : "";
-        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          this.actuallySubmitForm(data.form.name, submission, obs);
+        submission.barcode_processed = BarcodeStatus.Processed;
+
+        barcodeData.forEach(entry => {
+          let id = data.form.getIdByUniqueFieldName(entry.ll_field_unique_identifier);
+          if (!id) {
+            return;
+          }
+          submission.fields[id] = entry.value;
         });
-      } else {
-        obs.error(err);
-        let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
-        this.errorSource.next(msg);
-      }
 
-    });
+        this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          this.actuallySubmitForm(data.form.name, submission, obs, JSON.stringify(barcodeData));
+        }, (err) => {
+          obs.error(err);
+          this.errorSource.next("Could not save updated barcode info into the submission for form " + data.form.name);
+        });
+      }, (err) => {
+        console.error(err);
+
+        console.log('Process barcode error - ' + JSON.stringify(err));
+
+        if (err && err.status == 400 && form.accept_invalid_barcode) {
+          submission.hold_submission = 1;
+          submission.hold_submission_reason = err.message ? err.message : "";
+          submission.barcode_processed = BarcodeStatus.Processed;
+          this.db.updateSubmissionFields(data.form, submission).subscribe((done) => {
+            this.actuallySubmitForm(data.form.name, submission, obs);
+          });
+        } else {
+          obs.error(err);
+          let msg = "Could not process submission for form " + data.form.name + ": barcode processing failed";
+          this.errorSource.next(msg);
+        }
+      });
   }
 
   private actuallySubmitForm(formName: string, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
-
-    //update status to SUBMITTING
-    submission.status = SubmissionStatus.Submitting;
-    submission.last_sync_date = new Date().toISOString();
-    this.db.updateSubmissionStatus(submission).subscribe();
 
     console.log("Submit form: " + JSON.stringify(submission));
     if (barcodeData) {
@@ -439,7 +449,7 @@ export class SyncClient {
           let msg = "Could not process submission for form \"" + formName + "\": " + d.message;
           submission.invalid_fields = 1;
           submission.hold_request_id = 0;
-          submission.status = SubmissionStatus.ToSubmit;
+          submission.status = SubmissionStatus.InvalidFields;
           this.db.updateSubmissionId(submission).subscribe((ok) => {
             obs.error(msg);
             this.errorSource.next(msg);
@@ -451,6 +461,12 @@ export class SyncClient {
           return;
         }
 
+        if (d.is_new_submission == false) {
+          this.db.deleteSubmission(submission).subscribe();
+          obs.complete();
+          return;
+        }
+
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;
@@ -458,7 +474,7 @@ export class SyncClient {
           submission.hold_request_id = d.hold_request_id;
           submission.status = SubmissionStatus.OnHold;
         }
-  
+
         this.db.updateSubmissionId(submission).subscribe((ok) => {
           if(d.id > 0){
             submission.id = submission.activity_id;
@@ -469,18 +485,17 @@ export class SyncClient {
           obs.error(err);
           let msg = "Could not process submission for form " + formName;
           this.errorSource.next(msg);
+          msg += ". Error - " + err;
+          console.error(msg);
         })
       }, err => {
         obs.error(err);
         let msg = "Could not process submission for form " + formName;
         this.errorSource.next(msg);
-        msg += ". Error - " + err;
-        console.error(msg);
+
       })
     }, err => {
       obs.error(err);
-      submission.status = SubmissionStatus.ToSubmit;
-      this.db.updateSubmissionId(submission).subscribe();
       let msg = "Could not process submission for form " + formName;
       this.errorSource.next(msg);
       msg += ". Error - " + err;

@@ -75,7 +75,7 @@ export class DBClient {
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -346,6 +346,11 @@ export class DBClient {
       19: {
         queries: [
           "alter table forms add column is_enable_rapid_scan_mode integer default 0"
+        ]
+      },
+      20: {
+        queries: [
+          "alter table submissions add column is_rapid_scan integer default 0"
         ]
       },
 		}
@@ -736,6 +741,7 @@ export class DBClient {
     form.hold_submission_reason = dbForm.hold_submission_reason;
     form.hidden_elements = JSON.parse(dbForm.hidden_elements);
     form.station_id = dbForm.station_id;
+    form.is_rapid_scan = dbForm.is_rapid_scan;
     return form;
   }
 
@@ -819,7 +825,8 @@ export class DBClient {
       form.hold_submission,
       form.hold_submission_reason,
       JSON.stringify(form.hidden_elements),
-      form.station_id];
+      form.station_id,
+      form.is_rapid_scan];
   }
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {

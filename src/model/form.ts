@@ -87,18 +87,20 @@ export class Form extends BaseForm{
         if (!vals[match[1]]) {
           vals[match[1]] = {};
         }
-        vals[match[1]][id] = entry.value;
+        // vals[match[1]][id] = entry.value;
         ctrl = formGroup.get(match[1]).get(id);
-        ctrl.markAsTouched();
-        ctrl.markAsDirty();
       } else {
-        vals[id] = entry.value;
+        // vals[id] = entry.value;
         ctrl = formGroup.get(id);
+      }
+      if (ctrl) {
+        ctrl.setValue(entry.value);
         ctrl.markAsTouched();
         ctrl.markAsDirty();
+        ctrl.updateValueAndValidity();
       }
     });
-    formGroup.setValue(vals);
+    // formGroup.setValue(vals);
   }
 
 	public getUrlFields() : string[]{
@@ -158,4 +160,16 @@ export class Form extends BaseForm{
 			}
 		});
 	}
+
+  public getHiddenElementsPerVisibilityRules(): string[] {
+    let hiddenElements = this.elements.filter(element => {
+      return element["visible_conditions"] && !element.isMatchingRules;
+    });
+
+    let elementsIds = [];
+    for (let element of hiddenElements) {
+      elementsIds = elementsIds.concat(`element_${element["id"]}`);
+    }
+    return elementsIds;
+  }
 }

@@ -289,6 +289,19 @@
     [self.commandDelegate sendPluginResult:result callbackId:callback];
 }
 
+- (void)returnBarcodes:(NSArray *)barcodes persist:(BOOL)persist callback:(NSString*)callback {
+    NSMutableDictionary* resultDict = [NSMutableDictionary new];
+    resultDict[@"barcodes"] = barcodes;
+    resultDict[@"persist"] = @(persist);
+
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus: CDVCommandStatus_OK
+                               messageAsDictionary: resultDict
+                               ];
+    result.keepCallback = @(YES);
+    [self.commandDelegate sendPluginResult:result callbackId:callback];
+}
+
 //--------------------------------------------------------------------------
 - (void)returnError:(NSString*)message callback:(NSString*)callback {
     CDVPluginResult* result = [CDVPluginResult
@@ -460,6 +473,8 @@ parentViewController:(UIViewController*)parentViewController
                                            position:CSToastPositionTop];
 
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+
+                [self.plugin returnBarcodes:self.barcodes persist:YES callback:self.callback];
             }
 
             if (self.barcodes.count > 0) {

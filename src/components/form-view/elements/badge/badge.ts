@@ -10,10 +10,12 @@ import {GOCNFCScanner} from "./Scanners/GOCNFCScanner";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 import {GOCBarcodeScanner} from "./Scanners/GOCBarcodeScanner";
 import {Util} from "../../../../util/util";
-import {Platform} from "ionic-angular";
+import {NavController, Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import { Scanner, ScannerType } from './Scanners/Scanner';
 import {ActionService} from "../../../../services/action-service";
+import {DuplicateLeadsService} from "../../../../services/duplicate-leads-service";
+import {AppPreferences} from "@ionic-native/app-preferences";
 
 @Component({
 	selector: 'badge',
@@ -39,7 +41,9 @@ export class Badge extends BaseElement implements OnInit {
               public platform: Platform,
               public nfc: NFC,
               public ndef: Ndef,
-              public actionService: ActionService) {
+              public actionService: ActionService,
+              public duplicateLeadsService: DuplicateLeadsService,
+              public appPreferences: AppPreferences) {
 		super();
 	}
 
@@ -90,6 +94,7 @@ export class Badge extends BaseElement implements OnInit {
         cssClass: "success"
       }).present();
 
+
       this.processData(response.scannedId);
 
     }, (error) => {
@@ -99,20 +104,26 @@ export class Badge extends BaseElement implements OnInit {
   }
 
 	private processData(scannedId: string) {
-    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id).subscribe((data) => {
+    this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, 0, this.form.form_id + '').subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       console.log("Fetched badge data: " + JSON.stringify(data));
-      if(!data || data.length == 0) {
+      let barcodeData = data.info;
+
+      if(!barcodeData || barcodeData.length == 0) {
         this.onProcessingEvent.emit('false');
         return;
       }
 
-      this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
-      this.form["barcode_processed"] = BarcodeStatus.Processed; 
-      this.fillElementsWithFetchedData(data);
-      this.onProcessingEvent.emit('false');
-
+      //manage duplicate submissions
+      if (data["action"] && data["action"] == "edit_submission") {
+        data["form_id"] = this.form.form_id;
+        this.duplicateLeadsService.handleDuplicateLeads(this.form, data);
+      } else {
+        this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
+        this.form["barcode_processed"] = BarcodeStatus.Processed;
+        this.fillElementsWithFetchedData(barcodeData);
+      }
     }, err => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
@@ -181,7 +192,7 @@ export class Badge extends BaseElement implements OnInit {
 	  if (this.element.badge_type && this.element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences);
   }
 
   setDisabledState(isDisabled: boolean): void {

@@ -21,6 +21,7 @@ export class FormSubmission{
   last_sync_date: string;
   hidden_elements: string[];
   is_filled_from_list: boolean = false;
+  is_rapid_scan: number = 0;
 
   station_id: string;
 

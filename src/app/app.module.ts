@@ -90,6 +90,7 @@ import {BadgeRapidCapture} from "../services/badge-rapid-capture";
 import {BCRapidCapture} from "../services/bc-rapid-capture";
 import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
+import {AppPreferences} from "@ionic-native/app-preferences";
 
 @NgModule({
   declarations: [
@@ -228,7 +229,8 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
     BadgeRapidCapture,
     BCRapidCapture,
     ProgressHud,
-    DuplicateLeadsService
+    DuplicateLeadsService,
+    AppPreferences
   ]
 })
 export class AppModule { }

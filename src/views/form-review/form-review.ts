@@ -90,7 +90,7 @@ export class FormReview {
 
 	isSubmissionRemovable(submission: FormSubmission) {
 	  return (submission.status != SubmissionStatus.OnHold) &&
-      (submission.status != SubmissionStatus.Submitted);
+      (submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
   }
 
 	getColor(submission: FormSubmission) {
@@ -124,7 +124,10 @@ export class FormReview {
 
 
 	goToEntry(submission) {
-		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+	  if (this.isNoProcessedRapidScan(submission) || submission.id == -1) {
+     return;
+    }
+    this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
 
 	hasOnlyBusinessCard(submission: FormSubmission){
@@ -141,10 +144,12 @@ export class FormReview {
   }
 
   displayedName(submission) {
-	  let hasFullName = submission.full_name && submission.full_name.length > 0;
-	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
+	  let fullName = submission.full_name.trim();
+    let hasFullName = fullName && fullName.length > 0;
+    let firstName = submission.first_name.trim();
+	  let hasFirstLastName = firstName && firstName.length > 0;
 	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
-	  let isScannedAndPending = submission.barcode_processed = BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
+	  let isScannedAndPending = submission.barcode_processed == BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
 	  if (hasFullName) {
 	    return submission.full_name;
     } else if (hasFirstLastName) {
@@ -153,6 +158,11 @@ export class FormReview {
 	    return "Scanned";
     }
     return "";
+  }
+
+  isNoProcessedRapidScan(submission) {
+    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+    return submission.is_rapid_scan == 1 && isScannedAndNoProcessed && !submission.hold_submission;
   }
 
   displayedProperty(submission, key) {
@@ -167,16 +177,11 @@ export class FormReview {
   }
 
 
-  private normalizeURL(url: string): string {
-    return this.util.normalizeURL(url);
-  }
-
 	getBusinessCard(submission: FormSubmission){
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
 		if (front && front.length > 0) {
       front = this.util.imageUrl(front);
-      front = this.normalizeURL(front);
     }
     return front;
 	}
@@ -191,13 +196,18 @@ export class FormReview {
 
 	onFilterChanged() {
 		this.zone.run(() => {
-			var f = this.filter;
+			let f = this.filter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
 				if (Number(f["status"]) == SubmissionStatus.ToSubmit) {
-				  return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
+            return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
         }
+
+        if (Number(f["status"]) == SubmissionStatus.Blocked) {
+          return (sub.status == SubmissionStatus.InvalidFields) || (sub.status == SubmissionStatus.Blocked);
+        }
+
 				return !f["status"] || sub.status + "" == f["status"] + "";
 			}).reverse();
 			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
@@ -205,6 +215,12 @@ export class FormReview {
 			}).length > 0;
 
 			console.log(this.hasSubmissionsToSend);
+
+			if (this.filteredSubmissions.length == 0) {
+			  let fakeSubmission = new FormSubmission();
+			  fakeSubmission.id = -1;
+			  this.filteredSubmissions.push(fakeSubmission);
+      }
 
       this.content.resize();
 		});

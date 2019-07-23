@@ -7,6 +7,7 @@ import {GOCBarcodeScanner} from "../components/form-view/elements/badge/Scanners
 import {Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
 import {RapidCapture} from "./rapid-capture-service";
+import {AppPreferences} from "@ionic-native/app-preferences";
 
 @Injectable()
 
@@ -17,7 +18,8 @@ export class BadgeRapidCapture implements RapidCapture {
   constructor(public barcodeScanner: BarcodeScanner,
               public platform: Platform,
               public nfc: NFC,
-              public ndef: Ndef) {
+              public ndef: Ndef,
+              public appPreferences: AppPreferences) {
     //
   }
 
@@ -25,12 +27,12 @@ export class BadgeRapidCapture implements RapidCapture {
     if (element.badge_type == ScannerType.NFC) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, element.barcode_type, this.platform);
+    return new GOCBarcodeScanner(this.barcodeScanner, element.barcode_type, this.platform, this.appPreferences);
   }
 
-  capture(element: FormElement) {
+  capture(element: FormElement, id: string) {
     this.scanner = this.getScanner(element);
-    return this.scanner.scan(true).then((response) => {
+    return this.scanner.scan(true, id).then((response) => {
       return response.barcodes;
     })
   }

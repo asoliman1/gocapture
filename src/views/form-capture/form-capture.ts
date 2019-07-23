@@ -34,6 +34,7 @@ import {RapidCaptureService} from "../../services/rapid-capture-service";
 import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Scanner";
 import {Observable} from "rxjs";
 import {ProgressHud} from "../../services/progress-hud";
+import {AppPreferences} from "@ionic-native/app-preferences";
 
 @Component({
   selector: 'form-capture',
@@ -96,7 +97,8 @@ export class FormCapture implements AfterViewInit {
               private vibration: Vibration,
               private rapidCaptureService: RapidCaptureService,
               private alertCtrl: AlertController,
-              private progressHud: ProgressHud) {
+              private progressHud: ProgressHud,
+              private appPreferences: AppPreferences) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -129,6 +131,7 @@ export class FormCapture implements AfterViewInit {
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
     this.dispatch = this.navParams.get("dispatch");
+    this.submitAttempt = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
@@ -162,47 +165,71 @@ export class FormCapture implements AfterViewInit {
     this.openRapidScanMode();
   }
 
-  private startRapidScanModeForSource(source: string) {
+  private async startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
 
     this.progressHud.showLoader("Loading scanner...", 2000);
 
     let element = this.getElementForId(this.selectedScanSource);
-    this.rapidCaptureService.start(element).then((items) => {
-      this.progressHud.hideLoader();
-      let submissions = [];
-      for (let item of items) {
-        let saveSubmObservable = this.saveSubmissionWithData(item, element);
-        submissions.push(saveSubmObservable);
-      }
+    this.startRapidScan(element);
+  }
 
-      Observable.zip(...submissions).subscribe(() => {
-        this.navCtrl.pop().then(()=> {
-          this.client.doSync(this.form.form_id).subscribe(()=> {
-            console.log('rapid scan synced items');
-          }, (error) => {
-            console.error(error);
-          });
-        });
-      }, (error) => {
-        console.error(error);
-        this.navCtrl.pop();
-        this.progressHud.hideLoader();
-      })
+  private startRapidScan(element) {
+    //save form id for which we have rapidscan
+    this.appPreferences.store("rapidScan", "formId", this.form.form_id);
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation);
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
+
+    this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
+      this.progressHud.hideLoader();
+      this.processRapidScanResult(items, element);
     });
   }
 
-  private saveSubmissionWithData(data, element) {
+  private processRapidScanResult(items, element) {
+    let submissions = [];
+
+    let i = 100;
+    let timestamp = new Date().getTime();
+    for (let item of items) {
+      let submId = parseInt( timestamp + "" + i);
+      let saveSubmObservable = this.saveSubmissionWithData(item, element, submId);
+      i++;
+      submissions.push(saveSubmObservable);
+    }
+
+    Observable.zip(...submissions).subscribe(() => {
+      //barcodes are saved to the database so we can clear the defaults
+      this.rapidCaptureService.removeDefaults(this.form.form_id);
+
+      this.navCtrl.pop().then(()=> {
+        this.client.doSync(this.form.form_id).subscribe(()=> {
+          console.log('rapid scan synced items');
+        }, (error) => {
+          console.error(error);
+        });
+      });
+    }, (error) => {
+      console.error(error);
+      this.navCtrl.pop();
+      this.progressHud.hideLoader();
+    })
+  }
+
+  //saving subm from rapid scan mode
+  private saveSubmissionWithData(data, element, submId) {
     let submission = new FormSubmission();
     submission.fields = this.formView.getValues();
     let elementId = "element_" + element.id;
     submission.fields[elementId] = data;
-    submission.id = new Date().getTime() + Math.floor(Math.random() * 100000);
+    submission.id = submId;
     submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;
 
-    submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+    submission.is_rapid_scan = 1;
+
+    submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
       submission.station_id = this.selectedStation;
@@ -444,7 +471,7 @@ export class FormCapture implements AfterViewInit {
       this.submission.status = SubmissionStatus.ToSubmit;
     }
 
-    this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+    this.submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
       this.submission.station_id = this.selectedStation;
@@ -452,9 +479,14 @@ export class FormCapture implements AfterViewInit {
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       if (this.isEditing) {
-        this.navCtrl.pop();
+        if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+          this.navCtrl.pop();
+        } else {
+          this.navCtrl.popToRoot();
+        }
         return;
       }
+
       if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
         this.clearPlaceholders();
         this.submission = null;
@@ -613,21 +645,11 @@ export class FormCapture implements AfterViewInit {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
-  private getHiddenElementsPerVisibilityRules(): string[] {
-    let hiddenElements = this.form.elements.filter(element => {
-      return element["visible_conditions"] && !element.isMatchingRules;
-    });
 
-    let elementsIds = [];
-    for (let element of hiddenElements) {
-      elementsIds = elementsIds.concat(`element_${element["id"]}`);
-    }
-    return elementsIds;
-  }
 
   openStations() {
 
-    if (this.isReadOnly(this.submission) || this.isEditing) {
+    if (this.submission.id) {
       return;
     }
 
@@ -638,7 +660,12 @@ export class FormCapture implements AfterViewInit {
       this.stationsAlert = this.alertCtrl.create({
         title: 'Select Station:',
         buttons: [
-
+          {
+            text: 'Cancel',
+            handler: () => {
+              this.navCtrl.pop();
+            }
+          },
           {
             text: 'Ok',
             handler: (station) => {

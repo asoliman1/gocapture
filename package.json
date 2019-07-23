@@ -20,6 +20,7 @@
     "@angular/http": "5.0.3",
     "@angular/platform-browser": "5.0.3",
     "@angular/platform-browser-dynamic": "5.0.3",
+    "@ionic-native/app-preferences": "^4.20.0",
     "@ionic-native/app-version": "^4.5.3",
     "@ionic-native/barcode-scanner": "4.20.0",
     "@ionic-native/camera": "^4.5.3",
@@ -57,6 +58,7 @@
     "cordova-ios": "5.0.1",
     "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-advanced-http": "^2.0.4",
+    "cordova-plugin-app-preferences": "file:3rdParty/me.apla.cordova.app-preferences-cordova-9.0.0",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-badge": "0.8.8",
     "cordova-plugin-camera": "file:3rdParty/cordova-plugin-camera",
@@ -70,7 +72,7 @@
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-gocapture-ocr": "file:cordova-plugin-gocapture-ocr",
     "cordova-plugin-ionic-keyboard": "^2.1.2",
-    "cordova-plugin-ionic-webview": "2.3.1",
+    "cordova-plugin-ionic-webview": "4.1.1",
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-media": "^5.0.2",
     "cordova-plugin-network-information": "^2.0.1",
@@ -146,16 +148,17 @@
       "com-sarriaroman-photoviewer": {},
       "cordova-plugin-local-notification": {},
       "cordova-wheel-selector-plugin": {},
-      "cordova-plugin-ionic-webview": {
-        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
-      },
       "cordova-plugin-camera-preview": {
         "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
       },
       "phonegap-plugin-barcodescanner": {},
       "cordova-plugin-vibration": {},
-      "cordova-plugin-add-swift-support": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-app-preferences": {},
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
       "android",

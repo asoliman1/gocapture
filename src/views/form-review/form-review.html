@@ -33,34 +33,50 @@
 </ion-header>
 
 <ion-content class="form-summary">
-	<div [hidden]="filteredSubmissions.length == 0">
-		<!-- [virtualScroll]="filteredSubmissions" approxItemHeight="84px"-->
-		<ion-list >
-      <ion-item-sliding *ngFor="let submission of filteredSubmissions"  [class.danger]="submission.invalid_fields == 1">
-        <ion-item (click)="goToEntry(submission)">
-          <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
 
-          <div *ngIf="!shouldShowBusinessCard(submission)">
+  <ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="84px" >
+    <ion-item-sliding *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
+      <ion-item (click)="goToEntry(submission)">
+
+        <ng-container *ngIf="submission.id == -1">
+          <div >
+            <h1>No items to display</h1>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="submission.status != 1 && getBusinessCard(submission)">
+          <img class="business-card-thumbnail" [src]="getBusinessCard(submission) | convertFileSrc">
+        </ng-container>
+
+        <ng-container *ngIf="!shouldShowBusinessCard(submission) && !isNoProcessedRapidScan(submission)">
+          <div >
             <h1>{{displayedName(submission)}}</h1>
             <h2>{{submission.company}}</h2>
             <h2>{{displayedProperty(submission, "email")}}</h2>
             <h2>{{submission.telephone}}</h2>
           </div>
+        </ng-container>
 
-          <button ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
-            <ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
-          </button>
-        </ion-item>
-        <ion-item-options side="right" *ngIf="isSubmissionRemovable(submission)">
-          <button ion-button color="danger" (click)="deleteSubmission(submission)">
-            <ion-icon name="trash"></ion-icon>
-            Delete
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+        <ng-container *ngIf="!shouldShowBusinessCard(submission) && isNoProcessedRapidScan(submission)">
+          <div >
+            <h1><i>Processing scan...</i></h1>
+          </div>
+        </ng-container>
 
-		</ion-list>
-	</div>
+        <button *ngIf="submission.id != -1" ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
+          <ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
+        </button>
+      </ion-item>
+      <ion-item-options side="right" *ngIf="isSubmissionRemovable(submission)">
+        <button ion-button color="danger" (click)="deleteSubmission(submission)">
+          <ion-icon name="trash"></ion-icon>
+          Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
+
 	<!--ion-infinite-scroll (ionInfinite)="doInfinite($event)">
 		<ion-infinite-scroll-content></ion-infinite-scroll-content>
 	</ion-infinite-scroll-->

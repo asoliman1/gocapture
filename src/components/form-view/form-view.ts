@@ -185,8 +185,9 @@ export class FormView {
       this.onValidationChange.emit(this.theForm.valid);
     });
 
-    this.valueChangesSub = this.theForm.valueChanges.subscribe(data => {
+    this.valueChangesSub = this.theForm.valueChanges.subscribe((data) => {
       this.updateForm();
+
     });
 
     setTimeout(() => {
@@ -319,7 +320,7 @@ export class FormView {
 
 
   private updateForm() {
-    this.form.elements.forEach(element => {
+    this.form.elements.forEach((element) => {
       if (element["visible_conditions"]) {
         this.applyVisibilityRules(element);
       }
