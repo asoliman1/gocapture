@@ -92,6 +92,7 @@ import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
 import {DocumentViewer} from "@ionic-native/document-viewer";
+import {FileOpener} from "@ionic-native/file-opener";
 
 @NgModule({
   declarations: [
@@ -232,7 +233,8 @@ import {DocumentViewer} from "@ionic-native/document-viewer";
     ProgressHud,
     DuplicateLeadsService,
     AppPreferences,
-    DocumentViewer
+    DocumentViewer,
+    FileOpener
   ]
 })
 export class AppModule { }

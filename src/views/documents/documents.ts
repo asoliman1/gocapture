@@ -1,10 +1,12 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ActionSheetController, IonicPage, NavController, NavParams} from 'ionic-angular';
+import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
+import {ActionSheetController, Content, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument, IDocumentCategory} from "../../model";
 import {DocumentViewer} from "@ionic-native/document-viewer";
 import { File } from '@ionic-native/file';
+import {FileOpener} from "@ionic-native/file-opener";
+import {FileUtils} from "../../util/file";
 
 export enum DocumentShareMode {
   SEND_TO_BACKEND,
@@ -18,8 +20,8 @@ export enum DocumentShareMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Documents {
-  documentsSource: IDocumentCategory;
-  selectedDocuments: {};
+  private documentsSource: IDocumentCategory;
+  private selectedDocuments: object = {};
   private selectedTheme;
   private shareMode: DocumentShareMode;
 
@@ -30,11 +32,12 @@ export class Documents {
     private actionSheetCtrl: ActionSheetController,
     private themeProvider: ThemeProvider,
     private documentViewer: DocumentViewer,
-    private file: File
+    private file: File,
+    private fileOpener: FileOpener,
+    private toast: ToastController
   ) {
     this.documentsSource = this.navParams.get('documentSource');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
-    this.selectedDocuments = [];
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
@@ -44,18 +47,41 @@ export class Documents {
     console.log(this.selectedDocuments);
   }
 
-  openDocument(document: IDocument) {
-    const path = this.file.applicationDirectory + 'www/' + document.url;
+  async openDocument(document: IDocument) {
+    const documentExtension = FileUtils.getFileExtension(document.url);
+    const filePath = this.file.applicationDirectory + 'www/' + document.url;
 
-    this.documentViewer.viewDocument(
-      path,
-      'application/pdf',
-      {title: document.name},
-      null,
-      null,
-      null,
-      (err) => { console.log('Error opening PDF file => ', err); }
+    // open the PDF viewer
+    if (documentExtension === 'pdf') {
+      console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
+
+      this.documentViewer.viewDocument(
+        filePath,
+        'application/pdf',
+        {title: document.name},
+        null,
+        null,
+        null,
+        (err) => { console.log('Error opening PDF file => ', err); }
       );
+
+    }
+
+    // try use the file opener
+    const documentType = FileUtils.getTypeByExtension(documentExtension);
+    if (documentType) {
+      console.log('TRYING FILE OPENER FOR DOCUMENT', JSON.stringify(document));
+      return this.fileOpener.open(filePath, documentType);
+    }
+
+    // error
+    console.log('CANNOT OPEN DOCUMENT', JSON.stringify(document));
+    this.toast.create({
+      message: `The selected document couldn't be open. Please try it again later.`,
+      duration: 5000,
+      position: "top",
+      cssClass: "error"
+    }).present();
   }
 
   send() {

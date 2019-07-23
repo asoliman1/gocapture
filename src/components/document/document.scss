@@ -3,6 +3,7 @@ document {
   flex-flow: column;
   align-items: center;
 
+
   ion-label {
     max-width: 125px;
     overflow: hidden;
@@ -16,6 +17,12 @@ document {
     img {
       width: 100px;
       height: 125px;
+      position: relative;
+    }
+
+    img:active {
+      transform: scale(.8);
+      transition: all .5s ease-in;
     }
 
     ion-icon {
