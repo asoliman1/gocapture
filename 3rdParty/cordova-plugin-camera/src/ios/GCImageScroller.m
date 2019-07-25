@@ -32,7 +32,19 @@
 - (void)reloadWithImages:(NSArray *)images
 {
     self.images = images;
-    [self.imagesCollectionView reloadData];
+    [self.imagesCollectionView performBatchUpdates:^{
+        [self.imagesCollectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+    } completion:nil];
+}
+
+- (void)reload
+{
+    if (self.imagesCollectionView.indexPathsForSelectedItems.count > 0)
+    {
+        [self.imagesCollectionView performBatchUpdates:^{
+            [self.imagesCollectionView reloadItemsAtIndexPaths:self.imagesCollectionView.indexPathsForSelectedItems];
+        } completion:nil];
+    }
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -57,6 +69,7 @@
 }
 
 #pragma mark - UICollectionView Delegate
+
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {

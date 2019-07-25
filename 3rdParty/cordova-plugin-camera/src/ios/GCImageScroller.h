@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) id<GCImageScrollerDelegate>delegate;
 
 - (void)reloadWithImages:(NSArray *)images;
+- (void)reload;
 
 @end
 
