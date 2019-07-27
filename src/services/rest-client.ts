@@ -1,16 +1,27 @@
-import { BadgeResponse, ItemData } from '../model/badge';
-import { Injectable } from "@angular/core";
-import { Headers, Response, Http, URLSearchParams } from "@angular/http";
-import { Config } from "../config";
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
-import { Device } from "@ionic-native/device";
+import {BadgeResponse} from '../model/badge';
+import {Injectable} from "@angular/core";
+import {Headers, Http, Response, URLSearchParams} from "@angular/http";
+import {Config} from "../config";
+import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {DeviceFormMembership, Form, FormSubmission, SubmissionStatus, User} from "../model";
+import {
+  AuthenticationRequest,
+  BaseResponse,
+  DataResponse,
+  FileResponse,
+  FileUploadRequest,
+  FileUploadResponse,
+  FormSubmitResponse,
+  RecordsResponse,
+  SubmissionResponse
+} from "../model/protocol";
+import {Device} from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
 import {isProductionEnvironment} from "../app/config";
 import {retry} from "rxjs/operators/retry";
+import {DBClient} from "./db-client";
 
 @Injectable()
 export class RESTClient {
@@ -26,7 +37,8 @@ export class RESTClient {
 	private online = true;
 	private device: Device;
 
-	constructor(private http: Http) {
+	constructor(private http: Http,
+              private dbClient: DBClient) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
@@ -176,68 +188,84 @@ export class RESTClient {
 		if(lastSyncDate){
 			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
-		let f = form;
-		return this.getAll<SubmissionResponse>("/forms/submissions.json", opts)
+		return this.getAllItems<SubmissionResponse>("/forms/submissions.json", opts)
 				.map(resp => {
-					let data: FormSubmission[] = [];
-					resp.forEach((item: SubmissionResponse) => {
-						let entry: FormSubmission = new FormSubmission();
-						entry.id = item.activity_id;
-						entry.activity_id = item.activity_id;
-						entry.status = SubmissionStatus.Submitted;
-						entry.prospect_id = parseInt(item.prospect_id+"");
-						entry.hold_request_id = item.hold_request_id;
-						entry.email = item.email;
-						entry.form_id = parseInt(form.id);
-						item.data.forEach((dataItem) => {
-							if(!dataItem.value){
-								return;
-							}
-							let fieldName = "element_" + dataItem.element_id;
-							let field = form.getFieldById(dataItem.element_id);
-
-							switch(field.type){
-								case "simple_name":
-								case "address":
-								  if (dataItem["value_splitted"]) {
-								    let values = dataItem["value_splitted"];
-								    entry.fields = {...entry.fields, ...values};
-                  }
-									break;
-								case "image":
-                case "business_card":
-                case "audio":
-									try{
-										let obj = JSON.parse(dataItem.value);
-										if(typeof(obj) == "string" ){
-											obj = JSON.parse(obj);
-										}
-										entry.fields[fieldName] = obj;
-										for(var key in <any>entry.fields[fieldName]){
-											entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
-										}
-									}catch(e){
-										console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
-									}
-									break;
-								case "checkbox":
-									entry.fields[fieldName] = dataItem.value.split(";");
-									break;
-								default:
-									entry.fields[fieldName] = dataItem.value;
-							}
-						});
-						entry.first_name = "";
-						entry.last_name = "";
-						entry.company = "";
-						entry.phone = "";
-						entry.sub_date = item.submission_date;
-						entry.updateFields(f);
-						data.push(entry);
-					});
-					return data;
+				  this.handleDeletedSubmissions(resp.deletedItems);
+					return this.handleSubmissionsResponse(form, resp.items);
 				});
 	}
+
+	private handleDeletedSubmissions(submissions) {
+    let submissionsToDelete = [];
+	  submissions.forEach((submId) => {
+	    let submissionToDelete = new FormSubmission();
+	    submissionToDelete.id = submId;
+      let deleteSubmObs = this.dbClient.deleteSubmission(submissionToDelete);
+      submissionsToDelete.push(deleteSubmObs);
+    });
+
+    return Observable.zip(...submissionsToDelete);
+  }
+
+	private handleSubmissionsResponse(form, items) {
+    let data: FormSubmission[] = [];
+    items.forEach((item: SubmissionResponse) => {
+      let entry: FormSubmission = new FormSubmission();
+      entry.id = item.activity_id;
+      entry.activity_id = item.activity_id;
+      entry.status = SubmissionStatus.Submitted;
+      entry.prospect_id = parseInt(item.prospect_id+"");
+      entry.hold_request_id = item.hold_request_id;
+      entry.email = item.email;
+      entry.form_id = parseInt(form.id);
+      item.data.forEach((dataItem) => {
+        if(!dataItem.value){
+          return;
+        }
+        let fieldName = "element_" + dataItem.element_id;
+        let field = form.getFieldById(dataItem.element_id);
+
+        switch(field.type){
+          case "simple_name":
+          case "address":
+            if (dataItem["value_splitted"]) {
+              let values = dataItem["value_splitted"];
+              entry.fields = {...entry.fields, ...values};
+            }
+            break;
+          case "image":
+          case "business_card":
+          case "audio":
+            try{
+              let obj = JSON.parse(dataItem.value);
+              if(typeof(obj) == "string" ){
+                obj = JSON.parse(obj);
+              }
+              entry.fields[fieldName] = obj;
+              for(var key in <any>entry.fields[fieldName]){
+                entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
+              }
+            }catch(e){
+              console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
+            }
+            break;
+          case "checkbox":
+            entry.fields[fieldName] = dataItem.value.split(";");
+            break;
+          default:
+            entry.fields[fieldName] = dataItem.value;
+        }
+      });
+      entry.first_name = "";
+      entry.last_name = "";
+      entry.company = "";
+      entry.phone = "";
+      entry.sub_date = item.submission_date;
+      entry.updateFields(form);
+      data.push(entry);
+    });
+    return data;
+  }
 
 	public getAvailableFormIds(): Observable<number[]>{
 		return this.getAll<number>("/device/available_forms.json", {})
@@ -394,10 +422,10 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public submitForm(data: FormSubmission): Observable<{
-		id:number, 
-		message:string, 
-		hold_request_id:number, 
-		response_status: string, 
+		id:number,
+		message:string,
+		hold_request_id:number,
+		response_status: string,
 		form_id: number;
 		duplicate_action?: string,
 		submission?: FormSubmission,
@@ -486,6 +514,7 @@ export class RESTClient {
 				}else{
 					records = [data.records];
 				}
+
 				result.push.apply(result, records);
 				if(data.count + offset < data.total_count){
 					offset += data.count;
@@ -507,6 +536,53 @@ export class RESTClient {
 		});
 		return response;
 	}
+
+  private getAllItems<T>(relativeUrl: string, content: any) : Observable<{items: T[], deletedItems:any[]}>{
+    return new Observable<{ items: T[], deletedItems: any[] }>((obs: Observer<{ items: T[], deletedItems: any[] }>) => {
+      var offset = 0;
+      var result: { items: T[], deletedItems: any[] } = {items: [], deletedItems: []};
+      let handler = (data: RecordsResponse<T>) => {
+
+        var records = [];
+        var deletedRecords = [];
+
+        if (data["deleted_submissions"]) {
+          deletedRecords = data["deleted_submissions"].map((item) => {
+            return item.activity_id;
+          });
+        }
+
+        if (!data.records) {
+
+        } else if (Array.isArray(data.records)) {
+          records = data.records;
+        } else {
+          records = [data.records];
+        }
+
+        result.items.push.apply(result, records);
+        result.deletedItems.push.apply(result.deletedItems, deletedRecords);
+
+        if (data.count + offset < data.total_count) {
+          offset += data.count;
+          doTheCall();
+        } else {
+          obs.next(result);
+          obs.complete();
+        }
+      };
+
+      let doTheCall = () => {
+        let params = Object.assign({}, content);
+        if (offset > 0) {
+          params.offset = offset;
+        }
+        this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
+      };
+      doTheCall();
+
+    });
+  }
 
 	private call<T>(method: String, relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((responseObserver: Observer<T>) => {
