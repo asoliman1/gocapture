@@ -25,10 +25,14 @@
 			<ion-label>Key</ion-label>
 			<ion-label class="align-right"></ion-label>
 		</ion-item>
-		<ion-item class="last">
+		<ion-item [ngClass]="{'last': !user.device_id}">
 			<ion-label>Operator</ion-label>
 			<ion-label class="align-right">{{getName(user)}}</ion-label>
 		</ion-item>
+    <ion-item class="last" *ngIf="user.device_id">
+      <ion-label>Device ID</ion-label>
+      <ion-label class="align-right">{{user.device_id}}</ion-label>
+    </ion-item>
 		<ion-list-header>
 			Operations
 		</ion-list-header>
