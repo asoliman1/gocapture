@@ -746,7 +746,7 @@ export class DBClient {
     form.hold_submission = dbForm.hold_submission;
     form.hold_submission_reason = dbForm.hold_submission_reason;
     form.hidden_elements = JSON.parse(dbForm.hidden_elements);
-    form.station_id = dbForm.station_id;
+    form.station_id = parseInt(dbForm.station_id) + '';
     form.is_rapid_scan = dbForm.is_rapid_scan;
     return form;
   }

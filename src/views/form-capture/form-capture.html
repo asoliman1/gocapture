@@ -2,7 +2,7 @@
 	<ion-navbar color="primary" #navbar>
 
     <ion-title>
-      <div #formTitle (click)="openStations()">
+      <div #formTitle (click)="onOpenStations()">
         {{form ? form.name : ''}}
         <br>
         <span *ngIf="form && selectedStation" >{{stationTitle(selectedStation)}}</span>
