@@ -7,6 +7,8 @@ import {DocumentViewer} from "@ionic-native/document-viewer";
 import { File } from '@ionic-native/file';
 import {FileOpener} from "@ionic-native/file-opener";
 import {FileUtils} from "../../util/file";
+import {DocumentsService} from "../../services/documents-service";
+import {SocialSharing} from "@ionic-native/social-sharing";
 
 export enum DocumentShareMode {
   SEND_TO_BACKEND,
@@ -34,7 +36,9 @@ export class Documents {
     private documentViewer: DocumentViewer,
     private file: File,
     private fileOpener: FileOpener,
-    private toast: ToastController
+    private toast: ToastController,
+    private documentsService: DocumentsService,
+    private socialSharing: SocialSharing
   ) {
     this.documentsSource = this.navParams.get('documentSource');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
@@ -107,6 +111,8 @@ export class Documents {
   }
 
   shareDocuments() {
+    const message = this.prepareDocumentsMessage();
+
     this.actionSheetCtrl.create({
       title: "How do you want to send the docs?",
       buttons: [
@@ -115,6 +121,7 @@ export class Documents {
           icon: "mail",
           handler: () => {
             console.log('email clicked');
+            this.shareViaEmail(message);
           }
         },
         {
@@ -122,6 +129,23 @@ export class Documents {
           icon: "chatbubbles",
           handler: () => {
             console.log('sms clicked');
+            this.shareViaSMS(message);
+          }
+        },
+        {
+          text: 'WhatsApp',
+          icon: "logo-whatsapp",
+          handler: () => {
+            console.log('WhatsApp clicked');
+            this.shareViaWhatsapp(message);
+          }
+        },
+        {
+          text: 'Facebook',
+          icon: "logo-facebook",
+          handler: () => {
+            console.log('facebook clicked');
+            this.shareViaFacebook(message);
           }
         },
         {
@@ -133,7 +157,54 @@ export class Documents {
     }).present();
   }
 
-  normalizeUrl(url: string) {
-    return this.util.normalizeURL(url);
+  private shareViaEmail(message: string) {
+    this.socialSharing.canShareViaEmail()
+      .then((_) => {
+        this.socialSharing.shareViaEmail(message, 'LeadLiaison Documents', [''])
+          .then((_) => {
+            console.log('EMAIL SHARED SUCCESSFULLY');
+          })
+          .catch((err) => {
+            console.log('EMAIL FAILED. ', JSON.stringify(err));
+          })
+      })
+      .catch((err) => {
+        console.log('CANNOT SHARE VIA EMAIL ', JSON.stringify(err));
+      })
+  }
+
+  private shareViaSMS(message: string) {
+    this.socialSharing.shareViaSMS(message, '')
+      .then((_) => {
+        console.log('SMS SHARED SUCCESSFULLY');
+      })
+      .catch((err) => {
+        console.log("SMS COULDN'T BE SENT ", err);
+      });
+  }
+
+  private shareViaFacebook(message: string) {
+    this.socialSharing.shareViaFacebook(message)
+      .then((_) => {
+        console.log('SHARED VIA FACEBOOK SUCCESSFULLY');
+      })
+      .catch((err) => {
+        console.log("COULDN'T SHARE VIA FACEBOOK ", JSON.stringify(err));
+      })
+  }
+
+  private shareViaWhatsapp(message: string) {
+      this.socialSharing.shareViaWhatsApp(message)
+        .then((_) => {
+          console.log('SHARED VIA WHATSAPP SUCCESSFULLY');
+        })
+        .catch((err) => {
+          console.log("COULDN'T SHARE VIA WHATSAPP ", JSON.stringify(err));
+        })
+  }
+
+  // TODO: implement this
+  private prepareDocumentsMessage() {
+    return 'Test message';
   }
 }

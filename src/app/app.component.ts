@@ -118,7 +118,7 @@ export class MyApp {
         this.client.getUpdates().subscribe(()=> {});
 
         // sync documents
-        this.documentsService.syncAll();
+        //this.documentsService.syncAll();
       });
 
       this.hideSplashScreen();
@@ -192,7 +192,7 @@ export class MyApp {
       toaster.present();
     });
 
-    this.documentsService.syncAll();
+    //this.documentsService.syncAll();
   }
 
   private checkDir(dirName) {

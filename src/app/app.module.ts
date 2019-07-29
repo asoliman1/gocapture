@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {BrowserModule, SafeHtml} from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyApp } from './app.component';
 import { Login, UrlChoose } from "../views/login";
@@ -40,7 +40,6 @@ import {
 } from "../components/form-view/elements";
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
-//import { CustomFormsModule } from 'ng2-validation';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
 import { MyCurrencyDirective } from "../util/currency";
@@ -94,6 +93,7 @@ import {AppPreferences} from "@ionic-native/app-preferences";
 import {DocumentViewer} from "@ionic-native/document-viewer";
 import {FileOpener} from "@ionic-native/file-opener";
 import {DocumentsService} from "../services/documents-service";
+import {SocialSharing} from "@ionic-native/social-sharing";
 
 @NgModule({
   declarations: [
@@ -236,7 +236,8 @@ import {DocumentsService} from "../services/documents-service";
     AppPreferences,
     DocumentViewer,
     FileOpener,
-    DocumentsService
+    DocumentsService,
+    SocialSharing
   ]
 })
 export class AppModule { }

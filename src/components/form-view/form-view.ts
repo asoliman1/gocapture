@@ -62,7 +62,7 @@ export class FormView {
     private documentsService: DocumentsService
   ) {
     this.theForm = new FormGroup({});
-    this.documentsService.syncByForm(this.form.id);
+    //this.documentsService.syncByForm(this.form.id);
   }
 
   showSelection(){
