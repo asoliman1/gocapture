@@ -858,6 +858,11 @@ export class DBClient {
 		return this.remove(WORK, "submissions", [form.id]);
 	}
 
+  public deleteHoldSubmission(form: FormSubmission) {
+
+    return this.doUpdate(WORK, 'deleteByHoldId', 'submissions', [form.hold_request_id])
+  }
+
 	/**
 	 *
 	 */

@@ -190,7 +190,13 @@ export class RESTClient {
 		}
 		return this.getAllItems<SubmissionResponse>("/forms/submissions.json", opts)
 				.map(resp => {
-				  this.handleDeletedSubmissions(resp.deletedItems);
+				  if (resp.deletedItems) {
+            this.handleDeletedSubmissions(resp.deletedItems);
+          }
+
+				  if (resp.deletedHoldItems) {
+            this.handleDeletedHoldSubmissions(resp.deletedHoldItems);
+          }
 					return this.handleSubmissionsResponse(form, resp.items);
 				});
 	}
@@ -201,6 +207,18 @@ export class RESTClient {
 	    let submissionToDelete = new FormSubmission();
 	    submissionToDelete.id = submId;
       let deleteSubmObs = this.dbClient.deleteSubmission(submissionToDelete);
+      submissionsToDelete.push(deleteSubmObs);
+    });
+
+    return Observable.zip(...submissionsToDelete);
+  }
+
+  private handleDeletedHoldSubmissions(submissions) {
+    let submissionsToDelete = [];
+    submissions.forEach((submId) => {
+      let submissionToDelete = new FormSubmission();
+      submissionToDelete.id = submId;
+      let deleteSubmObs = this.dbClient.deleteHoldSubmission(submissionToDelete);
       submissionsToDelete.push(deleteSubmObs);
     });
 
@@ -537,18 +555,25 @@ export class RESTClient {
 		return response;
 	}
 
-  private getAllItems<T>(relativeUrl: string, content: any) : Observable<{items: T[], deletedItems:any[]}>{
-    return new Observable<{ items: T[], deletedItems: any[] }>((obs: Observer<{ items: T[], deletedItems: any[] }>) => {
-      var offset = 0;
-      var result: { items: T[], deletedItems: any[] } = {items: [], deletedItems: []};
+  private getAllItems<T>(relativeUrl: string, content: any) : Observable<{items: T[], deletedItems:any[], deletedHoldItems:any[]}>{
+    return new Observable<{ items: T[], deletedItems: any[], deletedHoldItems:any[] }>((obs: Observer<{ items: T[], deletedItems: any[], deletedHoldItems:any[] }>) => {
+      let offset = 0;
+      let result: { items: T[], deletedItems: any[], deletedHoldItems:any[] } = {items: [], deletedItems: [], deletedHoldItems: []};
       let handler = (data: RecordsResponse<T>) => {
 
-        var records = [];
-        var deletedRecords = [];
+        let records = [];
+        let deletedRecords = [];
+        let deletedHoldRecords = [];
 
         if (data["deleted_submissions"]) {
           deletedRecords = data["deleted_submissions"].map((item) => {
             return item.activity_id;
+          });
+        }
+
+        if (data["deleted_hold_submissions"]) {
+          deletedHoldRecords = data["deleted_hold_submissions"].map((item) => {
+            return item.hold_id;
           });
         }
 
@@ -562,6 +587,7 @@ export class RESTClient {
 
         result.items.push.apply(result, records);
         result.deletedItems.push.apply(result.deletedItems, deletedRecords);
+        result.deletedHoldItems.push.apply(result.deletedHoldItems, deletedHoldRecords);
 
         if (data.count + offset < data.total_count) {
           offset += data.count;
