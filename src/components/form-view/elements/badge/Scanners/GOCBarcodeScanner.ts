@@ -45,7 +45,7 @@ export class GOCBarcodeScanner implements Scanner {
         }
 
         if (scannedData["barcodes"]) {
-          resolve({barcodes: this.platform.is("ios") ? scannedData["barcodes"] : scannedData["barcodes"].split(",")});
+          resolve({barcodes: this.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])});
           return;
         }
 
