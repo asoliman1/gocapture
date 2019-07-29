@@ -93,6 +93,7 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
 import {DocumentViewer} from "@ionic-native/document-viewer";
 import {FileOpener} from "@ionic-native/file-opener";
+import {DocumentsService} from "../services/documents-service";
 
 @NgModule({
   declarations: [
@@ -234,7 +235,8 @@ import {FileOpener} from "@ionic-native/file-opener";
     DuplicateLeadsService,
     AppPreferences,
     DocumentViewer,
-    FileOpener
+    FileOpener,
+    DocumentsService
   ]
 })
 export class AppModule { }

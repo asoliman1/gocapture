@@ -13,6 +13,7 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import {ModalController} from "ionic-angular";
+import {DocumentsService} from "../../services/documents-service";
 
 @Component({
   selector: 'form-view',
@@ -54,8 +55,14 @@ export class FormView {
     2 : "queued"
   };
 
-  constructor(private fb: FormBuilder, private zone: NgZone, private modal: ModalController) {
+  constructor(
+    private fb: FormBuilder,
+    private zone: NgZone,
+    private modal: ModalController,
+    private documentsService: DocumentsService
+  ) {
     this.theForm = new FormGroup({});
+    this.documentsService.syncByForm(this.form.id);
   }
 
   showSelection(){

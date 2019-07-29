@@ -22,8 +22,7 @@ import {Colors} from "../constants/colors";
 import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
-import {LocalNotificationsService} from "../services/local-notifications-service";
-import {DuplicateLeadsService} from "../services/duplicate-leads-service";
+import {DocumentsService} from "../services/documents-service";
 
 declare var cordova;
 
@@ -52,7 +51,8 @@ export class MyApp {
     private loading: LoadingController,
     private logger: LogClient,
     public themeProvider: ThemeProvider,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private documentsService: DocumentsService) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
@@ -116,6 +116,9 @@ export class MyApp {
         checkDeviceStatus();
 
         this.client.getUpdates().subscribe(()=> {});
+
+        // sync documents
+        this.documentsService.syncAll();
       });
 
       this.hideSplashScreen();
@@ -188,6 +191,8 @@ export class MyApp {
       });
       toaster.present();
     });
+
+    this.documentsService.syncAll();
   }
 
   private checkDir(dirName) {

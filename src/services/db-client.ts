@@ -100,6 +100,32 @@ export class DBClient {
 				"delete": ""
 			}
 		},
+    {
+      name: 'documents',
+      master: false,
+      columns: [
+        { name: 'id', type: 'integer not null primary key' },
+        { name: 'formId', type: 'integer' },
+        { name: 'title', type: 'text' },
+        { name: 'url', type: 'text' },
+        { name: 'local_path', type: 'text' },
+        { name: 'processed', type: 'integer' },
+        { name: 'created_at', type: 'text' },
+        { name: 'updated_at', type: 'text' }
+      ],
+      queries: {
+        "select": "SELECT * FROM documents WHERE formId=?",
+        "selectByIds": "SELECT * FROM documents WHERE formId IN (?)",
+        "selectAll": "SELECT * FROM documents",
+        "selectAllUnprocessed": "SELECT * FROM documents WHERE processed=0",
+        "selectAllUnprocessedByID": "SELECT * FROM documents WHERE processed=0 and formId=?",
+        "update": "INSERT OR REPLACE INTO documents ( id, formId, title, url, local_path, processed, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?)",
+        "updateById": "UPDATE documents SET title=?, url=?, local_path=?, processed=? WHERE id=?",
+        "delete": "DELETE FROM documents WHERE id=?",
+        "deleteIn": "DELETE FROM documents WHERE formId IN (?)",
+        "deleteAll": "DELETE FROM documents"
+      }
+    },
 		{
 			name: 'contacts',
 			master: false,
@@ -721,6 +747,46 @@ export class DBClient {
 		});
 	}
 
+	public getUnprocessedDocuments(): Observable<any[]> {
+	  return new Observable<any[]>((responseObserver: Observer<any[]>) => {
+	    this.manager.db(WORK).subscribe((db) => {
+	      db.executeSql(this.getQuery('documents', 'selectAllUnprocessed'), [])
+          .then((data) => {
+            const resp = [];
+            console.log('ALL UNPROCESSED DOCUMENTS ', data);
+            for (let i = 0; i < data.rows.length; i++) {
+              resp.push(data.rows.item(i));
+            }
+
+            responseObserver.next(resp);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error('An error occurred: ' + JSON.stringify(err));
+          })
+      })
+    });
+  }
+
+  public getUnprocessedDocumentsByFormId(formId: number): Observable<any[]> {
+    return new Observable<any[]>((responseObserver: Observer<any[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery('documents', 'selectAllUnprocessedByID'), [formId])
+          .then((data) => {
+            const resp = [];
+            console.log(`ALL UNPROCESSED DOCUMENTS FOR FORM[${formId}]`, JSON.stringify(data));
+            for (let i = 0; i < data.rows.length; i++) {
+              resp.push(data.rows.item(i));
+            }
+
+            responseObserver.next(resp);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error('An error occurred: ' + JSON.stringify(err));
+          })
+      })
+    });
+  }
+
   private submissonFromDBEntry(dbForm) {
     let form = new FormSubmission();
     form.id = dbForm.id;
@@ -843,6 +909,10 @@ export class DBClient {
 		sub.updateFields(form);
 		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
 	}
+
+	public updateDocumentById(id: number, name: string, url: string, path: string = '', processed: boolean = true) {
+	  return this.updateById(WORK, 'documents', [name, url, path, processed, id]);
+  }
 
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
 		return this.saveAll<FormSubmission>(forms, "Submission");
