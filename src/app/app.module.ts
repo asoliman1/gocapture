@@ -76,6 +76,7 @@ import {BCRapidCapture} from "../services/bc-rapid-capture";
 import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
+import {SubmissionsRepository} from "../services/submissions-repository";
 
 
 @NgModule({
@@ -108,7 +109,7 @@ import {AppPreferences} from "@ionic-native/app-preferences";
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
     IonicImageViewerModule,
-	TextMaskModule, 
+	TextMaskModule,
 	PipesModule,
 	BusinessCardOverlayPageModule,
   ],
@@ -187,7 +188,8 @@ import {AppPreferences} from "@ionic-native/app-preferences";
     BCRapidCapture,
     ProgressHud,
     DuplicateLeadsService,
-    AppPreferences
+    AppPreferences,
+    SubmissionsRepository
   ]
 })
 export class AppModule { }

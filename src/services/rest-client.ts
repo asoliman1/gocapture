@@ -1,4 +1,4 @@
-import {BadgeResponse} from '../model/badge';
+import {BadgeResponse} from '../model';
 import {Injectable} from "@angular/core";
 import {Headers, Http, Response, URLSearchParams} from "@angular/http";
 import {Config} from "../config";
@@ -22,6 +22,7 @@ import {StatusResponse} from "../model/protocol/status-response";
 import {isProductionEnvironment} from "../app/config";
 import {retry} from "rxjs/operators/retry";
 import {DBClient} from "./db-client";
+import {SubmissionsRepository} from "./submissions-repository";
 
 @Injectable()
 export class RESTClient {
@@ -38,7 +39,8 @@ export class RESTClient {
 	private device: Device;
 
 	constructor(private http: Http,
-              private dbClient: DBClient) {
+              private dbClient: DBClient,
+              private submissionsRepository: SubmissionsRepository) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
@@ -191,39 +193,19 @@ export class RESTClient {
 		return this.getAllItems<SubmissionResponse>("/forms/submissions.json", opts)
 				.map(resp => {
 				  if (resp.deletedItems) {
-            this.handleDeletedSubmissions(resp.deletedItems);
+            this.submissionsRepository.handleDeletedSubmissions(resp.deletedItems).subscribe(()=>{
+              console.log('Removed deleted submissions - DONE');
+            });
           }
 
 				  if (resp.deletedHoldItems) {
-            this.handleDeletedHoldSubmissions(resp.deletedHoldItems);
+            this.submissionsRepository.handleDeletedHoldSubmissions(resp.deletedHoldItems).subscribe(() => {
+              console.log('Removed deleted HOLD submissions - DONE');
+            });
           }
 					return this.handleSubmissionsResponse(form, resp.items);
 				});
 	}
-
-	private handleDeletedSubmissions(submissions) {
-    let submissionsToDelete = [];
-	  submissions.forEach((submId) => {
-	    let submissionToDelete = new FormSubmission();
-	    submissionToDelete.id = submId;
-      let deleteSubmObs = this.dbClient.deleteSubmission(submissionToDelete);
-      submissionsToDelete.push(deleteSubmObs);
-    });
-
-    return Observable.zip(...submissionsToDelete);
-  }
-
-  private handleDeletedHoldSubmissions(submissions) {
-    let submissionsToDelete = [];
-    submissions.forEach((submId) => {
-      let submissionToDelete = new FormSubmission();
-      submissionToDelete.id = submId;
-      let deleteSubmObs = this.dbClient.deleteHoldSubmission(submissionToDelete);
-      submissionsToDelete.push(deleteSubmObs);
-    });
-
-    return Observable.zip(...submissionsToDelete);
-  }
 
 	private handleSubmissionsResponse(form, items) {
     let data: FormSubmission[] = [];
