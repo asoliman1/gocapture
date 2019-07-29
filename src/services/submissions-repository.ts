@@ -26,9 +26,9 @@ export class SubmissionsRepository {
 
   public handleDeletedHoldSubmissions(submissions) {
     let submissionsToDelete = [];
-    submissions.forEach((submId) => {
+    submissions.forEach((holdId) => {
       let submissionToDelete = new FormSubmission();
-      submissionToDelete.id = submId;
+      submissionToDelete.hold_request_id = holdId;
       let deleteSubmObs = this.dbClient.deleteHoldSubmission(submissionToDelete);
       submissionsToDelete.push(deleteSubmObs);
     });
