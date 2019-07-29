@@ -3,14 +3,14 @@
     <ion-col>
       <div class="card-label">Front</div>
       <div tappable class="card-container" (click)="captureImage(FRONT)">
-        <img class="card-image" #frontImage [src]="normalizeURL(theVal.front)" (load)="onImageLoaded($event, true)">
+        <img class="card-image" #frontImage [src]="theVal.front | convertFileSrc" (load)="onImageLoaded($event, true)">
         <ion-spinner name="ios-small" *ngIf="frontLoading"></ion-spinner>
       </div>
     </ion-col>
     <ion-col>
       <div class="card-label">Back</div>
       <div tappable class="card-container" (click)="captureImage(BACK)">
-        <img class="card-image" #backImage [src]="normalizeURL(theVal.back)" (load)="onImageLoaded($event, false)">
+        <img class="card-image" #backImage [src]="theVal.back | convertFileSrc" (load)="onImageLoaded($event, false)">
         <ion-spinner name="ios-small" *ngIf="backLoading"></ion-spinner>
       </div>
     </ion-col>

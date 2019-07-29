@@ -38,7 +38,7 @@
 		<ion-list >
       <ion-item-sliding *ngFor="let submission of filteredSubmissions"  [class.danger]="submission.invalid_fields == 1">
         <ion-item (click)="goToEntry(submission)">
-          <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission)">
+          <img class="business-card-thumbnail" *ngIf="submission.status != 1 && getBusinessCard(submission)" [src]="getBusinessCard(submission) | convertFileSrc">
 
           <div *ngIf="!shouldShowBusinessCard(submission)">
             <h1>{{displayedName(submission)}}</h1>

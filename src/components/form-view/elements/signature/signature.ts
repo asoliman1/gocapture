@@ -1,11 +1,11 @@
-import { Component, Input, forwardRef } from '@angular/core';
-import { FormElement } from "../../../../model";
-import { SignatureModal} from "./signature.modal";
-import { BaseElement } from "../base-element";
-import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
-import { ModalController } from 'ionic-angular/components/modal/modal-controller';
-import { File } from '@ionic-native/file';
+import {Component, forwardRef, Input} from '@angular/core';
+import {FormElement} from "../../../../model";
+import {SignatureModal} from "./signature.modal";
+import {BaseElement} from "../base-element";
+import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {ScreenOrientation} from '@ionic-native/screen-orientation';
+import {ModalController} from 'ionic-angular/components/modal/modal-controller';
+import {File} from '@ionic-native/file';
 import {Util} from "../../../../util/util";
 import {ImageProcessor} from "../../../../services/image-processor";
 
@@ -40,8 +40,7 @@ export class Signature extends BaseElement{
     }
     let folder = this.file.dataDirectory + "leadliaison/images";
     let name = this.currentVal.substr(this.currentVal.lastIndexOf("/") + 1);
-    let url = folder + "/" + name;
-    return this.util.normalizeURL(url);
+    return folder + "/" + name;
   }
 
 	show() {

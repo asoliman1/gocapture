@@ -144,7 +144,7 @@ export class FormReview {
 	  let hasFullName = submission.full_name && submission.full_name.length > 0;
 	  let hasFirstLastName = submission.first_name && submission.first_name.length > 0;
 	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
-	  let isScannedAndPending = submission.barcode_processed = BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
+	  let isScannedAndPending = submission.barcode_processed == BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
 	  if (hasFullName) {
 	    return submission.full_name;
     } else if (hasFirstLastName) {
@@ -166,17 +166,11 @@ export class FormReview {
     return "";
   }
 
-
-  private normalizeURL(url: string): string {
-    return this.util.normalizeURL(url);
-  }
-
 	getBusinessCard(submission: FormSubmission){
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
 		if (front && front.length > 0) {
       front = this.util.imageUrl(front);
-      front = this.normalizeURL(front);
     }
     return front;
 	}
