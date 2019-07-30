@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import {FormCapture} from "../views/form-capture";
-import {BarcodeStatus, FormSubmission, FormSubmissionType, SubmissionStatus} from "../model";
 import {BussinessClient} from "./business-service";
 import {Subscription} from "rxjs";
 import {ToastController} from "ionic-angular";
@@ -10,6 +9,7 @@ import {App} from 'ionic-angular';
 
 import * as moment from 'moment';
 import {ThemeProvider} from "../providers/theme/theme";
+import {SubmissionMapper} from "./submission-mapper";
 
 @Injectable()
 
@@ -22,7 +22,8 @@ export class DuplicateLeadsService {
               private popup: Popup,
               private toast: ToastController,
               private app: App,
-              private themeProvider: ThemeProvider) {
+              private themeProvider: ThemeProvider,
+              private submissionMapper: SubmissionMapper) {
     //
   }
 
@@ -60,7 +61,7 @@ export class DuplicateLeadsService {
               { text: 'Edit', handler: () => {
                   this.client.removeSubmission({id: data.id}).subscribe((_) => {
                     const form = forms.find((f) => f.form_id == data.form_id);
-                    const submission = this.mapDuplicateResponseToSubmission(data);
+                    const submission = this.submissionMapper.map(form, data.submission);
                     this.app.getActiveNav().push(FormCapture, { form: form, submission: submission, openEdit: true });
                   }, (err) => {
                     console.log("ERR ", err);
@@ -73,7 +74,7 @@ export class DuplicateLeadsService {
   }
 
   public handleDuplicateLeads(form, data) {
-    this.app.getActiveNav().push(FormCapture, { form: form, submission: this.mapDuplicateResponseToSubmission(data), openEdit: true }).then(() => {
+    this.app.getActiveNav().push(FormCapture, { form: form, submission: this.submissionMapper.map(form, data.submission), openEdit: true }).then(() => {
       const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
 
       setTimeout(()=>{
@@ -86,33 +87,4 @@ export class DuplicateLeadsService {
       }, 2000);
     });
   }
-
-  private mapDuplicateResponseToSubmission(data: any) {
-    const submission = new FormSubmission;
-    submission.id = data.submission.activity_id;
-    submission.form_id = parseInt(data.form_id);
-    submission.activity_id = data.submission.activity_id;
-    submission.prospect_id = data.submission.prospect_id;
-    submission.email = data.submission.email;
-    submission.sub_date = data.submission.submission_date;
-    submission.status = SubmissionStatus.Submitted;
-    submission.barcode_processed = data.submission.barcode_processed ? data.submission.barcode_processed : BarcodeStatus.None;
-    submission.submission_type = data.submission.submission_type ? data.submission.submission_type : FormSubmissionType.normal;
-
-    submission.fields = {};
-    data.submission.data.forEach((el) => {
-      if (el.value_splitted) {
-        Object.keys(el.value_splitted).forEach((key) => {
-          submission.fields[key] = el.value_splitted[key];
-        });
-      } else {
-        if (el["value"]) {
-          submission.fields["element_" + el['element_id']] = el["value"];
-        }
-      }
-    });
-
-    return submission;
-  }
-
 }

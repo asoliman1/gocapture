@@ -77,6 +77,7 @@ import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
 import {SubmissionsRepository} from "../services/submissions-repository";
+import {SubmissionMapper} from "../services/submission-mapper";
 
 
 @NgModule({
@@ -189,7 +190,8 @@ import {SubmissionsRepository} from "../services/submissions-repository";
     ProgressHud,
     DuplicateLeadsService,
     AppPreferences,
-    SubmissionsRepository
+    SubmissionsRepository,
+    SubmissionMapper
   ]
 })
 export class AppModule { }

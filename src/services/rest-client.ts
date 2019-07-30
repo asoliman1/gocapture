@@ -23,6 +23,7 @@ import {isProductionEnvironment} from "../app/config";
 import {retry} from "rxjs/operators/retry";
 import {DBClient} from "./db-client";
 import {SubmissionsRepository} from "./submissions-repository";
+import {SubmissionMapper} from "./submission-mapper";
 
 @Injectable()
 export class RESTClient {
@@ -40,7 +41,8 @@ export class RESTClient {
 
 	constructor(private http: Http,
               private dbClient: DBClient,
-              private submissionsRepository: SubmissionsRepository) {
+              private submissionsRepository: SubmissionsRepository,
+              private submissionMapper: SubmissionMapper) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
@@ -210,59 +212,9 @@ export class RESTClient {
 	private handleSubmissionsResponse(form, items) {
     let data: FormSubmission[] = [];
     items.forEach((item: SubmissionResponse) => {
-      let entry: FormSubmission = new FormSubmission();
-      entry.id = item.activity_id;
-      entry.activity_id = item.activity_id;
-      entry.status = SubmissionStatus.Submitted;
-      entry.prospect_id = parseInt(item.prospect_id+"");
-      entry.hold_request_id = item.hold_request_id;
-      entry.email = item.email;
-      entry.form_id = parseInt(form.id);
-      item.data.forEach((dataItem) => {
-        if(!dataItem.value){
-          return;
-        }
-        let fieldName = "element_" + dataItem.element_id;
-        let field = form.getFieldById(dataItem.element_id);
+      let formSubmmission = this.submissionMapper.map(form, item);
 
-        switch(field.type){
-          case "simple_name":
-          case "address":
-            if (dataItem["value_splitted"]) {
-              let values = dataItem["value_splitted"];
-              entry.fields = {...entry.fields, ...values};
-            }
-            break;
-          case "image":
-          case "business_card":
-          case "audio":
-            try{
-              let obj = JSON.parse(dataItem.value);
-              if(typeof(obj) == "string" ){
-                obj = JSON.parse(obj);
-              }
-              entry.fields[fieldName] = obj;
-              for(var key in <any>entry.fields[fieldName]){
-                entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
-              }
-            }catch(e){
-              console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
-            }
-            break;
-          case "checkbox":
-            entry.fields[fieldName] = dataItem.value.split(";");
-            break;
-          default:
-            entry.fields[fieldName] = dataItem.value;
-        }
-      });
-      entry.first_name = "";
-      entry.last_name = "";
-      entry.company = "";
-      entry.phone = "";
-      entry.sub_date = item.submission_date;
-      entry.updateFields(form);
-      data.push(entry);
+      data.push(formSubmmission);
     });
     return data;
   }
