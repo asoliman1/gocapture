@@ -8,7 +8,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform, 
+  Platform,
   ToastController,
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -463,7 +463,7 @@ export class FormCapture implements AfterViewInit {
 
     this.submission.fields = this.formView.getValues();
 
-    if (!this.submission.id) { 
+    if (!this.submission.id) {
       this.submission.id = new Date().getTime();
     }
 
@@ -646,6 +646,12 @@ export class FormCapture implements AfterViewInit {
   }
 
 
+  onOpenStations() {
+    if (this.form.is_mobile_kiosk_mode) {
+      return;
+    }
+    this.openStations();
+  }
 
   openStations() {
 

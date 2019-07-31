@@ -861,7 +861,7 @@ static NSString* toBase64(NSData* data) {
     }];
 
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        //
+        [(CameraOverlayView *)self.pickerController.cameraOverlayView reloadImageScroller];
     }];
 
     [actionsMenu addAction:deleteAction];

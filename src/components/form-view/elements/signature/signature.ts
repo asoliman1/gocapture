@@ -40,8 +40,7 @@ export class Signature extends BaseElement{
     }
     let folder = this.file.dataDirectory + "leadliaison/images";
     let name = this.currentVal.substr(this.currentVal.lastIndexOf("/") + 1);
-    let url = folder + "/" + name;
-    return this.util.normalizeURL(url);
+    return folder + "/" + name;
   }
 
 	show() {

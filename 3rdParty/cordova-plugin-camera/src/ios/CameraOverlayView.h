@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setupCaptureView:(CGRect)internalRect isRapidScan:(BOOL)isRapidScan;
 - (void)reloadImageScrollerWithImages:(NSArray *)images;
+- (void)reloadImageScroller;
 
 @end
 

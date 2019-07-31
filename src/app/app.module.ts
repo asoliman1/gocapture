@@ -94,6 +94,9 @@ import {DocumentViewer} from "@ionic-native/document-viewer";
 import {FileOpener} from "@ionic-native/file-opener";
 import {DocumentsService} from "../services/documents-service";
 import {SocialSharing} from "@ionic-native/social-sharing";
+import {SubmissionsRepository} from "../services/submissions-repository";
+import {SubmissionMapper} from "../services/submission-mapper";
+
 
 @NgModule({
   declarations: [
@@ -142,7 +145,10 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     IonicImageViewerModule,
 	  TextMaskModule,
 	  PipesModule,
-	  BusinessCardOverlayPageModule
+	  BusinessCardOverlayPageModule,
+	  TextMaskModule,
+	  PipesModule,
+	  BusinessCardOverlayPageModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -237,7 +243,9 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     DocumentViewer,
     FileOpener,
     DocumentsService,
-    SocialSharing
+    SocialSharing,
+    SubmissionsRepository,
+    SubmissionMapper
   ]
 })
 export class AppModule { }
