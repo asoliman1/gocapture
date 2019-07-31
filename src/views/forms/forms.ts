@@ -16,7 +16,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import {documentCategoriesMock, Form, FormSubmission, SubmissionStatus} from "../../model";
+import {Form, SubmissionStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { FormControlPipe } from "../../pipes/form-control-pipe";
@@ -166,25 +166,26 @@ export class Forms {
       }
     });
 
-    // TODO: replace this with with the correct check example (form.documents)
-    const hasOnlyOneDocumentCategory = false;
-
-    if (hasOnlyOneDocumentCategory || form.name == "Duplicate Lead BugT") {
-      buttons.push({
-        text: 'Documents',
-        icon: 'bookmarks',
-        handler: () => {
-          this.modalCtrl.create('Documents', { documentSource: documentCategoriesMock[0] }).present();
-        }
-      })
-    } else {
-      buttons.push({
-        text: 'Documents',
-        icon: 'bookmarks',
-        handler: () => {
-          this.navCtrl.push("DocumentsListPage", { form });
-        }
-      })
+    const documentSets = this.getDocuments(form);
+    console.log('DOCUMENTS SETS, ', documentSets);
+    if (documentSets.length) {
+      if (documentSets.length === 1) {
+        buttons.push({
+          text: 'Documents',
+          icon: 'bookmarks',
+          handler: () => {
+            this.modalCtrl.create('Documents', {documentSet: documentSets[0]}).present();
+          }
+        })
+      } else {
+        buttons.push({
+          text: 'Documents',
+          icon: 'bookmarks',
+          handler: () => {
+            this.navCtrl.push("DocumentsListPage", { form });
+          }
+        })
+      }
     }
 
     if (form.instructions_content && form.instructions_content.length > 0) {
@@ -224,8 +225,6 @@ export class Forms {
     });
   }
 
-
-
   ionViewDidLeave() {
     this.sub.unsubscribe();
   }
@@ -236,5 +235,11 @@ export class Forms {
         return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
       }).length;
     });
+  }
+
+  private getDocuments(form: Form) {
+    return form.elements
+      .filter((el) => el.type === 'documents')
+      .map((el) => el.documents_set);
   }
 }

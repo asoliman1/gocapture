@@ -6,7 +6,18 @@ import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
+import {
+  AuthenticationRequest,
+  DataResponse,
+  RecordsResponse,
+  BaseResponse,
+  FormSubmitResponse,
+  SubmissionResponse,
+  FileUploadRequest,
+  FileUploadResponse,
+  FileResponse,
+  FileDownloadResponse
+} from "../model/protocol";
 import { Device } from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
 import {isProductionEnvironment} from "../app/config";
@@ -288,6 +299,13 @@ export class RESTClient {
 			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
+
+
+	public getDocumentInfo(documentId: number): Observable<RecordsResponse<FileDownloadResponse>> {
+	  return this.call<RecordsResponse<FileDownloadResponse>>('GET', '/files.json', {id: documentId})
+      .map((res) => res);
+  }
+
 	/**
 	 *
 	 * @returns Observable

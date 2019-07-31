@@ -1,7 +1,9 @@
 export interface IDocument {
+  id: number;
   name: string;
-  url?: string;
-  size?: number;
-  type?: string;
+  file_type?: string;
+  thumbnail_path?: string;
+  file_path?: string;
+  file_extension?: string;
   selected?: boolean;
 }

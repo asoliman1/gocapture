@@ -8,4 +8,4 @@ export * from "./membership";
 export * from "./sync-status";
 export * from "./badge";
 export * from "./document";
-export * from "./documentCategory";
+export * from "./documentSet";

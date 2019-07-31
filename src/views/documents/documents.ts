@@ -1,12 +1,11 @@
-import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
-import {ActionSheetController, Content, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ActionSheetController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
-import {IDocument, IDocumentCategory} from "../../model";
+import {IDocument, IDocumentSet} from "../../model";
 import {DocumentViewer} from "@ionic-native/document-viewer";
 import { File } from '@ionic-native/file';
 import {FileOpener} from "@ionic-native/file-opener";
-import {FileUtils} from "../../util/file";
 import {DocumentsService} from "../../services/documents-service";
 import {SocialSharing} from "@ionic-native/social-sharing";
 
@@ -22,7 +21,7 @@ export enum DocumentShareMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Documents {
-  private documentsSource: IDocumentCategory;
+  private documentSet: IDocumentSet;
   private selectedDocuments: object = {};
   private selectedTheme;
   private shareMode: DocumentShareMode;
@@ -40,7 +39,7 @@ export class Documents {
     private documentsService: DocumentsService,
     private socialSharing: SocialSharing
   ) {
-    this.documentsSource = this.navParams.get('documentSource');
+    this.documentSet = this.navParams.get('documentSet');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -48,19 +47,36 @@ export class Documents {
   select(document: IDocument) {
     document.selected = !document.selected;
     this.selectedDocuments[document.name] = document.selected;
+    // this.documentsService.saveDocument(document.id)
+    //   .subscribe((data) => {
+    //     if (document.file_type === 'application/pdf') {
+    //       this.documentViewer.viewDocument(
+    //         data,
+    //         'application/pdf',
+    //         {title: document.name},
+    //         null,
+    //         null,
+    //         null,
+    //         (err) => { console.log('Error opening PDF file => ', err); }
+    //       );
+    //     } else {
+    //       document.url = data;
+    //       this.fileOpener.open(data, document.file_type);
+    //     }
+    //   }, (err) => {
+    //     console.log('SOME ERROR OCCURRED;');
+    //     console.log(err);
+    //   })
     console.log(this.selectedDocuments);
   }
 
   async openDocument(document: IDocument) {
-    const documentExtension = FileUtils.getFileExtension(document.url);
-    const filePath = this.file.applicationDirectory + 'www/' + document.url;
-
     // open the PDF viewer
-    if (documentExtension === 'pdf') {
+    if (document.file_type === 'application/pdf') {
       console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
 
-      this.documentViewer.viewDocument(
-        filePath,
+      return this.documentViewer.viewDocument(
+        document.file_path,
         'application/pdf',
         {title: document.name},
         null,
@@ -71,21 +87,22 @@ export class Documents {
 
     }
 
-    // try use the file opener
-    const documentType = FileUtils.getTypeByExtension(documentExtension);
-    if (documentType) {
-      console.log('TRYING FILE OPENER FOR DOCUMENT', JSON.stringify(document));
-      return this.fileOpener.open(filePath, documentType);
-    }
-
-    // error
-    console.log('CANNOT OPEN DOCUMENT', JSON.stringify(document));
-    this.toast.create({
-      message: `The selected document couldn't be open. Please try it again later.`,
-      duration: 5000,
-      position: "top",
-      cssClass: "error"
-    }).present();
+    console.log('TRYING FILE OPENER FOR DOCUMENT', JSON.stringify(document));
+    this.fileOpener.open(document.file_path, '')
+      .then((_) => {
+        console.log('DOCUMENT OPENED SUCCESSFULLY');
+      })
+      .catch((err) => {
+        // error
+        console.log('CANNOT OPEN DOCUMENT', JSON.stringify(document));
+        console.log(JSON.stringify(err));
+        this.toast.create({
+          message: `The selected document couldn't be open. Please try it again later.`,
+          duration: 5000,
+          position: "top",
+          cssClass: "error"
+        }).present();
+      });
   }
 
   send() {

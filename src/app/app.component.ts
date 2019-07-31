@@ -132,6 +132,7 @@ export class MyApp {
 
           this.checkDir('images');
           this.checkDir('audio');
+          this.checkDir('documents');
 
         }).catch(err=>{
         this.file.createDir(cordova.file.dataDirectory, "leadliaison", true)
@@ -139,6 +140,8 @@ export class MyApp {
 
             this.checkDir("images");
             this.checkDir("audio");
+            this.checkDir('documents');
+
           })
       });
     });
@@ -192,7 +195,7 @@ export class MyApp {
       toaster.present();
     });
 
-    //this.documentsService.syncAll();
+    this.documentsService.syncAll();
   }
 
   private checkDir(dirName) {

@@ -1,27 +1,19 @@
-
-const AcceptedTypes = {
-  'doc': 'application/msword',
-  'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'txt': 'text/plain',
-  'csv': 'text/csv',
-  'ppt': 'application/vnd.ms-powerpoint',
-  'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  'xml': 'application/xml',
-  'pdf': 'application/pdf',
-  'xls': 'application/vnd.ms-excel',
-  'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-};
+import * as mimeTypes from 'mime-types';
 
 export class FileUtils {
 
   /**
-   * Returns the correpsonding file type based on the extension
+   * Returns the corresponding file type based on the extension
    * or null if the extension is not recognized
    * @param extension
    *
    */
   static getTypeByExtension(extension: string): string|null {
-    return AcceptedTypes[extension];
+    return mimeTypes.lookup(extension);
+  }
+
+  static getExtensionByType(type: string): string|null {
+    return mimeTypes.extension(type);
   }
 
   /**

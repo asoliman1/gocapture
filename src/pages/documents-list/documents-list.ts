@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
-import {documentCategoriesMock, Form} from "../../model";
-import {IDocumentCategory, IDocument} from "../../model";
+import {Form, IDocumentSet} from "../../model";
 
 
 @IonicPage()
@@ -12,26 +11,23 @@ import {IDocumentCategory, IDocument} from "../../model";
 export class DocumentsListPage {
 
   form: Form;
-  documentCategories: IDocumentCategory[];
+  documentSets: IDocumentSet[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private modal: ModalController) {
     this.form = this.navParams.get('form');
-    this.mockupDocuments();
+    this.init();
   }
 
-  /**
-   * Mockup, remove when the form will return back the documents list
-   */
-  private mockupDocuments() {
-    this.documentCategories = documentCategoriesMock;
+  private init() {
+    console.log(this.form);
+    this.documentSets = this.form.elements
+      .filter((el) => el.type === 'documents')
+      .map((el) => el.documents_set);
   }
 
-  openDocuments(categoryId: number) {
-    const category = this.documentCategories.find((cat) => cat.id === categoryId);
-
-    if (category) {
-      this.modal.create("Documents", { documentSource: category }).present();
-    }
+  openDocuments(documentSet: IDocumentSet) {
+    console.log('Opening documents....', documentSet);
+    this.modal.create("Documents", { documentSet }).present();
   }
 
 }

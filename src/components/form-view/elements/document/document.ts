@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { BaseGroupElement} from "../base-group-element";
-import {documentCategoriesMock} from "../../../../model";
 import {ModalController} from "ionic-angular";
 import {DocumentShareMode} from "../../../../views/documents/documents";
 
@@ -18,17 +17,13 @@ export class Document extends BaseGroupElement {
   }
 
   ngOnChanges() {
-    this.element = {
-      ...this.element,
-      // TODO: remove this once the data is correctly fetched from the server.
-      documentSource: documentCategoriesMock[0]
-    }
+    console.log(this.element);
   }
 
   openDocuments() {
     console.log("OPENING DOCUMENTS PAGE...", this.element, this.shareMode);
     this.modalCtrl
-      .create("Documents", { documentSource: this.element.documentSource, shareMode: this.shareMode })
+      .create("Documents", { document_set: this.element.document_set, shareMode: this.shareMode })
       .present();
   }
 }

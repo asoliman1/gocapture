@@ -13,8 +13,8 @@
   <ion-label text-center>Select a Document Category</ion-label>
   <ion-grid style="background-color: white;">
     <ion-row>
-      <ion-col col-12 col-md-6 col-xl-6 *ngFor="let document of documentCategories">
-        <button color="blue" ion-button full large (click)="openDocuments(document.id)">{{document.name}}</button>
+      <ion-col col-12 col-md-6 col-xl-6 *ngFor="let documentSet of documentSets">
+        <button color="blue" ion-button full large (click)="openDocuments(documentSet)">{{documentSet.name}}</button>
       </ion-col>
     </ion-row>
   </ion-grid>
