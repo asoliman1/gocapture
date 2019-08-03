@@ -1,4 +1,5 @@
 import { Form } from "./form";
+import {Station} from "./station";
 
 export class FormSubmission{
 	id: number = null;
@@ -28,6 +29,8 @@ export class FormSubmission{
 	barcode_processed: BarcodeStatus = 0;
 
 	submission_type: FormSubmissionType = FormSubmissionType.normal;
+
+  stations: Station[];
 
 	public isSubmitted(): boolean{
 		return this.status == SubmissionStatus.Submitted;

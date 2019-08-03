@@ -21,21 +21,6 @@ form-capture {
   color: red;
 }
 
-.gc-popover, .gc-alert {
-  ion-backdrop {
-    pointer-events: none;
-    opacity: 0.5 !important;
-  }
-}
-
-.gc-alert {
-  &.remove-btns {
-    .alert-button-group {
-      display: none;
-    }
-  }
-}
-
 .platform-ios {
   .gc-alert {
     .alert-radio-inner {
@@ -43,3 +28,19 @@ form-capture {
     }
   }
 }
+
+.gc-popover {
+  .toolbar-background {
+    background-color: transparent !important;
+  }
+
+  .toolbar-ios ion-title {
+    padding: 0 40px 1px !important;
+  }
+
+  .bar-button {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+

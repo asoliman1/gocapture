@@ -519,7 +519,7 @@ export class RESTClient {
           records = [data.records];
         }
 
-        result.items.push.apply(result, records);
+        result.items.push.apply(result.items, records);
         result.deletedItems.push.apply(result.deletedItems, deletedRecords);
         result.deletedHoldItems.push.apply(result.deletedHoldItems, deletedHoldRecords);
 

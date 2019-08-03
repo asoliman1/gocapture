@@ -78,6 +78,7 @@ import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
 import {SubmissionsRepository} from "../services/submissions-repository";
 import {SubmissionMapper} from "../services/submission-mapper";
+import {StationsPage} from "../views/stations/stations";
 
 
 @NgModule({
@@ -102,7 +103,8 @@ import {SubmissionMapper} from "../services/submission-mapper";
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
-    DynamicFormElementComponent
+    DynamicFormElementComponent,
+    StationsPage
   ],
   imports: [
     BrowserModule,
@@ -134,7 +136,8 @@ import {SubmissionMapper} from "../services/submission-mapper";
     FormSelectionView,
     BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, GOCAudio, ImageViewer, UrlChoose,
     ProspectSearch,
-    OcrSelector
+    OcrSelector,
+    StationsPage
   ],
   exports: [
     DynamicFormElementComponent
