@@ -8,7 +8,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
+  Platform, PopoverController,
   ToastController,
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -35,6 +35,7 @@ import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Sc
 import {Observable} from "rxjs";
 import {ProgressHud} from "../../services/progress-hud";
 import {AppPreferences} from "@ionic-native/app-preferences";
+import {StationsPage} from "../stations/stations";
 
 @Component({
   selector: 'form-capture',
@@ -98,7 +99,8 @@ export class FormCapture implements AfterViewInit {
               private rapidCaptureService: RapidCaptureService,
               private alertCtrl: AlertController,
               private progressHud: ProgressHud,
-              private appPreferences: AppPreferences) {
+              private appPreferences: AppPreferences,
+              private popoverCtrl: PopoverController) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -119,10 +121,14 @@ export class FormCapture implements AfterViewInit {
       });
 
       instructionsModal.onDidDismiss(()=>{
-        this.openStations();
+        if (!this.submission.id) {
+          this.openStations();
+        }
       })
     } else {
-      this.openStations();
+      if (!this.submission.id) {
+        this.openStations();
+      }
     }
   }
 
@@ -130,6 +136,9 @@ export class FormCapture implements AfterViewInit {
     this.form = this.navParams.get("form");
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
+
+    this.setStation(this.submission);
+
     this.dispatch = this.navParams.get("dispatch");
     this.submitAttempt = false;
     if (this.dispatch) {
@@ -146,6 +155,12 @@ export class FormCapture implements AfterViewInit {
 
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
+    }
+  }
+
+  private setStation(submission) {
+    if (submission && submission.station_id) {
+      this.selectedStation = submission.station_id;
     }
   }
 
@@ -655,14 +670,23 @@ export class FormCapture implements AfterViewInit {
 
   openStations() {
 
-    if (this.submission.id) {
-      return;
-    }
-
     if (this.form.event_stations && this.form.event_stations.length > 0) {
       // this.stationsSelect.open(event);
       // this.stationsSelect.open(new UIEvent('touch'));
 
+      let popover = this.popoverCtrl.create(StationsPage, {stations: this.form.event_stations, selectedStation: this.selectedStation, visitedStations: this.submission.stations}, {enableBackdropDismiss: false, cssClass: this.selectedTheme + ' gc-popover'});
+      popover.present();
+
+      popover.onDidDismiss((data) => {
+        if (data.isCancel) {
+          this.navCtrl.pop();
+        } else {
+          this.selectedStation = data.station;
+          this.initiateRapidScanMode();
+        }
+      })
+
+      /*
       this.stationsAlert = this.alertCtrl.create({
         title: 'Select Station:',
         buttons: [
@@ -692,6 +716,7 @@ export class FormCapture implements AfterViewInit {
         this.stationsAlert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
       }
       this.stationsAlert.present();
+       */
     } else {
       this.initiateRapidScanMode();
     }

@@ -1,7 +1,5 @@
 
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { DBClient } from './db-client';
 import {Form, FormSubmission, SubmissionStatus} from "../model";
 import {SubmissionResponse} from "../model/protocol";
 
@@ -22,6 +20,9 @@ export class SubmissionMapper {
     entry.hold_request_id = item.hold_request_id;
     entry.email = item.email;
     entry.form_id = parseInt(form.id);
+    entry.station_id = item.station_id;
+    entry.stations = item.stations;
+
     item.data.forEach((dataItem) => {
       if(!dataItem.value){
         return;

@@ -98,6 +98,8 @@ import {SubmissionsRepository} from "../services/submissions-repository";
 import {SubmissionMapper} from "../services/submission-mapper";
 import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
+import {StationsPage} from "../views/stations/stations";
+
 
 @NgModule({
   declarations: [
@@ -136,7 +138,8 @@ import {ShareService} from "../services/share-service";
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
-    DynamicFormElementComponent
+    DynamicFormElementComponent,
+    StationsPage
   ],
   imports: [
     BrowserModule,
@@ -185,7 +188,8 @@ import {ShareService} from "../services/share-service";
     ImageViewer,
     UrlChoose,
     ProspectSearch,
-    OcrSelector
+    OcrSelector,
+    StationsPage
   ],
   exports: [
     DynamicFormElementComponent
