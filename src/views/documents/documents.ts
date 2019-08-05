@@ -7,7 +7,7 @@ import {DocumentViewer} from "@ionic-native/document-viewer";
 import { File } from '@ionic-native/file';
 import {FileOpener} from "@ionic-native/file-opener";
 import {DocumentsService} from "../../services/documents-service";
-import {SocialSharing} from "@ionic-native/social-sharing";
+import {ShareService} from "../../services/share-service";
 
 export enum DocumentShareMode {
   SEND_TO_BACKEND,
@@ -22,7 +22,6 @@ export enum DocumentShareMode {
 })
 export class Documents {
   private documentSet: IDocumentSet;
-  private selectedDocuments: object = {};
   private selectedTheme;
   private shareMode: DocumentShareMode;
 
@@ -37,37 +36,19 @@ export class Documents {
     private fileOpener: FileOpener,
     private toast: ToastController,
     private documentsService: DocumentsService,
-    private socialSharing: SocialSharing
+    private shareService: ShareService
   ) {
     this.documentSet = this.navParams.get('documentSet');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
+  ngOnInit() {
+
+  }
+
   select(document: IDocument) {
     document.selected = !document.selected;
-    this.selectedDocuments[document.name] = document.selected;
-    // this.documentsService.saveDocument(document.id)
-    //   .subscribe((data) => {
-    //     if (document.file_type === 'application/pdf') {
-    //       this.documentViewer.viewDocument(
-    //         data,
-    //         'application/pdf',
-    //         {title: document.name},
-    //         null,
-    //         null,
-    //         null,
-    //         (err) => { console.log('Error opening PDF file => ', err); }
-    //       );
-    //     } else {
-    //       document.url = data;
-    //       this.fileOpener.open(data, document.file_type);
-    //     }
-    //   }, (err) => {
-    //     console.log('SOME ERROR OCCURRED;');
-    //     console.log(err);
-    //   })
-    console.log(this.selectedDocuments);
   }
 
   async openDocument(document: IDocument) {
@@ -82,18 +63,16 @@ export class Documents {
         null,
         null,
         null,
-        (err) => { console.log('Error opening PDF file => ', err); }
+        (err) => { console.log('Error opening PDF file => ', JSON.stringify(err)); }
       );
 
     }
 
-    console.log('TRYING FILE OPENER FOR DOCUMENT', JSON.stringify(document));
-    this.fileOpener.open(document.file_path, '')
+    this.fileOpener.open(decodeURIComponent(document.file_path), document.file_type)
       .then((_) => {
         console.log('DOCUMENT OPENED SUCCESSFULLY');
       })
       .catch((err) => {
-        // error
         console.log('CANNOT OPEN DOCUMENT', JSON.stringify(document));
         console.log(JSON.stringify(err));
         this.toast.create({
@@ -106,20 +85,27 @@ export class Documents {
   }
 
   send() {
-    const selectedDocumentsCount = Object.keys(this.selectedDocuments).length;
+    const selectedDocumentsCount = this.documentSet.documents.filter((doc) => doc.selected);
 
     if (selectedDocumentsCount) {
-      switch (this.shareMode) {
-        case DocumentShareMode.NORMAL_SHARE:
-          this.shareDocuments();
-          break;
-        case DocumentShareMode.SEND_TO_BACKEND:
-          this.postDocuments();
-          break;
-        default:
-          console.log('Undefined share mode.');
-          break;
-      }
+      this.documentsService.getDocumentsBySet(this.documentSet.id)
+        .subscribe((set) => {
+          console.log('WE GOT THE DOCUMENTS SET RESULTS ', JSON.stringify(set));
+          switch (this.shareMode) {
+            case DocumentShareMode.NORMAL_SHARE:
+              this.shareDocuments();
+              break;
+            case DocumentShareMode.SEND_TO_BACKEND:
+              this.postDocuments();
+              break;
+            default:
+              console.log('Undefined share mode.');
+              break;
+          }
+        }, (error) => {
+          console.log('ERROR WHILE FETCHING THE DOCUMENTS.');
+          console.log(error);
+        })
     }
   }
 
@@ -128,7 +114,7 @@ export class Documents {
   }
 
   shareDocuments() {
-    const message = this.prepareDocumentsMessage();
+    const links = this.prepareDocumentLinks();
 
     this.actionSheetCtrl.create({
       title: "How do you want to send the docs?",
@@ -136,25 +122,25 @@ export class Documents {
         {
           text: 'Email',
           icon: "mail",
-          handler: () => {
+          handler: async () => {
             console.log('email clicked');
-            this.shareViaEmail(message);
+            await this.shareService.shareViaEmail(links, this.documentSet.name, ['']);
           }
         },
         {
           text: 'SMS',
           icon: "chatbubbles",
-          handler: () => {
+          handler: async () => {
             console.log('sms clicked');
-            this.shareViaSMS(message);
+            await this.shareService.shareViaSMS(links, '');
           }
         },
         {
           text: 'WhatsApp',
           icon: "logo-whatsapp",
-          handler: () => {
+          handler: async () => {
             console.log('WhatsApp clicked');
-            this.shareViaWhatsapp(message);
+            await this.shareService.shareViaWhatsApp(links);
           }
         },
         {
@@ -162,7 +148,15 @@ export class Documents {
           icon: "logo-facebook",
           handler: () => {
             console.log('facebook clicked');
-            this.shareViaFacebook(message);
+            this.shareService.shareViaFacebook(links);
+          }
+        },
+        {
+          text: 'Instagram',
+          icon: "logo-instagram",
+          handler: async () => {
+            console.log('instagram clicked');
+            await this.shareService.shareViaInstagram(links, '');
           }
         },
         {
@@ -174,54 +168,15 @@ export class Documents {
     }).present();
   }
 
-  private shareViaEmail(message: string) {
-    this.socialSharing.canShareViaEmail()
-      .then((_) => {
-        this.socialSharing.shareViaEmail(message, 'LeadLiaison Documents', [''])
-          .then((_) => {
-            console.log('EMAIL SHARED SUCCESSFULLY');
-          })
-          .catch((err) => {
-            console.log('EMAIL FAILED. ', JSON.stringify(err));
-          })
-      })
-      .catch((err) => {
-        console.log('CANNOT SHARE VIA EMAIL ', JSON.stringify(err));
-      })
+
+  close() {
+    this.documentSet.documents.forEach((doc) => doc.selected = false);
   }
 
-  private shareViaSMS(message: string) {
-    this.socialSharing.shareViaSMS(message, '')
-      .then((_) => {
-        console.log('SMS SHARED SUCCESSFULLY');
-      })
-      .catch((err) => {
-        console.log("SMS COULDN'T BE SENT ", err);
-      });
-  }
-
-  private shareViaFacebook(message: string) {
-    this.socialSharing.shareViaFacebook(message)
-      .then((_) => {
-        console.log('SHARED VIA FACEBOOK SUCCESSFULLY');
-      })
-      .catch((err) => {
-        console.log("COULDN'T SHARE VIA FACEBOOK ", JSON.stringify(err));
-      })
-  }
-
-  private shareViaWhatsapp(message: string) {
-      this.socialSharing.shareViaWhatsApp(message)
-        .then((_) => {
-          console.log('SHARED VIA WHATSAPP SUCCESSFULLY');
-        })
-        .catch((err) => {
-          console.log("COULDN'T SHARE VIA WHATSAPP ", JSON.stringify(err));
-        })
-  }
-
-  // TODO: implement this
-  private prepareDocumentsMessage() {
-    return 'Test message';
+  private prepareDocumentLinks() {
+    return this.documentSet.documents
+      .filter((document) => document.selected)
+      .map((document) => document.vanity_url)
+      .join(', ');
   }
 }

@@ -96,7 +96,8 @@ import {DocumentsService} from "../services/documents-service";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {SubmissionsRepository} from "../services/submissions-repository";
 import {SubmissionMapper} from "../services/submission-mapper";
-
+import {DocumentsSyncClient} from "../services/documents-sync-client";
+import {ShareService} from "../services/share-service";
 
 @NgModule({
   declarations: [
@@ -243,9 +244,11 @@ import {SubmissionMapper} from "../services/submission-mapper";
     DocumentViewer,
     FileOpener,
     DocumentsService,
+    DocumentsSyncClient,
     SocialSharing,
     SubmissionsRepository,
-    SubmissionMapper
+    SubmissionMapper,
+    ShareService
   ]
 })
 export class AppModule { }

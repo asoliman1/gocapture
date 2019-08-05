@@ -6,6 +6,7 @@ import {RESTClient} from "./rest-client";
 import {Observable} from "rxjs";
 import {Util} from "../util/util";
 import {FileUtils} from "../util/file";
+import {IDocument} from "../model";
 
 @Injectable()
 export class DocumentsService {
@@ -17,49 +18,142 @@ export class DocumentsService {
     private util: Util
   ) {}
 
-  syncAll() {
-    this.dbClient.getForms().subscribe((forms) => {
-      console.log('Got all unprocessed data, ', JSON.stringify(forms));
-    }, (error) => {
-      console.log('Some error occurred with the data...', JSON.stringify(error));
-    });
-  }
-
-  syncByForm(formId: number) {
-    this.dbClient.getFormsByIds([formId]).subscribe((forms) => {
-      console.log('Got all unprocessed data, ', JSON.stringify(forms));
-    }, (error) => {
-      console.log('Some error occurred with the data...', JSON.stringify(error));
-    });
-  }
-
-  saveDocument(id: number) {
+  saveDocument(documentId: number, setId: number, share_link?: string) {
     const fileTransferObject: FileTransferObject = this.fileTransfer.create();
-
     return new Observable<any>((obs) => {
-      this.restClient.getDocumentInfo(id).subscribe((data) => {
-        const document = data.records[0];
-        const filePath = this.getDocumentsDirectory() + document.name + '.' + FileUtils.getExtensionByType(document.file_type);
-        const adjustedPath = this.util.adjustFilePath(filePath);
+      return this.getDocumentById(documentId).subscribe((exists) => {
+        if (exists) {
+          return obs.complete();
+        }
 
-        // return this.fileService.checkFile(adjustedPath, document.name + '.' + FileUtils.getExtensionByType(document.file_type));
-        return fileTransferObject.download(document.download_url, adjustedPath)
-          .then((entry) => {
-            const path = entry.toURL();
-            this.dbClient.updateDocumentById(id, name, document.download_url, path);
-            console.log('Document saved successfully ' + path);
-            obs.next(path);
-            obs.complete();
-          }, (error) => {
-            // this.dbClient.updateDocumentById(id, name, document.download_url, '', false);
-            console.log("Document couldn't be saved: ", error);
-            obs.error(error);
-          });
-      }, (error) => {
-        obs.error(error);
-        console.log(`DOCUMENT COULDN'T BE DOWNLOADED `, JSON.stringify(error));
+        return this.restClient.getDocumentInfo(documentId).subscribe((data) => {
+          const document: IDocument|any = data.records[0];
+          document.file_extension = FileUtils.getExtensionByType(document.file_type);
+          document.thumbnail_path = document.thumbnail_path || '';
+          document.setId = setId;
+
+          const hasExtension = FileUtils.getFileExtension(document.name);
+          const extension = hasExtension ? '' : '.' + document.file_extension;
+
+          const filePath = this.getDocumentsDirectory() + document.name + extension;
+          const adjustedPath = this.util.adjustFilePath(filePath);
+
+          return fileTransferObject.download(document.download_url, adjustedPath)
+            .then((entry) => {
+              document.file_path = entry.toURL();
+              document.vanity_url = share_link;
+
+              return this.dbClient.saveDocument(document).subscribe((ok) => {
+                obs.next(document);
+                obs.complete();
+                console.log('Document saved successfully');
+                console.log(JSON.stringify(ok));
+              }, (error) => {
+                obs.error(error);
+                console.log(`Couldn't save document on the db`);
+                console.log(JSON.stringify(error));
+              });
+
+            }, (error) => {
+              obs.error(error);
+              console.log(`Couldn't save the document to the device`);
+              console.log(JSON.stringify(error));
+            });
+
+        }, (error) => {
+          obs.error(error);
+          console.log(`Couldn't get document info from the webservice`);
+          console.log(JSON.stringify(error));
+        });
       });
     });
+  }
+
+  /**
+   * Return a document form the database
+   * @param id
+   */
+  getDocumentById(id: number): Observable<IDocument> {
+    return new Observable<IDocument>((obs) => {
+      this.dbClient.getDocumentsByIds([id]).subscribe((docs) => {
+        if (!docs) {
+          obs.next(null);
+          obs.complete();
+          return;
+        }
+
+        obs.next(docs[0]);
+        obs.complete();
+      }, (error) => {
+        obs.error(false);
+        console.log(`Couldn't get the document, an error occurred`);
+        console.log(JSON.stringify(error));
+      })
+    });
+  }
+
+  getDocumentsByIds(ids: number[]): Observable<IDocument[]> {
+    return new Observable<IDocument[]>((obs) => {
+      this.dbClient.getDocumentsByIds(ids).subscribe((docs) => {
+        obs.next(docs);
+        obs.complete();
+      }, (error) => {
+        obs.error(false);
+        console.log(`Couldn't get the document, an error occurred`);
+        console.log(JSON.stringify(error));
+      })
+    });
+  }
+
+  getDocumentsBySet(setId: number): Observable<IDocument[]> {
+    return new Observable<IDocument[]>((obs) => {
+      this.dbClient.getDocumentsBySetId(setId).subscribe((docs) => {
+        obs.next(docs);
+        obs.complete();
+      }, (error) => {
+        obs.error(false);
+        console.log(`Couldn't get the documents, an error occurred`);
+        console.log(JSON.stringify(error));
+      })
+    });
+  }
+
+  documentExists(id: number): Observable<boolean> {
+    return new Observable<boolean>((obs) => {
+      this.dbClient.getDocumentsByIds([id]).subscribe((docs) => {
+        if (!docs) {
+          obs.next(false);
+          obs.complete();
+          return;
+        }
+
+        obs.next(true);
+        obs.complete();
+      }, (error) => {
+        obs.error(false);
+        console.log(`Couldn't check for document existence, an error occurred`);
+        console.log(JSON.stringify(error));
+      })
+    });
+  }
+
+  removeDocuments(ids: number[]): Observable<any> {
+    return new Observable<any>((obs) => {
+      this.dbClient.deleteDocuments(ids).subscribe((ok) => {
+        console.log('Documents deleted successfully');
+        console.log(JSON.stringify(ok));
+        obs.next(true);
+        obs.complete();
+      }, (error) => {
+        obs.error(false);
+        console.log(`Couldn't delete documents, an error occurred`);
+        console.log(JSON.stringify(error));
+      })
+    });
+  }
+
+  removeAllDocuments(): Observable<any> {
+    return this.dbClient.deleteAllDocuments();
   }
 
   public getDocumentsDirectory() {

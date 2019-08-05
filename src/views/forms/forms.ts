@@ -30,6 +30,7 @@ import {FormInstructions} from "../form-instructions";
 import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
 import {DocumentsListPage} from "../../pages/documents-list/documents-list";
 import {ModalController} from "ionic-angular";
+import {DocumentsService} from "../../services/documents-service";
 
 
 @Component({
@@ -85,7 +86,8 @@ export class Forms {
               private popup: Popup,
               private toast: ToastController,
               private duplicateLeadsService: DuplicateLeadsService,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController,
+              private documentsService: DocumentsService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
@@ -169,15 +171,18 @@ export class Forms {
     const documentSets = this.getDocuments(form);
     console.log('DOCUMENTS SETS, ', documentSets);
     if (documentSets.length) {
-      if (documentSets.length === 1) {
-        buttons.push({
-          text: 'Documents',
-          icon: 'bookmarks',
-          handler: () => {
-            this.modalCtrl.create('Documents', {documentSet: documentSets[0]}).present();
-          }
-        })
-      } else {
+      // if (documentSets.length === 1) {
+      //   this.documentsService.getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
+      //     .subscribe((docs) => {
+      //       buttons.push({
+      //         text: 'Documents',
+      //         icon: 'bookmarks',
+      //         handler: () => {
+      //           this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents: docs}}).present();
+      //         }
+      //       })
+      //     });
+      // } else {
         buttons.push({
           text: 'Documents',
           icon: 'bookmarks',
@@ -185,7 +190,7 @@ export class Forms {
             this.navCtrl.push("DocumentsListPage", { form });
           }
         })
-      }
+      // }
     }
 
     if (form.instructions_content && form.instructions_content.length > 0) {

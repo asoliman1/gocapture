@@ -22,7 +22,7 @@ import {Colors} from "../constants/colors";
 import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
-import {DocumentsService} from "../services/documents-service";
+import {DocumentsSyncClient} from "../services/documents-sync-client";
 
 declare var cordova;
 
@@ -52,7 +52,7 @@ export class MyApp {
     private logger: LogClient,
     public themeProvider: ThemeProvider,
     private settingsService: SettingsService,
-    private documentsService: DocumentsService) {
+    private documentsSync: DocumentsSyncClient) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
@@ -115,10 +115,9 @@ export class MyApp {
         //check device status when app resumes
         checkDeviceStatus();
 
-        this.client.getUpdates().subscribe(()=> {});
-
-        // sync documents
-        //this.documentsService.syncAll();
+        this.client.getUpdates().subscribe(()=> {
+          // this.documentsSync.syncAll();
+        });
       });
 
       this.hideSplashScreen();
@@ -194,8 +193,6 @@ export class MyApp {
       });
       toaster.present();
     });
-
-    this.documentsService.syncAll();
   }
 
   private checkDir(dirName) {

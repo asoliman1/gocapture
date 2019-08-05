@@ -24,8 +24,10 @@ export class Document implements OnChanges {
   }
 
   ngOnChanges() {
-    const defaultThumbnail = this.fileService.applicationDirectory + 'www/assets/images/doc-placeholder.png';
-    this.thumbnail = this.document.file_path ? this.document.file_path : defaultThumbnail;
+    // console.log('changes');
+    // const defaultThumbnail = this.fileService.applicationDirectory + 'www/assets/images/doc-placeholder.png';
+    // this.thumbnail = this.document.file_path ? this.document.file_path : defaultThumbnail;
+    // console.log(this.thumbnail);
   }
 
   select() {
