@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
 import { BaseGroupElement} from "../base-group-element";
 import {ModalController} from "ionic-angular";
 import {DocumentShareMode} from "../../../../views/documents/documents";
+import {Component, Input} from "@angular/core";
 
 @Component({
   selector: 'document',
@@ -23,7 +23,7 @@ export class Document extends BaseGroupElement {
   openDocuments() {
     console.log("OPENING DOCUMENTS PAGE...", this.element, this.shareMode);
     this.modalCtrl
-      .create("Documents", { document_set: this.element.document_set, shareMode: this.shareMode })
+      .create("Documents", { documentSet: this.element.documents_set, shareMode: this.shareMode })
       .present();
   }
 }
