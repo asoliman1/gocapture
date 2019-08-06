@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {NavController, NavParams, ViewController} from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {Content, NavController, NavParams, ViewController} from 'ionic-angular';
 
 @Component({
   selector: 'page-stations',
@@ -7,10 +7,13 @@ import {NavController, NavParams, ViewController} from 'ionic-angular';
 })
 export class StationsPage {
 
+  @ViewChild(Content) content: Content;
+
   stations: any[];
   selectedStation: any;
   filteredStations: any[];
   visitedStations: any[];
+  disableStationSelection: boolean = false;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -22,6 +25,11 @@ export class StationsPage {
     this.filteredStations = this.stations;
     this.selectedStation = this.navParams.get("selectedStation");
     this.visitedStations = this.navParams.get("visitedStations") || [];
+    this.disableStationSelection = this.navParams.get("disableStationSelection");
+  }
+
+  ionViewDidEnter() {
+    this.content.resize();
   }
 
   onCancel() {

@@ -1,4 +1,7 @@
 form-capture {
+  .info-icon {
+    vertical-align: text-bottom;
+  }
 
 }
 
@@ -31,7 +34,19 @@ form-capture {
 
 .gc-popover {
   .toolbar-background {
-    background-color: transparent !important;
+    background-color: white !important;
+  }
+
+  .popover-content {
+    overflow: hidden;
+  }
+
+  .popover-viewport {
+    height: 70vh;
+
+    .scroll-content {
+      height: calc(100% - 80px);
+    }
   }
 
   .toolbar-ios ion-title {

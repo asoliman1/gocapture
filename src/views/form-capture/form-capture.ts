@@ -674,12 +674,22 @@ export class FormCapture implements AfterViewInit {
       // this.stationsSelect.open(event);
       // this.stationsSelect.open(new UIEvent('touch'));
 
-      let popover = this.popoverCtrl.create(StationsPage, {stations: this.form.event_stations, selectedStation: this.selectedStation, visitedStations: this.submission.stations}, {enableBackdropDismiss: false, cssClass: this.selectedTheme + ' gc-popover'});
+      let popover = this.popoverCtrl.create(StationsPage, {
+        stations: this.form.event_stations,
+        selectedStation: this.selectedStation,
+        visitedStations: this.submission.stations,
+        disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
+      }, {
+        enableBackdropDismiss: false,
+        cssClass: this.selectedTheme + ' gc-popover'
+      });
       popover.present();
 
       popover.onDidDismiss((data) => {
         if (data.isCancel) {
-          this.navCtrl.pop();
+          if (!this.submission.id && !this.selectedStation) {
+            this.navCtrl.pop();
+          }
         } else {
           this.selectedStation = data.station;
           this.initiateRapidScanMode();

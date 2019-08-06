@@ -74,8 +74,10 @@ export class FormReview {
 	}
 
 	ionViewDidLeave() {
-		this.sub.unsubscribe();
-		this.sub = null;
+	  if (this.sub) {
+      this.sub.unsubscribe();
+      this.sub = null;
+    }
 	}
 
 	getIcon(sub: FormSubmission){
