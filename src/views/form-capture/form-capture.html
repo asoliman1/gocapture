@@ -5,7 +5,7 @@
       <div #formTitle (click)="onOpenStations()">
         {{form ? form.name : ''}}
         <br>
-        <span *ngIf="form && selectedStation" >{{stationTitle(selectedStation)}}</span>
+        <span *ngIf="form && selectedStation" >{{stationTitle(selectedStation)}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
       </div>
     </ion-title>
 
