@@ -53,11 +53,13 @@ export class Documents {
 
   async openDocument(document: IDocument) {
     // open the PDF viewer
+    let filename =  document.file_path.split('/').pop();
+    let documentFilePath = this.documentsFolder() + filename;
     if (document.file_type === 'application/pdf') {
       console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
 
       return this.documentViewer.viewDocument(
-        document.file_path,
+        documentFilePath,
         'application/pdf',
         {title: document.name},
         null,
@@ -65,10 +67,9 @@ export class Documents {
         null,
         (err) => { console.log('Error opening PDF file => ', JSON.stringify(err)); }
       );
-
     }
 
-    this.fileOpener.open(decodeURIComponent(document.file_path), document.file_type)
+    this.fileOpener.open(decodeURIComponent(documentFilePath), document.file_type)
       .then((_) => {
         console.log('DOCUMENT OPENED SUCCESSFULLY');
       })
@@ -178,5 +179,9 @@ export class Documents {
       .filter((document) => document.selected)
       .map((document) => document.vanity_url)
       .join(', ');
+  }
+
+  private documentsFolder(): string {
+    return this.file.dataDirectory + "leadliaison/documents/";
   }
 }
