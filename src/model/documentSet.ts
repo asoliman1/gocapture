@@ -5,4 +5,5 @@ export interface IDocumentSet {
   formId: number;
   name: string;
   documents: IDocument[];
+  selectedDocumentIdsForSubmission?: number[];
 }

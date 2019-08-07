@@ -41,13 +41,7 @@ export class DocumentsListPage {
 
   openDocuments(documentSet: IDocumentSet) {
     if (this.documentsSync.isSyncing()) {
-      let toaster = this.toast.create({
-        message: `Documents are still syncing please try again later.`,
-        duration: 3000,
-        position: "top",
-        cssClass: "warning"
-      });
-      toaster.present();
+      this.documentsSync.showSyncingToast();
       return;
     }
 

@@ -5,6 +5,7 @@ import {Form, IDocument, IDocumentSet} from "../model";
 import {xorBy, intersectionBy, differenceBy} from 'lodash';
 import {forkJoin} from "rxjs/observable/forkJoin";
 import {Observable} from "rxjs";
+import {ToastController} from "ionic-angular";
 
 @Injectable()
 export class DocumentsSyncClient {
@@ -12,7 +13,8 @@ export class DocumentsSyncClient {
 
   constructor(
     private dbClient: DBClient,
-    private documentsService: DocumentsService
+    private documentsService: DocumentsService,
+    private toast: ToastController
   ) {}
 
   async syncAll() {
@@ -141,6 +143,17 @@ export class DocumentsSyncClient {
 
   public isSyncing(): boolean {
     return this._isSyncing;
+  }
+
+  public showSyncingToast() {
+    let toaster = this.toast.create({
+      message: `Documents are still syncing please try again later.`,
+      duration: 3000,
+      position: "top",
+      cssClass: "warning"
+    });
+
+    toaster.present();
   }
 
   private getDocumentsSetByForm(form: Form): IDocumentSet[] {

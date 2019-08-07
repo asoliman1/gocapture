@@ -476,7 +476,7 @@ export class FormCapture implements AfterViewInit {
       return;
     }
 
-    this.submission.fields = this.formView.getValues();
+    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
       this.submission.id = new Date().getTime();
@@ -660,6 +660,21 @@ export class FormCapture implements AfterViewInit {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
+  getDocumentsForSubmission() {
+    const documentsElements = {};
+
+    const filteredElements = this.form.elements
+      .filter((element) => element.type === 'documents')
+      .filter((element) => element.documents_set.selectedDocumentIdsForSubmission);
+
+    filteredElements.forEach((element) => {
+      documentsElements["element_" + element.id] = element.documents_set.selectedDocumentIdsForSubmission;
+    });
+
+    console.log(JSON.stringify(documentsElements));
+
+    return documentsElements;
+  }
 
   onOpenStations() {
     if (this.form.is_mobile_kiosk_mode) {

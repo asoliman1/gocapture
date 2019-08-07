@@ -1,5 +1,12 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ActionSheetController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {
+  ActionSheetController,
+  IonicPage,
+  NavController,
+  NavParams,
+  ToastController,
+  ViewController
+} from 'ionic-angular';
 import {Util} from "../../util/util";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument, IDocumentSet} from "../../model";
@@ -36,7 +43,8 @@ export class Documents {
     private fileOpener: FileOpener,
     private toast: ToastController,
     private documentsService: DocumentsService,
-    private shareService: ShareService
+    private shareService: ShareService,
+    public viewCtrl: ViewController
   ) {
     this.documentSet = this.navParams.get('documentSet');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
@@ -112,6 +120,11 @@ export class Documents {
 
   postDocuments() {
     console.log('SEND THE DOCUMENT IDs TO THE SERVER');
+    this.viewCtrl.dismiss(
+     this.documentSet.documents
+      .filter((document) => document.selected)
+      .map((document) => document.id)
+    );
   }
 
   shareDocuments() {
