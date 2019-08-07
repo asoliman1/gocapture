@@ -154,7 +154,7 @@
 
     <!-- DOCUMENTS -->
     <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <document [element]="element" [shareMode]="0"></document>
+      <document [element]="element" [shareMode]="0" [isEditing]="isEditing" [submission]="submission"></document>
     </ion-item>
 
 

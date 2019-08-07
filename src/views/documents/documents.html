@@ -6,7 +6,7 @@
       </button>
     </ion-buttons>
     <ion-title>{{documentSet.name}}</ion-title>
-    <ion-buttons end (click)="send()">
+    <ion-buttons end (click)="send()" *ngIf="selectedDocCount && !readonlyMode">
       <button ion-button>
         Send
       </button>
@@ -15,7 +15,9 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-label text-center>Tap to select documents. Long press to view</ion-label>
+  <ion-label text-center>
+    {{readonlyMode ? 'Long press to view document.' : 'Tap to select documents. Long press to view'}}
+  </ion-label>
 
   <ion-grid class="documents-list">
     <ion-row>

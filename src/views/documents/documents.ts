@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {
   ActionSheetController,
   IonicPage,
@@ -17,20 +17,23 @@ import {DocumentsService} from "../../services/documents-service";
 import {ShareService} from "../../services/share-service";
 
 export enum DocumentShareMode {
-  SEND_TO_BACKEND,
-  NORMAL_SHARE
+  SUBMISSION,
+  SHARE
 }
 
 @IonicPage()
 @Component({
   selector: 'documents',
   templateUrl: 'documents.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Documents {
+export class Documents implements AfterViewInit {
   private documentSet: IDocumentSet;
   private selectedTheme;
   private shareMode: DocumentShareMode;
+  private readonlyMode: boolean = false;
+
+  private selectedDocCount: number = 0;
 
   constructor(
     public navCtrl: NavController,
@@ -44,19 +47,27 @@ export class Documents {
     private toast: ToastController,
     private documentsService: DocumentsService,
     private shareService: ShareService,
-    public viewCtrl: ViewController
+    public viewCtrl: ViewController,
   ) {
     this.documentSet = this.navParams.get('documentSet');
-    this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.NORMAL_SHARE;
+    this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.SHARE;
+    this.readonlyMode = this.navParams.get('readOnly');
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
-  ngOnInit() {
-
+  ngAfterViewInit() {
+    if (this.documentSet && this.documentSet.selectedDocumentIdsForSubmission) {
+      this.selectedDocCount = this.documentSet.selectedDocumentIdsForSubmission.length;
+    }
   }
 
   select(document: IDocument) {
+    if (this.readonlyMode) {
+      return;
+    }
+
     document.selected = !document.selected;
+    document.selected ? this.selectedDocCount++ : this.selectedDocCount--;
   }
 
   async openDocument(document: IDocument) {
@@ -101,14 +112,14 @@ export class Documents {
         .subscribe((set) => {
           console.log('WE GOT THE DOCUMENTS SET RESULTS ', JSON.stringify(set));
           switch (this.shareMode) {
-            case DocumentShareMode.NORMAL_SHARE:
+            case DocumentShareMode.SHARE:
               this.shareDocuments();
               break;
-            case DocumentShareMode.SEND_TO_BACKEND:
-              this.postDocuments();
+            case DocumentShareMode.SUBMISSION:
+              this.submitSelectedDocuments();
               break;
             default:
-              console.log('Undefined share mode.');
+              console.log('Undefined send mode.');
               break;
           }
         }, (error) => {
@@ -118,7 +129,7 @@ export class Documents {
     }
   }
 
-  postDocuments() {
+  submitSelectedDocuments() {
     console.log('SEND THE DOCUMENT IDs TO THE SERVER');
     this.viewCtrl.dismiss(
      this.documentSet.documents
