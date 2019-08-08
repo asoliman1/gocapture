@@ -74,6 +74,7 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
+        "selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
@@ -711,6 +712,25 @@ export class DBClient {
 			});
 	}
 
+  public getSubmissionById(activityId): Observable<FormSubmission> {
+    return new Observable<FormSubmission>((responseObserver: Observer<FormSubmission>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("submissions", "selectById"), [activityId])
+          .then((data) => {
+            let submission: FormSubmission;
+            if (data && data.rows.length > 0) {
+              let dbForm = data.rows.item(0);
+              submission = this.submissonFromDBEntry(dbForm);
+            }
+            responseObserver.next(submission);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occured: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
 	public getSubmissionsToSend(): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
 			this.manager.db(WORK).subscribe((db) => {
@@ -1139,7 +1159,9 @@ export class DBClient {
 					}, (err) => {
 						responseObserver.error("An error occured: " + JSON.stringify(err));
 					});
-			});
+			}, (error) => {
+			  console.error(error);
+      });
 		});
 	}
 
