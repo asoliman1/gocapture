@@ -1150,14 +1150,14 @@ export class DBClient {
 			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, queryId), params)
 					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
+						if (data.rowsAffected > 1) {
+              responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+              responseObserver.next(true);
+              responseObserver.complete();
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
+						responseObserver.error("An error occurred: " + JSON.stringify(err));
 					});
 			}, (error) => {
 			  console.error(error);
