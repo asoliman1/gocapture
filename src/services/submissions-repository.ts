@@ -3,13 +3,15 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { DBClient } from './db-client';
 import {FormSubmission} from "../model";
+import {SubmissionMapper} from "./submission-mapper";
 
 
 @Injectable()
 export class SubmissionsRepository {
 
-  constructor(private dbClient: DBClient) {
-
+  constructor(private dbClient: DBClient,
+              private submMapper: SubmissionMapper) {
+    //
   }
 
   public handleDeletedSubmissions(submissions) {
@@ -36,4 +38,24 @@ export class SubmissionsRepository {
     return Observable.zip(...submissionsToDelete);
   }
 
+  public handleMergedSubmission(activityId, localSubmission, mergedSubmission, form) {
+    return this.dbClient.getSubmissionById(activityId).flatMap((sub) => {
+      if (sub) {
+        //remove local submission with the same activityId
+        return this.dbClient.deleteSubmission(sub);
+      }
+      return Observable.of({});
+    }).flatMap(() => {
+      if (mergedSubmission) {
+        //remove the locally saved submission (that was submitted)
+        return this.dbClient.deleteSubmission(localSubmission);
+      }
+      return Observable.of({});
+    }).flatMap(() => {
+      if (mergedSubmission) {
+        return this.dbClient.saveSubmission(this.submMapper.map(form, mergedSubmission));
+      }
+      return this.dbClient.updateSubmissionId(localSubmission);
+    })
+  }
 }

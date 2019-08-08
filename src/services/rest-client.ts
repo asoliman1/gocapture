@@ -400,7 +400,8 @@ export class RESTClient {
 						message: "",
 						response_status: resp.status,
 						form_id: data.form_id,
-            is_new_submission: resp.is_new_submission
+            is_new_submission: resp.is_new_submission,
+            submission: resp.submission,
 					};
 				}
 				this.errorSource.next(resp);
