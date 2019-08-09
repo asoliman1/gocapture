@@ -494,7 +494,7 @@ export class FormCapture implements AfterViewInit {
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+        if (this.form.is_mobile_kiosk_mode) {
           this.navCtrl.pop();
         } else {
           this.navCtrl.popToRoot();
@@ -502,7 +502,7 @@ export class FormCapture implements AfterViewInit {
         return;
       }
 
-      if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+      if (this.form.is_mobile_kiosk_mode) {
         this.clearPlaceholders();
         this.submission = null;
         this.form = null;
@@ -677,7 +677,8 @@ export class FormCapture implements AfterViewInit {
   }
 
   onOpenStations() {
-    if (this.form.is_mobile_kiosk_mode) {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
       return;
     }
     this.openStations();
