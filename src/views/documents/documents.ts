@@ -25,9 +25,9 @@ export enum DocumentShareMode {
 @Component({
   selector: 'documents',
   templateUrl: 'documents.html',
-  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Documents implements AfterViewInit {
+  private DocumentShareMode = DocumentShareMode;
   private documentSet: IDocumentSet;
   private selectedTheme;
   private shareMode: DocumentShareMode;
@@ -84,7 +84,10 @@ export class Documents implements AfterViewInit {
         null,
         null,
         null,
-        (err) => { console.log('Error opening PDF file => ', JSON.stringify(err)); }
+        (err) => {
+          console.log('Error opening PDF file => ', JSON.stringify(err));
+          this.showDocumentOpeningErrorToast();
+        }
       );
     }
 
@@ -95,38 +98,8 @@ export class Documents implements AfterViewInit {
       .catch((err) => {
         console.log('CANNOT OPEN DOCUMENT', JSON.stringify(document));
         console.log(JSON.stringify(err));
-        this.toast.create({
-          message: `The selected document couldn't be open. Please try it again later.`,
-          duration: 5000,
-          position: "top",
-          cssClass: "error"
-        }).present();
+        this.showDocumentOpeningErrorToast();
       });
-  }
-
-  send() {
-    const selectedDocumentsCount = this.documentSet.documents.filter((doc) => doc.selected);
-
-    if (selectedDocumentsCount) {
-      this.documentsService.getDocumentsBySet(this.documentSet.id)
-        .subscribe((set) => {
-          console.log('WE GOT THE DOCUMENTS SET RESULTS ', JSON.stringify(set));
-          switch (this.shareMode) {
-            case DocumentShareMode.SHARE:
-              this.shareDocuments();
-              break;
-            case DocumentShareMode.SUBMISSION:
-              this.submitSelectedDocuments();
-              break;
-            default:
-              console.log('Undefined send mode.');
-              break;
-          }
-        }, (error) => {
-          console.log('ERROR WHILE FETCHING THE DOCUMENTS.');
-          console.log(error);
-        })
-    }
   }
 
   submitSelectedDocuments() {
@@ -207,5 +180,14 @@ export class Documents implements AfterViewInit {
 
   private documentsFolder(): string {
     return this.file.dataDirectory + "leadliaison/documents/";
+  }
+
+  private showDocumentOpeningErrorToast() {
+    this.toast.create({
+      message: `Couldn’t open the document. Please try again.`,
+      duration: 5000,
+      position: "top",
+      cssClass: "error"
+    }).present();
   }
 }

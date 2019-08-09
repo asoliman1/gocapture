@@ -6,7 +6,6 @@ import {DocumentsService} from "../../../../services/documents-service";
 import {FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
 import {DocumentsSyncClient} from "../../../../services/documents-sync-client";
 
-
 @Component({
   selector: 'document',
   templateUrl: 'document.html'
@@ -50,21 +49,7 @@ export class Document extends BaseGroupElement {
         this.element.documents_set.documents = documents;
       }
 
-      const setId = this.element.documents_set.id;
-      if (this.submission && this.submission.fields["element_" + setId]) {
-        this.element.documents_set.selectedDocumentIdsForSubmission = JSON.parse(this.submission.fields["element_" + setId] as string);
-
-        this.element.documents_set.documents = this.element.documents_set.documents
-          .map((document) => {
-            if (this.element.documents_set.selectedDocumentIdsForSubmission.indexOf(document.id) !== -1) {
-              document.selected = true;
-            }
-
-            return document;
-          });
-      }
-
-      console.log(JSON.stringify(this.element.documents_set.documents));
+      this.prepareSelectedDocuments();
 
       const modal =  this.modalCtrl
         .create("Documents", {
@@ -74,7 +59,8 @@ export class Document extends BaseGroupElement {
         });
 
       modal.onDidDismiss((data: number[]) => {
-        if (data) {
+        console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
+        if (data && Array.isArray(data)) {
           this.element.documents_set.selectedDocumentIdsForSubmission = data;
         }
       });
@@ -83,12 +69,50 @@ export class Document extends BaseGroupElement {
 
     }, (error) => {
       let toaster = this.toast.create({
-        message: `Something went wrong while opening the documents. Please try again later.`,
+        message: `A problem occurred while opening your documents. Please try again.`,
         duration: 3000,
         position: "top",
         cssClass: "error"
       });
       toaster.present();
     });
+  }
+
+  prepareSelectedDocuments() {
+    const elementId = this.element.id;
+    if (this.submission && this.submission.fields["element_" + elementId]) {
+      try {
+        if (!this.element.documents_set.selectedDocumentIdsForSubmission) {
+          if (typeof this.submission.fields["element_" + elementId] === 'string') {
+            this.element.documents_set.selectedDocumentIdsForSubmission = JSON.parse(this.submission.fields["element_" + elementId] as string);
+          } else if (this.submission.fields["element_" + elementId]) {
+            this.element.documents_set.selectedDocumentIdsForSubmission = this.submission.fields["element_" + elementId] as any;
+          }
+        }
+      } catch (e) {
+        console.log('Error while parsing the documents element');
+        console.log(JSON.stringify(e));
+      }
+
+      this.element.documents_set.documents = this.element.documents_set.documents
+        .map((document) => {
+          if (this.element.documents_set.selectedDocumentIdsForSubmission.indexOf(document.id) !== -1) {
+            document.selected = true;
+          }
+
+          return document;
+        });
+    }
+
+    if (this.element.documents_set.selectedDocumentIdsForSubmission) {
+      this.element.documents_set.documents = this.element.documents_set.documents
+        .map((document) => {
+          if (this.element.documents_set.selectedDocumentIdsForSubmission.indexOf(document.id) !== -1) {
+            document.selected = true;
+          }
+
+          return document;
+        });
+    }
   }
 }

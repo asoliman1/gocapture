@@ -6,10 +6,13 @@
       </button>
     </ion-buttons>
     <ion-title>{{documentSet.name}}</ion-title>
-    <ion-buttons end (click)="send()" *ngIf="selectedDocCount && !readonlyMode">
-      <button ion-button>
-        Send
-      </button>
+
+    <ion-buttons end (click)="shareDocuments()" *ngIf="shareMode === DocumentShareMode.SHARE && selectedDocCount && !readonlyMode">
+      <button ion-button>Send</button>
+    </ion-buttons>
+
+    <ion-buttons end (click)="submitSelectedDocuments()" *ngIf="shareMode === DocumentShareMode.SUBMISSION && !readonlyMode">
+      <button ion-button>Done</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>

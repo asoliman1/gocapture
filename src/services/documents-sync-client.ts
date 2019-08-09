@@ -147,7 +147,7 @@ export class DocumentsSyncClient {
 
   public showSyncingToast() {
     let toaster = this.toast.create({
-      message: `Documents are still syncing please try again later.`,
+      message: `Documents are still syncing. Please try again later.`,
       duration: 3000,
       position: "top",
       cssClass: "warning"
