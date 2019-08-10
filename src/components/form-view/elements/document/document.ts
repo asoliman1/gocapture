@@ -1,16 +1,23 @@
-import { BaseGroupElement} from "../base-group-element";
 import {ModalController, ToastController} from "ionic-angular";
 import {DocumentShareMode} from "../../../../views/documents/documents";
-import {Component, Input} from "@angular/core";
+import {Component, forwardRef, Input} from "@angular/core";
 import {DocumentsService} from "../../../../services/documents-service";
-import {FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
+import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
 import {DocumentsSyncClient} from "../../../../services/documents-sync-client";
+import {BaseElement} from "../base-element";
+import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
   selector: 'document',
-  templateUrl: 'document.html'
+  templateUrl: 'document.html',
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Document), multi: true }
+  ]
 })
-export class Document extends BaseGroupElement {
+export class Document extends BaseElement {
+  @Input() form: Form;
+  @Input() formGroup: FormGroup;
+  @Input() readonly: boolean = false;
 
   @Input() element: FormElement;
   @Input() shareMode: DocumentShareMode;
@@ -62,6 +69,10 @@ export class Document extends BaseGroupElement {
         console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
         if (data && Array.isArray(data)) {
           this.element.documents_set.selectedDocumentIdsForSubmission = data;
+
+          if (this.shareMode === DocumentShareMode.SUBMISSION) {
+            data.length ? this.onChange(data) : this.onChange(null);
+          }
         }
       });
 
@@ -82,29 +93,31 @@ export class Document extends BaseGroupElement {
     const elementId = this.element.id;
     if (this.submission && this.submission.fields["element_" + elementId]) {
       try {
+        let selectedDocs = [];
         if (!this.element.documents_set.selectedDocumentIdsForSubmission) {
           if (typeof this.submission.fields["element_" + elementId] === 'string') {
-            this.element.documents_set.selectedDocumentIdsForSubmission = JSON.parse(this.submission.fields["element_" + elementId] as string);
+            selectedDocs = JSON.parse(this.submission.fields["element_" + elementId] as string);
           } else if (this.submission.fields["element_" + elementId]) {
-            this.element.documents_set.selectedDocumentIdsForSubmission = this.submission.fields["element_" + elementId] as any;
+            selectedDocs = this.submission.fields["element_" + elementId] as any;
           }
+        } else {
+          selectedDocs = this.element.documents_set.selectedDocumentIdsForSubmission;
         }
+
+        this.element.documents_set.documents = this.element.documents_set.documents
+          .map((document) => {
+            if (selectedDocs.indexOf(document.id) !== -1) {
+              document.selected = true;
+            }
+
+            return document;
+          });
       } catch (e) {
         console.log('Error while parsing the documents element');
         console.log(JSON.stringify(e));
       }
-
-      this.element.documents_set.documents = this.element.documents_set.documents
-        .map((document) => {
-          if (this.element.documents_set.selectedDocumentIdsForSubmission.indexOf(document.id) !== -1) {
-            document.selected = true;
-          }
-
-          return document;
-        });
     }
-
-    if (this.element.documents_set.selectedDocumentIdsForSubmission) {
+    else if (this.element.documents_set.selectedDocumentIdsForSubmission) {
       this.element.documents_set.documents = this.element.documents_set.documents
         .map((document) => {
           if (this.element.documents_set.selectedDocumentIdsForSubmission.indexOf(document.id) !== -1) {

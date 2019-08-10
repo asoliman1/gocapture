@@ -154,7 +154,16 @@
 
     <!-- DOCUMENTS -->
     <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <document [element]="element" [shareMode]="0" [isEditing]="isEditing" [submission]="submission"></document>
+      <document
+        [form]="form"
+        [readonly]="readOnly"
+        [formControlName]="element.identifier"
+        [formGroup]="theForm"
+        [element]="element"
+        [shareMode]="0"
+        [isEditing]="isEditing"
+        [submission]="submission">
+      </document>
     </ion-item>
 
 
