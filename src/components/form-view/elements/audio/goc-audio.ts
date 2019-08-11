@@ -196,7 +196,7 @@ export class GOCAudio extends BaseElement {
 				}
 			}];
 
-		this.popup.showAlert('Warning', "Do you want to delete the record?", buttons, this.selectedTheme);
+		this.popup.showAlert('Warning', "Do you want to delete the recording?", buttons, this.selectedTheme);
 	}
 
 	private updateTimeLabels(position, duration) {
