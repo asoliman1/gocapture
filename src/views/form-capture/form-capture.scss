@@ -57,5 +57,10 @@ form-capture {
     padding-left: 20px;
     padding-right: 20px;
   }
+
+  .toolbar:last-child {
+    min-height: 44px !important;
+    padding-bottom: 4px !important;
+  }
 }
 
