@@ -9,7 +9,7 @@
 
   <ion-list radio-group [(ngModel)]="selectedStation" [disabled]="disableStationSelection" >
     <ion-item-divider *ngIf="visitedStations && visitedStations.length > 0">
-      Already visited stations
+      Stations visited
     </ion-item-divider>
     <ion-item no-lines *ngFor="let station of visitedStations">
       <ion-label>{{station.name}}</ion-label>
