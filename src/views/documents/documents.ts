@@ -114,56 +114,60 @@ export class Documents implements AfterViewInit {
   shareDocuments() {
     const links = this.prepareDocumentLinks();
 
-    this.actionSheetCtrl.create({
-      title: "How do you want to send the docs?",
-      buttons: [
-        {
-          text: 'Email',
-          icon: "mail",
-          handler: async () => {
-            console.log('email clicked');
-            await this.shareService.shareViaEmail(links, this.documentSet.name, ['']);
-          }
-        },
-        {
-          text: 'SMS',
-          icon: "chatbubbles",
-          handler: async () => {
-            console.log('sms clicked');
-            await this.shareService.shareViaSMS(links, '');
-          }
-        },
-        {
-          text: 'WhatsApp',
-          icon: "logo-whatsapp",
-          handler: async () => {
-            console.log('WhatsApp clicked');
-            await this.shareService.shareViaWhatsApp(links);
-          }
-        },
-        {
-          text: 'Facebook',
-          icon: "logo-facebook",
-          handler: () => {
-            console.log('facebook clicked');
-            this.shareService.shareViaFacebook(links);
-          }
-        },
-        {
-          text: 'Instagram',
-          icon: "logo-instagram",
-          handler: async () => {
-            console.log('instagram clicked');
-            await this.shareService.shareViaInstagram(links, '');
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
+    const buttons: [any] = [
+      {
+        text: 'Email',
+        icon: "mail",
+        handler: async () => {
+          console.log('email clicked');
+          await this.shareService.shareViaEmail(links, this.documentSet.name, ['']);
+        }
+      },
+      {
+        text: 'SMS',
+        icon: "chatbubbles",
+        handler: async () => {
+          console.log('sms clicked');
+          await this.shareService.shareViaSMS(links, '');
+        }
+      },
+      {
+        text: 'WhatsApp',
+        icon: "logo-whatsapp",
+        handler: async () => {
+          console.log('WhatsApp clicked');
+          await this.shareService.shareViaWhatsApp(links);
+        }
+      },
+      {
+        text: 'Facebook',
+        icon: "logo-facebook",
+        handler: () => {
+          console.log('facebook clicked');
+          this.shareService.shareViaFacebook(links);
+        }
+      },
+      {
+        text: 'Instagram',
+        icon: "logo-instagram",
+        handler: async () => {
+          console.log('instagram clicked');
+          await this.shareService.shareViaInstagram(links, '');
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+      }
+    ];
 
-      ],
-    }).present();
+    const actionSheet = this.actionSheetCtrl.create({
+      title: 'How do you want to send the docs?',
+      buttons,
+      cssClass: this.selectedTheme.toString()
+    });
+
+    actionSheet.present();
   }
 
 

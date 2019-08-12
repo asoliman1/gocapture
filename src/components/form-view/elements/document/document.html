@@ -1,3 +1,5 @@
 <div class="document">
-  <button (click)="openDocuments()" ion-button full large color="blue">{{element.documents_set.name}}</button>
+  <button (click)="openDocuments()" ion-button full large [color]="selectedThemeColor">
+    {{element.documents_set.name}}
+  </button>
 </div>

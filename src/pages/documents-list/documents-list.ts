@@ -3,6 +3,7 @@ import {IonicPage, ModalController, NavController, NavParams, ToastController} f
 import {Form, IDocumentSet} from "../../model";
 import {DocumentsService} from "../../services/documents-service";
 import {DocumentsSyncClient} from "../../services/documents-sync-client";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 
 @IonicPage()
@@ -15,13 +16,16 @@ export class DocumentsListPage {
   form: Form;
   documentSets: IDocumentSet[];
 
+  private selectedThemeColor: string;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     private modal: ModalController,
     private documentsService: DocumentsService,
     private documentsSync: DocumentsSyncClient,
-    private toast: ToastController
+    private toast: ToastController,
+    private themeService: ThemeProvider
   ) {
     this.form = this.navParams.get('form');
     this.init();
@@ -37,6 +41,8 @@ export class DocumentsListPage {
           formId: parseInt(this.form.id)
         }
       });
+
+    this.themeService.getActiveTheme().subscribe((theme) => this.selectedThemeColor = theme.split('-')[0]);
   }
 
   openDocuments(documentSet: IDocumentSet) {

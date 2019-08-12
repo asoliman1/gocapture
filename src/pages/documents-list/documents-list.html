@@ -14,7 +14,9 @@
   <ion-grid style="background-color: white;">
     <ion-row>
       <ion-col col-12 col-md-6 col-xl-6 *ngFor="let documentSet of documentSets">
-        <button color="blue" ion-button full large (click)="openDocuments(documentSet)">{{documentSet.name}}</button>
+        <button ion-button full large (click)="openDocuments(documentSet)" [color]="selectedThemeColor">
+          {{documentSet.name}}
+        </button>
       </ion-col>
     </ion-row>
   </ion-grid>

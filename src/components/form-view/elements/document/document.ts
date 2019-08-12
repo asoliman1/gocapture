@@ -6,6 +6,7 @@ import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../m
 import {DocumentsSyncClient} from "../../../../services/documents-sync-client";
 import {BaseElement} from "../base-element";
 import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {ThemeProvider} from "../../../../providers/theme/theme";
 
 @Component({
   selector: 'document',
@@ -24,13 +25,21 @@ export class Document extends BaseElement {
   @Input() isEditing?: boolean;
   @Input() submission?: FormSubmission;
 
+  private selectedTheme: string;
+  private selectedThemeColor: string;
+
   constructor(
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
     private documentsSyncClient: DocumentsSyncClient,
-    private toast: ToastController
+    private toast: ToastController,
+    private themeService: ThemeProvider
   ) {
     super();
+    this.themeService.getActiveTheme().subscribe((theme: string) => {
+      this.selectedTheme = theme;
+      this.selectedThemeColor = theme.split('-')[0];
+    });
   }
 
   isReadOnlyMode() {
