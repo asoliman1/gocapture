@@ -169,25 +169,20 @@ export class Forms {
     });
 
     const documentSets = this.getDocuments(form);
-    console.log('DOCUMENTS SETS, ', documentSets);
     if (documentSets.length) {
-      // if (documentSets.length === 1) {
-      //   this.documentsService.getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
-      //     .subscribe((docs) => {
-      //       buttons.push({
-      //         text: 'Documents',
-      //         icon: 'bookmarks',
-      //         handler: () => {
-      //           this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents: docs}}).present();
-      //         }
-      //       })
-      //     });
-      // } else {
         buttons.push({
           text: 'Documents',
           icon: 'bookmarks',
-          handler: () => {
-            this.navCtrl.push("DocumentsListPage", { form });
+          handler: async () => {
+            if (documentSets.length === 1) {
+              const docs = await this.documentsService
+                .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
+                .toPromise();
+
+              this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents: docs}}).present();
+            } else {
+              this.navCtrl.push("DocumentsListPage", { form });
+            }
           }
         })
       // }

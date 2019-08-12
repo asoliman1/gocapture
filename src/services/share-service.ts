@@ -51,11 +51,11 @@ export class ShareService {
     return this.socialSharing.shareViaFacebook(message, image, url)
       .then((_) => {
         console.log('SHARED VIA FACEBOOK SUCCESSFULLY');
-        return true
+        return true;
       })
       .catch((err) => {
         console.log("COULDN'T SHARE VIA FACEBOOK ", JSON.stringify(err));
-        this.showErrorToast();
+        // this.showErrorToast();
         return false;
       })
   }

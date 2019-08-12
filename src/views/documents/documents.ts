@@ -120,7 +120,7 @@ export class Documents implements AfterViewInit {
         icon: "mail",
         handler: async () => {
           console.log('email clicked');
-          await this.shareService.shareViaEmail(links, this.documentSet.name, ['']);
+          await this.shareService.shareViaEmail(links, this.documentSet.name, null);
         }
       },
       {
@@ -128,7 +128,7 @@ export class Documents implements AfterViewInit {
         icon: "chatbubbles",
         handler: async () => {
           console.log('sms clicked');
-          await this.shareService.shareViaSMS(links, '');
+          await this.shareService.shareViaSMS(links, null);
         }
       },
       {
@@ -144,7 +144,7 @@ export class Documents implements AfterViewInit {
         icon: "logo-facebook",
         handler: () => {
           console.log('facebook clicked');
-          this.shareService.shareViaFacebook(links);
+          this.shareService.shareViaFacebook(links, null, null);
         }
       },
       {
@@ -152,7 +152,7 @@ export class Documents implements AfterViewInit {
         icon: "logo-instagram",
         handler: async () => {
           console.log('instagram clicked');
-          await this.shareService.shareViaInstagram(links, '');
+          await this.shareService.shareViaInstagram(links, null);
         }
       },
       {
