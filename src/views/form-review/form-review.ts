@@ -36,6 +36,7 @@ export class FormReview {
 	filters;
 
 	filteredSubmissions: FormSubmission[] = [];
+	searchedSubmissions: FormSubmission[] = [];
 
 	hasSubmissionsToSend: boolean = false;
 
@@ -196,6 +197,18 @@ export class FormReview {
 		});
 	}
 
+  getSearchedItems(event) {
+    let val = event.target.value;
+    let regexp = new RegExp(val, "i");
+    this.searchedSubmissions = [].concat(this.filteredSubmissions.filter((submission) => {
+      return !val || regexp.test(submission.email) || regexp.test(submission.first_name) || regexp.test(submission.last_name);
+    }));
+  }
+
+  isSearchingAvailable() {
+    return !(this.filteredSubmissions.length == 0 || this.filteredSubmissions[0].id == -1);
+  }
+
 	onFilterChanged() {
 		this.zone.run(() => {
 			let f = this.filter;
@@ -223,6 +236,8 @@ export class FormReview {
 			  fakeSubmission.id = -1;
 			  this.filteredSubmissions.push(fakeSubmission);
       }
+
+			this.searchedSubmissions = this.filteredSubmissions;
 
       this.content.resize();
 		});

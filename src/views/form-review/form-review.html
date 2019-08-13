@@ -30,11 +30,12 @@
 			</ion-col>
 		</ion-row>
 	</ion-grid>
+  <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable()"></ion-searchbar>
 </ion-header>
 
 <ion-content class="form-summary">
 
-  <ion-list [virtualScroll]="filteredSubmissions" approxItemHeight="84px" >
+  <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="84px" >
     <ion-item-sliding *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
       <ion-item (click)="goToEntry(submission)">
 
