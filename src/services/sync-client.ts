@@ -1,29 +1,28 @@
-import { SettingsService } from './settings-service';
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { DBClient } from './db-client';
-import { RESTClient } from './rest-client';
+import {SettingsService} from './settings-service';
+import {Injectable} from "@angular/core";
+import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {DBClient} from './db-client';
+import {RESTClient} from './rest-client';
 
-import {DirectoryEntry, Entry, File, FileEntry, IFile} from '@ionic-native/file';
+import {File} from '@ionic-native/file';
 import {
-  SyncStatus,
   BarcodeStatus,
-  FormElementType,
-  Form,
-  Dispatch,
-  DispatchOrder,
   DeviceFormMembership,
+  Form,
+  FormElementType,
   FormSubmission,
+  FormSubmissionType,
   SubmissionStatus,
-  FormSubmissionType
+  SyncStatus
 } from "../model";
-import { FileUploadRequest, FileInfo } from "../model/protocol";
-import { HTTP } from '@ionic-native/http';
+import {FileInfo, FileUploadRequest} from "../model/protocol";
+import {HTTP} from '@ionic-native/http';
 import {StorageProvider} from "./storage-provider";
-import { settingsKeys } from '../constants/constants';
+import {settingsKeys} from '../constants/constants';
 import {SubmissionsRepository} from "./submissions-repository";
+
 declare var cordova: any;
 
 
@@ -592,36 +591,42 @@ export class SyncClient {
       mapEntry.loading = true;
       mapEntry.percent = 10;
 
-      this.rest.getAllForms(lastSyncDate).subscribe(remoteForms => {
+      this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
+
+        let remoteFormsIds = remoteForms.map((form) => form.form_id);
 
         remoteForms.forEach(form => {
           form.id = form.form_id + "";
         });
 
-        let remoteFormsIds = remoteForms.map(form => form.id);
-
-        result.newFormIds = Object.assign(remoteFormsIds);
         result.forms = remoteForms;
 
-        this.clearLocalForms().subscribe(() => {
-          mapEntry.percent = 50;
-          this.syncSource.next(this.lastSyncStatus);
-          this.db.saveForms(remoteForms).subscribe(reply => {
+        this.clearLocalForms().flatMap(() => {
+            mapEntry.percent = 50;
+            this.syncSource.next(this.lastSyncStatus);
+            return this.db.getForms();
+          }).flatMap((localForms)=> {
+            let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
+            if (localFormsIds && localFormsIds.length > 0) {
+              result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
+            }
+            return this.db.saveForms(remoteForms);
+          }).subscribe(reply => {
             mapEntry.complete = true;
             mapEntry.loading = false;
             mapEntry.percent = 100;
             this.entitySyncedSource.next(mapEntry.formName);
             this.syncSource.next(this.lastSyncStatus);
+
             obs.next(remoteForms);
             obs.complete();
-          }, err => {
-            obs.error(err);
-          });
-        }, err => {
+        }, (err) => {
           obs.error(err);
-        });
-      })
-    });
+        })
+      }, err => {
+        obs.error(err);
+      });
+    })
   }
 
 
