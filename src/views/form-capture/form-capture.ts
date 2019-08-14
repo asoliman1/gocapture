@@ -8,7 +8,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform, PopoverController,
+  Platform, Popover, PopoverController,
   ToastController,
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -83,6 +83,8 @@ export class FormCapture implements AfterViewInit {
   stationsSelectOptions: string = '';
 
   private stationsAlert;
+
+  private stationsPopover: Popover;
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -343,6 +345,10 @@ export class FormCapture implements AfterViewInit {
       this.backUnregister();
     }
     this.navbar.backButtonClick = this["oldClick"];
+
+    if (this.stationsPopover) {
+      this.stationsPopover.dismiss();
+    }
   }
 
   ionViewDidLeave(){
@@ -690,7 +696,7 @@ export class FormCapture implements AfterViewInit {
       // this.stationsSelect.open(event);
       // this.stationsSelect.open(new UIEvent('touch'));
 
-      let popover = this.popoverCtrl.create(StationsPage, {
+      this.stationsPopover = this.popoverCtrl.create(StationsPage, {
         stations: this.form.event_stations,
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
@@ -699,9 +705,9 @@ export class FormCapture implements AfterViewInit {
         enableBackdropDismiss: false,
         cssClass: this.selectedTheme + ' gc-popover'
       });
-      popover.present();
+      this.stationsPopover.present();
 
-      popover.onDidDismiss((data) => {
+      this.stationsPopover.onDidDismiss((data) => {
         if (data.isCancel) {
           if (!this.submission.id && !this.selectedStation) {
             this.navCtrl.pop();
