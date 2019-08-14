@@ -17,6 +17,7 @@ export class DocumentsListPage {
   documentSets: IDocumentSet[];
 
   private selectedThemeColor: string;
+  private selectedTheme: string;
 
   constructor(
     public navCtrl: NavController,
@@ -34,7 +35,7 @@ export class DocumentsListPage {
   private init() {
     console.log(this.form);
     this.documentSets = this.form.elements
-      .filter((el) => el.type === 'documents')
+      .filter((el) => el.type === 'documents' && el.documents_set)
       .map((el) => {
         return {
           ...el.documents_set,
@@ -42,7 +43,10 @@ export class DocumentsListPage {
         }
       });
 
-    this.themeService.getActiveTheme().subscribe((theme) => this.selectedThemeColor = theme.split('-')[0]);
+    this.themeService.getActiveTheme().subscribe((theme: string) => {
+      this.selectedTheme = theme;
+      this.selectedThemeColor = theme.split('-')[0]
+    });
   }
 
   openDocuments(documentSet: IDocumentSet) {

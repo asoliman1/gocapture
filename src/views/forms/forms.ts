@@ -178,7 +178,6 @@ export class Forms {
               const docs = await this.documentsService
                 .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
                 .toPromise();
-
               this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents: docs}}).present();
             } else {
               this.navCtrl.push("DocumentsListPage", { form });

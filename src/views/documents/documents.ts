@@ -120,7 +120,8 @@ export class Documents implements AfterViewInit {
         icon: "mail",
         handler: async () => {
           console.log('email clicked');
-          await this.shareService.shareViaEmail(links, this.documentSet.name, null);
+          const emailLinks = this.prepareDocumentLinks('\n');
+          await this.shareService.shareViaEmail(emailLinks, this.documentSet.name, null);
         }
       },
       {
@@ -175,11 +176,11 @@ export class Documents implements AfterViewInit {
     this.documentSet.documents.forEach((doc) => doc.selected = false);
   }
 
-  private prepareDocumentLinks() {
+  private prepareDocumentLinks(separator?: string) {
     return this.documentSet.documents
       .filter((document) => document.selected)
       .map((document) => document.vanity_url)
-      .join(', ');
+      .join(separator || ', ');
   }
 
   private documentsFolder(): string {

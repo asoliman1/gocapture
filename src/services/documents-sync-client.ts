@@ -5,7 +5,7 @@ import {Form, IDocument, IDocumentSet} from "../model";
 import {xorBy, intersectionBy, differenceBy} from 'lodash';
 import {forkJoin} from "rxjs/observable/forkJoin";
 import {Observable} from "rxjs";
-import {ToastController} from "ionic-angular";
+import {Platform, ToastController} from "ionic-angular";
 
 @Injectable()
 export class DocumentsSyncClient {
@@ -14,7 +14,8 @@ export class DocumentsSyncClient {
   constructor(
     private dbClient: DBClient,
     private documentsService: DocumentsService,
-    private toast: ToastController
+    private toast: ToastController,
+    private platform: Platform
   ) {}
 
   async syncAll() {
@@ -33,7 +34,7 @@ export class DocumentsSyncClient {
 
       for (let i = 0; i < forms.length; i++) {
         forms[i].elements.forEach((el) => {
-          if (el.type === 'documents') {
+          if (el.type === 'documents' && el.documents_set) {
             documentSets[el.documents_set.id] = el.documents_set.documents;
             currentDocuments = currentDocuments.concat(el.documents_set.documents);
           }
@@ -150,7 +151,7 @@ export class DocumentsSyncClient {
       message: `Documents are still syncing. Please try again later.`,
       duration: 3000,
       position: "top",
-      cssClass: "warning"
+      cssClass: "error"
     });
 
     toaster.present();

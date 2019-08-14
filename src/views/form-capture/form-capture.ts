@@ -664,7 +664,7 @@ export class FormCapture implements AfterViewInit {
     const documentsElements = {};
 
     const filteredElements = this.form.elements
-      .filter((element) => element.type === 'documents')
+      .filter((element) => element.type === 'documents' && element.documents_set)
       .filter((element) => element.documents_set.selectedDocumentIdsForSubmission);
 
     filteredElements.forEach((element) => {

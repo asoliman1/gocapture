@@ -7,6 +7,7 @@ import {Observable} from "rxjs";
 import {Util} from "../util/util";
 import {FileUtils} from "../util/file";
 import {IDocument} from "../model";
+import {ToastController} from "ionic-angular";
 
 @Injectable()
 export class DocumentsService {
@@ -15,7 +16,8 @@ export class DocumentsService {
     private fileTransfer: FileTransfer,
     private dbClient: DBClient,
     private restClient: RESTClient,
-    private util: Util
+    private util: Util,
+    private toast: ToastController
   ) {}
 
   saveDocument(documentId: number, setId: number, share_link?: string) {
@@ -158,5 +160,16 @@ export class DocumentsService {
 
   public getDocumentsDirectory() {
     return this.fileService.dataDirectory + 'leadliaison/documents/';
+  }
+
+  showNoDocumentsToast() {
+    let toaster = this.toast.create({
+      message: `The selected documents set doesn't contains any documents.`,
+      duration: 3000,
+      position: "top",
+      cssClass: "error"
+    });
+
+    toaster.present();
   }
 }

@@ -36,10 +36,7 @@ export class Document extends BaseElement {
     private themeService: ThemeProvider
   ) {
     super();
-    this.themeService.getActiveTheme().subscribe((theme: string) => {
-      this.selectedTheme = theme;
-      this.selectedThemeColor = theme.split('-')[0];
-    });
+    this.themeService.getActiveTheme().subscribe((theme: string) => this.selectedThemeColor = theme.split('-')[0]);
   }
 
   isReadOnlyMode() {
@@ -58,6 +55,10 @@ export class Document extends BaseElement {
     if (this.documentsSyncClient.isSyncing()) {
       this.documentsSyncClient.showSyncingToast();
       return;
+    }
+
+    if (!this.element.documents_set) {
+      return this.documentsService.showNoDocumentsToast();
     }
 
     this.documentsService.getDocumentsByIds(this.element.documents_set.documents.map((d) => d.id)).subscribe((documents) => {
