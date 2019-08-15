@@ -15,6 +15,7 @@ import { File } from '@ionic-native/file';
 import {FileOpener} from "@ionic-native/file-opener";
 import {DocumentsService} from "../../services/documents-service";
 import {ShareService} from "../../services/share-service";
+import {DocumentsSyncClient} from "../../services/documents-sync-client";
 
 export enum DocumentShareMode {
   SUBMISSION,
@@ -46,6 +47,7 @@ export class Documents implements AfterViewInit {
     private fileOpener: FileOpener,
     private toast: ToastController,
     private documentsService: DocumentsService,
+    private documentsSyncClient: DocumentsSyncClient,
     private shareService: ShareService,
     public viewCtrl: ViewController,
   ) {
@@ -71,6 +73,10 @@ export class Documents implements AfterViewInit {
   }
 
   async openDocument(document: IDocument) {
+    if (!document.file_path) {
+      return this.documentsSyncClient.showSyncingToast();
+    }
+
     // open the PDF viewer
     let filename =  document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;

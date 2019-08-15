@@ -18,8 +18,12 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-label text-center>
+  <ion-label text-center *ngIf="documentSet && documentSet.documents.length">
     {{readonlyMode ? 'Long press to view document.' : 'Tap to select documents. Long press to view.'}}
+  </ion-label>
+
+  <ion-label text-center *ngIf="documentSet && !documentSet.documents.length">
+    This document set is empty.
   </ion-label>
 
   <ion-grid class="documents-list">

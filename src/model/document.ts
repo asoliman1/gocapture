@@ -4,8 +4,8 @@ export interface IDocument {
   name: string;
   vanity_url: string;
   file_type?: string;
-  thumbnail_path?: string;
   file_path?: string;
   file_extension?: string;
   selected?: boolean;
+  preview_urls?: string;
 }

@@ -23,6 +23,7 @@ import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
 import {DocumentsSyncClient} from "../services/documents-sync-client";
+import { ImageLoaderConfig } from 'ionic-image-loader';
 
 declare var cordova;
 
@@ -52,14 +53,19 @@ export class MyApp {
     private logger: LogClient,
     public themeProvider: ThemeProvider,
     private settingsService: SettingsService,
-    private documentsSync: DocumentsSyncClient) {
+    private documentsSync: DocumentsSyncClient,
+    private imageLoaderConfig: ImageLoaderConfig
+    ) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
+      const colorKey = val.split('-')[0];
+      const color = Colors[colorKey];
       if (this.platform.is('android')) {
-        let color = Colors[val.split('-')[0]];
         this.statusBar.backgroundColorByHexString(color);
       }
+
+      this.imageLoaderConfig.setFallbackUrl(`assets/images/doc-placeholder-${colorKey}.png`);
     });
 
     this.initializeApp();
@@ -193,6 +199,12 @@ export class MyApp {
       });
       toaster.present();
     });
+
+    this.imageLoaderConfig.enableDebugMode();
+    this.imageLoaderConfig.enableSpinner(false);
+    this.imageLoaderConfig.setFallbackUrl('assets/images/doc-placeholder.png');
+    this.imageLoaderConfig.enableFallbackAsPlaceholder(true);
+    this.imageLoaderConfig.setConcurrency(10);
   }
 
   private checkDir(dirName) {

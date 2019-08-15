@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import {IonicPage, ModalController, NavController, NavParams, ToastController} from 'ionic-angular';
 import {Form, IDocumentSet} from "../../model";
 import {DocumentsService} from "../../services/documents-service";
-import {DocumentsSyncClient} from "../../services/documents-sync-client";
 import {ThemeProvider} from "../../providers/theme/theme";
-
+import {unionBy} from 'lodash';
 
 @IonicPage()
 @Component({
@@ -24,7 +23,6 @@ export class DocumentsListPage {
     public navParams: NavParams,
     private modal: ModalController,
     private documentsService: DocumentsService,
-    private documentsSync: DocumentsSyncClient,
     private toast: ToastController,
     private themeService: ThemeProvider
   ) {
@@ -50,14 +48,9 @@ export class DocumentsListPage {
   }
 
   openDocuments(documentSet: IDocumentSet) {
-    if (this.documentsSync.isSyncing()) {
-      this.documentsSync.showSyncingToast();
-      return;
-    }
-
     this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
       if (documents && documents.length) {
-        documentSet.documents = documents;
+        documentSet.documents = unionBy(documents, documentSet, 'id');
       }
 
       this.modal.create("Documents", { documentSet }).present();

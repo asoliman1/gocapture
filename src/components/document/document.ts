@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Outp
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
 import {File} from "@ionic-native/file";
+import {Platform} from "ionic-angular";
+import {DocumentsService} from "../../services/documents-service";
 
 @Component({
   selector: 'document',
   templateUrl: 'document.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Document implements OnChanges {
   @Input() document: IDocument;
@@ -18,16 +19,32 @@ export class Document implements OnChanges {
 
   constructor(
     private themeProvider: ThemeProvider,
-    private fileService: File
+    private fileService: File,
+    private platform: Platform,
+    private documentsService: DocumentsService
   ) {
     this.themeProvider.getActiveTheme().subscribe((theme) => this.selectedTheme = theme);
   }
 
   ngOnChanges() {
-    // console.log('changes');
-    // const defaultThumbnail = this.fileService.applicationDirectory + 'www/assets/images/doc-placeholder.png';
-    // this.thumbnail = this.document.file_path ? this.document.file_path : defaultThumbnail;
-    // console.log(this.thumbnail);
+    this.prepareThumbnail();
+  }
+
+  prepareThumbnail() {
+    if (!this.document.preview_urls) {
+      return;
+    }
+
+    const preview_urls = typeof this.document.preview_urls === 'string' ? JSON.parse(this.document.preview_urls) : this.document.preview_urls;
+    if (this.platform.is('mobile')) {
+      this.thumbnail = preview_urls['small'];
+    } else if (this.platform.is('tablet')) {
+      this.thumbnail = preview_urls['medium'];
+    } else if (this.platform.is('windows')) {
+      this.thumbnail = preview_urls['large'];
+    } else {
+      this.thumbnail = preview_urls['normal'];
+    }
   }
 
   select() {

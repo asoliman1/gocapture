@@ -36,10 +36,16 @@ export class DocumentsSyncClient {
         forms[i].elements.forEach((el) => {
           if (el.type === 'documents' && el.documents_set) {
             documentSets[el.documents_set.id] = el.documents_set.documents;
-            currentDocuments = currentDocuments.concat(el.documents_set.documents);
+            currentDocuments = currentDocuments
+              .concat(
+                el.documents_set.documents.map((doc) => {return {...doc, setId: el.documents_set.id};})
+              );
           }
         })
       }
+
+      console.log('DOCUMENTS FROM FORMS');
+      console.log(currentDocuments);
 
       Object.keys(documentSets).forEach((setId) => {
         this.documentsService.getDocumentsBySet(parseInt(setId))
@@ -49,6 +55,8 @@ export class DocumentsSyncClient {
             }
 
             const currentSetDocuments = documents.map((doc) => doc);
+            console.log('DOCUMENTS FROM DB');
+            console.log(currentSetDocuments);
 
             console.log('document ids fetched from the webservice');
             console.log(JSON.stringify(currentDocuments));
@@ -57,11 +65,11 @@ export class DocumentsSyncClient {
             console.log(JSON.stringify(currentDocuments));
 
             // check only a small portion of the documents
-            const documentsToBeChecked = xorBy(currentSetDocuments, currentDocuments);
+            const documentsToBeChecked = xorBy(currentSetDocuments, currentDocuments, 'id');
             // documents to be deleted
-            const documentsToBeDeleted = intersectionBy(currentSetDocuments, documentsToBeChecked);
+            const documentsToBeDeleted = intersectionBy(currentSetDocuments, documentsToBeChecked, 'id');
             // documents to be inserted
-            const documentsToBeInserted = differenceBy(documentsToBeChecked, documentsToBeDeleted);
+            const documentsToBeInserted = differenceBy(documentsToBeChecked, documentsToBeDeleted, 'id');
 
             console.log("DOCUMENTS TO BE DELETED => ");
             console.log(JSON.stringify(documentsToBeDeleted));
@@ -69,7 +77,7 @@ export class DocumentsSyncClient {
             console.log(JSON.stringify(documentsToBeInserted));
 
             if (documentsToBeDeleted.length) {
-              this.documentsService.removeDocuments(documentsToBeDeleted)
+              this.documentsService.removeDocuments(documentsToBeDeleted.map((doc) => doc.id))
                 .subscribe(() => {
                   console.log('deleting success');
                 }, (error) => {
@@ -78,23 +86,10 @@ export class DocumentsSyncClient {
                 )});
             }
 
-            const findSetID = function(docId: number) {
-              console.warn(docId);
-              Object.keys(documentSets).forEach((key) => {
-                console.warn(key);
-                if (documentSets[key].documents.find((doc) => doc.id === docId)) {
-                  console.error(key);
-                  return key;
-                }
-              });
-
-              return 0;
-            };
-
             if (documentsToBeInserted.length) {
                 const documentObservables = documentsToBeInserted
                   .map((doc: IDocument) => {
-                    return this.documentsService.saveDocument(doc.id, doc.setId, doc.vanity_url)
+                    return this.documentsService.saveDocument(doc)
                       .defaultIfEmpty({})
                       .retry(3)
                       .catch(() => Observable.of({}));
@@ -127,7 +122,7 @@ export class DocumentsSyncClient {
   syncBySet(set: IDocumentSet) {
     const promises = set.documents.map((document) => {
       return new Promise((resolve, reject) => {
-        this.documentsService.saveDocument(document.id, set.id)
+        this.documentsService.saveDocument(document)
           .subscribe((_) => {
             resolve();
             console.log(`Document synced`);

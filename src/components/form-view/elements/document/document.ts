@@ -3,7 +3,6 @@ import {DocumentShareMode} from "../../../../views/documents/documents";
 import {Component, forwardRef, Input} from "@angular/core";
 import {DocumentsService} from "../../../../services/documents-service";
 import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
-import {DocumentsSyncClient} from "../../../../services/documents-sync-client";
 import {BaseElement} from "../base-element";
 import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {ThemeProvider} from "../../../../providers/theme/theme";
@@ -25,13 +24,11 @@ export class Document extends BaseElement {
   @Input() isEditing?: boolean;
   @Input() submission?: FormSubmission;
 
-  private selectedTheme: string;
   private selectedThemeColor: string;
 
   constructor(
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
-    private documentsSyncClient: DocumentsSyncClient,
     private toast: ToastController,
     private themeService: ThemeProvider
   ) {
@@ -49,14 +46,6 @@ export class Document extends BaseElement {
   }
 
   openDocuments() {
-    console.log("OPENING DOCUMENTS PAGE");
-    console.log(JSON.stringify(this.submission));
-
-    if (this.documentsSyncClient.isSyncing()) {
-      this.documentsSyncClient.showSyncingToast();
-      return;
-    }
-
     if (!this.element.documents_set) {
       return this.documentsService.showNoDocumentsToast();
     }

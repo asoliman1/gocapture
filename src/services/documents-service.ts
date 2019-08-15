@@ -8,6 +8,7 @@ import {Util} from "../util/util";
 import {FileUtils} from "../util/file";
 import {IDocument} from "../model";
 import {ToastController} from "ionic-angular";
+import {forkJoin} from "rxjs/observable/forkJoin";
 
 @Injectable()
 export class DocumentsService {
@@ -20,41 +21,58 @@ export class DocumentsService {
     private toast: ToastController
   ) {}
 
-  saveDocument(documentId: number, setId: number, share_link?: string) {
+  saveDocument(document: IDocument) {
     const fileTransferObject: FileTransferObject = this.fileTransfer.create();
     return new Observable<any>((obs) => {
-      return this.getDocumentById(documentId).subscribe((exists) => {
-        if (exists) {
+      return this.getDocumentById(document.id).subscribe((doc) => {
+        if (doc) {
+          // check for changes here
+          if (doc.preview_urls !== document.preview_urls || doc.vanity_url !== document.vanity_url) {
+            this.updateDocument({
+              ...doc,
+              preview_urls: JSON.stringify(document.preview_urls),
+              vanity_url: document.vanity_url
+            }).subscribe((_) => {
+              obs.next(document);
+              obs.complete();
+            }, (error) => obs.complete());
+          }
+
           return obs.complete();
         }
 
-        return this.restClient.getDocumentInfo(documentId).subscribe((data) => {
-          const document: IDocument|any = data.records[0];
-          document.file_extension = FileUtils.getExtensionByType(document.file_type);
-          document.thumbnail_path = document.thumbnail_path || '';
-          document.setId = setId;
+        return this.restClient.getDocumentInfo(document.id).subscribe((data) => {
+          if (data.status != "200") {
+            return this.removeDocuments([document.id])
+              .subscribe((_) => obs.complete(), (error) => obs.complete());
+          }
 
-          const hasExtension = FileUtils.getFileExtension(document.name);
-          const extension = hasExtension ? '' : '.' + document.file_extension;
+          const documentFromTheAPI: IDocument | any = {...data.records[0], setId: document.setId};
+          documentFromTheAPI.file_extension = FileUtils.getExtensionByType(documentFromTheAPI.file_type);
 
-          const filePath = this.getDocumentsDirectory() + document.name + extension;
+          if (documentFromTheAPI.preview_urls && typeof documentFromTheAPI.preview_urls !== 'string') {
+            documentFromTheAPI.preview_urls = JSON.stringify(documentFromTheAPI.preview_urls);
+          }
+
+          const hasExtension = FileUtils.getFileExtension(documentFromTheAPI.name);
+          const extension = hasExtension ? '' : '.' + documentFromTheAPI.file_extension;
+
+          const filePath = this.getDocumentsDirectory() + documentFromTheAPI.name + extension;
           const adjustedPath = this.util.adjustFilePath(filePath);
-
-          return fileTransferObject.download(document.download_url, adjustedPath)
+          return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
             .then((entry) => {
-              document.file_path = entry.toURL();
-              document.vanity_url = share_link;
-
-              return this.dbClient.saveDocument(document).subscribe((ok) => {
-                obs.next(document);
-                obs.complete();
-                console.log('Document saved successfully');
-                console.log(JSON.stringify(ok));
-              }, (error) => {
-                obs.error(error);
-                console.log(`Couldn't save document on the db`);
-                console.log(JSON.stringify(error));
-              });
+              documentFromTheAPI.file_path = entry.toURL();
+              return this.dbClient.saveDocument(documentFromTheAPI)
+                .subscribe((ok) => {
+                  obs.next(documentFromTheAPI);
+                  obs.complete();
+                  console.log('Document saved successfully');
+                  console.log(JSON.stringify(ok));
+                }, (error) => {
+                  obs.error(error);
+                  console.log(`Couldn't save document on the db`);
+                  console.log(JSON.stringify(error));
+                });
 
             }, (error) => {
               obs.error(error);
@@ -120,6 +138,10 @@ export class DocumentsService {
     });
   }
 
+  updateDocument(document: IDocument) {
+    return this.dbClient.updateDocument(document);
+  }
+
   documentExists(id: number): Observable<boolean> {
     return new Observable<boolean>((obs) => {
       this.dbClient.getDocumentsByIds([id]).subscribe((docs) => {
@@ -141,16 +163,44 @@ export class DocumentsService {
 
   removeDocuments(ids: number[]): Observable<any> {
     return new Observable<any>((obs) => {
-      this.dbClient.deleteDocuments(ids).subscribe((ok) => {
-        console.log('Documents deleted successfully');
-        console.log(JSON.stringify(ok));
-        obs.next(true);
-        obs.complete();
+      this.dbClient.getDocumentsByIds(ids).subscribe(async (documents) => {
+        if (!documents) {
+          obs.next(true);
+          obs.complete();
+          return;
+        }
+
+        const toDeleteObservables = documents.map((doc) => {
+          const fileName = doc.file_path.split('/').pop();
+          return Observable
+            .fromPromise(this.fileService.removeFile(this.getDocumentsDirectory(), fileName))
+            .defaultIfEmpty({})
+            .catch(() => Observable.of({}));
+        });
+
+        forkJoin(toDeleteObservables)
+          .subscribe((data) => {
+
+            this.dbClient.deleteDocuments(ids).subscribe((ok) => {
+              obs.next(true);
+              obs.complete();
+            }, (error) => {
+              obs.error(false);
+              console.log(`Couldn't delete documents, an error occurred`);
+              console.log(JSON.stringify(error));
+            })
+
+          }, (error) => {
+            obs.error(false);
+            console.log(`Couldn't delete documents, an error occurred`);
+            console.log(JSON.stringify(error));
+          })
+
       }, (error) => {
         obs.error(false);
         console.log(`Couldn't delete documents, an error occurred`);
         console.log(JSON.stringify(error));
-      })
+      });
     });
   }
 

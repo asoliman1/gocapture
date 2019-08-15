@@ -31,7 +31,7 @@ import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
 import {DocumentsListPage} from "../../pages/documents-list/documents-list";
 import {ModalController} from "ionic-angular";
 import {DocumentsService} from "../../services/documents-service";
-
+import {unionBy} from 'lodash';
 
 @Component({
   selector: 'forms',
@@ -178,7 +178,13 @@ export class Forms {
               const docs = await this.documentsService
                 .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
                 .toPromise();
-              this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents: docs}}).present();
+
+              let documents;
+              if (docs && docs.length) {
+                documents = unionBy(docs, documentSets[0].documents, 'id');
+              }
+
+              this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents}}).present();
             } else {
               this.navCtrl.push("DocumentsListPage", { form });
             }

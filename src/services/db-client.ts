@@ -210,8 +210,8 @@ export class DBClient {
         "selectBySet": "SELECT * FROM documents WHERE setId=?",
         "selectByIds": "SELECT * FROM documents WHERE id IN (?)",
         "selectAll": "SELECT * FROM documents",
-        "update": "INSERT OR REPLACE INTO documents ( id, setId, name, file_path, thumbnail_path, file_type, file_extension, vanity_url, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?,?,?)",
-        "updateById": "UPDATE documents SET name=?, file_path=?, thumbnail_path=?, file_type=?, file_extension=?, updated_at=?, vanity_url=? WHERE id=?",
+        "update": "INSERT OR REPLACE INTO documents ( id, setId, name, file_path, preview_urls, file_type, file_extension, vanity_url, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "updateById": "UPDATE documents SET name=?, setId=?, file_path=?, preview_urls=?, file_type=?, file_extension=?, vanity_url=?, updated_at=? WHERE id=?",
         "delete": "DELETE FROM documents WHERE id=?",
         "deleteIn": "DELETE FROM documents WHERE id IN (?)",
         "deleteBySet": "DELETE FROM documents WHERE setId IN (?)",
@@ -277,8 +277,8 @@ export class DBClient {
             name: 'documents',
             columns: [
               { name: 'id', type: 'integer not null primary key' },
-              { name: 'setId', type: 'integer not null' },
-              { name: 'name', type: 'text not null' },
+              { name: 'setId', type: 'integer' },
+              { name: 'name', type: 'text' },
               { name: 'file_path', type: 'text' },
               { name: 'thumbnail_path', type: 'text' },
               { name: 'file_type', type: 'text' },
@@ -415,6 +415,11 @@ export class DBClient {
           "alter table submissions add column stations text"
         ]
       },
+      22: {
+        queries: [
+          "alter table documents add column preview_urls text"
+        ]
+      }
 		}
 	};
 	/**
@@ -990,7 +995,7 @@ export class DBClient {
       document.setId,
       document.name,
       document.file_path,
-      document.thumbnail_path,
+      document.preview_urls,
       document.file_type,
       document.file_extension,
       document.vanity_url,
@@ -1002,8 +1007,9 @@ export class DBClient {
 	public updateDocument(document: IDocument) {
 	  return this.updateById(WORK, 'documents', [
 	    document.name,
+      document.setId,
       document.file_path,
-      document.thumbnail_path || '',
+      document.preview_urls || '',
       document.file_type,
       document.file_extension || '',
       document.vanity_url,
@@ -1025,7 +1031,30 @@ export class DBClient {
   }
 
   public deleteDocuments(ids: number[]) {
-	  return this.doUpdate(WORK, 'deleteIn', 'documents', [ids.join(',')]);
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "deleteIn").replace("?", ids.join(",")), [])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
   }
 
   public deleteAllDocuments() {

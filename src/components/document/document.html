@@ -2,8 +2,9 @@
   <ion-label text-center>{{document.name}}</ion-label>
 
   <div tappable (tap)="select()" class="preview" (press)="openDocument()">
-    <img src="../../assets/images/doc-placeholder.png" alt="{{document.name}}" />
+<!--    <img [src]="thumbnail" alt="{{document.name}}" />-->
     <ion-icon *ngIf="document.selected" name="checkmark-circle"></ion-icon>
+    <img-loader [src]="thumbnail" useImg></img-loader>
   </div>
 
 </div>

@@ -99,7 +99,7 @@ import {SubmissionMapper} from "../services/submission-mapper";
 import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
-
+import {IonicImageLoader} from "ionic-image-loader";
 
 @NgModule({
   declarations: [
@@ -153,6 +153,7 @@ import {StationsPage} from "../views/stations/stations";
 	  TextMaskModule,
 	  PipesModule,
 	  BusinessCardOverlayPageModule,
+    IonicImageLoader.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
