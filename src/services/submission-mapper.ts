@@ -40,26 +40,21 @@ export class SubmissionMapper {
           break;
         case "image":
         case "business_card":
-        case "audio":
           try {
-            let obj;
-
-            if (typeof dataItem.value === 'object') {
-              obj = JSON.parse(dataItem.value);
-            } else {
-              obj = dataItem.value.replace(/\\/g, "");
+            let obj = JSON.parse(dataItem.value);
+            if(typeof(obj) == "string" ){
+              obj = JSON.parse(obj);
             }
-
             entry.fields[fieldName] = obj;
-
-            if (typeof obj === 'object') {
-              for(let key in <any>entry.fields[fieldName]) {
-                entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
-              }
+            for(var key in <any>entry.fields[fieldName]){
+              entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
             }
           }catch(e){
             console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
           }
+          break;
+        case "audio":
+          entry.fields[fieldName] = dataItem.value.replace(/\\/g, "");
           break;
         case "checkbox":
           entry.fields[fieldName] = dataItem.value.split(";");
