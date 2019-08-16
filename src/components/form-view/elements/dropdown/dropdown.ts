@@ -6,6 +6,7 @@ import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import {ModalController} from "ionic-angular";
 import {OptionItem} from "../../../../model/option-item";
 import {ISearch} from "../../../../views/search/search";
+import {Util} from "../../../../util/util";
 
 @Component({
 	selector: 'dropdown',
@@ -20,7 +21,7 @@ export class Dropdown extends BaseElement implements ISearch {
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
 
-	constructor(private modal: ModalController,) {
+	constructor(private modal: ModalController) {
 		super();
 	}
 
@@ -36,17 +37,19 @@ export class Dropdown extends BaseElement implements ISearch {
   }
 
 	writeValue(obj: any): void{
-		if(!obj){
+		if(!obj) {
 			for(let i = 0; i < this.element.options.length; i++){
 				if(this.element.options[i].is_default == 1){
 					obj = this.element.options[i].option;
 					break;
 				}
 			}
-		}else if(this.element && this.element.options.filter((entry)=>{
+		} else if (this.element && this.element.options.filter((entry)=>{
 			return entry.option == obj;
-		}).length == 0){
-			obj = this.element.options[parseInt(obj)-1].option;
+		}).length == 0) {
+		  if (Util.isNumber(obj)) {
+        obj = this.element.options[parseInt(obj)-1].option;
+      }
 		}
 		super.writeValue(obj);
 	}
