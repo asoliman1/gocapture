@@ -1,9 +1,8 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
 import {File} from "@ionic-native/file";
 import {Platform} from "ionic-angular";
-import {DocumentsService} from "../../services/documents-service";
 
 @Component({
   selector: 'document',
@@ -20,8 +19,7 @@ export class Document implements OnChanges {
   constructor(
     private themeProvider: ThemeProvider,
     private fileService: File,
-    private platform: Platform,
-    private documentsService: DocumentsService
+    private platform: Platform
   ) {
     this.themeProvider.getActiveTheme().subscribe((theme) => this.selectedTheme = theme);
   }

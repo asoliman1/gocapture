@@ -93,7 +93,7 @@ export class Document extends BaseElement {
     if (this.submission && this.submission.fields["element_" + elementId]) {
       try {
         let selectedDocs = [];
-        if (!this.element.documents_set.selectedDocumentIdsForSubmission) {
+        if (!this.element.documents_set.selectedDocumentIdsForSubmission || !this.element.documents_set.selectedDocumentIdsForSubmission.length) {
           if (typeof this.submission.fields["element_" + elementId] === 'string') {
             selectedDocs = JSON.parse(this.submission.fields["element_" + elementId] as string);
           } else if (this.submission.fields["element_" + elementId]) {

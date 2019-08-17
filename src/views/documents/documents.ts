@@ -4,6 +4,7 @@ import {
   IonicPage,
   NavController,
   NavParams,
+  Platform,
   ToastController,
   ViewController
 } from 'ionic-angular';
@@ -50,6 +51,7 @@ export class Documents implements AfterViewInit {
     private documentsSyncClient: DocumentsSyncClient,
     private shareService: ShareService,
     public viewCtrl: ViewController,
+    private platform: Platform
   ) {
     this.documentSet = this.navParams.get('documentSet');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.SHARE;
@@ -65,6 +67,7 @@ export class Documents implements AfterViewInit {
 
   select(document: IDocument) {
     if (this.readonlyMode) {
+      this.showEditingReadOnlyDocumentsErrorToast();
       return;
     }
 
@@ -80,7 +83,7 @@ export class Documents implements AfterViewInit {
     // open the PDF viewer
     let filename =  document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;
-    if (document.file_type === 'application/pdf') {
+    if (document.file_type === 'application/pdf' && this.platform.is('ios')) {
       console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
 
       return this.documentViewer.viewDocument(
@@ -146,22 +149,23 @@ export class Documents implements AfterViewInit {
           await this.shareService.shareViaWhatsApp(links);
         }
       },
-      {
-        text: 'Facebook',
-        icon: "logo-facebook",
-        handler: () => {
-          console.log('facebook clicked');
-          this.shareService.shareViaFacebook(links, null, null);
-        }
-      },
-      {
-        text: 'Instagram',
-        icon: "logo-instagram",
-        handler: async () => {
-          console.log('instagram clicked');
-          await this.shareService.shareViaInstagram(links, null);
-        }
-      },
+      // TODO: not needed for the moment
+      // {
+      //   text: 'Facebook',
+      //   icon: "logo-facebook",
+      //   handler: () => {
+      //     console.log('facebook clicked');
+      //     this.shareService.shareViaFacebook(links, null, null);
+      //   }
+      // },
+      // {
+      //   text: 'Instagram',
+      //   icon: "logo-instagram",
+      //   handler: async () => {
+      //     console.log('instagram clicked');
+      //     await this.shareService.shareViaInstagram(links, null);
+      //   }
+      // },
       {
         text: 'Cancel',
         role: 'cancel',
@@ -199,6 +203,16 @@ export class Documents implements AfterViewInit {
       duration: 5000,
       position: "top",
       cssClass: "error"
+    }).present();
+  }
+
+  private showEditingReadOnlyDocumentsErrorToast() {
+    this.toast.create({
+      message: `You cannot edit submissions in Preview Mode. Click Edit first before making changes.`,
+      duration: 5000,
+      position: "top",
+      cssClass: "error",
+
     }).present();
   }
 }

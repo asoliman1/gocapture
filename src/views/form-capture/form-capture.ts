@@ -499,6 +499,8 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+      this.tryClearDocumentsSelection();
+
       if (this.isEditing) {
         if (this.form.is_mobile_kiosk_mode) {
           this.navCtrl.pop();
@@ -677,8 +679,6 @@ export class FormCapture implements AfterViewInit {
       documentsElements["element_" + element.id] = element.documents_set.selectedDocumentIdsForSubmission;
     });
 
-    console.log(JSON.stringify(documentsElements));
-
     return documentsElements;
   }
 
@@ -758,6 +758,16 @@ export class FormCapture implements AfterViewInit {
     this.form.elements.forEach((element) => {
       element.placeholder = '';
     });
+  }
+
+  tryClearDocumentsSelection() {
+    this.form.elements
+      .filter((d) => d.type === 'documents')
+      .forEach((element) => {
+        if (element.documents_set && element.documents_set.selectedDocumentIdsForSubmission) {
+          element.documents_set.selectedDocumentIdsForSubmission = [];
+        }
+      });
   }
 
   openRapidScanMode() {
