@@ -4,6 +4,7 @@ import {
   IonicPage,
   NavController,
   NavParams,
+  Platform,
   ToastController,
   ViewController
 } from 'ionic-angular';
@@ -50,6 +51,7 @@ export class Documents implements AfterViewInit {
     private documentsSyncClient: DocumentsSyncClient,
     private shareService: ShareService,
     public viewCtrl: ViewController,
+    private platform: Platform
   ) {
     this.documentSet = this.navParams.get('documentSet');
     this.shareMode = this.navParams.get('shareMode') !== undefined ? this.navParams.get('shareMode') : DocumentShareMode.SHARE;
@@ -80,7 +82,7 @@ export class Documents implements AfterViewInit {
     // open the PDF viewer
     let filename =  document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;
-    if (document.file_type === 'application/pdf') {
+    if (document.file_type === 'application/pdf' && this.platform.is('ios')) {
       console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
 
       return this.documentViewer.viewDocument(
