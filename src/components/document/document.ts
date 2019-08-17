@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
 import {File} from "@ionic-native/file";
