@@ -49,6 +49,7 @@ export class DocumentsService {
 
           const documentFromTheAPI: IDocument | any = {...data.records[0], setId: document.setId};
           documentFromTheAPI.file_extension = FileUtils.getExtensionByType(documentFromTheAPI.file_type);
+          documentFromTheAPI.vanity_url = document.vanity_url;
 
           if (documentFromTheAPI.preview_urls && typeof documentFromTheAPI.preview_urls !== 'string') {
             documentFromTheAPI.preview_urls = JSON.stringify(documentFromTheAPI.preview_urls);
