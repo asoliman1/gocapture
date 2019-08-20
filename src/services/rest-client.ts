@@ -15,7 +15,8 @@ import {
   FileUploadResponse,
   FormSubmitResponse,
   RecordsResponse,
-  SubmissionResponse
+  SubmissionResponse,
+	FileDownloadResponse
 } from "../model/protocol";
 import {Device} from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
@@ -268,6 +269,13 @@ export class RESTClient {
 			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
+
+
+	public getDocumentInfo(documentId: number): Observable<RecordsResponse<FileDownloadResponse>> {
+	  return this.call<RecordsResponse<FileDownloadResponse>>('GET', '/files.json', {id: documentId})
+      .map((res) => res);
+  }
+
 	/**
 	 *
 	 * @returns Observable

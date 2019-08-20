@@ -8,3 +8,4 @@ export * from "./radios";
 export * from "./dropdown";
 export * from "./checkboxes";
 export * from "./badge";
+export * from "./document";

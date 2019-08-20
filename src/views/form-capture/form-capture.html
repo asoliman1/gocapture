@@ -50,15 +50,16 @@
 		</ion-row>
 
 		<ion-row>
-      <form-view *ngIf="form"
-						[form]="form"
-						[prospect]="prospect"
-						[submission]="submission"
-						(onValidationChange)="onValidationChange($event)"
-						[readOnly]="isReadOnly(submission) && !isEditing"
-            [isEditing]="isEditing"
-            [submitAttempt]="submitAttempt"
-            (onProcessingEvent)="onProcessing($event)">
+      <form-view
+        *ngIf="form"
+        [form]="form"
+        [prospect]="prospect"
+        [submission]="submission"
+        (onValidationChange)="onValidationChange($event)"
+        [readOnly]="isReadOnly(submission) && !isEditing"
+        [isEditing]="isEditing"
+        [submitAttempt]="submitAttempt"
+        (onProcessingEvent)="onProcessing($event)">
       </form-view>
     </ion-row>
 

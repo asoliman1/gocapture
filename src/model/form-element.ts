@@ -1,3 +1,5 @@
+import {IDocumentSet} from "./documentSet";
+
 export class FormElement {
 	id : number;
 	title : string;
@@ -29,6 +31,7 @@ export class FormElement {
   isMatchingRules: boolean;
 	is_filled_from_list: boolean;
 	post_show_reconciliation: boolean;
+  documents_set?: IDocumentSet;
 }
 
 export class Option{

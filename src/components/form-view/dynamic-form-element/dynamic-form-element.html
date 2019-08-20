@@ -152,6 +152,21 @@
            [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
     </goc-audio>
 
+    <!-- DOCUMENTS -->
+    <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      <document
+        [form]="form"
+        [readonly]="readOnly"
+        [formControlName]="element.identifier"
+        [formGroup]="theForm"
+        [element]="element"
+        [shareMode]="0"
+        [isEditing]="isEditing"
+        [submission]="submission">
+      </document>
+    </ion-item>
+
+
     <ion-item *ngSwitchDefault>
       <ion-label>Coming soon! A component for {{element.type}}</ion-label>
     </ion-item>

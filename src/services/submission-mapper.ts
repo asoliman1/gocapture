@@ -40,8 +40,7 @@ export class SubmissionMapper {
           break;
         case "image":
         case "business_card":
-        case "audio":
-          try{
+          try {
             let obj = JSON.parse(dataItem.value);
             if(typeof(obj) == "string" ){
               obj = JSON.parse(obj);
@@ -53,6 +52,9 @@ export class SubmissionMapper {
           }catch(e){
             console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
           }
+          break;
+        case "audio":
+          entry.fields[fieldName] = dataItem.value.replace(/\\/g, "");
           break;
         case "checkbox":
           entry.fields[fieldName] = dataItem.value.split(";");

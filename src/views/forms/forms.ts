@@ -16,7 +16,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import {Form, FormSubmission, SubmissionStatus} from "../../model";
+import {Form, SubmissionStatus} from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { FormControlPipe } from "../../pipes/form-control-pipe";
@@ -28,7 +28,10 @@ import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinit
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FormInstructions} from "../form-instructions";
 import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
-
+import {DocumentsListPage} from "../../pages/documents-list/documents-list";
+import {ModalController} from "ionic-angular";
+import {DocumentsService} from "../../services/documents-service";
+import {unionBy} from 'lodash';
 
 @Component({
   selector: 'forms',
@@ -82,7 +85,9 @@ export class Forms {
               private themeProvider: ThemeProvider,
               private popup: Popup,
               private toast: ToastController,
-              private duplicateLeadsService: DuplicateLeadsService) {
+              private duplicateLeadsService: DuplicateLeadsService,
+              private modalCtrl: ModalController,
+              private documentsService: DocumentsService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
@@ -163,6 +168,30 @@ export class Forms {
       }
     });
 
+    const documentSets = this.getDocuments(form);
+    if (documentSets.length) {
+        buttons.push({
+          text: 'Documents',
+          icon: 'bookmarks',
+          handler: async () => {
+            if (documentSets.length === 1) {
+              const docs = await this.documentsService
+                .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
+                .toPromise();
+
+              let documents;
+              if (docs && docs.length) {
+                documents = unionBy(docs, documentSets[0].documents, 'id');
+              }
+
+              this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents}}).present();
+            } else {
+              this.navCtrl.push("DocumentsListPage", { form });
+            }
+          }
+        })
+      // }
+    }
 
     if (form.instructions_content && form.instructions_content.length > 0) {
       buttons.push({
@@ -201,8 +230,6 @@ export class Forms {
     });
   }
 
-
-
   ionViewDidLeave() {
     this.sub.unsubscribe();
   }
@@ -213,5 +240,11 @@ export class Forms {
         return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
       }).length;
     });
+  }
+
+  private getDocuments(form: Form) {
+    return form.elements
+      .filter((el) => el.type === 'documents')
+      .map((el) => el.documents_set);
   }
 }

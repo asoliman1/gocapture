@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {BrowserModule, SafeHtml} from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyApp } from './app.component';
 import { Login, UrlChoose } from "../views/login";
@@ -22,10 +22,24 @@ import { ImageProcessor } from "../services/image-processor";
 import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
-import { BusinessCard, Image, SimpleName, Signature, SignatureModal, SignaturePad, Gps, Address, Checkboxes, Radios, Dropdown, Badge, ImageViewer} from "../components/form-view/elements";
+import {
+  BusinessCard,
+  Image,
+  SimpleName,
+  Signature,
+  SignatureModal,
+  SignaturePad,
+  Gps,
+  Address,
+  Checkboxes,
+  Radios,
+  Dropdown,
+  Badge,
+  ImageViewer,
+  Document
+} from "../components/form-view/elements";
 import {ProspectSearch} from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
-//import { CustomFormsModule } from 'ng2-validation';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
 import { MyCurrencyDirective } from "../util/currency";
@@ -76,10 +90,16 @@ import {BCRapidCapture} from "../services/bc-rapid-capture";
 import {ProgressHud} from "../services/progress-hud";
 import {DuplicateLeadsService} from "../services/duplicate-leads-service";
 import {AppPreferences} from "@ionic-native/app-preferences";
+import {DocumentViewer} from "@ionic-native/document-viewer";
+import {FileOpener} from "@ionic-native/file-opener";
+import {DocumentsService} from "../services/documents-service";
+import {SocialSharing} from "@ionic-native/social-sharing";
 import {SubmissionsRepository} from "../services/submissions-repository";
 import {SubmissionMapper} from "../services/submission-mapper";
+import {DocumentsSyncClient} from "../services/documents-sync-client";
+import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
-
+import {IonicImageLoader} from "ionic-image-loader";
 
 @NgModule({
   declarations: [
@@ -99,7 +119,22 @@ import {StationsPage} from "../views/stations/stations";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, HTMLBlock, GOCAudio, ImageViewer, UrlChoose,
+    BusinessCard,
+    Image,
+    SimpleName,
+    Signature,
+    SignatureModal,
+    Gps,
+    Address,
+    Document,
+    Checkboxes,
+    Radios,
+    Dropdown,
+    Badge,
+    HTMLBlock,
+    GOCAudio,
+    ImageViewer,
+    UrlChoose,
     ProspectSearch,
     OcrSelector,
     MyCurrencyDirective,
@@ -112,9 +147,13 @@ import {StationsPage} from "../views/stations/stations";
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
     IonicImageViewerModule,
-	TextMaskModule,
-	PipesModule,
-	BusinessCardOverlayPageModule,
+	  TextMaskModule,
+	  PipesModule,
+	  BusinessCardOverlayPageModule,
+	  TextMaskModule,
+	  PipesModule,
+	  BusinessCardOverlayPageModule,
+    IonicImageLoader.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -134,7 +173,21 @@ import {StationsPage} from "../views/stations/stations";
     LogView,
     SignaturePad,
     FormSelectionView,
-    BusinessCard, Image, SimpleName, Signature, SignatureModal, Gps, Address, Checkboxes, Radios, Dropdown, Badge, GOCAudio, ImageViewer, UrlChoose,
+    BusinessCard,
+    Image,
+    SimpleName,
+    Signature,
+    SignatureModal,
+    Gps,
+    Address,
+    Document,
+    Checkboxes,
+    Radios,
+    Dropdown,
+    Badge,
+    GOCAudio,
+    ImageViewer,
+    UrlChoose,
     ProspectSearch,
     OcrSelector,
     StationsPage
@@ -193,8 +246,14 @@ import {StationsPage} from "../views/stations/stations";
     ProgressHud,
     DuplicateLeadsService,
     AppPreferences,
+    DocumentViewer,
+    FileOpener,
+    DocumentsService,
+    DocumentsSyncClient,
+    SocialSharing,
     SubmissionsRepository,
-    SubmissionMapper
+    SubmissionMapper,
+    ShareService
   ]
 })
 export class AppModule { }

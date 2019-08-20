@@ -1,7 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
-import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
+import {
+  User,
+  Form,
+  DispatchOrder,
+  FormElement,
+  FormSubmission,
+  DeviceFormMembership,
+  SubmissionStatus,
+  IDocument
+} from "../model";
 import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
@@ -181,7 +190,34 @@ export class DBClient {
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?'
 			}
-		}
+		},
+    {
+      name: 'documents',
+      master: false,
+      columns: [
+        { name: 'id', type: 'integer not null primary key' },
+        { name: 'setId', type: 'integer' },
+        { name: 'name', type: 'text' },
+        { name: 'file_path', type: 'text' },
+        { name: 'thumbnail_path', type: 'text' },
+        { name: 'file_type', type: 'text' },
+        { name: 'file_extension', type: 'text' },
+        { name: 'vanity_url', type: 'text' },
+        { name: 'created_at', type: 'text' },
+        { name: 'updated_at', type: 'text' }
+      ],
+      queries: {
+        "selectBySet": "SELECT * FROM documents WHERE setId=?",
+        "selectByIds": "SELECT * FROM documents WHERE id IN (?)",
+        "selectAll": "SELECT * FROM documents",
+        "update": "INSERT OR REPLACE INTO documents ( id, setId, name, file_path, preview_urls, file_type, file_extension, vanity_url, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "updateById": "UPDATE documents SET name=?, setId=?, file_path=?, preview_urls=?, file_type=?, file_extension=?, vanity_url=?, updated_at=? WHERE id=?",
+        "delete": "DELETE FROM documents WHERE id=?",
+        "deleteIn": "DELETE FROM documents WHERE id IN (?)",
+        "deleteBySet": "DELETE FROM documents WHERE setId IN (?)",
+        "deleteAll": "DELETE FROM documents"
+      }
+    }
 	];
 
 	private versions = {
@@ -236,7 +272,22 @@ export class DBClient {
 							{ name: 'version', type: 'integer not null' },
 							{ name: 'updated_at', type: 'text' }
 						]
-					}
+					},
+          {
+            name: 'documents',
+            columns: [
+              { name: 'id', type: 'integer not null primary key' },
+              { name: 'setId', type: 'integer' },
+              { name: 'name', type: 'text' },
+              { name: 'file_path', type: 'text' },
+              { name: 'thumbnail_path', type: 'text' },
+              { name: 'file_type', type: 'text' },
+              { name: 'file_extension', type: 'text' },
+              { name: 'vanity_url', type: 'text' },
+              { name: 'created_at', type: 'text' },
+              { name: 'updated_at', type: 'text' }
+            ]
+          }
 				],
 				queries: [
 					"ALTER TABLE submissions add column activityId VARCHAR(50)"
@@ -364,6 +415,11 @@ export class DBClient {
           "alter table submissions add column stations text"
         ]
       },
+      22: {
+        queries: [
+          "alter table documents add column preview_urls text"
+        ]
+      }
 		}
 	};
 	/**
@@ -752,6 +808,7 @@ export class DBClient {
 		});
 	}
 
+
   private submissonFromDBEntry(dbForm) {
     let form = new FormSubmission();
     form.id = dbForm.id;
@@ -877,6 +934,90 @@ export class DBClient {
 		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
 	}
 
+	public getDocumentsByIds(ids: number[]) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "selectByIds").replace("?", ids.join(",")), [])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public getDocumentsBySetId(setId: number) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "selectBySet"), [setId])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public saveDocument(document: IDocument) {
+	  const now = Date.now();
+	  return this.save(WORK, 'documents', [
+	    document.id,
+      document.setId,
+      document.name,
+      document.file_path,
+      document.preview_urls,
+      document.file_type,
+      document.file_extension,
+      document.vanity_url,
+      now,
+      now
+    ])
+  }
+
+	public updateDocument(document: IDocument) {
+	  return this.updateById(WORK, 'documents', [
+	    document.name,
+      document.setId,
+      document.file_path,
+      document.preview_urls || '',
+      document.file_type,
+      document.file_extension || '',
+      document.vanity_url,
+      Date.now(),
+      document.id
+    ]);
+  }
+
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
 		return this.saveAll<FormSubmission>(forms, "Submission");
 	}
@@ -886,11 +1027,41 @@ export class DBClient {
 	}
 
   public deleteHoldSubmission(form: FormSubmission) {
-
-    return this.doUpdate(WORK, 'deleteByHoldId', 'submissions', [form.hold_request_id])
+    return this.doUpdate(WORK, 'deleteByHoldId', 'submissions', [form.hold_request_id]);
   }
 
-	/**
+  public deleteDocuments(ids: number[]) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "deleteIn").replace("?", ids.join(",")), [])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public deleteAllDocuments() {
+    return this.doUpdate(WORK, 'deleteAll', 'documents', []);
+  }
+
+	/**§
 	 *
 	 */
 	public saveRegistration(user: User): Observable<boolean> {

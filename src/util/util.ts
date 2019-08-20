@@ -92,6 +92,10 @@ export class Util {
     return obj != null && obj == obj.window;
   }
 
+  public static isNumber(num) {
+    return !isNaN(num);
+  }
+
   public static isNumeric( obj : any ) : boolean {
     let realStringObj = obj && obj.toString();
     return !Util.isArray( obj ) && ( realStringObj - parseFloat( realStringObj ) + 1 ) >= 0;

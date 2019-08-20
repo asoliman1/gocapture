@@ -482,7 +482,7 @@ export class FormCapture implements AfterViewInit {
       return;
     }
 
-    this.submission.fields = this.formView.getValues();
+    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
       this.submission.id = new Date().getTime();
@@ -499,8 +499,10 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+      this.tryClearDocumentsSelection();
+
       if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+        if (this.form.is_mobile_kiosk_mode) {
           this.navCtrl.pop();
         } else {
           this.navCtrl.popToRoot();
@@ -508,7 +510,7 @@ export class FormCapture implements AfterViewInit {
         return;
       }
 
-      if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+      if (this.form.is_mobile_kiosk_mode) {
         this.clearPlaceholders();
         this.submission = null;
         this.form = null;
@@ -666,9 +668,23 @@ export class FormCapture implements AfterViewInit {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
+  getDocumentsForSubmission() {
+    const documentsElements = {};
+
+    const filteredElements = this.form.elements
+      .filter((element) => element.type === 'documents' && element.documents_set)
+      .filter((element) => element.documents_set.selectedDocumentIdsForSubmission);
+
+    filteredElements.forEach((element) => {
+      documentsElements["element_" + element.id] = element.documents_set.selectedDocumentIdsForSubmission;
+    });
+
+    return documentsElements;
+  }
 
   onOpenStations() {
-    if (this.form.is_mobile_kiosk_mode) {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
       return;
     }
     this.openStations();
@@ -742,6 +758,16 @@ export class FormCapture implements AfterViewInit {
     this.form.elements.forEach((element) => {
       element.placeholder = '';
     });
+  }
+
+  tryClearDocumentsSelection() {
+    this.form.elements
+      .filter((d) => d.type === 'documents')
+      .forEach((element) => {
+        if (element.documents_set && element.documents_set.selectedDocumentIdsForSubmission) {
+          element.documents_set.selectedDocumentIdsForSubmission = [];
+        }
+      });
   }
 
   openRapidScanMode() {

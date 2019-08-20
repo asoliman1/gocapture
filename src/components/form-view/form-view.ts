@@ -1,11 +1,19 @@
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
-import { Form, BarcodeStatus, FormElement, DeviceFormMembership, FormSubmission, FormElementType, ElementMapping } from "../../model";
+import {
+  Form,
+  BarcodeStatus,
+  FormElement,
+  DeviceFormMembership,
+  FormSubmission,
+  FormElementType,
+} from "../../model";
 import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
-import { ModalController } from 'ionic-angular/components/modal/modal-controller';
+import {ModalController} from "ionic-angular";
+import {DocumentsService} from "../../services/documents-service";
 
 @Component({
   selector: 'form-view',
@@ -47,12 +55,18 @@ export class FormView {
     2 : "queued"
   };
 
-  constructor(private fb: FormBuilder, private zone: NgZone, private modalCtrl: ModalController) {
+  constructor(
+    private fb: FormBuilder,
+    private zone: NgZone,
+    private modal: ModalController,
+    private documentsService: DocumentsService
+  ) {
     this.theForm = new FormGroup({});
+    //this.documentsService.syncByForm(this.form.id);
   }
 
   showSelection(){
-    let modal = this.modalCtrl.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
+    let modal = this.modal.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
     modal.present();
   }
 
@@ -186,6 +200,22 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
+        // this.displayForm.elements = [
+        //   ...this.displayForm.elements,
+        //   {
+        //     ...this.displayForm.elements[0],
+        //     id: 999,
+        //     type: 'document',
+        //     title: 'ELM Documents'
+        //   },
+        //   {
+        //     ...this.displayForm.elements[0],
+        //     id: 9999,
+        //     type: 'document',
+        //     title: 'POST SHOW Docs'
+        //   }
+        // ];
+        console.log(this.displayForm);
       });
     }, 150);
   }
@@ -429,5 +459,4 @@ export class FormView {
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
   }
-
 }

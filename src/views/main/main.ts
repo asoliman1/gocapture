@@ -14,6 +14,8 @@ import {ThemeProvider} from "../../providers/theme/theme";
 import {App} from "ionic-angular";
 import {FormCapture} from "../form-capture";
 import {RapidCaptureService} from "../../services/rapid-capture-service";
+import {DocumentsService} from "../../services/documents-service";
+import {DocumentsSyncClient} from "../../services/documents-sync-client";
 
 @Component({
 	selector: 'main',
@@ -51,7 +53,8 @@ export class Main {
     private util: Util,
     private themeProvider: ThemeProvider,
     private app: App,
-    private rapidCaptureService: RapidCaptureService) {
+    private rapidCaptureService: RapidCaptureService,
+    private documentsSync: DocumentsSyncClient) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Events', component: Forms, icon: "document" },
@@ -135,10 +138,13 @@ export class Main {
 			this.statuses = stats;
 			//console.log(stats);
 			this.currentSyncForm = this.getCurrentUploadingForm();
+
+			this.documentsSync.syncAll();
+
 			if (this.pullup.state == IonPullUpFooterState.Minimized && !hidePullup) {
 				this.pullup.collapse();
 			}
-			timer = setTimeout(()=> {
+			timer = setTimeout(() => {
 				hidePullup = true;
 				this.pullup.minimize();
 			}, 12500);
