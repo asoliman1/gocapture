@@ -5,7 +5,7 @@ import { FormControlPipe } from './form-control-pipe';
 import { AvatarPathUpdaterPipe } from './avatar-path-updater';
 import { ArrayFilterPipe } from './filter-pipe';
 import { TimeIntervalPipe } from './time-interval-pipe';
-import {ConvertFileSrcPipe} from "./conver-file-src-pipe";
+import {ConvertFileSrcPipe} from "./convert-file-src-pipe";
 @NgModule({
 	declarations: [
 		SafeHtmlPipe,

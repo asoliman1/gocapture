@@ -1,4 +1,4 @@
-export class User{
+export class User {
 	id : number;
 	customerID : number;
 	customer_account_name : string;
@@ -17,5 +17,6 @@ export class User{
 	device_token: string;
 	is_production: 0 | 1 = 1;
 	theme: string;
+	device_id: number;
 
 }

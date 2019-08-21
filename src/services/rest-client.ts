@@ -1,16 +1,30 @@
-import { BadgeResponse, ItemData } from '../model/badge';
-import { Injectable } from "@angular/core";
-import { Headers, Response, Http, URLSearchParams } from "@angular/http";
-import { Config } from "../config";
-import { Observable } from "rxjs/Observable";
-import { Observer } from "rxjs/Observer";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { User, Form, Dispatch, DeviceFormMembership, FormSubmission, SubmissionStatus } from "../model";
-import { AuthenticationRequest, DataResponse, RecordsResponse, BaseResponse, FormSubmitResponse, SubmissionResponse, FileUploadRequest, FileUploadResponse, FileResponse } from "../model/protocol";
-import { Device } from "@ionic-native/device";
+import {BadgeResponse} from '../model';
+import {Injectable} from "@angular/core";
+import {Headers, Http, Response, URLSearchParams} from "@angular/http";
+import {Config} from "../config";
+import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {DeviceFormMembership, Form, FormSubmission, SubmissionStatus, User} from "../model";
+import {
+  AuthenticationRequest,
+  BaseResponse,
+  DataResponse,
+  FileResponse,
+  FileUploadRequest,
+  FileUploadResponse,
+  FormSubmitResponse,
+  RecordsResponse,
+  SubmissionResponse,
+	FileDownloadResponse
+} from "../model/protocol";
+import {Device} from "@ionic-native/device";
 import {StatusResponse} from "../model/protocol/status-response";
 import {isProductionEnvironment} from "../app/config";
 import {retry} from "rxjs/operators/retry";
+import {DBClient} from "./db-client";
+import {SubmissionsRepository} from "./submissions-repository";
+import {SubmissionMapper} from "./submission-mapper";
 
 @Injectable()
 export class RESTClient {
@@ -26,7 +40,10 @@ export class RESTClient {
 	private online = true;
 	private device: Device;
 
-	constructor(private http: Http) {
+	constructor(private http: Http,
+              private dbClient: DBClient,
+              private submissionsRepository: SubmissionsRepository,
+              private submissionMapper: SubmissionMapper) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
@@ -176,68 +193,32 @@ export class RESTClient {
 		if(lastSyncDate){
 			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
-		let f = form;
-		return this.getAll<SubmissionResponse>("/forms/submissions.json", opts)
+		return this.getAllItems<SubmissionResponse>("/forms/submissions.json", opts)
 				.map(resp => {
-					let data: FormSubmission[] = [];
-					resp.forEach((item: SubmissionResponse) => {
-						let entry: FormSubmission = new FormSubmission();
-						entry.id = item.activity_id;
-						entry.activity_id = item.activity_id;
-						entry.status = SubmissionStatus.Submitted;
-						entry.prospect_id = parseInt(item.prospect_id+"");
-						entry.hold_request_id = item.hold_request_id;
-						entry.email = item.email;
-						entry.form_id = parseInt(form.id);
-						item.data.forEach((dataItem) => {
-							if(!dataItem.value){
-								return;
-							}
-							let fieldName = "element_" + dataItem.element_id;
-							let field = form.getFieldById(dataItem.element_id);
+				  if (resp.deletedItems) {
+            this.submissionsRepository.handleDeletedSubmissions(resp.deletedItems).subscribe(()=>{
+              console.log('Removed deleted submissions - DONE');
+            });
+          }
 
-							switch(field.type){
-								case "simple_name":
-								case "address":
-								  if (dataItem["value_splitted"]) {
-								    let values = dataItem["value_splitted"];
-								    entry.fields = {...entry.fields, ...values};
-                  }
-									break;
-								case "image":
-                case "business_card":
-                case "audio":
-									try{
-										let obj = JSON.parse(dataItem.value);
-										if(typeof(obj) == "string" ){
-											obj = JSON.parse(obj);
-										}
-										entry.fields[fieldName] = obj;
-										for(var key in <any>entry.fields[fieldName]){
-											entry.fields[fieldName][key] = entry.fields[fieldName][key].replace(/\\/g, "");
-										}
-									}catch(e){
-										console.log("Can't parse " + field.type + " for submission " + entry.activity_id)
-									}
-									break;
-								case "checkbox":
-									entry.fields[fieldName] = dataItem.value.split(";");
-									break;
-								default:
-									entry.fields[fieldName] = dataItem.value;
-							}
-						});
-						entry.first_name = "";
-						entry.last_name = "";
-						entry.company = "";
-						entry.phone = "";
-						entry.sub_date = item.submission_date;
-						entry.updateFields(f);
-						data.push(entry);
-					});
-					return data;
+				  if (resp.deletedHoldItems) {
+            this.submissionsRepository.handleDeletedHoldSubmissions(resp.deletedHoldItems).subscribe(() => {
+              console.log('Removed deleted HOLD submissions - DONE');
+            });
+          }
+					return this.handleSubmissionsResponse(form, resp.items);
 				});
 	}
+
+	private handleSubmissionsResponse(form, items) {
+    let data: FormSubmission[] = [];
+    items.forEach((item: SubmissionResponse) => {
+      let formSubmmission = this.submissionMapper.map(form, item);
+
+      data.push(formSubmmission);
+    });
+    return data;
+  }
 
 	public getAvailableFormIds(): Observable<number[]>{
 		return this.getAll<number>("/device/available_forms.json", {})
@@ -288,6 +269,13 @@ export class RESTClient {
 			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
+
+
+	public getDocumentInfo(documentId: number): Observable<RecordsResponse<FileDownloadResponse>> {
+	  return this.call<RecordsResponse<FileDownloadResponse>>('GET', '/files.json', {id: documentId})
+      .map((res) => res);
+  }
+
 	/**
 	 *
 	 * @returns Observable
@@ -394,13 +382,14 @@ export class RESTClient {
 	 * @returns Observable
 	 */
 	public submitForm(data: FormSubmission): Observable<{
-		id:number, 
-		message:string, 
-		hold_request_id:number, 
-		response_status: string, 
+		id:number,
+		message:string,
+		hold_request_id:number,
+		response_status: string,
 		form_id: number;
 		duplicate_action?: string,
-		submission?: FormSubmission
+		submission?: FormSubmission,
+    is_new_submission: boolean
 	}> {
 		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
@@ -410,7 +399,9 @@ export class RESTClient {
 						hold_request_id: resp.hold_request_id,
 						message: "",
 						response_status: resp.status,
-						form_id: data.form_id
+						form_id: data.form_id,
+            is_new_submission: resp.is_new_submission,
+            submission: resp.submission,
 					};
 				}
 				this.errorSource.next(resp);
@@ -421,7 +412,8 @@ export class RESTClient {
 						response_status: resp.status,
 						duplicate_action: resp.duplicate_action,
 						submission: resp.submission,
-						form_id: data.form_id
+						form_id: data.form_id,
+            is_new_submission: resp.is_new_submission
 					};
 			});
 	}
@@ -483,6 +475,7 @@ export class RESTClient {
 				}else{
 					records = [data.records];
 				}
+
 				result.push.apply(result, records);
 				if(data.count + offset < data.total_count){
 					offset += data.count;
@@ -504,6 +497,61 @@ export class RESTClient {
 		});
 		return response;
 	}
+
+  private getAllItems<T>(relativeUrl: string, content: any) : Observable<{items: T[], deletedItems:any[], deletedHoldItems:any[]}>{
+    return new Observable<{ items: T[], deletedItems: any[], deletedHoldItems:any[] }>((obs: Observer<{ items: T[], deletedItems: any[], deletedHoldItems:any[] }>) => {
+      let offset = 0;
+      let result: { items: T[], deletedItems: any[], deletedHoldItems:any[] } = {items: [], deletedItems: [], deletedHoldItems: []};
+      let handler = (data: RecordsResponse<T>) => {
+
+        let records = [];
+        let deletedRecords = [];
+        let deletedHoldRecords = [];
+
+        if (data["deleted_submissions"]) {
+          deletedRecords = data["deleted_submissions"].map((item) => {
+            return item.activity_id;
+          });
+        }
+
+        if (data["deleted_hold_submissions"]) {
+          deletedHoldRecords = data["deleted_hold_submissions"].map((item) => {
+            return item.hold_id;
+          });
+        }
+
+        if (!data.records) {
+
+        } else if (Array.isArray(data.records)) {
+          records = data.records;
+        } else {
+          records = [data.records];
+        }
+
+        result.items.push.apply(result.items, records);
+        result.deletedItems.push.apply(result.deletedItems, deletedRecords);
+        result.deletedHoldItems.push.apply(result.deletedHoldItems, deletedHoldRecords);
+
+        if (data.count + offset < data.total_count) {
+          offset += data.count;
+          doTheCall();
+        } else {
+          obs.next(result);
+          obs.complete();
+        }
+      };
+
+      let doTheCall = () => {
+        let params = Object.assign({}, content);
+        if (offset > 0) {
+          params.offset = offset;
+        }
+        this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
+      };
+      doTheCall();
+
+    });
+  }
 
 	private call<T>(method: String, relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((responseObserver: Observer<T>) => {

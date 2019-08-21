@@ -22,8 +22,8 @@ import {Colors} from "../constants/colors";
 import {settingsKeys} from "../constants/constants";
 import {SettingsService} from "../services/settings-service";
 import {Observable} from "rxjs";
-import {LocalNotificationsService} from "../services/local-notifications-service";
-import {DuplicateLeadsService} from "../services/duplicate-leads-service";
+import {DocumentsSyncClient} from "../services/documents-sync-client";
+import { ImageLoaderConfig } from 'ionic-image-loader';
 
 declare var cordova;
 
@@ -52,14 +52,20 @@ export class MyApp {
     private loading: LoadingController,
     private logger: LogClient,
     public themeProvider: ThemeProvider,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    private documentsSync: DocumentsSyncClient,
+    private imageLoaderConfig: ImageLoaderConfig
+    ) {
 
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val;
+      const colorKey = val.split('-')[0];
+      const color = Colors[colorKey];
       if (this.platform.is('android')) {
-        let color = Colors[val.split('-')[0]];
         this.statusBar.backgroundColorByHexString(color);
       }
+
+      this.imageLoaderConfig.setFallbackUrl(`assets/images/doc-placeholder-${colorKey}.png`);
     });
 
     this.initializeApp();
@@ -115,7 +121,9 @@ export class MyApp {
         //check device status when app resumes
         checkDeviceStatus();
 
-        this.client.getUpdates().subscribe(()=> {});
+        this.client.getUpdates().subscribe(()=> {
+          // this.documentsSync.syncAll();
+        });
       });
 
       this.hideSplashScreen();
@@ -129,6 +137,7 @@ export class MyApp {
 
           this.checkDir('images');
           this.checkDir('audio');
+          this.checkDir('documents');
 
         }).catch(err=>{
         this.file.createDir(cordova.file.dataDirectory, "leadliaison", true)
@@ -136,6 +145,8 @@ export class MyApp {
 
             this.checkDir("images");
             this.checkDir("audio");
+            this.checkDir('documents');
+
           })
       });
     });
@@ -188,6 +199,12 @@ export class MyApp {
       });
       toaster.present();
     });
+
+    this.imageLoaderConfig.enableDebugMode();
+    this.imageLoaderConfig.enableSpinner(false);
+    this.imageLoaderConfig.setFallbackUrl('assets/images/doc-placeholder.png');
+    this.imageLoaderConfig.enableFallbackAsPlaceholder(true);
+    this.imageLoaderConfig.setConcurrency(10);
   }
 
   private checkDir(dirName) {

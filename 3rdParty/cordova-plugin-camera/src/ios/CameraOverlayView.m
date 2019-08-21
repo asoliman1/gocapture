@@ -122,6 +122,11 @@
     [self.imageScroller reloadWithImages:images];
 }
 
+- (void)reloadImageScroller
+{
+    [self.imageScroller reload];
+}
+
 
 - (IBAction)onTakePicture:(UIButton *)sender
 {

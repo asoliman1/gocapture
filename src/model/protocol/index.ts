@@ -7,3 +7,4 @@ export * from "./submission-response";
 export * from "./file-upload-request";
 export * from "./file-upload-response";
 export * from "./form-submit-response";
+export * from "./file-download-response";

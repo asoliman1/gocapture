@@ -1,7 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
-import { User, Form, DispatchOrder, FormElement, FormSubmission, DeviceFormMembership, SubmissionStatus } from "../model";
+import {
+  User,
+  Form,
+  DispatchOrder,
+  FormElement,
+  FormSubmission,
+  DeviceFormMembership,
+  SubmissionStatus,
+  IDocument
+} from "../model";
 import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
@@ -74,8 +83,9 @@ export class DBClient {
 				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
+        "selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -176,11 +186,38 @@ export class DBClient {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"makeAllInactive": "UPDATE org_master set active = 0",
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?'
 			}
-		}
+		},
+    {
+      name: 'documents',
+      master: false,
+      columns: [
+        { name: 'id', type: 'integer not null primary key' },
+        { name: 'setId', type: 'integer' },
+        { name: 'name', type: 'text' },
+        { name: 'file_path', type: 'text' },
+        { name: 'thumbnail_path', type: 'text' },
+        { name: 'file_type', type: 'text' },
+        { name: 'file_extension', type: 'text' },
+        { name: 'vanity_url', type: 'text' },
+        { name: 'created_at', type: 'text' },
+        { name: 'updated_at', type: 'text' }
+      ],
+      queries: {
+        "selectBySet": "SELECT * FROM documents WHERE setId=?",
+        "selectByIds": "SELECT * FROM documents WHERE id IN (?)",
+        "selectAll": "SELECT * FROM documents",
+        "update": "INSERT OR REPLACE INTO documents ( id, setId, name, file_path, preview_urls, file_type, file_extension, vanity_url, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "updateById": "UPDATE documents SET name=?, setId=?, file_path=?, preview_urls=?, file_type=?, file_extension=?, vanity_url=?, updated_at=? WHERE id=?",
+        "delete": "DELETE FROM documents WHERE id=?",
+        "deleteIn": "DELETE FROM documents WHERE id IN (?)",
+        "deleteBySet": "DELETE FROM documents WHERE setId IN (?)",
+        "deleteAll": "DELETE FROM documents"
+      }
+    }
 	];
 
 	private versions = {
@@ -219,7 +256,12 @@ export class DBClient {
 				queries: [
 					"ALTER TABLE org_master add column theme text"
 				]
-			}
+			},
+      7: {
+        queries: [
+          "ALTER TABLE org_master add column deviceId integer"
+        ]
+      },
 		},
 		work: {
 			1: {
@@ -230,7 +272,22 @@ export class DBClient {
 							{ name: 'version', type: 'integer not null' },
 							{ name: 'updated_at', type: 'text' }
 						]
-					}
+					},
+          {
+            name: 'documents',
+            columns: [
+              { name: 'id', type: 'integer not null primary key' },
+              { name: 'setId', type: 'integer' },
+              { name: 'name', type: 'text' },
+              { name: 'file_path', type: 'text' },
+              { name: 'thumbnail_path', type: 'text' },
+              { name: 'file_type', type: 'text' },
+              { name: 'file_extension', type: 'text' },
+              { name: 'vanity_url', type: 'text' },
+              { name: 'created_at', type: 'text' },
+              { name: 'updated_at', type: 'text' }
+            ]
+          }
 				],
 				queries: [
 					"ALTER TABLE submissions add column activityId VARCHAR(50)"
@@ -353,6 +410,16 @@ export class DBClient {
           "alter table submissions add column is_rapid_scan integer default 0"
         ]
       },
+      21: {
+        queries: [
+          "alter table submissions add column stations text"
+        ]
+      },
+      22: {
+        queries: [
+          "alter table documents add column preview_urls text"
+        ]
+      }
 		}
 	};
 	/**
@@ -568,6 +635,7 @@ export class DBClient {
 					user.pushRegistered = data.pushRegistered;
 					user.device_token = data.registrationId;
 					user.is_production = data.isProduction;
+					user.device_id = data.deviceId;
 					this.registration = user;
 					return user;
 				}
@@ -700,6 +768,25 @@ export class DBClient {
 			});
 	}
 
+  public getSubmissionById(activityId): Observable<FormSubmission> {
+    return new Observable<FormSubmission>((responseObserver: Observer<FormSubmission>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("submissions", "selectById"), [activityId])
+          .then((data) => {
+            let submission: FormSubmission;
+            if (data && data.rows.length > 0) {
+              let dbForm = data.rows.item(0);
+              submission = this.submissonFromDBEntry(dbForm);
+            }
+            responseObserver.next(submission);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occured: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
 	public getSubmissionsToSend(): Observable<FormSubmission[]> {
 		return new Observable<FormSubmission[]>((responseObserver: Observer<FormSubmission[]>) => {
 			this.manager.db(WORK).subscribe((db) => {
@@ -721,6 +808,7 @@ export class DBClient {
 		});
 	}
 
+
   private submissonFromDBEntry(dbForm) {
     let form = new FormSubmission();
     form.id = dbForm.id;
@@ -740,8 +828,9 @@ export class DBClient {
     form.hold_submission = dbForm.hold_submission;
     form.hold_submission_reason = dbForm.hold_submission_reason;
     form.hidden_elements = JSON.parse(dbForm.hidden_elements);
-    form.station_id = dbForm.station_id;
+    form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
     form.is_rapid_scan = dbForm.is_rapid_scan;
+    form.stations = typeof dbForm.stations == "string" ? JSON.parse(dbForm.stations) : dbForm.stations;
     return form;
   }
 
@@ -826,7 +915,8 @@ export class DBClient {
       form.hold_submission_reason,
       JSON.stringify(form.hidden_elements),
       form.station_id,
-      form.is_rapid_scan];
+      form.is_rapid_scan,
+      JSON.stringify(form.stations)];
   }
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
@@ -844,6 +934,90 @@ export class DBClient {
 		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
 	}
 
+	public getDocumentsByIds(ids: number[]) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "selectByIds").replace("?", ids.join(",")), [])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public getDocumentsBySetId(setId: number) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "selectBySet"), [setId])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public saveDocument(document: IDocument) {
+	  const now = Date.now();
+	  return this.save(WORK, 'documents', [
+	    document.id,
+      document.setId,
+      document.name,
+      document.file_path,
+      document.preview_urls,
+      document.file_type,
+      document.file_extension,
+      document.vanity_url,
+      now,
+      now
+    ])
+  }
+
+	public updateDocument(document: IDocument) {
+	  return this.updateById(WORK, 'documents', [
+	    document.name,
+      document.setId,
+      document.file_path,
+      document.preview_urls || '',
+      document.file_type,
+      document.file_extension || '',
+      document.vanity_url,
+      Date.now(),
+      document.id
+    ]);
+  }
+
 	public saveSubmisisons(forms: FormSubmission[], pageSize: number = 1): Observable<boolean> {
 		return this.saveAll<FormSubmission>(forms, "Submission");
 	}
@@ -852,7 +1026,42 @@ export class DBClient {
 		return this.remove(WORK, "submissions", [form.id]);
 	}
 
-	/**
+  public deleteHoldSubmission(form: FormSubmission) {
+    return this.doUpdate(WORK, 'deleteByHoldId', 'submissions', [form.hold_request_id]);
+  }
+
+  public deleteDocuments(ids: number[]) {
+    return new Observable<IDocument[]>((responseObserver: Observer<IDocument[]>) => {
+      this.manager.db(WORK).subscribe((db) => {
+        db.executeSql(this.getQuery("documents", "deleteIn").replace("?", ids.join(",")), [])
+          .then((data) => {
+            if (!data.rows.length) {
+              responseObserver.next(null);
+              responseObserver.complete();
+
+              return;
+            }
+
+            const documents: IDocument[] = [];
+
+            for (let i = 0; i < data.rows.length; i++) {
+              documents.push(data.rows.item(i));
+            }
+
+            responseObserver.next(documents);
+            responseObserver.complete();
+          }, (err) => {
+            responseObserver.error("An error occurred: " + JSON.stringify(err));
+          });
+      });
+    });
+  }
+
+  public deleteAllDocuments() {
+    return this.doUpdate(WORK, 'deleteAll', 'documents', []);
+  }
+
+	/**§
 	 *
 	 */
 	public saveRegistration(user: User): Observable<boolean> {
@@ -875,7 +1084,8 @@ export class DBClient {
 			user.last_name,
 			user.pushRegistered,
 			user.is_production,
-			user.theme
+			user.theme,
+      user.device_id
 		]).map(data => {
 			this.registration = user;
 			return data;
@@ -1111,16 +1321,18 @@ export class DBClient {
 			this.manager.db(type).subscribe((db) => {
 				db.executeSql(this.getQuery(table, queryId), params)
 					.then((data) => {
-						if (data.rowsAffected == 1) {
-							responseObserver.next(true);
-							responseObserver.complete();
+						if (data.rowsAffected > 1) {
+              responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
 						} else {
-							responseObserver.error("Wrong number of affected rows: " + data.rowsAffected);
+              responseObserver.next(true);
+              responseObserver.complete();
 						}
 					}, (err) => {
-						responseObserver.error("An error occured: " + JSON.stringify(err));
+						responseObserver.error("An error occurred: " + JSON.stringify(err));
 					});
-			});
+			}, (error) => {
+			  console.error(error);
+      });
 		});
 	}
 

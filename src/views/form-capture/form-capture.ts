@@ -8,7 +8,7 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform, 
+  Platform, Popover, PopoverController,
   ToastController,
 } from 'ionic-angular';
 import {BussinessClient} from "../../services/business-service";
@@ -34,6 +34,8 @@ import {RapidCaptureService} from "../../services/rapid-capture-service";
 import {ScannerType} from "../../components/form-view/elements/badge/Scanners/Scanner";
 import {Observable} from "rxjs";
 import {ProgressHud} from "../../services/progress-hud";
+import {AppPreferences} from "@ionic-native/app-preferences";
+import {StationsPage} from "../stations/stations";
 
 @Component({
   selector: 'form-capture',
@@ -82,6 +84,8 @@ export class FormCapture implements AfterViewInit {
 
   private stationsAlert;
 
+  private stationsPopover: Popover;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private client: BussinessClient,
@@ -96,7 +100,9 @@ export class FormCapture implements AfterViewInit {
               private vibration: Vibration,
               private rapidCaptureService: RapidCaptureService,
               private alertCtrl: AlertController,
-              private progressHud: ProgressHud) {
+              private progressHud: ProgressHud,
+              private appPreferences: AppPreferences,
+              private popoverCtrl: PopoverController) {
     console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -117,10 +123,14 @@ export class FormCapture implements AfterViewInit {
       });
 
       instructionsModal.onDidDismiss(()=>{
-        this.openStations();
+        if (!this.submission.id) {
+          this.openStations();
+        }
       })
     } else {
-      this.openStations();
+      if (!this.submission.id) {
+        this.openStations();
+      }
     }
   }
 
@@ -128,7 +138,11 @@ export class FormCapture implements AfterViewInit {
     this.form = this.navParams.get("form");
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
+
+    this.setStation(this.submission);
+
     this.dispatch = this.navParams.get("dispatch");
+    this.submitAttempt = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
@@ -143,6 +157,12 @@ export class FormCapture implements AfterViewInit {
 
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
+    }
+  }
+
+  private setStation(submission) {
+    if (submission && submission.station_id) {
+      this.selectedStation = submission.station_id;
     }
   }
 
@@ -162,50 +182,71 @@ export class FormCapture implements AfterViewInit {
     this.openRapidScanMode();
   }
 
-  private startRapidScanModeForSource(source: string) {
+  private async startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
 
     this.progressHud.showLoader("Loading scanner...", 2000);
 
     let element = this.getElementForId(this.selectedScanSource);
-    this.rapidCaptureService.start(element).then((items) => {
-      this.progressHud.hideLoader();
-      let submissions = [];
-      for (let item of items) {
-        let saveSubmObservable = this.saveSubmissionWithData(item, element);
-        submissions.push(saveSubmObservable);
-      }
+    this.startRapidScan(element);
+  }
 
-      Observable.zip(...submissions).subscribe(() => {
-        this.navCtrl.pop().then(()=> {
-          this.client.doSync(this.form.form_id).subscribe(()=> {
-            console.log('rapid scan synced items');
-          }, (error) => {
-            console.error(error);
-          });
-        });
-      }, (error) => {
-        console.error(error);
-        this.navCtrl.pop();
-        this.progressHud.hideLoader();
-      })
+  private startRapidScan(element) {
+    //save form id for which we have rapidscan
+    this.appPreferences.store("rapidScan", "formId", this.form.form_id);
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation);
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
+
+    this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
+      this.progressHud.hideLoader();
+      this.processRapidScanResult(items, element);
     });
   }
 
+  private processRapidScanResult(items, element) {
+    let submissions = [];
+
+    let i = 100;
+    let timestamp = new Date().getTime();
+    for (let item of items) {
+      let submId = parseInt( timestamp + "" + i);
+      let saveSubmObservable = this.saveSubmissionWithData(item, element, submId);
+      i++;
+      submissions.push(saveSubmObservable);
+    }
+
+    Observable.zip(...submissions).subscribe(() => {
+      //barcodes are saved to the database so we can clear the defaults
+      this.rapidCaptureService.removeDefaults(this.form.form_id);
+
+      this.navCtrl.pop().then(()=> {
+        this.client.doSync(this.form.form_id).subscribe(()=> {
+          console.log('rapid scan synced items');
+        }, (error) => {
+          console.error(error);
+        });
+      });
+    }, (error) => {
+      console.error(error);
+      this.navCtrl.pop();
+      this.progressHud.hideLoader();
+    })
+  }
+
   //saving subm from rapid scan mode
-  private saveSubmissionWithData(data, element) {
+  private saveSubmissionWithData(data, element, submId) {
     let submission = new FormSubmission();
     submission.fields = this.formView.getValues();
     let elementId = "element_" + element.id;
     submission.fields[elementId] = data;
-    submission.id = new Date().getTime() + Math.floor(Math.random() * 100000);
+    submission.id = submId;
     submission.form_id = this.dispatch ? this.dispatch.form_id : this.form.form_id;
 
     submission.status = SubmissionStatus.ToSubmit;
 
     submission.is_rapid_scan = 1;
 
-    submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+    submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
       submission.station_id = this.selectedStation;
@@ -304,6 +345,10 @@ export class FormCapture implements AfterViewInit {
       this.backUnregister();
     }
     this.navbar.backButtonClick = this["oldClick"];
+
+    if (this.stationsPopover) {
+      this.stationsPopover.dismiss();
+    }
   }
 
   ionViewDidLeave(){
@@ -437,9 +482,9 @@ export class FormCapture implements AfterViewInit {
       return;
     }
 
-    this.submission.fields = this.formView.getValues();
+    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
-    if (!this.submission.id) { 
+    if (!this.submission.id) {
       this.submission.id = new Date().getTime();
     }
 
@@ -447,15 +492,17 @@ export class FormCapture implements AfterViewInit {
       this.submission.status = SubmissionStatus.ToSubmit;
     }
 
-    this.submission.hidden_elements = this.getHiddenElementsPerVisibilityRules();
+    this.submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
       this.submission.station_id = this.selectedStation;
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+      this.tryClearDocumentsSelection();
+
       if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+        if (this.form.is_mobile_kiosk_mode) {
           this.navCtrl.pop();
         } else {
           this.navCtrl.popToRoot();
@@ -463,7 +510,7 @@ export class FormCapture implements AfterViewInit {
         return;
       }
 
-      if (this.form.is_mobile_kiosk_mode || this.form.is_mobile_quick_capture_mode) {
+      if (this.form.is_mobile_kiosk_mode) {
         this.clearPlaceholders();
         this.submission = null;
         this.form = null;
@@ -621,32 +668,66 @@ export class FormCapture implements AfterViewInit {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
-  private getHiddenElementsPerVisibilityRules(): string[] {
-    let hiddenElements = this.form.elements.filter(element => {
-      return element["visible_conditions"] && !element.isMatchingRules;
+  getDocumentsForSubmission() {
+    const documentsElements = {};
+
+    const filteredElements = this.form.elements
+      .filter((element) => element.type === 'documents' && element.documents_set)
+      .filter((element) => element.documents_set.selectedDocumentIdsForSubmission);
+
+    filteredElements.forEach((element) => {
+      documentsElements["element_" + element.id] = element.documents_set.selectedDocumentIdsForSubmission;
     });
 
-    let elementsIds = [];
-    for (let element of hiddenElements) {
-      elementsIds = elementsIds.concat(`element_${element["id"]}`);
+    return documentsElements;
+  }
+
+  onOpenStations() {
+    let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+    if (isKioskMode) {
+      return;
     }
-    return elementsIds;
+    this.openStations();
   }
 
   openStations() {
-
-    if (this.isReadOnly(this.submission) || this.isEditing) {
-      return;
-    }
 
     if (this.form.event_stations && this.form.event_stations.length > 0) {
       // this.stationsSelect.open(event);
       // this.stationsSelect.open(new UIEvent('touch'));
 
+      this.stationsPopover = this.popoverCtrl.create(StationsPage, {
+        stations: this.form.event_stations,
+        selectedStation: this.selectedStation,
+        visitedStations: this.submission.stations,
+        disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
+      }, {
+        enableBackdropDismiss: false,
+        cssClass: this.selectedTheme + ' gc-popover'
+      });
+      this.stationsPopover.present();
+
+      this.stationsPopover.onDidDismiss((data) => {
+        if (data.isCancel) {
+          if (!this.submission.id && !this.selectedStation) {
+            this.navCtrl.pop();
+          }
+        } else {
+          this.selectedStation = data.station;
+          this.initiateRapidScanMode();
+        }
+      })
+
+      /*
       this.stationsAlert = this.alertCtrl.create({
         title: 'Select Station:',
         buttons: [
-
+          {
+            text: 'Cancel',
+            handler: () => {
+              this.navCtrl.pop();
+            }
+          },
           {
             text: 'Ok',
             handler: (station) => {
@@ -667,6 +748,7 @@ export class FormCapture implements AfterViewInit {
         this.stationsAlert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
       }
       this.stationsAlert.present();
+       */
     } else {
       this.initiateRapidScanMode();
     }
@@ -676,6 +758,16 @@ export class FormCapture implements AfterViewInit {
     this.form.elements.forEach((element) => {
       element.placeholder = '';
     });
+  }
+
+  tryClearDocumentsSelection() {
+    this.form.elements
+      .filter((d) => d.type === 'documents')
+      .forEach((element) => {
+        if (element.documents_set && element.documents_set.selectedDocumentIdsForSubmission) {
+          element.documents_set.selectedDocumentIdsForSubmission = [];
+        }
+      });
   }
 
   openRapidScanMode() {
