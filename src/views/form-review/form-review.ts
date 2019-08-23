@@ -1,12 +1,12 @@
 import {Component, NgZone, ViewChild} from '@angular/core';
-import { SyncClient } from "../../services/sync-client";
-import { BussinessClient } from "../../services/business-service";
-import {Form, FormSubmission, SubmissionStatus, FormElementType, BarcodeStatus} from "../../model";
-import { FormCapture } from "../form-capture";
-import { Subscription } from "rxjs/Subscription";
-import { NavController } from 'ionic-angular/navigation/nav-controller';
-import { NavParams } from 'ionic-angular/navigation/nav-params';
-import { ToastController } from 'ionic-angular/components/toast/toast-controller';
+import {SyncClient} from "../../services/sync-client";
+import {BussinessClient} from "../../services/business-service";
+import {BarcodeStatus, Form, FormElementType, FormSubmission, SubmissionStatus} from "../../model";
+import {FormCapture} from "../form-capture";
+import {Subscription} from "rxjs/Subscription";
+import {NavController} from 'ionic-angular/navigation/nav-controller';
+import {NavParams} from 'ionic-angular/navigation/nav-params';
+import {ToastController} from 'ionic-angular/components/toast/toast-controller';
 import {Util} from "../../util/util";
 import {Content} from "ionic-angular";
 
@@ -157,7 +157,7 @@ export class FormReview {
 	    return submission.full_name;
     } else if (hasFirstLastName) {
       return submission.first_name + ' ' + submission.last_name;
-    } else if (isScannedAndNoProcessed || isScannedAndPending) {
+    } else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
 	    return "Scanned";
     }
     return "";

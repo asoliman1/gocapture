@@ -236,6 +236,16 @@ export class FormCapture implements AfterViewInit {
   //saving subm from rapid scan mode
   private saveSubmissionWithData(data, element, submId) {
     let submission = new FormSubmission();
+
+    if (element.post_show_reconciliation) {
+      submission.hold_submission = 1;
+      submission.hold_submission_reason = "Post-Show Reconciliation";
+      submission.barcode_processed = BarcodeStatus.PostShowReconsilation;
+    } else if (element.badge_type == ScannerType.NFC || element.badge_type == ScannerType.Barcode) {
+      //put the submission to the queue to process badges
+      submission.barcode_processed = BarcodeStatus.Queued;
+    }
+
     submission.fields = this.formView.getValues();
     let elementId = "element_" + element.id;
     submission.fields[elementId] = data;
@@ -250,11 +260,6 @@ export class FormCapture implements AfterViewInit {
 
     if (this.selectedStation) {
       submission.station_id = this.selectedStation;
-    }
-
-    if (element.badge_type == ScannerType.NFC || element.badge_type == ScannerType.Barcode) {
-      //put the submission to the queue to process badges
-      submission.barcode_processed = BarcodeStatus.Queued;
     }
 
     return this.client.saveSubmission(submission, this.form, false);
