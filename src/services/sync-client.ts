@@ -424,7 +424,9 @@ export class SyncClient {
       console.log("With Barcode data: " + barcodeData);
     }
 
-    if (submission.barcode_processed == BarcodeStatus.Processed) {
+    if (submission.barcode_processed == BarcodeStatus.Processed ||
+      submission.barcode_processed == BarcodeStatus.Queued ||
+      submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
       submission.submission_type = FormSubmissionType.barcode;
     }
 

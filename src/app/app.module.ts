@@ -100,6 +100,9 @@ import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
 import {IonicImageLoader} from "ionic-image-loader";
+import {ComponentsModule} from "../components/components.module";
+import {FilterPage} from "../pages/filter/filter";
+import {FilterService} from "../services/filter-service";
 
 @NgModule({
   declarations: [
@@ -139,7 +142,7 @@ import {IonicImageLoader} from "ionic-image-loader";
     OcrSelector,
     MyCurrencyDirective,
     DynamicFormElementComponent,
-    StationsPage
+    StationsPage,
   ],
   imports: [
     BrowserModule,
@@ -147,13 +150,14 @@ import {IonicImageLoader} from "ionic-image-loader";
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
     IonicImageViewerModule,
-	  TextMaskModule,
-	  PipesModule,
-	  BusinessCardOverlayPageModule,
-	  TextMaskModule,
-	  PipesModule,
-	  BusinessCardOverlayPageModule,
+    TextMaskModule,
+    PipesModule,
+    BusinessCardOverlayPageModule,
+    TextMaskModule,
+    PipesModule,
+    BusinessCardOverlayPageModule,
     IonicImageLoader.forRoot(),
+    ComponentsModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -190,7 +194,7 @@ import {IonicImageLoader} from "ionic-image-loader";
     UrlChoose,
     ProspectSearch,
     OcrSelector,
-    StationsPage
+    StationsPage,
   ],
   exports: [
     DynamicFormElementComponent
@@ -253,7 +257,8 @@ import {IonicImageLoader} from "ionic-image-loader";
     SocialSharing,
     SubmissionsRepository,
     SubmissionMapper,
-    ShareService
+    ShareService,
+    FilterService
   ]
 })
 export class AppModule { }

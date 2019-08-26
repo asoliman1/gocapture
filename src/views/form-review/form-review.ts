@@ -8,7 +8,9 @@ import {NavController} from 'ionic-angular/navigation/nav-controller';
 import {NavParams} from 'ionic-angular/navigation/nav-params';
 import {ToastController} from 'ionic-angular/components/toast/toast-controller';
 import {Util} from "../../util/util";
-import {Content} from "ionic-angular";
+import {Content, ModalController} from "ionic-angular";
+import {GCFilter} from "../../components/filters-view/gc-filter";
+import {FilterService} from "../../services/filter-service";
 
 
 @Component({
@@ -21,7 +23,7 @@ export class FormReview {
 
 	form: Form = new Form();
 
-	filter = {};
+	statusFilter = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -33,12 +35,15 @@ export class FormReview {
 
 	private isDispatch;
 
-	filters;
+	statusFilters;
+	selectedFilters: GCFilter[] = [];
 
 	filteredSubmissions: FormSubmission[] = [];
 	searchedSubmissions: FormSubmission[] = [];
 
 	hasSubmissionsToSend: boolean = false;
+
+	isFilterExpanded: boolean = false;
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -46,17 +51,19 @@ export class FormReview {
 		private zone: NgZone,
 		private syncClient: SyncClient,
 		private toast: ToastController,
-              private util: Util,
+    private util: Util,
+    private modalCtrl: ModalController,
+    private filterService: FilterService
               ) {
 
-	  this.filters = [
+	  this.statusFilters = [
 	    {id: 'all', title:"All", status: 0,  description: "Tap an entry to edit/review."},
 	    {id: 'sent', title:"Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review."},
 	    {id: 'hold', title:"Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review."},
 	    {id: 'ready', title:"Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."},
 	    {id: 'blocked', title:"Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."},
 	    ];
-	  this.filter = this.filters[0];
+	  this.statusFilter = this.statusFilters[0];
 	}
 
 	ionViewDidEnter() {
@@ -211,7 +218,7 @@ export class FormReview {
 
 	onFilterChanged() {
 		this.zone.run(() => {
-			let f = this.filter;
+			let f = this.statusFilter;
 			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
@@ -268,6 +275,60 @@ export class FormReview {
 			});
 		});
 	}
+
+	openFilter() {
+	  this.isFilterExpanded = !this.isFilterExpanded;
+  }
+
+  openFilterView(filter: GCFilter) {
+
+    if (this.selectedFilters.filter(f => f.id === filter.id).length == 0) {
+      this.selectedFilters.push(filter);
+    }
+
+	  if (filter.id == 'reset') {
+	    this.filterService.resetFilters();
+      this.searchedSubmissions = this.filteredSubmissions;
+      this.selectedFilters = [];
+      this.isFilterExpanded = false;
+      return;
+    }
+
+    let filterPageModal = this.modalCtrl.create('FilterPage', {items: this.filterService.composeData(filter, this.submissions), selectedItems: filter.selected});
+    filterPageModal.present().then(()=> {
+      this.isFilterExpanded = false;
+    });
+
+    filterPageModal.onDidDismiss((data: string[]) => {
+
+      if (!data) {
+        return;
+      }
+
+      filter.selected = data;
+
+      this.searchedSubmissions = this.filteredSubmissions;
+      this.selectedFilters.forEach((filter) => {
+        this.filterDataWithFilter(filter, this.searchedSubmissions);
+      })
+    });
+  }
+
+  filterDataWithFilter(filter, data) {
+    if (filter.id == 'name') {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.first_name) != -1;
+      }));
+    } else if (filter.id == 'email') {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.email) != -1;
+      }));
+    } else if (filter.id == 'captureType') {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.submission_type) != -1;
+      }));
+    }
+  }
 
 	statusClick(event: Event, submission: FormSubmission) {
 		event.stopImmediatePropagation();
