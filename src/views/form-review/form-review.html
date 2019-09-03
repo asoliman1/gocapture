@@ -1,27 +1,28 @@
 <ion-header>
-	<ion-navbar color="primary">
+	<ion-navbar color="primary" [hideBackButton]="isFilterExpanded">
 		<ion-buttons start>
-			<button ion-button>
-				<ion-icon name="back"></ion-icon>
-			</button>
+      <button ion-button (click)="resetFilter()" *ngIf="isFilterExpanded">
+        Clear
+      </button>
 		</ion-buttons>
-		<ion-title>{{form.name}}</ion-title>
-		<ion-buttons end>
+		<ion-title >{{isFilterExpanded ? 'Filter' : form.name}}</ion-title>
+		<ion-buttons end *ngIf="!isFilterExpanded">
       <button ion-button (click)="openFilter()">
-        <ion-icon name="settings"></ion-icon>
+        <ion-icon name="ios-funnel-outline"></ion-icon>
       </button>
 			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend">
 				<ion-icon name="cloud-upload" class="sync-submissions"></ion-icon>
 			</button>
 		</ion-buttons>
+    <ion-buttons end *ngIf="isFilterExpanded">
+      <button ion-button (click)="applyFilter()">
+        Apply
+      </button>
+    </ion-buttons>
 	</ion-navbar>
-  <filters-view *ngIf="isFilterExpanded" (onFilterSelected)="openFilterView($event)"></filters-view>
-	<ion-grid style="background-color: white;">
-		<ion-row>
-			<ion-col>
-				<h4>{{statusFilter.description}}</h4>
-			</ion-col>
-		</ion-row>
+  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" *ngIf="isFilterExpanded"></filters-view>
+  <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
+	<ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
 		<ion-row>
 			<ion-col>
 				<ion-segment [(ngModel)]="statusFilter"  (ionChange)="onFilterChanged()" color="dark" class="segment">
@@ -33,8 +34,12 @@
 				</ion-segment>
 			</ion-col>
 		</ion-row>
+    <ion-row>
+      <ion-col>
+        <h4>{{statusFilter.description}}</h4>
+      </ion-col>
+    </ion-row>
 	</ion-grid>
-  <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable()"></ion-searchbar>
 </ion-header>
 
 <ion-content class="form-summary">

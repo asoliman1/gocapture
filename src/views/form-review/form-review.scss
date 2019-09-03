@@ -1,3 +1,10 @@
+form-review {
+  .searchbar-input {
+    font-size: 20px !important;
+    font-weight: 600;
+  }
+}
+
 .form-summary ion-item button{
 	height: 100% !important;
 	margin: 0 !important;
@@ -113,13 +120,12 @@
 	}
 }
 
-
 #filters-view {
-  top: 64px;
-  position: absolute;
-  transform: translateY(-110%);
-  -webkit-transform: translateY(-110%);
+  transform: translateY(-120%);
+  -webkit-transform: translateY(-120%);
 }
+
+
 
 .slide-in {
   animation: slide-in 0.5s forwards;
@@ -141,10 +147,10 @@
 
 @keyframes slide-out {
   0% { transform: translateY(0%); }
-  100% { transform: translateY(-110%); }
+  100% { transform: translateY(-120%); }
 }
 
 @-webkit-keyframes slide-out {
   0% { -webkit-transform: translateY(0%); }
-  100% { -webkit-transform: translateY(-110%); }
+  100% { -webkit-transform: translateY(-120%); }
 }

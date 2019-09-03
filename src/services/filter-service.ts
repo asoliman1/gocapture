@@ -14,8 +14,7 @@ export class FilterService {
       {title: 'Prospect Email', id: 'email', icon: 'at'},
       {title: 'Capture Type', id: 'captureType', icon: 'attach'},
       {title: 'Date', id: 'date', icon: 'calendar'},
-      {title: 'Person who capture the lead', id: 'person', icon: 'person'},
-      {title: 'Reset filters', id: 'reset', icon: 'refresh'}];
+      {title: 'Person who capture the lead', id: 'person', icon: 'person'}];
   }
 
   filters() {

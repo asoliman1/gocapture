@@ -45,6 +45,8 @@ export class FormReview {
 
 	isFilterExpanded: boolean = false;
 
+	filterPageModal;
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
@@ -278,6 +280,7 @@ export class FormReview {
 
 	openFilter() {
 	  this.isFilterExpanded = !this.isFilterExpanded;
+    this.content.resize();
   }
 
   openFilterView(filter: GCFilter) {
@@ -286,20 +289,10 @@ export class FormReview {
       this.selectedFilters.push(filter);
     }
 
-	  if (filter.id == 'reset') {
-	    this.filterService.resetFilters();
-      this.searchedSubmissions = this.filteredSubmissions;
-      this.selectedFilters = [];
-      this.isFilterExpanded = false;
-      return;
-    }
+    this.filterPageModal = this.modalCtrl.create('FilterPage', {items: this.filterService.composeData(filter, this.submissions), selectedItems: filter.selected});
+    this.filterPageModal.present();
 
-    let filterPageModal = this.modalCtrl.create('FilterPage', {items: this.filterService.composeData(filter, this.submissions), selectedItems: filter.selected});
-    filterPageModal.present().then(()=> {
-      this.isFilterExpanded = false;
-    });
-
-    filterPageModal.onDidDismiss((data: string[]) => {
+    this.filterPageModal.onDidDismiss((data: string[]) => {
 
       if (!data) {
         return;
@@ -307,10 +300,6 @@ export class FormReview {
 
       filter.selected = data;
 
-      this.searchedSubmissions = this.filteredSubmissions;
-      this.selectedFilters.forEach((filter) => {
-        this.filterDataWithFilter(filter, this.searchedSubmissions);
-      })
     });
   }
 
@@ -352,4 +341,23 @@ export class FormReview {
 
 		return false;
 	}
+
+  applyFilter() {
+	  this.isFilterExpanded = false;
+    this.content.resize();
+
+    this.searchedSubmissions = this.filteredSubmissions;
+    this.selectedFilters.forEach((filter) => {
+      this.filterDataWithFilter(filter, this.searchedSubmissions);
+    })
+  }
+
+  resetFilter() {
+	  this.isFilterExpanded = false;
+    this.content.resize();
+
+    this.filterService.resetFilters();
+    this.searchedSubmissions = this.filteredSubmissions;
+    this.selectedFilters = [];
+  }
 }
