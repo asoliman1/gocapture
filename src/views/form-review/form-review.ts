@@ -289,7 +289,10 @@ export class FormReview {
       this.selectedFilters.push(filter);
     }
 
-    this.filterPageModal = this.modalCtrl.create('FilterPage', {items: this.filterService.composeData(filter, this.submissions), selectedItems: filter.selected});
+    this.filterPageModal = this.modalCtrl.create('FilterPage', {
+      items: this.filterService.composeData(filter, this.submissions),
+      selectedItems: filter.selected,
+      title: filter.title});
     this.filterPageModal.present();
 
     this.filterPageModal.onDidDismiss((data: string[]) => {

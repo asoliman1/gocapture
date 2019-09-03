@@ -8,7 +8,11 @@
 		<ion-title >{{isFilterExpanded ? 'Filter' : form.name}}</ion-title>
 		<ion-buttons end *ngIf="!isFilterExpanded">
       <button ion-button (click)="openFilter()">
-        <ion-icon name="ios-funnel-outline"></ion-icon>
+
+        <ion-icon name="ios-funnel-outline">
+          <ion-label *ngIf="selectedFilters.length" class="top-text">({{selectedFilters.length}})</ion-label>
+        </ion-icon>
+
       </button>
 			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend">
 				<ion-icon name="cloud-upload" class="sync-submissions"></ion-icon>

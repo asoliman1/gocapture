@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {FormSubmission, FormSubmissionType} from "../model";
 import {GCFilter} from "../components/filters-view/gc-filter";
+import * as moment from 'moment';
 
 @Injectable()
 
@@ -10,11 +11,11 @@ export class FilterService {
 
   private setupFilters() {
     this.gcFilters = [
-      {title: 'Prospect Name', id: 'name', icon:'information-circle-outline'},
-      {title: 'Prospect Email', id: 'email', icon: 'at'},
+      {title: 'Name', id: 'name', icon:'information-circle-outline'},
+      {title: 'Email', id: 'email', icon: 'at'},
       {title: 'Capture Type', id: 'captureType', icon: 'attach'},
-      {title: 'Date', id: 'date', icon: 'calendar'},
-      {title: 'Person who capture the lead', id: 'person', icon: 'person'}];
+      {title: 'Capture Date', id: 'date', icon: 'calendar'},
+      {title: 'Captured By', id: 'person', icon: 'person'}];
   }
 
   filters() {
@@ -44,6 +45,10 @@ export class FilterService {
     if (filter.id == 'captureType') {
       return [FormSubmissionType.normal, FormSubmissionType.barcode, FormSubmissionType.list];
     }
+
+    if (filter.id == 'date') {
+      return this.getUniqueDates(submissions);
+    }
   }
 
   private getUniqueNames(submissions: FormSubmission[]) {
@@ -53,6 +58,14 @@ export class FilterService {
 
   private getUniqueEmails(submissions: FormSubmission[]) {
     return submissions.map((item) => item.email)
+      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+  }
+
+  private getUniqueDates(submissions: FormSubmission[]) {
+    return submissions.map((item) => item.sub_date)
+      .map((date) => {
+        return moment(date).format('dddd, MMMM DD[th] YYYY');
+      })
       .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
   }
 }

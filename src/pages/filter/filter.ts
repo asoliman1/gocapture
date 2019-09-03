@@ -12,6 +12,7 @@ export class FilterPage extends BasePage {
 
   private items: {value: string, isSelected: boolean}[];
   searchedItems: {value: string, isSelected: boolean}[];
+  title: '';
 
   isAll: boolean = false;
 
@@ -28,6 +29,8 @@ export class FilterPage extends BasePage {
       return {value: item, isSelected: selectedItems.length > 0 && selectedItems.indexOf(item) != -1};
     });
     this.searchedItems = this.items;
+
+    this.title = this.navParams.get('title') || 'Filter';
   }
 
   done() {

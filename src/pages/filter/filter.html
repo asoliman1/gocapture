@@ -1,29 +1,30 @@
 <ion-header [class]="selectedTheme">
   <ion-navbar color="primary">
-    <ion-buttons start>
-      <button ion-button (click)="done()">
-        <ion-icon name="close" class="capture"></ion-icon>
+    <ion-buttons left>
+      <button navPop ion-button icon-only (click)="done()">
+        <ion-icon name="arrow-back"></ion-icon>
+        <ion-label>Back</ion-label>
       </button>
     </ion-buttons>
-    <ion-title>Filter</ion-title>
+    <ion-title>{{title}}</ion-title>
     <ion-buttons end>
       <button ion-button (click)="filter()">
         Filter
       </button>
     </ion-buttons>
   </ion-navbar>
+  <ion-searchbar (ionInput)="getSearchedItems($event)"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>
 
   <ion-list>
     <ion-item>
-      <ion-label>All</ion-label>
+      <ion-label class="filter-name" no-border>All</ion-label>
       <ion-checkbox [(ngModel)] = isAll (ionChange)="isAllUpdated()"></ion-checkbox>
     </ion-item>
-    <ion-searchbar (ionInput)="getSearchedItems($event)"></ion-searchbar>
     <ion-item *ngFor="let item of searchedItems">
-      <ion-label>{{item.value}}</ion-label>
+      <ion-label class="filter-name">{{item.value}}</ion-label>
       <ion-checkbox [(ngModel)]="item.isSelected"></ion-checkbox>
     </ion-item>
   </ion-list>
