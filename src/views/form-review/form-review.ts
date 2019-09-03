@@ -319,6 +319,10 @@ export class FormReview {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
         return filter.selected.indexOf(submission.submission_type) != -1;
       }));
+    } else if (filter.id == 'capturedBy') {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.captured_by_user_name) != -1;
+      }));
     }
   }
 

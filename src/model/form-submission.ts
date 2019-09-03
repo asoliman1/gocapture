@@ -23,6 +23,7 @@ export class FormSubmission{
   hidden_elements: string[];
   is_filled_from_list: boolean = false;
   is_rapid_scan: number = 0;
+  captured_by_user_name: string =  "";
 
   station_id: string;
 

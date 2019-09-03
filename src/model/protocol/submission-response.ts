@@ -1,6 +1,6 @@
 import {Station} from "../station";
 
-export class SubmissionResponse{
+export class SubmissionResponse {
 	activity_id: number;
 	prospect_id: number;
 	email: string;
@@ -9,9 +9,10 @@ export class SubmissionResponse{
 	data: [SubmissionDataResponse];
 	station_id: string;
 	stations: [Station];
+  captured_by_user_name: string;
 }
 
-export class SubmissionDataResponse{
+export class SubmissionDataResponse {
 	element_id: number;
 	element_title: string;
 	value: string;

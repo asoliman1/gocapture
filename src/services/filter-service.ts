@@ -15,7 +15,7 @@ export class FilterService {
       {title: 'Email', id: 'email', icon: 'at'},
       {title: 'Capture Type', id: 'captureType', icon: 'attach'},
       {title: 'Capture Date', id: 'date', icon: 'calendar'},
-      {title: 'Captured By', id: 'person', icon: 'person'}];
+      {title: 'Captured By', id: 'capturedBy', icon: 'person'}];
   }
 
   filters() {
@@ -49,6 +49,10 @@ export class FilterService {
     if (filter.id == 'date') {
       return this.getUniqueDates(submissions);
     }
+
+    if (filter.id == 'capturedBy') {
+      return this.getUniqueUsers(submissions);
+    }
   }
 
   private getUniqueNames(submissions: FormSubmission[]) {
@@ -66,6 +70,11 @@ export class FilterService {
       .map((date) => {
         return moment(date).format('dddd, MMMM DD[th] YYYY');
       })
+      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+  }
+
+  private getUniqueUsers(submissions: FormSubmission[]) {
+    return submissions.map((item) => item.captured_by_user_name)
       .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
   }
 }

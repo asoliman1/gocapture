@@ -85,7 +85,7 @@ export class DBClient {
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
         "selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -418,6 +418,11 @@ export class DBClient {
       22: {
         queries: [
           "alter table documents add column preview_urls text"
+        ]
+      },
+      23: {
+        queries: [
+          "alter table submissions add column captured_by_user_name text"
         ]
       }
 		}
@@ -831,6 +836,7 @@ export class DBClient {
     form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
     form.is_rapid_scan = dbForm.is_rapid_scan;
     form.stations = typeof dbForm.stations == "string" ? JSON.parse(dbForm.stations) : dbForm.stations;
+    form.captured_by_user_name = dbForm.captured_by_user_name;
     return form;
   }
 
@@ -916,7 +922,8 @@ export class DBClient {
       JSON.stringify(form.hidden_elements),
       form.station_id,
       form.is_rapid_scan,
-      JSON.stringify(form.stations)];
+      JSON.stringify(form.stations),
+      form.captured_by_user_name];
   }
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
