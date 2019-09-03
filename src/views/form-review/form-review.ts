@@ -11,6 +11,7 @@ import {Util} from "../../util/util";
 import {Content, ModalController} from "ionic-angular";
 import {GCFilter} from "../../components/filters-view/gc-filter";
 import {FilterService} from "../../services/filter-service";
+import {ThemeProvider} from "../../providers/theme/theme";
 
 
 @Component({
@@ -47,6 +48,8 @@ export class FormReview {
 
 	filterPageModal;
 
+	private selectedTheme;
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
@@ -55,7 +58,8 @@ export class FormReview {
 		private toast: ToastController,
     private util: Util,
     private modalCtrl: ModalController,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private themeProvider: ThemeProvider
               ) {
 
 	  this.statusFilters = [
@@ -66,6 +70,8 @@ export class FormReview {
 	    {id: 'blocked', title:"Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."},
 	    ];
 	  this.statusFilter = this.statusFilters[0];
+
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	ionViewDidEnter() {
@@ -292,7 +298,8 @@ export class FormReview {
     this.filterPageModal = this.modalCtrl.create('FilterPage', {
       items: this.filterService.composeData(filter, this.submissions),
       selectedItems: filter.selected,
-      title: filter.title});
+      title: filter.title
+    }, {cssClass: this.selectedTheme});
     this.filterPageModal.present();
 
     this.filterPageModal.onDidDismiss((data: string[]) => {
