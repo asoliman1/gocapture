@@ -200,22 +200,7 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
-        // this.displayForm.elements = [
-        //   ...this.displayForm.elements,
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 999,
-        //     type: 'document',
-        //     title: 'ELM Documents'
-        //   },
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 9999,
-        //     type: 'document',
-        //     title: 'POST SHOW Docs'
-        //   }
-        // ];
-        console.log(this.displayForm);
+        this.buildSections();
       });
     }, 150);
   }
@@ -458,5 +443,50 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+
+  private buildSections() {
+    const structuredData = {
+      startForms: [],
+      sections: [],
+    };
+
+    const getSectionElementsRange = (startIndex: number) => {
+      let endIndex;
+      for (let i = startIndex; i < this.displayForm.elements.length; i++) {
+        if (this.displayForm.elements[i].type === 'section') {
+          endIndex = i;
+          return endIndex;
+        }
+      }
+    
+      return this.displayForm.elements.length;
+    };
+    
+    for (let i = 0; i < this.displayForm.elements.length; i++) {
+      if (this.displayForm.elements[i].type !== 'section') {
+        structuredData.startForms.push(this.displayForm.elements[i]);
+      }
+    
+      // check if the first element is a section or not
+      if (this.displayForm.elements[i].type === 'section') {
+        const endIndex = getSectionElementsRange(i + 1);
+        const section = {
+          section: this.displayForm.elements[i],
+          elements: [...this.displayForm.elements.slice(i + 1, endIndex)]
+        }
+        
+        structuredData.sections.push(section);
+    
+        // case we have reached the end
+        if (endIndex === this.displayForm.elements.length - 1) {
+          break;
+        }
+    
+        i = endIndex - 1;
+      }
+    };
+
+    console.log(structuredData);
   }
 }

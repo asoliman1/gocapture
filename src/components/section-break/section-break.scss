@@ -1,0 +1,36 @@
+section-break {
+  .section {
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+
+    .card-header {
+      color: #fff;
+      padding: 0px !important;
+      
+      .item-block {
+        border: 0 !important;
+
+        .item-inner {
+          border: 0 !important;
+        }
+      }
+
+      .label {
+        color: #ffffff !important;
+        text-transform: uppercase;
+      }
+
+      ion-icon {
+        transition: all 500ms ease-in-out;
+      }
+    }
+
+    .card-content {
+      padding: 0px !important; 
+      max-height: 9999px;
+    }
+  }
+}

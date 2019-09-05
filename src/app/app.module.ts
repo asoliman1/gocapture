@@ -1,3 +1,4 @@
+import { SectionBreak } from '../components/section-break/section-break';
 import { NgModule } from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -139,7 +140,8 @@ import {IonicImageLoader} from "ionic-image-loader";
     OcrSelector,
     MyCurrencyDirective,
     DynamicFormElementComponent,
-    StationsPage
+    StationsPage,
+    SectionBreak
   ],
   imports: [
     BrowserModule,
