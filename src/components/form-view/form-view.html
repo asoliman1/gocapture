@@ -4,16 +4,9 @@
   <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
 
     <div class="" *ngFor="let element of displayForm.elements">
-      <dynamic-form-element
-        *ngIf="shouldElementBeDisplayed(element)"
-        [theForm]="theForm"
-        [element]="element"
-        [submitAttempt]="submitAttempt"
-        [readOnly]="readOnly"
-        [isEditing]="isEditing"
-        [form]="form"
-        [submission]="submission"
-        (onProcessingEvent)="onProcessing($event)">
+      <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
+        [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
+        [submission]="submission" (onProcessingEvent)="onProcessing($event)">
       </dynamic-form-element>
     </div>
 
