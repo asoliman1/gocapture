@@ -103,6 +103,8 @@ import {IonicImageLoader} from "ionic-image-loader";
 import {ComponentsModule} from "../components/components.module";
 import {FilterPage} from "../pages/filter/filter";
 import {FilterService} from "../services/filter-service";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -142,7 +144,7 @@ import {FilterService} from "../services/filter-service";
     OcrSelector,
     MyCurrencyDirective,
     DynamicFormElementComponent,
-    StationsPage,
+    StationsPage
   ],
   imports: [
     BrowserModule,
@@ -158,6 +160,8 @@ import {FilterService} from "../services/filter-service";
     BusinessCardOverlayPageModule,
     IonicImageLoader.forRoot(),
     ComponentsModule,
+    NgSelectModule,
+    FormsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

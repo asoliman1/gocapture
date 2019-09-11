@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 import {BasePage} from "../base/base";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
+import {FilterService, Modifiers} from "../../services/filter-service";
 
 @IonicPage()
 @Component({
@@ -12,7 +14,11 @@ export class FilterPage extends BasePage {
 
   private items: {value: string, isSelected: boolean}[];
   searchedItems: {value: string, isSelected: boolean}[];
+  selectedItems: any[];
   title: '';
+  selectedFilter: GCFilter;
+  modifiers: any[];
+  selectedModifier: any = FilterService.modifiers()[0];
 
   isAll: boolean = false;
 
@@ -31,6 +37,9 @@ export class FilterPage extends BasePage {
     this.searchedItems = this.items;
 
     this.title = this.navParams.get('title') || 'Filter';
+    this.selectedFilter = this.navParams.get('filter');
+
+    this.modifiers = FilterService.modifiers();
   }
 
   done() {
@@ -42,7 +51,13 @@ export class FilterPage extends BasePage {
       return item.value;
     });
 
-    this.viewCtrl.dismiss(data);
+    if (this.shouldShowSelect()) {
+      data = this.selectedItems.map((item) => {
+        return item.value;
+      });
+    }
+
+    this.viewCtrl.dismiss({data: data, modifier: this.selectedModifier.value});
   }
 
   getSearchedItems(event) {
@@ -58,5 +73,17 @@ export class FilterPage extends BasePage {
     this.searchedItems.forEach(item => {
       item.isSelected = this.isAll;
     });
+  }
+
+  addTagFn(value) {
+    return {value: value, tag: true, isSelected: true };
+  }
+
+  shouldShowSelect() {
+    return  this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
+  }
+
+  clearSelectedItems() {
+    this.selectedItems = [];
   }
 }

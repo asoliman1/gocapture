@@ -1,9 +1,8 @@
 <ion-list>
-  <ion-item no-lines>
+  <ion-item>
     <h1>Select Search Criteria</h1>
     </ion-item>
-  <ion-item no-lines *ngFor="let filter of filters" (click)="onSelect(filter)">
-    <ion-icon name="{{filter.icon}}" item-left></ion-icon>
+  <ion-item *ngFor="let filter of filters" (click)="onSelect(filter)">
     <ion-label class="filter-name">{{filter.title}}</ion-label>
     <ion-label *ngIf="filter.selected && filter.selected.length">({{filter.selected.length}})</ion-label>
     <ion-icon name="ios-arrow-forward" item-right *ngIf="filter.id != 'reset'"></ion-icon>

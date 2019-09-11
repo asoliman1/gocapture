@@ -13,12 +13,30 @@
       </button>
     </ion-buttons>
   </ion-navbar>
-  <ion-searchbar (ionInput)="getSearchedItems($event)"></ion-searchbar>
+  <ion-searchbar (ionInput)="getSearchedItems($event)" *ngIf="selectedFilter && !shouldShowSelect()"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>
+  <div>Select {{selectedFilter && selectedFilter.title}}</div>
 
-  <ion-list>
+  <ng-select *ngIf="selectedFilter && shouldShowSelect()"
+             [items]="modifiers"
+             [multiple]="false"
+             bindLabel="name"
+             [clearable]="false"
+             [(ngModel)]="selectedModifier">
+  </ng-select>
+
+  <ng-select *ngIf="selectedFilter && shouldShowSelect()"
+             [items]="items"
+             [multiple]="true"
+             [addTag]="addTagFn"
+             [hideSelected]="true"
+             bindLabel="value"
+             [(ngModel)]="selectedItems">
+  </ng-select>
+
+  <ion-list *ngIf="selectedFilter && !shouldShowSelect()">
     <ion-item>
       <ion-label class="filter-name" no-border>All</ion-label>
       <ion-checkbox [(ngModel)] = isAll (ionChange)="isAllUpdated()"></ion-checkbox>

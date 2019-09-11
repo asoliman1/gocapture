@@ -9,8 +9,8 @@ import {NavParams} from 'ionic-angular/navigation/nav-params';
 import {ToastController} from 'ionic-angular/components/toast/toast-controller';
 import {Util} from "../../util/util";
 import {Content, ModalController} from "ionic-angular";
-import {GCFilter} from "../../components/filters-view/gc-filter";
-import {FilterService} from "../../services/filter-service";
+import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
+import {FilterService, Modifiers} from "../../services/filter-service";
 import {ThemeProvider} from "../../providers/theme/theme";
 
 
@@ -298,35 +298,40 @@ export class FormReview {
     this.filterPageModal = this.modalCtrl.create('FilterPage', {
       items: this.filterService.composeData(filter, this.submissions),
       selectedItems: filter.selected,
-      title: filter.title
+      title: filter.title,
+      filter: filter
     }, {cssClass: this.selectedTheme});
     this.filterPageModal.present();
 
-    this.filterPageModal.onDidDismiss((data: string[]) => {
+    this.filterPageModal.onDidDismiss((data: {data: any, modifier: Modifiers}) => {
 
       if (!data) {
         return;
       }
 
-      filter.selected = data;
+      filter.selected = data.data;
+      filter.modifier = data.modifier;
+
+      this.applyFilter();
 
     });
   }
 
   filterDataWithFilter(filter, data) {
-    if (filter.id == 'name') {
+    if (filter.id == FilterType.Name) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
-        return filter.selected.indexOf(submission.first_name) != -1;
+        let name = submission.first_name + ' ' + submission.last_name;
+        return FilterService.filterItems(filter.selected, name, filter.modifier);
       }));
-    } else if (filter.id == 'email') {
+    } else if (filter.id == FilterType.Email) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
-        return filter.selected.indexOf(submission.email) != -1;
+        return FilterService.filterItems(filter.selected, submission.email, filter.modifier);
       }));
-    } else if (filter.id == 'captureType') {
+    } else if (filter.id == FilterType.CaptureType) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
         return filter.selected.indexOf(submission.submission_type) != -1;
       }));
-    } else if (filter.id == 'capturedBy') {
+    } else if (filter.id == FilterType.CapturedBy) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
         return filter.selected.indexOf(submission.captured_by_user_name) != -1;
       }));
