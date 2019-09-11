@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {FormSubmission, FormSubmissionType} from "../model";
-import {GCFilter} from "../components/filters-view/gc-filter";
+import {FilterType, GCFilter} from "../components/filters-view/gc-filter";
 import * as moment from 'moment';
 
 export enum Modifiers {
@@ -20,11 +20,11 @@ export class FilterService {
 
   private setupFilters() {
     this.gcFilters = [
-      {title: 'Name', id: 'name', icon:'information-circle-outline'},
-      {title: 'Email', id: 'email', icon: 'at'},
-      {title: 'Capture Type', id: 'captureType', icon: 'attach'},
-      {title: 'Capture Date', id: 'date', icon: 'calendar'},
-      {title: 'Captured By', id: 'capturedBy', icon: 'person'}];
+      {title: 'Name', id: FilterType.Name, icon:'information-circle-outline'},
+      {title: 'Email', id: FilterType.Email, icon: 'at'},
+      {title: 'Capture Method', id: FilterType.CaptureType, icon: 'attach'},
+      {title: 'Capture Date', id: FilterType.CaptureDate, icon: 'calendar'},
+      {title: 'Captured By', id: FilterType.CapturedBy, icon: 'person'}];
   }
 
   filters() {
@@ -47,27 +47,27 @@ export class FilterService {
   }
 
   composeData(filter: GCFilter, submissions: FormSubmission[]) {
-    if (filter.id == 'name') {
+    if (filter.id == FilterType.Name) {
       return this.getUniqueNames(submissions);
     }
 
-    if (filter.id == 'email') {
+    if (filter.id == FilterType.Email) {
       return this.getUniqueEmails(submissions);
     }
 
-    if (filter.id == 'email') {
-      return this.getUniqueEmails(submissions);
+    if (filter.id == FilterType.CaptureType) {
+      return [
+        {title: "Normal", value: FormSubmissionType.normal},
+        {title: "Badge Scan", value: FormSubmissionType.barcode},
+        {title: "List", value: FormSubmissionType.list},
+        {title: "Transcription", value: FormSubmissionType.transcription}];
     }
 
-    if (filter.id == 'captureType') {
-      return [FormSubmissionType.normal, FormSubmissionType.barcode, FormSubmissionType.list];
-    }
-
-    if (filter.id == 'date') {
+    if (filter.id == FilterType.CaptureDate) {
       return this.getUniqueDates(submissions);
     }
 
-    if (filter.id == 'capturedBy') {
+    if (filter.id == FilterType.CapturedBy) {
       return this.getUniqueUsers(submissions);
     }
   }
@@ -131,11 +131,9 @@ export class FilterService {
   }
 
   private getUniqueDates(submissions: FormSubmission[]) {
-    return submissions.map((item) => item.sub_date)
-      .map((date) => {
-        return moment(date).format('dddd, MMMM DD[th] YYYY');
-      })
-      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+    return submissions.map((item) =>  {
+      return { formattedDate: moment(item.sub_date).format('dddd, MMMM DD[th] YYYY'), original: item.sub_date}
+    }).filter((value, index, self) => self.indexOf(value) === index && value && value.formattedDate.length > 0);
   }
 
   private getUniqueUsers(submissions: FormSubmission[]) {

@@ -45,6 +45,7 @@ export class FormReview {
 	hasSubmissionsToSend: boolean = false;
 
 	isFilterExpanded: boolean = false;
+  isFilterApplied: boolean = false;
 
 	filterPageModal;
 
@@ -286,11 +287,11 @@ export class FormReview {
 
 	openFilter() {
 	  this.isFilterExpanded = !this.isFilterExpanded;
+    this.isFilterApplied = false;
     this.content.resize();
   }
 
   openFilterView(filter: GCFilter) {
-
     if (this.selectedFilters.filter(f => f.id === filter.id).length == 0) {
       this.selectedFilters.push(filter);
     }
@@ -312,7 +313,10 @@ export class FormReview {
       filter.selected = data.data;
       filter.modifier = data.modifier;
 
-      this.applyFilter();
+      this.searchedSubmissions = this.filteredSubmissions;
+      this.selectedFilters.forEach((filter) => {
+        this.filterDataWithFilter(filter, this.searchedSubmissions);
+      })
 
     });
   }
@@ -334,6 +338,10 @@ export class FormReview {
     } else if (filter.id == FilterType.CapturedBy) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
         return filter.selected.indexOf(submission.captured_by_user_name) != -1;
+      }));
+    } else if (filter.id == FilterType.CaptureDate) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.map(value => new Date(value).getTime()).indexOf(submission.sub_date) != -1;
       }));
     }
   }
@@ -363,12 +371,8 @@ export class FormReview {
 
   applyFilter() {
 	  this.isFilterExpanded = false;
+    this.isFilterApplied = true;
     this.content.resize();
-
-    this.searchedSubmissions = this.filteredSubmissions;
-    this.selectedFilters.forEach((filter) => {
-      this.filterDataWithFilter(filter, this.searchedSubmissions);
-    })
   }
 
   resetFilter() {

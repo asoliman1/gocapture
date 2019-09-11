@@ -4,7 +4,8 @@ export enum FilterType {
   Email = 'email',
   Name = 'name',
   CaptureType = 'captureType',
-  CapturedBy = 'capturedBy'
+  CapturedBy = 'capturedBy',
+  CaptureDate = 'capturedDate'
 }
 
 
@@ -13,7 +14,7 @@ export class GCFilter {
   title: string;
   icon: string;
   selected?: string [];
-  modifier?: Modifiers
+  modifier?: Modifiers;
 
   constructor() {
     //

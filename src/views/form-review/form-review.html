@@ -26,11 +26,11 @@
 	</ion-navbar>
   <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" *ngIf="isFilterExpanded"></filters-view>
   <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
-	<ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
+
+  <ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
 		<ion-row>
 			<ion-col>
 				<ion-segment [(ngModel)]="statusFilter"  (ionChange)="onFilterChanged()" color="dark" class="segment">
-
           <ion-segment-button [value]="filter" [ngClass]="filter.id" *ngFor="let filter of statusFilters; let i = index">
           {{filter.title}}
           </ion-segment-button>
@@ -47,7 +47,9 @@
 </ion-header>
 
 <ion-content class="form-summary">
-
+  <ion-item *ngIf="isFilterApplied">
+    <h1>Results</h1>
+  </ion-item>
   <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="84px" >
     <ion-item-sliding *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
       <ion-item (click)="goToEntry(submission)">
