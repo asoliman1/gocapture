@@ -12,6 +12,7 @@ import {Content, ModalController} from "ionic-angular";
 import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
 import {FilterService, Modifiers} from "../../services/filter-service";
 import {ThemeProvider} from "../../providers/theme/theme";
+import {DateTimeUtil} from "../../util/date-time-util";
 
 
 @Component({
@@ -73,27 +74,30 @@ export class FormReview {
 	  this.statusFilter = this.statusFilters[0];
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
+    this.form = this.navParams.get("form");
+    this.isDispatch = this.navParams.get("isDispatch");
+    this.loading = true;
+    this.doRefresh();
+    this.syncing = this.syncClient.isSyncing();
+
+    this.sub = this.syncClient.onSync.subscribe(stats => { },
+      (err) => { },
+      () => {
+        this.syncing = this.syncClient.isSyncing();
+        this.doRefresh();
+      });
 	}
 
 	ionViewDidEnter() {
-		this.form = this.navParams.get("form");
-		this.isDispatch = this.navParams.get("isDispatch");
-		this.loading = true;
-		this.doRefresh();
-		this.syncing = this.syncClient.isSyncing();
-
-		this.sub = this.syncClient.onSync.subscribe(stats => { },
-			(err) => { },
-			() => {
-				this.syncing = this.syncClient.isSyncing();
-				this.doRefresh();
-			});
+		//
 	}
 
 	ionViewDidLeave() {
 	  if (this.sub) {
       this.sub.unsubscribe();
       this.sub = null;
+      this.filterService.clearFilters();
     }
 	}
 
@@ -341,7 +345,7 @@ export class FormReview {
       }));
     } else if (filter.id == FilterType.CaptureDate) {
       this.searchedSubmissions = [].concat(data.filter((submission) => {
-        return filter.selected.map(value => new Date(value).getTime()).indexOf(submission.sub_date) != -1;
+        return filter.selected.indexOf(DateTimeUtil.submissionDisplayedTime(submission.sub_date)) != -1;
       }));
     }
   }

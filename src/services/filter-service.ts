@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
 import {FormSubmission, FormSubmissionType} from "../model";
 import {FilterType, GCFilter} from "../components/filters-view/gc-filter";
-import * as moment from 'moment';
+import {DateTimeUtil} from "../util/date-time-util";
+
 
 export enum Modifiers {
   Equals = 'equal',
@@ -27,11 +28,15 @@ export class FilterService {
       {title: 'Captured By', id: FilterType.CapturedBy, icon: 'person'}];
   }
 
-  filters() {
-    if (!this.gcFilters) {
+  filters(shouldReset: boolean = false) {
+    if (!this.gcFilters || shouldReset) {
       this.setupFilters();
     }
     return this.gcFilters;
+  }
+
+  clearFilters() {
+    this.setupFilters();
   }
 
   static modifiers() {
@@ -131,9 +136,8 @@ export class FilterService {
   }
 
   private getUniqueDates(submissions: FormSubmission[]) {
-    return submissions.map((item) =>  {
-      return { formattedDate: moment(item.sub_date).format('dddd, MMMM DD[th] YYYY'), original: item.sub_date}
-    }).filter((value, index, self) => self.indexOf(value) === index && value && value.formattedDate.length > 0);
+    return submissions.map(item => DateTimeUtil.submissionDisplayedTime(item.sub_date))
+    .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
   }
 
   private getUniqueUsers(submissions: FormSubmission[]) {
