@@ -56,8 +56,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, available_for_users, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode, available_for_users) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)",
 				"deleteAll": "delete from forms"
@@ -424,7 +424,12 @@ export class DBClient {
         queries: [
           "alter table submissions add column captured_by_user_name text"
         ]
-      }
+      },
+      24: {
+        queries: [
+          "alter table forms add column available_for_users text"
+        ]
+      },
 		}
 	};
 	/**
@@ -508,6 +513,7 @@ export class DBClient {
 		form.submit_button_text = dbForm.submit_button_text;
 		form.elements = typeof dbForm.elements == "string" ? JSON.parse(dbForm.elements) : dbForm.elements;
     form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
+    form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
 				if (e1.position < e2.position) {
@@ -577,7 +583,7 @@ export class DBClient {
       JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0,
       form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
       form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
-      form.is_enable_rapid_scan_mode ? 1 : 0]);
+      form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users)]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {

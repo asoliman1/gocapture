@@ -259,6 +259,10 @@ export class FormReview {
 
 			this.searchedSubmissions = this.filteredSubmissions;
 
+      this.selectedFilters.forEach((filter) => {
+        this.filterDataWithFilter(filter, this.searchedSubmissions);
+      });
+
       this.content.resize();
 		});
 	}
@@ -301,7 +305,7 @@ export class FormReview {
     }
 
     this.filterPageModal = this.modalCtrl.create('FilterPage', {
-      items: this.filterService.composeData(filter, this.submissions),
+      items: this.filterService.composeData(filter, this.submissions, this.form),
       selectedItems: filter.selected,
       title: filter.title,
       filter: filter
@@ -321,7 +325,6 @@ export class FormReview {
       this.selectedFilters.forEach((filter) => {
         this.filterDataWithFilter(filter, this.searchedSubmissions);
       })
-
     });
   }
 

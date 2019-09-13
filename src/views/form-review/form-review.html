@@ -47,7 +47,7 @@
 </ion-header>
 
 <ion-content class="form-summary">
-  <ion-item *ngIf="isFilterApplied">
+  <ion-item *ngIf="isFilterApplied && searchedSubmissions.length > 0">
     <h1>Results</h1>
   </ion-item>
   <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="84px" >

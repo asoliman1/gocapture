@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
-import {FormSubmission, FormSubmissionType} from "../model";
+import {Form, FormSubmission, FormSubmissionType} from "../model";
 import {FilterType, GCFilter} from "../components/filters-view/gc-filter";
 import {DateTimeUtil} from "../util/date-time-util";
-
+import {iFilterItem} from "../model/protocol/ifilter-item";
 
 export enum Modifiers {
   Equals = 'equal',
@@ -10,7 +10,6 @@ export enum Modifiers {
   Contains = 'contain',
   NotContain = 'not_contain',
   StartsWith = 'starts_with',
-
 }
 
 @Injectable()
@@ -51,7 +50,7 @@ export class FilterService {
     this.setupFilters();
   }
 
-  composeData(filter: GCFilter, submissions: FormSubmission[]) {
+  composeData(filter: GCFilter, submissions: FormSubmission[], form?: Form): iFilterItem[] {
     if (filter.id == FilterType.Name) {
       return this.getUniqueNames(submissions);
     }
@@ -62,10 +61,10 @@ export class FilterService {
 
     if (filter.id == FilterType.CaptureType) {
       return [
-        {title: "Normal", value: FormSubmissionType.normal},
-        {title: "Badge Scan", value: FormSubmissionType.barcode},
-        {title: "List", value: FormSubmissionType.list},
-        {title: "Transcription", value: FormSubmissionType.transcription}];
+        {title: "Normal", value: FormSubmissionType.normal, displayedProperty: 'title'},
+        {title: "Badge Scan", value: FormSubmissionType.barcode, displayedProperty: 'title'},
+        {title: "List", value: FormSubmissionType.list, displayedProperty: 'title'},
+        {title: "Transcription", value: FormSubmissionType.transcription, displayedProperty: 'title'}];
     }
 
     if (filter.id == FilterType.CaptureDate) {
@@ -73,7 +72,10 @@ export class FilterService {
     }
 
     if (filter.id == FilterType.CapturedBy) {
-      return this.getUniqueUsers(submissions);
+      return form.available_for_users
+        .map((user) => {
+          return {value: user.user_name, displayedProperty: 'value'};
+        })
     }
   }
 
@@ -127,21 +129,33 @@ export class FilterService {
 
   private getUniqueNames(submissions: FormSubmission[]) {
     return submissions.map((item) => item.first_name + ' ' + item.last_name)
-      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
+      .map((item) => {
+        return {value: item, displayedProperty: 'value'}
+      });
   }
 
   private getUniqueEmails(submissions: FormSubmission[]) {
     return submissions.map((item) => item.email)
-      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
+      .map((item) => {
+        return {value: item, displayedProperty: 'value'}
+      });
   }
 
   private getUniqueDates(submissions: FormSubmission[]) {
     return submissions.map(item => DateTimeUtil.submissionDisplayedTime(item.sub_date))
-    .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+    .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
+      .map((item) => {
+        return {value: item, displayedProperty: 'value'}
+      });
   }
 
   private getUniqueUsers(submissions: FormSubmission[]) {
     return submissions.map((item) => item.captured_by_user_name)
-      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0);
+      .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
+      .map((item) => {
+        return {value: item, displayedProperty: 'value'}
+      } );
   }
 }

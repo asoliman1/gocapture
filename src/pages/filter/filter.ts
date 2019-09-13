@@ -4,6 +4,7 @@ import {BasePage} from "../base/base";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
 import {FilterService, Modifiers} from "../../services/filter-service";
+import {iFilterItem} from "../../model/protocol/ifilter-item";
 
 @IonicPage()
 @Component({
@@ -12,8 +13,8 @@ import {FilterService, Modifiers} from "../../services/filter-service";
 })
 export class FilterPage extends BasePage {
 
-  private items: {value: string, isSelected: boolean}[];
-  searchedItems: {value: string, isSelected: boolean}[];
+  private items: iFilterItem[];
+  searchedItems: iFilterItem[];
   selectedItems: any[];
   title: '';
   selectedFilter: GCFilter;
@@ -31,9 +32,8 @@ export class FilterPage extends BasePage {
 
   ionViewDidLoad() {
     let selectedItems = this.navParams.get('selectedItems') || [];
-    this.items = this.navParams.get('items').map((item) => {
-      return {value: item, isSelected: selectedItems.length > 0 && selectedItems.indexOf(item) != -1};
-    });
+    this.items = this.navParams.get('items');
+    this.items.forEach(item => item.isSelected = selectedItems.length > 0 && selectedItems.indexOf(item.value) != -1);
     this.searchedItems = this.items;
 
     this.title = this.navParams.get('title') || 'Filter';

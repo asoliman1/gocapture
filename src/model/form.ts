@@ -23,6 +23,7 @@ export class Form extends BaseForm{
   is_enforce_instructions_initially: boolean;
   event_stations: Station[];
   is_enable_rapid_scan_mode: boolean;
+  available_for_users: any[];
 
 	public static getIdByUniqueFieldName(name : string, form: any) : string{
 		let element : FormElement = null;

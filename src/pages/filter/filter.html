@@ -42,7 +42,7 @@
       <ion-checkbox [(ngModel)] = isAll (ionChange)="isAllUpdated()"></ion-checkbox>
     </ion-item>
     <ion-item *ngFor="let item of searchedItems">
-      <ion-label class="filter-name">{{item.value}}</ion-label>
+      <ion-label class="filter-name">{{item[item.displayedProperty]}}</ion-label>
       <ion-checkbox [(ngModel)]="item.isSelected"></ion-checkbox>
     </ion-item>
   </ion-list>
