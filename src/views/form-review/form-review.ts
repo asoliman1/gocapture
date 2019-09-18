@@ -221,7 +221,7 @@ export class FormReview {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
     this.searchedSubmissions = [].concat(this.filteredSubmissions.filter((submission) => {
-      return !val || regexp.test(submission.email) || regexp.test(submission.first_name) || regexp.test(submission.last_name);
+      return !val || regexp.test(submission.email) || regexp.test(submission.first_name + ' ' + submission.last_name);
     }));
   }
 

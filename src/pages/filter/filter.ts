@@ -76,7 +76,11 @@ export class FilterPage extends BasePage {
   }
 
   addTagFn(value) {
-    return {value: value, tag: true, isSelected: true };
+    let trimmedValue = value && value.trim();
+    if (trimmedValue.length) {
+      return {value: trimmedValue, tag: true, isSelected: true };
+    }
+    return;
   }
 
   shouldShowSelect() {

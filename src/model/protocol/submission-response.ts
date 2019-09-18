@@ -1,4 +1,5 @@
 import {Station} from "../station";
+import {FormSubmissionType} from "../form-submission";
 
 export class SubmissionResponse {
 	activity_id: number;
@@ -10,6 +11,7 @@ export class SubmissionResponse {
 	station_id: string;
 	stations: [Station];
   captured_by_user_name: string;
+  submission_type: FormSubmissionType;
 }
 
 export class SubmissionDataResponse {

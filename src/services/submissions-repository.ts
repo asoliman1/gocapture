@@ -46,11 +46,12 @@ export class SubmissionsRepository {
       }
       return Observable.of({});
     }).flatMap(() => {
-      if (mergedSubmission) {
-        //remove the locally saved submission (that was submitted)
-        return this.dbClient.deleteSubmission(localSubmission);
-      }
-      return Observable.of({});
+      // if (mergedSubmission) {
+      //   //remove the locally saved submission (that was submitted)
+      //   return this.dbClient.deleteSubmission(localSubmission);
+      // }
+      return this.dbClient.deleteSubmission(localSubmission);
+      // return Observable.of({});
     }).flatMap(() => {
       if (mergedSubmission) {
         return this.dbClient.saveSubmission(this.submMapper.map(form, mergedSubmission));

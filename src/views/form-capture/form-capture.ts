@@ -17,7 +17,7 @@ import {
   DeviceFormMembership,
   DispatchOrder,
   Form,
-  FormSubmission,
+  FormSubmission, FormSubmissionType,
   SubmissionStatus
 } from "../../model";
 
@@ -501,6 +501,16 @@ export class FormCapture implements AfterViewInit {
 
     if (this.selectedStation) {
       this.submission.station_id = this.selectedStation;
+    }
+
+    if (this.submission.barcode_processed == BarcodeStatus.Processed ||
+      this.submission.barcode_processed == BarcodeStatus.Queued ||
+      this.submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
+      this.submission.submission_type = FormSubmissionType.barcode;
+    }
+
+    if (this.submission.prospect_id) {
+      this.submission.submission_type = FormSubmissionType.list;
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {

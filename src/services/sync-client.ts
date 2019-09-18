@@ -424,16 +424,6 @@ export class SyncClient {
       console.log("With Barcode data: " + barcodeData);
     }
 
-    if (submission.barcode_processed == BarcodeStatus.Processed ||
-      submission.barcode_processed == BarcodeStatus.Queued ||
-      submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
-      submission.submission_type = FormSubmissionType.barcode;
-    }
-
-    if (submission.prospect_id) {
-      submission.submission_type = FormSubmissionType.list;
-    }
-
     this.rest.submitForm(submission).subscribe((d) => {
       this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
         const autoUpload = String(setting) == "true";
