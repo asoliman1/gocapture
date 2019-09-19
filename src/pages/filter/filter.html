@@ -13,13 +13,15 @@
       </button>
     </ion-buttons>
   </ion-navbar>
-  <ion-searchbar (ionInput)="getSearchedItems($event)" *ngIf="selectedFilter && !shouldShowSelect()"></ion-searchbar>
+  <ion-searchbar (ionInput)="getSearchedItems($event)" *ngIf="selectedFilter && !isModifierMode()"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>
-  <div>Select {{selectedFilter && selectedFilter.title}}</div>
+  <div *ngIf="selectedFilter && !isModifierMode()">
+    Select {{selectedFilter && selectedFilter.title}}
+  </div>
 
-  <ng-select *ngIf="selectedFilter && shouldShowSelect()"
+  <ng-select *ngIf="selectedFilter && isModifierMode()"
              [items]="modifiers"
              [multiple]="false"
              bindLabel="name"
@@ -27,16 +29,16 @@
              [(ngModel)]="selectedModifier">
   </ng-select>
 
-  <ng-select *ngIf="selectedFilter && shouldShowSelect()"
+  <ng-select *ngIf="selectedFilter && isModifierMode()"
              [items]="items"
              [multiple]="true"
              [addTag]="addTagFn"
              [hideSelected]="true"
              bindLabel="value"
-             [(ngModel)]="selectedItems">
+             [(ngModel)]="selectedTags">
   </ng-select>
 
-  <ion-list *ngIf="selectedFilter && !shouldShowSelect()">
+  <ion-list *ngIf="selectedFilter && !isModifierMode()">
     <ion-item>
       <ion-label class="filter-name" no-border>All</ion-label>
       <ion-checkbox [(ngModel)] = isAll (ionChange)="isAllUpdated()"></ion-checkbox>

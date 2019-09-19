@@ -68,6 +68,19 @@
     color: $theme-color;
   }
 
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    background-color: $theme-color !important;
+  }
+
+  .ng-select-container:after {
+    border-color: $theme-color !important;
+  }
+
+  .ng-arrow,
+  .ng-option.ng-option-selected {
+    color: $theme-color !important;
+  }
+
   .checkbox-checked,
   .radio-md .radio-inner,
   .alert-radio-inner {

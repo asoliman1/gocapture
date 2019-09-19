@@ -10,7 +10,7 @@ import {ToastController} from 'ionic-angular/components/toast/toast-controller';
 import {Util} from "../../util/util";
 import {Content, ModalController} from "ionic-angular";
 import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
-import {FilterService, Modifiers} from "../../services/filter-service";
+import {FilterService, Modifier, Modifiers} from "../../services/filter-service";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {DateTimeUtil} from "../../util/date-time-util";
 
@@ -92,6 +92,10 @@ export class FormReview {
 	ionViewDidEnter() {
 		//
 	}
+
+	ionViewWillLeave() {
+	  this.isFilterExpanded = false;
+  }
 
 	ionViewDidLeave() {
 	  if (this.sub) {
@@ -312,7 +316,7 @@ export class FormReview {
     }, {cssClass: this.selectedTheme});
     this.filterPageModal.present();
 
-    this.filterPageModal.onDidDismiss((data: {data: any, modifier: Modifiers}) => {
+    this.filterPageModal.onDidDismiss((data: {data: any, modifier: Modifier}) => {
 
       if (!data) {
         return;
@@ -376,17 +380,9 @@ export class FormReview {
 		return false;
 	}
 
-  applyFilter() {
-	  this.isFilterExpanded = false;
-    this.isFilterApplied = true;
-    this.content.resize();
-  }
-
   resetFilter() {
-	  this.isFilterExpanded = false;
-    this.content.resize();
-
     this.filterService.resetFilters();
+    this.content.resize();
     this.searchedSubmissions = this.filteredSubmissions;
     this.selectedFilters = [];
   }

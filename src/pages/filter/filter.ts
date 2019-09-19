@@ -3,8 +3,9 @@ import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular
 import {BasePage} from "../base/base";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
-import {FilterService, Modifiers} from "../../services/filter-service";
+import {FilterService, Modifier} from "../../services/filter-service";
 import {iFilterItem} from "../../model/protocol/ifilter-item";
+import {iTagItem} from "../../model/protocol/itag-item";
 
 @IonicPage()
 @Component({
@@ -13,13 +14,16 @@ import {iFilterItem} from "../../model/protocol/ifilter-item";
 })
 export class FilterPage extends BasePage {
 
-  private items: iFilterItem[];
+  items: iFilterItem[];
+  selectedTags: iTagItem[];
+
   searchedItems: iFilterItem[];
-  selectedItems: any[];
   title: '';
+
   selectedFilter: GCFilter;
+
   modifiers: any[];
-  selectedModifier: any = FilterService.modifiers()[0];
+  selectedModifier: Modifier;
 
   isAll: boolean = false;
 
@@ -31,15 +35,20 @@ export class FilterPage extends BasePage {
   }
 
   ionViewDidLoad() {
-    let selectedItems = this.navParams.get('selectedItems') || [];
     this.items = this.navParams.get('items');
-    this.items.forEach(item => item.isSelected = selectedItems.length > 0 && selectedItems.indexOf(item.value) != -1);
-    this.searchedItems = this.items;
+    this.selectedTags = this.navParams.get('selectedItems') || [];
+
+    this.searchedItems = this.navParams.get('items');
 
     this.title = this.navParams.get('title') || 'Filter';
     this.selectedFilter = this.navParams.get('filter');
 
     this.modifiers = FilterService.modifiers();
+    this.selectedModifier = this.selectedFilter.modifier || FilterService.modifiers()[0];
+
+    this.items.forEach((item) => {
+      item.isSelected = this.items.length > 0 && this.items.indexOf(item.value) != -1;
+    });
   }
 
   done() {
@@ -51,13 +60,11 @@ export class FilterPage extends BasePage {
       return item.value;
     });
 
-    if (this.shouldShowSelect()) {
-      data = this.selectedItems.map((item) => {
-        return item.value;
-      });
+    if (this.isModifierMode()) {
+      data = this.selectedTags;
     }
 
-    this.viewCtrl.dismiss({data: data, modifier: this.selectedModifier.value});
+    this.viewCtrl.dismiss({data: data, modifier: this.selectedModifier});
   }
 
   getSearchedItems(event) {
@@ -83,11 +90,11 @@ export class FilterPage extends BasePage {
     return;
   }
 
-  shouldShowSelect() {
+  isModifierMode() {
     return  this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
   }
 
   clearSelectedItems() {
-    this.selectedItems = [];
+    this.items = [];
   }
 }

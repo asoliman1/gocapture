@@ -12,6 +12,11 @@ export enum Modifiers {
   StartsWith = 'starts_with',
 }
 
+export interface Modifier {
+  name: string;
+  value: Modifiers;
+}
+
 @Injectable()
 
 export class FilterService {
@@ -38,7 +43,7 @@ export class FilterService {
     this.setupFilters();
   }
 
-  static modifiers() {
+  static modifiers(): Modifier[] {
     return [
       {name: 'Equals', value: Modifiers.Equals},
       {name: 'Does not equal', value: Modifiers.NotEqual},
@@ -80,21 +85,22 @@ export class FilterService {
   }
 
   static filterItems(items, filter, modifier) {
-    switch (modifier) {
+    let mappedItems = items.map(item => item.value);
+    switch (modifier.value) {
       case Modifiers.Contains: {
-        return FilterService.contains(items, filter);
+        return FilterService.contains(mappedItems, filter);
       }
       case Modifiers.NotContain: {
-        return !FilterService.contains(items, filter);
+        return !FilterService.contains(mappedItems, filter);
       }
       case Modifiers.Equals: {
-        return FilterService.equals(items, filter);
+        return FilterService.equals(mappedItems, filter);
       }
       case Modifiers.NotEqual: {
-        return !FilterService.equals(items, filter);
+        return !FilterService.equals(mappedItems, filter);
       }
       case Modifiers.StartsWith: {
-        return FilterService.startsWith(items, filter);
+        return FilterService.startsWith(mappedItems, filter);
       }
     }
   }
@@ -132,7 +138,7 @@ export class FilterService {
       .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
       .map((item) => {
         return {value: item, displayedProperty: 'value'}
-      });
+      }).sort((a, b) => a.value.localeCompare(b.value));
   }
 
   private getUniqueEmails(submissions: FormSubmission[]) {
@@ -140,7 +146,7 @@ export class FilterService {
       .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
       .map((item) => {
         return {value: item, displayedProperty: 'value'}
-      });
+      }).sort((a, b) => a.value.localeCompare(b.value));
   }
 
   private getUniqueDates(submissions: FormSubmission[]) {

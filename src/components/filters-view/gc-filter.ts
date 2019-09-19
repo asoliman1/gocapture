@@ -1,4 +1,4 @@
-import {Modifiers} from "../../services/filter-service";
+import {Modifier, Modifiers} from "../../services/filter-service";
 
 export enum FilterType {
   Email = 'email',
@@ -14,7 +14,7 @@ export class GCFilter {
   title: string;
   icon: string;
   selected?: string [];
-  modifier?: Modifiers;
+  modifier?: Modifier;
 
   constructor() {
     //
