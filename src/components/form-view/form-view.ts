@@ -200,22 +200,7 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
-        // this.displayForm.elements = [
-        //   ...this.displayForm.elements,
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 999,
-        //     type: 'document',
-        //     title: 'ELM Documents'
-        //   },
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 9999,
-        //     type: 'document',
-        //     title: 'POST SHOW Docs'
-        //   }
-        // ];
-        console.log(this.displayForm);
+        this.buildSections();
       });
     }, 150);
   }
@@ -412,7 +397,11 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element) {
+  private shouldElementBeDisplayed(element: FormElement) {
+    return element.isMatchingRules && element.parent_element_id == 0;
+  }
+
+  private shouldElementBeDisplayedInsideSection(element: FormElement) {
     return element.isMatchingRules;
   }
 
@@ -458,5 +447,34 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+
+  private buildSections() {
+    const sections = {};
+    
+    const findSectionChildElements = (sectionId) => {
+      return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
+    }
+
+    this.displayForm.elements
+      .filter((d) => d.type == 'section_block')
+      .forEach((section) => {
+        section.children = findSectionChildElements(section.id);
+        sections[section.id] = section;
+      });
+        
+    Object.keys(sections).forEach((key: any) => {
+      const dataIndex = this.displayForm.elements.findIndex((d) => d.id == key);
+      this.displayForm[dataIndex] = sections[key];
+    })
+  }
+
+  // used by the *ngFor
+  private trackByFn(index: number, item: FormElement) {
+    if (!item) {
+      return null;
+    }
+
+    return item.id;
   }
 }

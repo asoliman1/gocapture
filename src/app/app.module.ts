@@ -105,6 +105,7 @@ import {FilterPage} from "../pages/filter/filter";
 import {FilterService} from "../services/filter-service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {FormsModule} from "@angular/forms";
+import { SectionBlock } from '../components/section-block';
 
 @NgModule({
   declarations: [
@@ -144,7 +145,8 @@ import {FormsModule} from "@angular/forms";
     OcrSelector,
     MyCurrencyDirective,
     DynamicFormElementComponent,
-    StationsPage
+    StationsPage,
+    SectionBlock
   ],
   imports: [
     BrowserModule,
