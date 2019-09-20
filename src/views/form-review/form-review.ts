@@ -52,6 +52,8 @@ export class FormReview {
 
 	private selectedTheme;
 
+	filters: GCFilter[] = this.filterService.filters(true);
+
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
@@ -382,12 +384,15 @@ export class FormReview {
 
 	onBack() {
 	  this.isFilterExpanded = false;
+
     this.content.resize();
+    this.filters = this.filterService.filters(true);
+    this.searchedSubmissions = this.filteredSubmissions;
+    this.selectedFilters = [];
   }
 
   resetFilter() {
-    this.filterService.resetFilters();
-    this.content.resize();
+    this.filters = this.filterService.filters(true);
     this.searchedSubmissions = this.filteredSubmissions;
     this.selectedFilters = [];
   }

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {GCFilter} from "./gc-filter";
 import {FilterService} from "../../services/filter-service";
 
@@ -10,17 +10,12 @@ import {FilterService} from "../../services/filter-service";
 export class FiltersViewComponent {
 
   @Output() onFilterSelected = new EventEmitter();
-
-  filters: GCFilter[] = [];
+  @Input() filters: GCFilter[];
 
   selectedFilter: GCFilter;
 
-  constructor(private filterService: FilterService) {
-    this.setupFilter();
-  }
-
-  private setupFilter() {
-    this.filters = this.filterService.filters();
+  constructor() {
+    //
   }
 
   onSelect(filter) {

@@ -22,7 +22,7 @@
       </button>
     </ion-buttons>
 	</ion-navbar>
-  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" *ngIf="isFilterExpanded"></filters-view>
+  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" [filters]="filters" *ngIf="isFilterExpanded"></filters-view>
   <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
 
   <ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
