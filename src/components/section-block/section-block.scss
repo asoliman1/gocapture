@@ -1,4 +1,4 @@
-section-break {
+section-block {
   .section {
     margin: 0;
     border-radius: 0;
@@ -24,13 +24,22 @@ section-break {
       }
 
       ion-icon {
-        transition: all 500ms ease-in-out;
+        transition: all 350ms ease-in-out;
+
+        &.active {
+          transform: rotate(90deg);
+        }
       }
     }
 
     .card-content {
       padding: 0px !important; 
-      max-height: 9999px;
+      transition-property: all;
+	    transition-duration: 350ms;
+	    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+      border: 0.55px solid #c8c7cc;
+      margin-left: 1px;
     }
+
   }
 }

@@ -397,7 +397,11 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element) {
+  private shouldElementBeDisplayed(element: FormElement) {
+    return element.isMatchingRules && element.parent_element_id == 0;
+  }
+
+  private shouldElementBeDisplayedInsideSection(element: FormElement) {
     return element.isMatchingRules;
   }
 
@@ -446,47 +450,31 @@ export class FormView {
   }
 
   private buildSections() {
-    const structuredData = {
-      startForms: [],
-      sections: [],
-    };
+    const sections = {};
+    
+    const findSectionChildElements = (sectionId) => {
+      return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
+    }
 
-    const getSectionElementsRange = (startIndex: number) => {
-      let endIndex;
-      for (let i = startIndex; i < this.displayForm.elements.length; i++) {
-        if (this.displayForm.elements[i].type === 'section') {
-          endIndex = i;
-          return endIndex;
-        }
-      }
-    
-      return this.displayForm.elements.length;
-    };
-    
-    for (let i = 0; i < this.displayForm.elements.length; i++) {
-      if (this.displayForm.elements[i].type !== 'section') {
-        structuredData.startForms.push(this.displayForm.elements[i]);
-      }
-    
-      // check if the first element is a section or not
-      if (this.displayForm.elements[i].type === 'section') {
-        const endIndex = getSectionElementsRange(i + 1);
-        const section = {
-          section: this.displayForm.elements[i],
-          elements: [...this.displayForm.elements.slice(i + 1, endIndex)]
-        }
+    this.displayForm.elements
+      .filter((d) => d.type == 'section_block')
+      .forEach((section) => {
+        section.children = findSectionChildElements(section.id);
+        sections[section.id] = section;
+      });
         
-        structuredData.sections.push(section);
-    
-        // case we have reached the end
-        if (endIndex === this.displayForm.elements.length - 1) {
-          break;
-        }
-    
-        i = endIndex - 1;
-      }
-    };
+    Object.keys(sections).forEach((key: any) => {
+      const dataIndex = this.displayForm.elements.findIndex((d) => d.id == key);
+      this.displayForm[dataIndex] = sections[key];
+    })
+  }
 
-    console.log(structuredData);
+  // used by the *ngFor
+  private trackByFn(index: number, item: FormElement) {
+    if (!item) {
+      return null;
+    }
+
+    return item.id;
   }
 }

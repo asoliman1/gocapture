@@ -1,4 +1,3 @@
-import { SectionBreak } from '../components/section-break/section-break';
 import { NgModule } from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -101,6 +100,7 @@ import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
 import {IonicImageLoader} from "ionic-image-loader";
+import { SectionBlock } from '../components/section-block/section-block';
 
 @NgModule({
   declarations: [
@@ -141,7 +141,7 @@ import {IonicImageLoader} from "ionic-image-loader";
     MyCurrencyDirective,
     DynamicFormElementComponent,
     StationsPage,
-    SectionBreak
+    SectionBlock
   ],
   imports: [
     BrowserModule,

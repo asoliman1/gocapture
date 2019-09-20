@@ -2,6 +2,7 @@ import {IDocumentSet} from "./documentSet";
 
 export class FormElement {
 	id : number;
+	parent_element_id: number;
 	title : string;
 	guidelines : string;
 	field_error_message : string;
@@ -31,7 +32,9 @@ export class FormElement {
   isMatchingRules: boolean;
 	is_filled_from_list: boolean;
 	post_show_reconciliation: boolean;
-  documents_set?: IDocumentSet;
+	documents_set?: IDocumentSet;
+	children?: FormElement[];
+	collapse_content?: boolean; 
 }
 
 export class Option{
