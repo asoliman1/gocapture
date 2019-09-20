@@ -514,7 +514,7 @@ export class FormCapture implements AfterViewInit {
       this.submission.submission_type = FormSubmissionType.list;
     }
 
-    if (this.isTranscriptionEnabled() && !this.isBusinessCardAdded()) {
+    if (this.isTranscriptionEnabled() && this.isBusinessCardAdded()) {
       this.submission.submission_type = FormSubmissionType.transcription;
     }
 

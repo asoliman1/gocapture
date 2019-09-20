@@ -47,7 +47,7 @@ export class FilterPage extends BasePage {
     this.selectedModifier = this.selectedFilter.modifier || FilterService.modifiers()[0];
 
     this.items.forEach((item) => {
-      item.isSelected = this.items.length > 0 && this.items.indexOf(item.value) != -1;
+      item.isSelected = this.selectedTags.length > 0 && this.selectedTags.indexOf(item.value) != -1;
     });
   }
 
@@ -96,5 +96,11 @@ export class FilterPage extends BasePage {
 
   clearSelectedItems() {
     this.items = [];
+  }
+
+  onCheckbox(item) {
+    if (item.isSelected == false) {
+      this.isAll = false;
+    }
   }
 }

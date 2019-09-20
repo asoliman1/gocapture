@@ -1,7 +1,7 @@
-import {Injectable, OnInit} from "@angular/core";
-import {FormElement, FormSubmission} from "../model";
+import {Injectable} from "@angular/core";
+import {FormElement, FormSubmissionType} from "../model";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
-import {Scanner, ScannerResponse, ScannerType} from "../components/form-view/elements/badge/Scanners/Scanner";
+import {Scanner, ScannerType} from "../components/form-view/elements/badge/Scanners/Scanner";
 import {GOCNFCScanner} from "../components/form-view/elements/badge/Scanners/GOCNFCScanner";
 import {GOCBarcodeScanner} from "../components/form-view/elements/badge/Scanners/GOCBarcodeScanner";
 import {Platform} from "ionic-angular";
@@ -14,13 +14,14 @@ import {AppPreferences} from "@ionic-native/app-preferences";
 export class BadgeRapidCapture implements RapidCapture {
 
   scanner: Scanner;
+  type: FormSubmissionType;
 
   constructor(public barcodeScanner: BarcodeScanner,
               public platform: Platform,
               public nfc: NFC,
               public ndef: Ndef,
               public appPreferences: AppPreferences) {
-    //
+    this.type = FormSubmissionType.barcode;
   }
 
   private getScanner(element): Scanner {

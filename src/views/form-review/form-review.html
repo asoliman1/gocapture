@@ -1,26 +1,24 @@
 <ion-header>
 	<ion-navbar color="primary" [hideBackButton]="isFilterExpanded">
 		<ion-buttons start>
-      <button ion-button (click)="resetFilter()" *ngIf="isFilterExpanded">
-        Clear
+      <button ion-button (click)="onBack()" *ngIf="isFilterExpanded">
+        Back
       </button>
 		</ion-buttons>
 		<ion-title >{{isFilterExpanded ? 'Filter' : form.name}}</ion-title>
 		<ion-buttons end *ngIf="!isFilterExpanded">
       <button ion-button (click)="openFilter()">
-
         <ion-icon name="ios-funnel-outline">
           <ion-label *ngIf="selectedFilters.length" class="top-text">({{selectedFilters.length}})</ion-label>
         </ion-icon>
-
       </button>
 			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend">
 				<ion-icon name="cloud-upload" class="sync-submissions"></ion-icon>
 			</button>
 		</ion-buttons>
     <ion-buttons end *ngIf="isFilterExpanded">
-      <button ion-button (click)="applyFilter()">
-        Apply
+      <button ion-button (click)="resetFilter()">
+        Clear
       </button>
     </ion-buttons>
 	</ion-navbar>

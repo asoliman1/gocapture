@@ -41,11 +41,11 @@
   <ion-list *ngIf="selectedFilter && !isModifierMode()">
     <ion-item>
       <ion-label class="filter-name" no-border>All</ion-label>
-      <ion-checkbox [(ngModel)] = isAll (ionChange)="isAllUpdated()"></ion-checkbox>
+      <ion-checkbox [(ngModel)] = isAll (click)="isAllUpdated()"></ion-checkbox>
     </ion-item>
     <ion-item *ngFor="let item of searchedItems">
       <ion-label class="filter-name">{{item[item.displayedProperty]}}</ion-label>
-      <ion-checkbox [(ngModel)]="item.isSelected"></ion-checkbox>
+      <ion-checkbox [(ngModel)]="item.isSelected" (click)="onCheckbox(item)"></ion-checkbox>
     </ion-item>
   </ion-list>
 

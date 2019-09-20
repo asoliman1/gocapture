@@ -15,6 +15,7 @@ import {Observable} from "rxjs";
 import {BussinessClient} from "./business-service";
 
 export interface RapidCapture {
+  type: FormSubmissionType;
   capture(element: FormElement, id?: string): Promise<any[]>;
 }
 
@@ -155,8 +156,12 @@ export class RapidCaptureService {
 
     submission.station_id = station;
 
-    submission.barcode_processed = BarcodeStatus.Queued;
-    submission.submission_type = FormSubmissionType.barcode;
+    if (this.captureService.type == FormSubmissionType.barcode) {
+      submission.barcode_processed = BarcodeStatus.Queued;
+      submission.submission_type = FormSubmissionType.barcode;
+    } else if (this.captureService.type == FormSubmissionType.transcription) {
+      submission.submission_type = FormSubmissionType.transcription;
+    }
 
     return this.client.saveSubmission(submission, form, false);
   }

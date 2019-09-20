@@ -380,6 +380,11 @@ export class FormReview {
 		return false;
 	}
 
+	onBack() {
+	  this.isFilterExpanded = false;
+    this.content.resize();
+  }
+
   resetFilter() {
     this.filterService.resetFilters();
     this.content.resize();
