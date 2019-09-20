@@ -100,6 +100,7 @@ import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
 import {IonicImageLoader} from "ionic-image-loader";
+import { SectionBlock } from '../components/section-block/section-block';
 
 @NgModule({
   declarations: [
@@ -139,7 +140,8 @@ import {IonicImageLoader} from "ionic-image-loader";
     OcrSelector,
     MyCurrencyDirective,
     DynamicFormElementComponent,
-    StationsPage
+    StationsPage,
+    SectionBlock
   ],
   imports: [
     BrowserModule,
