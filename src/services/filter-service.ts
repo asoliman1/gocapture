@@ -132,7 +132,6 @@ export class FilterService {
     return false;
   }
 
-
   private getUniqueNames(submissions: FormSubmission[]) {
     return submissions.map((item) => item.first_name + ' ' + item.last_name)
       .filter((value, index, self) => self.indexOf(value) === index && value && value.length > 0)
