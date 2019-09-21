@@ -4,15 +4,16 @@ import { Subscription } from "rxjs/Subscription";
 import { Clipboard } from '@ionic-native/clipboard';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
 import {ThemeProvider} from "../../providers/theme/theme";
+import {BasePage} from "../../pages/base/base";
+import {NavController, NavParams} from "ionic-angular";
 
 @Component({
 	selector: 'log',
 	templateUrl: 'log.html'
 })
-export class LogView{
+export class LogView extends BasePage{
 
 	private sub: Subscription;
-  selectedTheme: String;
 
 	logs: LogEntry[];
 
@@ -21,12 +22,17 @@ export class LogView{
 	limit: number = 10;
 	isMore: boolean = false;
 
-	constructor(private logClient: LogClient,
-				private zone: NgZone,
-				private viewCtrl: ViewController,
-				private clipboard: Clipboard,
-        public themeProvider: ThemeProvider) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+	constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public themeProvider: ThemeProvider,
+	  private logClient: LogClient,
+    private zone: NgZone,
+    private viewCtrl: ViewController,
+    private clipboard: Clipboard) {
+
+
+    super(navCtrl, navParams, themeProvider);
 	}
 
 	ionViewDidEnter() {

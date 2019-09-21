@@ -100,7 +100,12 @@ import {DocumentsSyncClient} from "../services/documents-sync-client";
 import {ShareService} from "../services/share-service";
 import {StationsPage} from "../views/stations/stations";
 import {IonicImageLoader} from "ionic-image-loader";
-import { SectionBlock } from '../components/section-block/section-block';
+import {ComponentsModule} from "../components/components.module";
+import {FilterPage} from "../pages/filter/filter";
+import {FilterService} from "../services/filter-service";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {FormsModule} from "@angular/forms";
+import { SectionBlock } from '../components/section-block';
 
 @NgModule({
   declarations: [
@@ -149,13 +154,16 @@ import { SectionBlock } from '../components/section-block/section-block';
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
     IonicImageViewerModule,
-	  TextMaskModule,
-	  PipesModule,
-	  BusinessCardOverlayPageModule,
-	  TextMaskModule,
-	  PipesModule,
-	  BusinessCardOverlayPageModule,
+    TextMaskModule,
+    PipesModule,
+    BusinessCardOverlayPageModule,
+    TextMaskModule,
+    PipesModule,
+    BusinessCardOverlayPageModule,
     IonicImageLoader.forRoot(),
+    ComponentsModule,
+    NgSelectModule,
+    FormsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -192,7 +200,7 @@ import { SectionBlock } from '../components/section-block/section-block';
     UrlChoose,
     ProspectSearch,
     OcrSelector,
-    StationsPage
+    StationsPage,
   ],
   exports: [
     DynamicFormElementComponent
@@ -255,7 +263,8 @@ import { SectionBlock } from '../components/section-block/section-block';
     SocialSharing,
     SubmissionsRepository,
     SubmissionMapper,
-    ShareService
+    ShareService,
+    FilterService
   ]
 })
 export class AppModule { }

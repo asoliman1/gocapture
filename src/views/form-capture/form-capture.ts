@@ -17,7 +17,7 @@ import {
   DeviceFormMembership,
   DispatchOrder,
   Form,
-  FormSubmission,
+  FormSubmission, FormSubmissionType,
   SubmissionStatus
 } from "../../model";
 
@@ -114,8 +114,9 @@ export class FormCapture implements AfterViewInit {
 
     let instructions = this.localStorage.get("FormInstructions");
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
+    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1;
 
-    if (this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
+    if (shouldShowInstruction) {
       let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
       instructionsModal.present().then((result) => {
         formsInstructions.push(this.form.id);
@@ -501,6 +502,20 @@ export class FormCapture implements AfterViewInit {
 
     if (this.selectedStation) {
       this.submission.station_id = this.selectedStation;
+    }
+
+    if (this.submission.barcode_processed == BarcodeStatus.Processed ||
+      this.submission.barcode_processed == BarcodeStatus.Queued ||
+      this.submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
+      this.submission.submission_type = FormSubmissionType.barcode;
+    }
+
+    if (this.submission.prospect_id) {
+      this.submission.submission_type = FormSubmissionType.list;
+    }
+
+    if (this.isTranscriptionEnabled() && this.isBusinessCardAdded()) {
+      this.submission.submission_type = FormSubmissionType.transcription;
     }
 
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {

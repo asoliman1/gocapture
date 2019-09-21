@@ -1,4 +1,4 @@
-import {BarcodeStatus, FormElement, FormSubmission, SubmissionStatus} from "../model";
+import {BarcodeStatus, FormElement, FormSubmission, FormSubmissionType, SubmissionStatus} from "../model";
 import {BarcodeScanner} from "@ionic-native/barcode-scanner";
 import {Platform} from "ionic-angular";
 import {Ndef, NFC} from "@ionic-native/nfc";
@@ -7,16 +7,15 @@ import {BCRapidCapture} from "./bc-rapid-capture";
 import {Injectable} from "@angular/core";
 import {ImageProcessor} from "./image-processor";
 import {File} from "@ionic-native/file";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Camera} from "@ionic-native/camera";
 import {Util} from "../util/util";
 import {AppPreferences} from "@ionic-native/app-preferences";
 import {Popup} from "../providers/popup/popup";
 import {Observable} from "rxjs";
 import {BussinessClient} from "./business-service";
-import {ScannerType} from "../components/form-view/elements/badge/Scanners/Scanner";
 
 export interface RapidCapture {
+  type: FormSubmissionType;
   capture(element: FormElement, id?: string): Promise<any[]>;
 }
 
@@ -157,7 +156,12 @@ export class RapidCaptureService {
 
     submission.station_id = station;
 
-    submission.barcode_processed = BarcodeStatus.Queued;
+    if (this.captureService.type == FormSubmissionType.barcode) {
+      submission.barcode_processed = BarcodeStatus.Queued;
+      submission.submission_type = FormSubmissionType.barcode;
+    } else if (this.captureService.type == FormSubmissionType.transcription) {
+      submission.submission_type = FormSubmissionType.transcription;
+    }
 
     return this.client.saveSubmission(submission, form, false);
   }

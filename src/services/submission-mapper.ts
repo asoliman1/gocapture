@@ -22,6 +22,8 @@ export class SubmissionMapper {
     entry.form_id = parseInt(form.id);
     entry.station_id = item.station_id;
     entry.stations = item.stations;
+    entry.captured_by_user_name = item.captured_by_user_name;
+    entry.submission_type = item.submission_type;
 
     item.data.forEach((dataItem) => {
       if(!dataItem.value){

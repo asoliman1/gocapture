@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {FormElement} from "../model";
+import {FormElement, FormSubmissionType} from "../model";
 import {RapidCapture} from "./rapid-capture-service";
 import {ImageProcessor} from "./image-processor";
 import {File} from "@ionic-native/file";
@@ -10,12 +10,16 @@ import {Util} from "../util/util";
 @Injectable()
 
 export class BCRapidCapture implements RapidCapture {
+
+  type: FormSubmissionType;
+
 	constructor(public imageProc: ImageProcessor,
               public fileService: File,
               public platform: Platform,
               public camera: Camera,
               public util: Util) {
-	  //
+
+	  this.type = FormSubmissionType.transcription;
 	}
 
   capture(element: FormElement): Promise<any[]> {

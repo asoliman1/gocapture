@@ -1,0 +1,52 @@
+<ion-header [class]="selectedTheme">
+  <ion-navbar color="primary">
+    <ion-buttons left>
+      <button navPop ion-button icon-only (click)="done()">
+        <ion-icon name="arrow-back"></ion-icon>
+        <ion-label>Back</ion-label>
+      </button>
+    </ion-buttons>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="filter()">
+        Filter
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-searchbar (ionInput)="getSearchedItems($event)" *ngIf="selectedFilter && !isModifierMode()"></ion-searchbar>
+</ion-header>
+
+<ion-content padding>
+  <div *ngIf="selectedFilter && !isModifierMode()">
+    Select {{selectedFilter && selectedFilter.title}}
+  </div>
+
+  <ng-select *ngIf="selectedFilter && isModifierMode()"
+             [items]="modifiers"
+             [multiple]="false"
+             bindLabel="name"
+             [clearable]="false"
+             [(ngModel)]="selectedModifier">
+  </ng-select>
+
+  <ng-select *ngIf="selectedFilter && isModifierMode()"
+             [items]="items"
+             [multiple]="true"
+             [addTag]="addTagFn"
+             [hideSelected]="true"
+             bindLabel="value"
+             [(ngModel)]="selectedTags">
+  </ng-select>
+
+  <ion-list *ngIf="selectedFilter && !isModifierMode()">
+    <ion-item>
+      <ion-label class="filter-name" no-border>All</ion-label>
+      <ion-checkbox [(ngModel)] = isAll (click)="isAllUpdated()"></ion-checkbox>
+    </ion-item>
+    <ion-item *ngFor="let item of searchedItems">
+      <ion-label class="filter-name">{{item[item.displayedProperty]}}</ion-label>
+      <ion-checkbox [(ngModel)]="item.isSelected" (click)="onCheckbox(item)"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
