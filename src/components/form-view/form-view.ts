@@ -398,7 +398,7 @@ export class FormView {
   }
 
   private shouldElementBeDisplayed(element: FormElement) {
-    return element.isMatchingRules && element.parent_element_id == 0;
+    return element.isMatchingRules && !element.parent_element_id;
   }
 
   private shouldElementBeDisplayedInsideSection(element: FormElement) {
@@ -451,7 +451,7 @@ export class FormView {
 
   private buildSections() {
     const sections = {};
-    
+
     const findSectionChildElements = (sectionId) => {
       return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
     }
@@ -462,7 +462,7 @@ export class FormView {
         section.children = findSectionChildElements(section.id);
         sections[section.id] = section;
       });
-        
+
     Object.keys(sections).forEach((key: any) => {
       const dataIndex = this.displayForm.elements.findIndex((d) => d.id == key);
       this.displayForm[dataIndex] = sections[key];
