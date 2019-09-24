@@ -46,7 +46,6 @@ export class FormReview {
 	hasSubmissionsToSend: boolean = false;
 
 	isFilterExpanded: boolean = false;
-  isFilterApplied: boolean = false;
 
 	filterPageModal;
 
@@ -301,7 +300,6 @@ export class FormReview {
 
 	openFilter() {
 	  this.isFilterExpanded = !this.isFilterExpanded;
-    this.isFilterApplied = false;
     this.content.resize();
   }
 

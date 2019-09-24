@@ -45,9 +45,6 @@
 </ion-header>
 
 <ion-content class="form-summary">
-  <ion-item *ngIf="isFilterApplied && searchedSubmissions.length > 0">
-    <h1>Results</h1>
-  </ion-item>
   <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="84px" [virtualTrackBy]="itemTracker">
     <ion-item-sliding *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
       <ion-item (click)="goToEntry(submission)">
