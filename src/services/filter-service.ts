@@ -81,6 +81,7 @@ export class FilterService {
         .map((user) => {
           return {value: user.user_name, displayedProperty: 'value'};
         })
+        .sort((a, b) => a.value.localeCompare(b.value));
     }
   }
 

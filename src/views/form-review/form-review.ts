@@ -396,4 +396,8 @@ export class FormReview {
     this.searchedSubmissions = this.filteredSubmissions;
     this.selectedFilters = [];
   }
+
+  itemTracker(index, item) {
+    return item.id;
+  }
 }
