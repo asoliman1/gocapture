@@ -1,14 +1,35 @@
 <div class="form-view {{barcodeStatusMap[submission ? submission.barcode_processed : displayForm.barcode_processed ]}}">
   <!--button ion-button (click)="showSelection()"></button-->
-
+ 
+  <!-- A.S GOC-319 -->
   <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
+    <ion-row *ngIf="isSeparatable">
+      <ion-col>
+        <ion-row *ngFor="let element of splitEls(true)">
+          <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
+            [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
+            [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+          </dynamic-form-element>
+        </ion-row>
+      </ion-col>
+      <div class="spacer"></div>
+      <ion-col>
+        <ion-row *ngFor="let element of splitEls(false)">
+          <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
+            [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
+            [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+          </dynamic-form-element>
+        </ion-row>
+      </ion-col>
+    </ion-row>
 
-    <div class="" *ngFor="let element of displayForm.elements">
-      <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
-        [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
-        [submission]="submission" (onProcessingEvent)="onProcessing($event)">
-      </dynamic-form-element>
+    <div *ngIf="!isSeparatable">
+      <div class="" *ngFor="let element of displayForm.elements" #notSeparatable>
+        <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
+          [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
+          [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+        </dynamic-form-element>
+      </div>
     </div>
-
   </form>
 </div>

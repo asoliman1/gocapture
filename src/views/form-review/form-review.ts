@@ -1,14 +1,14 @@
-import {Component, NgZone, ViewChild} from '@angular/core';
-import {SyncClient} from "../../services/sync-client";
-import {BussinessClient} from "../../services/business-service";
-import {BarcodeStatus, Form, FormElementType, FormSubmission, SubmissionStatus} from "../../model";
-import {FormCapture} from "../form-capture";
-import {Subscription} from "rxjs/Subscription";
-import {NavController} from 'ionic-angular/navigation/nav-controller';
-import {NavParams} from 'ionic-angular/navigation/nav-params';
-import {ToastController} from 'ionic-angular/components/toast/toast-controller';
-import {Util} from "../../util/util";
-import {Content} from "ionic-angular";
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { SyncClient } from "../../services/sync-client";
+import { BussinessClient } from "../../services/business-service";
+import { BarcodeStatus, Form, FormElementType, FormSubmission, SubmissionStatus } from "../../model";
+import { FormCapture } from "../form-capture";
+import { Subscription } from "rxjs/Subscription";
+import { NavController } from 'ionic-angular/navigation/nav-controller';
+import { NavParams } from 'ionic-angular/navigation/nav-params';
+import { Util } from "../../util/util";
+import { Content } from "ionic-angular";
+import { Popup } from '../../providers/popup/popup';
 
 
 @Component({
@@ -17,11 +17,11 @@ import {Content} from "ionic-angular";
 })
 export class FormReview {
 
-  @ViewChild(Content) content: Content;
+	@ViewChild(Content) content: Content;
 
 	form: Form = new Form();
 
-	filter = {};
+	filter : any = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -33,7 +33,7 @@ export class FormReview {
 
 	private isDispatch;
 
-	filters;
+	filters : any;
 
 	filteredSubmissions: FormSubmission[] = [];
 
@@ -44,18 +44,18 @@ export class FormReview {
 		private client: BussinessClient,
 		private zone: NgZone,
 		private syncClient: SyncClient,
-		private toast: ToastController,
-              private util: Util,
-              ) {
+		private popup: Popup,
+		private util: Util,
+	) {
 
-	  this.filters = [
-	    {id: 'all', title:"All", status: 0,  description: "Tap an entry to edit/review."},
-	    {id: 'sent', title:"Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review."},
-	    {id: 'hold', title:"Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review."},
-	    {id: 'ready', title:"Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."},
-	    {id: 'blocked', title:"Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."},
-	    ];
-	  this.filter = this.filters[0];
+		this.filters = [
+			{ id: 'all', title: "All", status: 0, description: "Tap an entry to edit/review." },
+			{ id: 'sent', title: "Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review." },
+			{ id: 'hold', title: "Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review." },
+			{ id: 'ready', title: "Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete." },
+			{ id: 'blocked', title: "Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete." },
+		];
+		this.filter = this.filters[0];
 	}
 
 	ionViewDidEnter() {
@@ -74,26 +74,26 @@ export class FormReview {
 	}
 
 	ionViewDidLeave() {
-	  if (this.sub) {
-      this.sub.unsubscribe();
-      this.sub = null;
-    }
+		if (this.sub) {
+			this.sub.unsubscribe();
+			this.sub = null;
+		}
 	}
 
-	getIcon(sub: FormSubmission){
+	getIcon(sub: FormSubmission) {
 		let result = "checkmark-circle";
 		switch (sub.status) {
 			case SubmissionStatus.ToSubmit:
-				result = sub.invalid_fields == 1 ? "warning": "checkmark-circle";
+				result = sub.invalid_fields == 1 ? "warning" : "checkmark-circle";
 				break;
 		}
 		return result;
 	}
 
 	isSubmissionRemovable(submission: FormSubmission) {
-	  return (submission.status != SubmissionStatus.OnHold) &&
-      (submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
-  }
+		return (submission.status != SubmissionStatus.OnHold) &&
+			(submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
+	}
 
 	getColor(submission: FormSubmission) {
 		let result = "";
@@ -105,8 +105,8 @@ export class FormReview {
 				result = "danger";
 				break;
 			case SubmissionStatus.ToSubmit:
-      case SubmissionStatus.Submitting:
-				result = submission.invalid_fields == 1 ? "danger": "blue";
+			case SubmissionStatus.Submitting:
+				result = submission.invalid_fields == 1 ? "danger" : "blue";
 				break;
 			case SubmissionStatus.Submitted:
 				result = "secondary";
@@ -119,20 +119,20 @@ export class FormReview {
 	}
 
 	deleteSubmission(submission) {
-	  this.client.removeSubmission(submission).subscribe(result => {
-	    this.doRefresh();
-    });
-  }
+		this.client.removeSubmission(submission).subscribe(result => {
+			this.doRefresh();
+		});
+	}
 
 
 	goToEntry(submission) {
-	  if (this.isNoProcessedRapidScan(submission) || submission.id == -1) {
-     return;
-    }
-    this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+		if (this.isNoProcessedRapidScan(submission) || submission.id == -1) {
+			return;
+		}
+		this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
 	}
 
-	hasOnlyBusinessCard(submission: FormSubmission){
+	hasOnlyBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let emailId = this.form.getIdByFieldType(FormElementType.email);
 		let nameId = this.form.getIdByFieldType(FormElementType.simple_name);
@@ -142,50 +142,50 @@ export class FormReview {
 	}
 
 	shouldShowBusinessCard(submission: FormSubmission) {
-    submission.status != SubmissionStatus.Submitted && this.getBusinessCard(submission);
-  }
+		submission.status != SubmissionStatus.Submitted && this.getBusinessCard(submission);
+	}
 
-  displayedName(submission) {
-	  let fullName = submission.full_name.trim();
-    let hasFullName = fullName && fullName.length > 0;
-    let firstName = submission.first_name.trim();
-	  let hasFirstLastName = firstName && firstName.length > 0;
-	  let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
-	  let isScannedAndPending = submission.barcode_processed == BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
-	  if (hasFullName) {
-	    return submission.full_name;
-    } else if (hasFirstLastName) {
-      return submission.first_name + ' ' + submission.last_name;
-    } else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
-	    return "Scanned";
-    }
-    return "";
-  }
+	displayedName(submission) {
+		let fullName = submission.full_name.trim();
+		let hasFullName = fullName && fullName.length > 0;
+		let firstName = submission.first_name.trim();
+		let hasFirstLastName = firstName && firstName.length > 0;
+		let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+		let isScannedAndPending = submission.barcode_processed == BarcodeStatus.Processed && typeof submission.hold_request_id != 'undefined';
+		if (hasFullName) {
+			return submission.full_name;
+		} else if (hasFirstLastName) {
+			return submission.first_name + ' ' + submission.last_name;
+		} else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
+			return "Scanned";
+		}
+		return submission.id; // A.S GOC-336
+	}
 
-  isNoProcessedRapidScan(submission) {
-    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
-    return submission.is_rapid_scan == 1 && isScannedAndNoProcessed && !submission.hold_submission;
-  }
+	isNoProcessedRapidScan(submission) {
+		let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+		return submission.is_rapid_scan == 1 && isScannedAndNoProcessed && !submission.hold_submission;
+	}
 
-  displayedProperty(submission, key) {
-    let hasValue = submission[key] && submission[key].length > 0;
-    let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
-    if (hasValue) {
-      return submission[key];
-    }  else if (isScannedAndNoProcessed) {
-      return "Scanned";
-    }
-    return "";
-  }
+	displayedProperty(submission, key) {
+		let hasValue = submission[key] && submission[key].length > 0;
+		let isScannedAndNoProcessed = submission.barcode_processed == BarcodeStatus.Queued;
+		if (hasValue) {
+			return submission[key];
+		} else if (isScannedAndNoProcessed) {
+			return "Scanned";
+		}
+		return "";
+	}
 
 
-	getBusinessCard(submission: FormSubmission){
+	getBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
 		if (front && front.length > 0) {
-      front = this.util.imageUrl(front);
-    }
-    return front;
+			front = this.util.imageUrl(front);
+		}
+		return front;
 	}
 
 	doRefresh() {
@@ -199,42 +199,42 @@ export class FormReview {
 	onFilterChanged() {
 		this.zone.run(() => {
 			let f = this.filter;
-			this.filteredSubmissions = this.submissions.filter((sub)=>{
+			this.filteredSubmissions = this.submissions.filter((sub) => {
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
 				if (Number(f["status"]) == SubmissionStatus.ToSubmit) {
-            return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
-        }
+					return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting);
+				}
 
-        if (Number(f["status"]) == SubmissionStatus.Blocked) {
-          return (sub.status == SubmissionStatus.InvalidFields) || (sub.status == SubmissionStatus.Blocked);
-        }
+				if (Number(f["status"]) == SubmissionStatus.Blocked) {
+					return (sub.status == SubmissionStatus.InvalidFields) || (sub.status == SubmissionStatus.Blocked);
+				}
 
 				return !f["status"] || sub.status + "" == f["status"] + "";
 			}).reverse();
-			this.hasSubmissionsToSend = this.submissions.filter((sub)=>{
-			  return this.isSubmissionNeedToBeSubmitted(sub);
+			this.hasSubmissionsToSend = this.submissions.filter((sub) => {
+				return this.isSubmissionNeedToBeSubmitted(sub);
 			}).length > 0;
 
 			console.log(this.hasSubmissionsToSend);
 
 			if (this.filteredSubmissions.length == 0) {
-			  let fakeSubmission = new FormSubmission();
-			  fakeSubmission.id = -1;
-			  this.filteredSubmissions.push(fakeSubmission);
-      }
+				let fakeSubmission = new FormSubmission();
+				fakeSubmission.id = -1;
+				this.filteredSubmissions.push(fakeSubmission);
+			}
 
-      this.content.resize();
+			this.content.resize();
 		});
 	}
 
 	private isSubmissionNeedToBeSubmitted(submission: FormSubmission) {
-    return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting)
-  }
+		return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting)
+	}
 
 	sync() {
 		this.syncing = true;
-		this.client.doSync(this.form.form_id).subscribe((data)=>{
+		this.client.doSync(this.form.form_id).subscribe((data) => {
 			this.zone.run(() => {
 				this.syncing = false;
 				this.doRefresh();
@@ -243,13 +243,8 @@ export class FormReview {
 			this.zone.run(() => {
 				this.syncing = false;
 				this.doRefresh();
-				let toaster = this.toast.create({
-					message: "There was an error sync-ing the submissions",
-					duration: 5000,
-					position: "top",
-					cssClass: "error"
-				});
-				toaster.present();
+				this.popup.showToast("There was an error sync-ing the submissions");
+				console.log(err)
 			});
 		});
 	}
@@ -259,17 +254,17 @@ export class FormReview {
 		event.stopPropagation();
 		event.preventDefault();
 		let initialState = null;
-		if(submission.status == SubmissionStatus.ToSubmit || submission.status == SubmissionStatus.Submitting) {
+		if (submission.status == SubmissionStatus.ToSubmit || submission.status == SubmissionStatus.Submitting) {
 			initialState = submission.status;
 			submission.status = SubmissionStatus.Blocked;
 		} else if (submission.status == SubmissionStatus.Blocked) {
 			initialState = submission.status;
 			submission.status = SubmissionStatus.ToSubmit;
 		}
-		if (initialState){
-			this.client.saveSubmission(submission, this.form).subscribe(()=>{
+		if (initialState) {
+			this.client.saveSubmission(submission, this.form).subscribe(() => {
 				this.onFilterChanged();
-			}, (err)=>{
+			}, (err) => {
 				submission.status = initialState;
 			});
 		}

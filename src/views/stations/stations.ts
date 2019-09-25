@@ -1,5 +1,6 @@
-import {Component, ViewChild} from '@angular/core';
-import {Content, NavController, NavParams, ViewController} from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Content, NavController, NavParams, ViewController } from 'ionic-angular';
+import { Station } from '../../model/station';
 
 @Component({
   selector: 'page-stations',
@@ -16,16 +17,28 @@ export class StationsPage {
   disableStationSelection: boolean = false;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
-              public viewController: ViewController) {
+    public navParams: NavParams,
+    public viewController: ViewController) {
   }
 
   ionViewDidLoad() {
-    this.stations = this.navParams.get("stations");
+    this.stations = this.navParams.get("stations")
+    this.sortStations();
     this.filteredStations = this.stations;
     this.selectedStation = this.navParams.get("selectedStation");
     this.visitedStations = this.navParams.get("visitedStations") || [];
     this.disableStationSelection = this.navParams.get("disableStationSelection");
+  }
+
+  sortStations() { // A.S GOC-317
+    this.stations = this.stations.sort((a: Station, b: Station): number => {
+      if (a.order < b.order)
+        return -1;
+      else if (a.order > b.order)
+        return 1;
+      else
+        return 0
+    })
   }
 
   ionViewDidEnter() {
@@ -33,14 +46,14 @@ export class StationsPage {
   }
 
   onCancel() {
-    this.viewController.dismiss({isCancel: true})
+    this.viewController.dismiss({ isCancel: true })
   }
 
   onStationChoose() {
     if (!this.selectedStation) {
       return;
     }
-    this.viewController.dismiss({isCancel: false, station: this.selectedStation});
+    this.viewController.dismiss({ isCancel: false, station: this.selectedStation });
   }
 
   getItems(event) {

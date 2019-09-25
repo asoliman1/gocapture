@@ -4,7 +4,7 @@ import { Form, FormElement, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AudioCaptureService } from "../../../../services/audio-capture-service";
 import { ThemeProvider } from "../../../../providers/theme/theme";
-import {ActionSheetController, Content} from "ionic-angular";
+import { Content } from "ionic-angular";
 import { Popup } from "../../../../providers/popup/popup";
 import { MEDIA_STATUS } from "@ionic-native/media";
 
@@ -26,12 +26,12 @@ export class GOCAudio extends BaseElement {
 	@Input() form: Form;
 	@Input() submission: FormSubmission;
 
-	private selectedTheme;
-	private isRecording = false;
-	private isPlaying = false;
+	selectedTheme;
+	isRecording = false;
+	isPlaying = false;
 
-	private trackDuration = 0;
-	private currentPosition = 0;//%
+	trackDuration = 0;
+	currentPosition = 0;//%
 
 	private audioTimer;
 	private recordTimer;
@@ -40,22 +40,21 @@ export class GOCAudio extends BaseElement {
 
 	private isSeeked = false;
 
-	private timeUp;
-	private timeDown;
+	timeUp;
+	timeDown;
 
 	constructor(private audioCaptureService: AudioCaptureService,
 		private themeProvider: ThemeProvider,
-		private actionCtrl: ActionSheetController,
 		private popup: Popup,
 		private zone: NgZone,
-    private content:Content) {
+		private content: Content) {
 		super();
 
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	startRecording() {
-    this.onProcessingEvent.emit('true');
+		this.onProcessingEvent.emit('true');
 		this.trackDuration = 0;
 		this.audioCaptureService.startRecord().subscribe(status => {
 			if (status == MEDIA_STATUS.RUNNING) {
@@ -73,7 +72,7 @@ export class GOCAudio extends BaseElement {
 	stopRecording() {
 
 		this.audioCaptureService.stopRecord().then(filePath => {
-      this.onProcessingEvent.emit('false');
+			this.onProcessingEvent.emit('false');
 			this.isRecording = false;
 			this.onChange([filePath]);
 			this.updateRecordDuration(true);
@@ -145,7 +144,7 @@ export class GOCAudio extends BaseElement {
 
 	startPlayback() {
 
-	  let filePath = typeof this.currentVal === 'object' ? this.currentVal[0] : this.currentVal;
+		let filePath = typeof this.currentVal === 'object' ? this.currentVal[0] : this.currentVal;
 
 		this.audioCaptureService.playRecord(filePath).subscribe(status => {
 			this.isPlaying = (status == MEDIA_STATUS.RUNNING);

@@ -1,7 +1,8 @@
 import { Platform } from "ionic-angular/platform/platform";
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 import { File } from '@ionic-native/file';
-import {Observable, Observer} from "rxjs";
+import { Observable, Observer } from "rxjs";
+import { LocalStorageProvider } from "../providers/local-storage/local-storage";
 
 /**
  * Jquery clone
@@ -10,44 +11,45 @@ import {Observable, Observer} from "rxjs";
 @Injectable()
 export class Util {
 
-  private static arr : Array<string> = [];
+  private static arr: Array<string> = [];
   private static slice: Function = Util.arr.slice;
-  private static class2type : any = {
-    "[object Boolean]" : "boolean",
-    "[object Number]" : "number",
-    "[object String]" : "string",
-    "[object Function]" : "function",
-    "[object Array]" : "array",
-    "[object Date]" : "date",
-    "[object RegExp]" : "regexp",
-    "[object Object]" : "object",
-    "[object Error]" : "error",
-    "[object Symbol]" : "symbol"
+  private static class2type: any = {
+    "[object Boolean]": "boolean",
+    "[object Number]": "number",
+    "[object String]": "string",
+    "[object Function]": "function",
+    "[object Array]": "array",
+    "[object Date]": "date",
+    "[object RegExp]": "regexp",
+    "[object Object]": "object",
+    "[object Error]": "error",
+    "[object Symbol]": "symbol"
   };
 
   private win: any = window;
 
   //private static toString : Function = Util.class2type.toString;
-  private static hasOwn : Function = Util.class2type.hasOwnProperty;
+  private static hasOwn: Function = Util.class2type.hasOwnProperty;
 
   constructor(private platform: Platform,
-              private file: File) {
+    private file: File,
+    private localStorage: LocalStorageProvider) {
     //
   }
 
-  public static each( obj : any, callback: (element: any, index : number, context: any) => any) {
-    let length : number, i : any = 0;
+  public static each(obj: any, callback: (element: any, index: number, context: any) => any) {
+    let length: number, i: any = 0;
 
-    if ( Util.isArrayLike( obj ) ) {
+    if (Util.isArrayLike(obj)) {
       length = obj.length;
-      for ( ; i < length; i++ ) {
-        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+      for (; i < length; i++) {
+        if (callback.call(obj[i], i, obj[i]) === false) {
           break;
         }
       }
     } else {
-      for ( i in obj ) {
-        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+      for (i in obj) {
+        if (callback.call(obj[i], i, obj[i]) === false) {
           break;
         }
       }
@@ -56,39 +58,39 @@ export class Util {
   }
 
 
-  public static proxy(fn : Function, context : any ) {
+  public static proxy(fn: Function, context: any) {
     let args, proxy, tmp;
 
-    if ( typeof context === "string" ) {
-      tmp = fn[ context ];
+    if (typeof context === "string") {
+      tmp = fn[context];
       context = fn;
       fn = tmp;
     }
 
     // Quick check to determine if target is callable, in the spec
     // this throws a TypeError, but we will just return undefined.
-    if ( !Util.isFunction( fn ) ) {
+    if (!Util.isFunction(fn)) {
       return undefined;
     }
 
     // Simulated bind
-    args = Util.slice.call( arguments, 2 );
-    proxy = function() {
-      return fn.apply( context || Util, args.concat( Util.slice.call( arguments ) ) );
+    args = Util.slice.call(arguments, 2);
+    proxy = function () {
+      return fn.apply(context || Util, args.concat(Util.slice.call(arguments)));
     };
 
     return proxy;
   }
 
-  public static isFunction( obj :any ) : boolean {
-    return Util.type( obj ) === "function";
+  public static isFunction(obj: any): boolean {
+    return Util.type(obj) === "function";
   }
 
-  public static isArray( obj :any ) : boolean {
+  public static isArray(obj: any): boolean {
     return Array.isArray(obj);
   }
 
-  public static isWindow( obj :any ) : boolean {
+  public static isWindow(obj: any): boolean {
     return obj != null && obj == obj.window;
   }
 
@@ -96,38 +98,38 @@ export class Util {
     return !isNaN(num);
   }
 
-  public static isNumeric( obj : any ) : boolean {
+  public static isNumeric(obj: any): boolean {
     let realStringObj = obj && obj.toString();
-    return !Util.isArray( obj ) && ( realStringObj - parseFloat( realStringObj ) + 1 ) >= 0;
+    return !Util.isArray(obj) && (realStringObj - parseFloat(realStringObj) + 1) >= 0;
   }
 
-  public static isEmptyObject( obj : any ) : boolean {
+  public static isEmptyObject(obj: any): boolean {
     let name;
-    for ( name in obj ) {
+    for (name in obj) {
       return false;
     }
     return true;
   }
 
-  public static isPlainObject( obj :any ) : boolean {
+  public static isPlainObject(obj: any): boolean {
     let key;
 
     // Must be an Object.
     // Because of IE, we also have to check the presence of the constructor property.
     // Make sure that DOM nodes and window objects don't pass through, as well
-    if ( !obj || Util.type( obj ) !== "object" || obj.nodeType || Util.isWindow( obj ) ) {
+    if (!obj || Util.type(obj) !== "object" || obj.nodeType || Util.isWindow(obj)) {
       return false;
     }
 
     try {
 
       // Not own constructor property must be Object
-      if ( obj.constructor &&
-        !Util.hasOwn.call( obj, "constructor" ) &&
-        !Util.hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+      if (obj.constructor &&
+        !Util.hasOwn.call(obj, "constructor") &&
+        !Util.hasOwn.call(obj.constructor.prototype, "isPrototypeOf")) {
         return false;
       }
-    } catch ( e ) {
+    } catch (e) {
 
       // IE8,9 Will throw exceptions on certain host objects #9897
       return false;
@@ -135,34 +137,34 @@ export class Util {
 
     // Own properties are enumerated firstly, so to speed up,
     // if last one is own, then all properties are own.
-    for ( key in obj ) {}
+    for (key in obj) { }
 
-    return key === undefined || Util.hasOwn.call( obj, key );
+    return key === undefined || Util.hasOwn.call(obj, key);
   }
 
-  public static type( obj  :any ) : string {
-    if ( obj == null ) {
+  public static type(obj: any): string {
+    if (obj == null) {
       return obj + "";
     }
     return typeof obj === "object" || typeof obj === "function" ?
-      Util.class2type[ toString.call( obj ) ] || "object" :
+      Util.class2type[toString.call(obj)] || "object" :
       typeof obj;
   }
 
 
-  private static isArrayLike( obj : any ) : boolean {
+  private static isArrayLike(obj: any): boolean {
     let length = !!obj && "length" in obj && obj.length,
-      type = Util.type( obj );
+      type = Util.type(obj);
 
-    if ( type === "function" || Util.isWindow( obj ) ) {
+    if (type === "function" || Util.isWindow(obj)) {
       return false;
     }
 
     return type === "array" || length === 0 ||
-      typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+      typeof length === "number" && length > 0 && (length - 1) in obj;
   }
 
-  public normalizeURL(url: string): string{
+  public normalizeURL(url: string): string {
     return this.win.Ionic.WebView.convertFileSrc(url);
   }
 
@@ -181,13 +183,13 @@ export class Util {
   }
 
 
-  public moveFile(filePath: string, newFolder: string, needRename: boolean = false) : Observable<string>{
+  public moveFile(filePath: string, newFolder: string, needRename: boolean = false): Observable<string> {
     return new Observable<string>((obs: Observer<string>) => {
       let name = filePath.substr(filePath.lastIndexOf("/") + 1).split("?")[0];
       let ext = name.split(".").pop();
       let oldFolder = filePath.substr(0, filePath.lastIndexOf("/"));
       let newName = needRename ? new Date().getTime() + "." + ext : name;
-      let doMove = (d) =>{
+      let doMove = (d) => {
         this.file.moveFile(oldFolder, name, newFolder, newName)
           .then(entry => {
             obs.next(newFolder + "/" + newName);
@@ -216,6 +218,48 @@ export class Util {
     if (!path) {
       return "";
     }
-    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "")
+    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random()) * 1000) + "")
   }
+
+  // A.S
+  private folderForFile(ext: string) {
+    if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
+      return "images/";
+    else if (ext == '.mp3' || ext == 'aac' || ext == 'wma')
+      return "audio/";
+    else
+      return "videos/"
+  }
+
+  // A.S
+  getFilePath(url, id?) {
+    let isSplashImage = url.includes('https://images.unsplash.com/');
+    url = isSplashImage ? url.split('?')[0] : url;
+    let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
+    let name = id + url.substr(url.lastIndexOf("/") + 1);
+    let pathToDownload = encodeURI(url);
+    let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
+    let path = newFolder + name;
+
+    return { path, pathToDownload }
+  }
+
+  // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
+  public setPluginPrefs() {
+    if (this.platform.is('android'))
+      this.localStorage.set('android-plugin', true)
+    else
+      this.localStorage.set('android-plugin', false);
+  }
+
+  // A.S this is fn to delete after returning from plugin
+  public rmPluginPrefs() {
+    this.localStorage.remove('android-plugin')
+  }
+
+  // A.S check the if any plugin is used or not 
+  public getPluginPrefs() {
+    return this.localStorage.get('android-plugin')
+  }
+
 }

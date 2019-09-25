@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable()
 export class ThemeProvider {
@@ -10,12 +10,13 @@ export class ThemeProvider {
     this.theme = new BehaviorSubject('default-theme');
   }
 
-  setActiveTheme(val) {
-    this.theme.next(val);
+  setActiveTheme(val?) {
+    this.theme.next(val ? val : 'default-theme');
   }
 
   getActiveTheme() {
     return this.theme.asObservable();
   }
+
 
 }

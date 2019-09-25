@@ -4,7 +4,6 @@ export class SyncStatus{
 	formId: number;
 	formName: string;
 	percent: number = 0;
-
 	constructor(loading?: boolean, complete?: boolean, formId?: number, formName?: string, percent?: number){
 		this.loading = loading;
 		this.complete = complete;

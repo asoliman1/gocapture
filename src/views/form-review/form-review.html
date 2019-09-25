@@ -7,7 +7,7 @@
 		</ion-buttons>
 		<ion-title>{{form.name}}</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend">
+			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend || syncing">
 				<ion-icon name="cloud-upload" class="sync-submissions"></ion-icon>
 			</button>
 		</ion-buttons>

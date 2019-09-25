@@ -1,15 +1,14 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { BussinessClient } from "../../services/business-service";
 import { User } from "../../model";
 import { Main } from "../main";
 import { UrlChoose } from "./url-choose";
 import { Config } from "../../config";
 import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
-import { ToastController } from 'ionic-angular/components/toast/toast-controller';
-import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
-import {App} from "ionic-angular";
+import { App } from "ionic-angular";
+import { Popup } from '../../providers/popup/popup';
 
 @Component({
 	selector: 'login',
@@ -27,34 +26,26 @@ export class Login {
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
 		private client: BussinessClient,
-		private loading: LoadingController,
-		private toast: ToastController,
+		private popup: Popup,
 		private popoverCtrl: PopoverController,
-    public app: App) {
+		public app: App) {
 	}
 
 	ngOnInit() {
 
-		if(this.navParams.get("unauthenticated") == true) {
+		if (this.navParams.get("unauthenticated") == true) {
 			this.doAuth = true;
 			return;
 		}
 
-		if(this.navParams.get('unauthorized') == true) {
+		if (this.navParams.get('unauthorized') == true) {
 			this.doAuth = true;
 
 			let errorMessage = this.navParams.get('errorMessage');
 			if (!errorMessage) {
-			  errorMessage = "Authorization failed. Please obtain a new Authentication Code";
-      }
-
-			let toaster = this.toast.create({
-				message: errorMessage,
-				duration: 5000,
-				position: "top",
-				cssClass: "error"
-			});
-			toaster.present();
+				errorMessage = "Authorization failed. Please obtain a new Authentication Code";
+			}
+			this.popup.showToast(errorMessage);
 			return;
 		}
 		this.client.getRegistration()
@@ -73,26 +64,17 @@ export class Login {
 			if (!this.authCode || !this.email) {
 				return;
 			}
-			let loader = this.loading.create({
-				content: "Authenticating..."
-			});
-			loader.present();
+			this.popup.showLoading("Authenticating...");
 			Config.isProd = this.useProd;
 			this.client.authenticate(this.email, this.authCode)
-        .subscribe(data => {
-					loader.setContent(data.message);
+				.subscribe(data => {
+					this.popup.setLoadingContent(data.message);
 					// this.themeProvider.setActiveTheme()
 				}, err => {
-					loader.dismiss();
-					let toaster = this.toast.create({
-						message: err,
-						duration: 5000,
-						position: "top",
-						cssClass: "error"
-					});
-					toaster.present();
+					this.popup.dismiss('loading');
+					this.popup.showToast(err);
 				}, () => {
-					loader.dismiss();
+					this.popup.dismiss('loading');
 					this.navCtrl.setRoot(Main);
 				});
 		} else {
@@ -100,10 +82,10 @@ export class Login {
 		}
 	}
 
-	presentPopover(event){
-		let popover = this.popoverCtrl.create(UrlChoose, {isProd: this.useProd});
-		popover.onDidDismiss((data)=> {
-			if(data){
+	presentPopover(event) {
+		let popover = this.popoverCtrl.create(UrlChoose, { isProd: this.useProd });
+		popover.onDidDismiss((data) => {
+			if (data) {
 				this.useProd = data.prod;
 			}
 		});

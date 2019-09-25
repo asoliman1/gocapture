@@ -29,6 +29,8 @@ export class FormSelectionView {
 
 	data: any;
 
+	readOnly:boolean = false;
+
 	constructor(private fb: FormBuilder, private zone: NgZone) {
 		this.theForm = fb.group({});
 		this.select = new EventEmitter<string>();

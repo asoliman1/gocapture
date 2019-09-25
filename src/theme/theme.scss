@@ -1,4 +1,4 @@
-@mixin theme ($theme-color) {
+@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
   $alert-ios-button-text-color: $theme-color;
 
   $action-sheet-ios-button-text-color: $theme-color;
@@ -84,5 +84,9 @@
 
   .bar-button {
     color: $theme-color;
+  }
+
+  .info-box{
+    color: $theme-text-color // A.S to set a text color for each theme
   }
 }

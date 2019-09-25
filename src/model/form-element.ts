@@ -1,40 +1,40 @@
-import {IDocumentSet} from "./documentSet";
+import { IDocumentSet } from "./documentSet";
 
 export class FormElement {
-	id : number;
-	title : string;
-	guidelines : string;
-	field_error_message : string;
-	size : string;
-	is_required : boolean;
-	is_always_display : boolean;
-	is_conditional : boolean;
-	is_not_prefilled : boolean;
+	id: number;
+	title: string;
+	guidelines: string;
+	field_error_message: string;
+	size: string;
+	is_required: boolean;
+	is_always_display: boolean;
+	is_conditional: boolean;
+	is_not_prefilled: boolean;
 	is_scan_cards_and_prefill_form: 0 | 1;
-	is_hidden : boolean;
-	is_readonly : boolean;
+	is_hidden: boolean;
+	is_readonly: boolean;
 	is_filled_from_barcode: boolean;
-	type : string;
-	position : number;
-	default_value : string;
-	total_child : number;
-	options : Option[];
-	mapping : ElementMapping[];
+	type: string;
+	position: number;
+	default_value: string;
+	total_child: number;
+	options: Option[];
+	mapping: ElementMapping[];
 	barcode_provider_id: string;
 	barcode_provider_name: string;
-  badge_type: string;
-  //specify the barcode format ()
-  barcode_type: string;
+	badge_type: string;
+	//specify the barcode format ()
+	barcode_type: string;
 	identifier?: string;
 	placeholder: string = "";
-  accept_invalid_barcode: boolean;
-  isMatchingRules: boolean;
+	accept_invalid_barcode: boolean;
+	isMatchingRules: boolean;
 	is_filled_from_list: boolean;
 	post_show_reconciliation: boolean;
-  documents_set?: IDocumentSet;
+	documents_set?: IDocumentSet;
 }
 
-export class Option{
+export class Option {
 	option: string;
 	option_label: string;
 	position: number;
@@ -42,7 +42,7 @@ export class Option{
 
 }
 
-export class ElementMapping{
+export class ElementMapping {
 	ll_field_id: string;
 	ll_field_unique_identifier: string;
 	ll_field_type: string;
@@ -69,5 +69,6 @@ export const FormElementType = {
 	image: "image",
 	business_card: "business_card",
 	signature: "signature",
-	barcode: "barcode"
+	barcode: "barcode",
+	separator : "column_separator"
 };

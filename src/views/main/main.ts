@@ -1,4 +1,4 @@
-import {Component, ViewChild, NgZone} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Forms } from "../forms";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
@@ -7,15 +7,10 @@ import { Subscription } from "rxjs/Subscription";
 import { SyncClient } from "../../services/sync-client";
 import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
 import { Nav } from 'ionic-angular/components/nav/nav';
-import { NavParams } from 'ionic-angular/navigation/nav-params';
-import { NavController } from 'ionic-angular/navigation/nav-controller';
-import {Util} from "../../util/util";
-import {ThemeProvider} from "../../providers/theme/theme";
-import {App} from "ionic-angular";
-import {FormCapture} from "../form-capture";
-import {RapidCaptureService} from "../../services/rapid-capture-service";
-import {DocumentsService} from "../../services/documents-service";
-import {DocumentsSyncClient} from "../../services/documents-sync-client";
+import { ThemeProvider } from "../../providers/theme/theme";
+import { App } from "ionic-angular";
+import { FormCapture } from "../form-capture";
+import { RapidCaptureService } from "../../services/rapid-capture-service";
 
 @Component({
 	selector: 'main',
@@ -46,15 +41,12 @@ export class Main {
 	@ViewChild('pullup') pullup: IonPullUpComponent;
 
 	constructor(
-	  private navCtrl: NavController,
-		private navParams: NavParams,
 		public client: BussinessClient,
 		private syncClient: SyncClient,
-    private util: Util,
-    private themeProvider: ThemeProvider,
-    private app: App,
-    private rapidCaptureService: RapidCaptureService,
-    private documentsSync: DocumentsSyncClient) {
+		private themeProvider: ThemeProvider,
+		private app: App,
+		private rapidCaptureService: RapidCaptureService,
+		) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: 'Events', component: Forms, icon: "document" },
@@ -72,17 +64,17 @@ export class Main {
 			this.user = user;
 			this.client.setupNotifications();
 			let theme = this.user.theme ? this.user.theme : 'default';
-			this.themeProvider.setActiveTheme(theme + '-theme');
+			this.themeProvider.setActiveTheme(theme + '-theme'); // A.S a bug in some themes
 		});
 
 		//TODO: move sync bar to the separate components
-    this.app.viewWillEnter.subscribe((viewCtrl) => {
+		this.app.viewWillEnter.subscribe((viewCtrl) => {
 
-      let isFormCaptureView = viewCtrl.instance instanceof FormCapture;
+			let isFormCaptureView = viewCtrl.instance instanceof FormCapture;
 
-      this.shouldShowSyncBar = !isFormCaptureView;
+			this.shouldShowSyncBar = !isFormCaptureView;
 
-    })
+		})
 	}
 
 	footerExpanded() {
@@ -95,11 +87,11 @@ export class Main {
 
 	ionViewDidEnter() {
 
-    this.client.getForms().subscribe((forms)=>{
-      setTimeout(()=>{
-        this.rapidCaptureService.processUnsentBadges(forms, this.user.theme ? this.user.theme : 'default');
-      }, 2000);
-    });
+		this.client.getForms().subscribe((forms) => {
+			setTimeout(() => {
+				this.rapidCaptureService.processUnsentBadges(forms, this.user.theme ? this.user.theme : 'default');
+			}, 2000);
+		});
 
 		if (this.syncClient.isSyncing) {
 			this.pullup.collapse();
@@ -107,20 +99,20 @@ export class Main {
 			this.currentSyncForm = this.getCurrentUploadingForm();
 		}
 
-    this.sub = this.handleSync();
+		this.sub = this.handleSync();
 
-		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function(response) {
+		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function (response) {
 			console.log(response);
-		}, function(reason) {
+		}, function (reason) {
 			console.error(reason);
 		});
 
 		this.client.getUpdates().subscribe(done => {
-			setTimeout(()=>{
+			setTimeout(() => {
 				this.client.doAutoSync();
 			}, 350);
-		}, (err) =>{
-			setTimeout(()=>{
+		}, (err) => {
+			setTimeout(() => {
 				this.client.doAutoSync();
 			}, 350);
 		});
@@ -128,7 +120,7 @@ export class Main {
 
 	}
 
-	handleSync() : Subscription{
+	handleSync(): Subscription {
 		let timer = null;
 		let hidePullup = false;
 		return this.syncClient.onSync.subscribe(stats => {
@@ -136,11 +128,10 @@ export class Main {
 				return;
 			}
 			this.statuses = stats;
-			//console.log(stats);
 			this.currentSyncForm = this.getCurrentUploadingForm();
 
-			this.documentsSync.syncAll();
-
+			// A.S there was a function here to call sync for documents which make performance very slow as it executed many times
+				
 			if (this.pullup.state == IonPullUpFooterState.Minimized && !hidePullup) {
 				this.pullup.collapse();
 			}
@@ -149,22 +140,22 @@ export class Main {
 				this.pullup.minimize();
 			}, 12500);
 		},
-		(err) => {
-			clearTimeout(timer);
-			setTimeout(()=>{
-				this.pullup.minimize();
-				this.sub.unsubscribe();
-				this.sub = this.handleSync();
-			}, 200);
-		},
-		() => {
-			clearTimeout(timer);
-			setTimeout(()=>{
-				this.pullup.minimize();
-				this.sub.unsubscribe();
-				this.sub = this.handleSync();
-			}, 300);
-		});
+			(err) => {
+				clearTimeout(timer);
+				setTimeout(() => {
+					this.pullup.minimize();
+					this.sub.unsubscribe();
+					this.sub = this.handleSync();
+				}, 200);
+			},
+			() => {
+				clearTimeout(timer);
+				setTimeout(() => {
+					this.pullup.minimize();
+					this.sub.unsubscribe();
+					this.sub = this.handleSync();
+				}, 500);
+			});
 	}
 
 	ionViewDidLeave() {

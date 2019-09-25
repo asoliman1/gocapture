@@ -1,19 +1,41 @@
 import { Injectable } from '@angular/core';
-import { AlertController } from 'ionic-angular/components/alert/alert-controller';
-import { Alert } from 'ionic-angular/components/alert/alert';
-import {ThemeProvider} from "../theme/theme";
+import {
+  LoadingController,
+  ToastController,
+  ActionSheetController,
+  AlertController,
+  Alert,
+  ActionSheetButton,
+  Loading,
+  ActionSheet,
+  AlertButton,
+  Toast
+} from 'ionic-angular';
 
 
 @Injectable()
 export class Popup {
 
   private alert: Alert;
+  private loading: Loading;
+  private toast: Toast;
+  private actionSheet: ActionSheet;
 
-  constructor(public alertCtrl: AlertController) {
+  constructor(
+    public alertCtrl: AlertController,
+    public toastCtrl: ToastController,
+    public actionCtrl: ActionSheetController,
+    public loadingCtrl: LoadingController) {
     //
   }
+  
+  // A.S
+  showLoading(message,theme?) {
+    this.loading = this.loadingCtrl.create({ content: message,cssClass:theme });
+    return this.loading.present();
+  }
 
-  showAlert(title, message, buttons, theme?) {
+  showAlert(title, message, buttons: AlertButton[] | string[], theme?) {
     if (this.alert) {
       this.alert.dismiss();
     }
@@ -24,8 +46,29 @@ export class Popup {
       enableBackdropDismiss: false,
       cssClass: theme ? theme.toString() : ""
     });
-
     return this.alert.present();
+  }
+
+  // A.S
+  showActionSheet(title, buttons: ActionSheetButton[], theme?) {
+    this.actionSheet = this.actionCtrl.create({
+      title, buttons, cssClass: theme.toString()
+    })
+    return this.actionSheet.present();
+  }
+
+  // A.S
+  showToast(message, position = "top", theme = "error", duration = 3000) {
+    this.toast = this.toastCtrl.create({
+      message: message,
+      duration: duration,
+      position: position,
+      cssClass: theme,
+      showCloseButton: true,
+      closeButtonText: 'x'
+    });
+
+    return this.toast.present();
   }
 
   showPrompt(title, message, inputs, buttons, theme?) {
@@ -39,14 +82,26 @@ export class Popup {
       message: message,
       inputs: inputs,
       buttons: buttons,
-      cssClass: theme
+      cssClass: theme.toString()
     });
     return this.alert.present();
   }
 
+  // A.S
   dismissAll() {
-    if (this.alert) {
-      this.alert.dismiss();
-    }
+    this.dismiss('alert')
+    this.dismiss('loading')
+    this.dismiss('toast')
+    this.dismiss('actionSheet')
+  }
+
+  // A.S
+  dismiss(type) {
+    if (this[type]) return this[type].dismiss();
+  }
+
+  // A.S
+  setLoadingContent(content){
+    this.loading.setContent(content);
   }
 }
