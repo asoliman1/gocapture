@@ -29,7 +29,7 @@ export class FormSelectionView {
 
 	data: any;
 
-	readOnly:boolean = false;
+	readOnly: boolean = false;
 
 	constructor(private fb: FormBuilder, private zone: NgZone) {
 		this.theForm = fb.group({});
@@ -44,18 +44,18 @@ export class FormSelectionView {
 	ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
 		if (changes['form'] || changes['submission']) {
 			if (this.form && this.submission) {
-				this.setupFormGroup();				
+				this.setupFormGroup();
 			} else {
 				this.theForm = new FormGroup({});
 				this.displayForm = <any>{};
 			}
-		}else if(changes['outsideChanged']){
-			for(let identifier in this.outsideChanged){
+		} else if (changes['outsideChanged']) {
+			for (let identifier in this.outsideChanged) {
 				let match = /(\w+\_\d+)\_\d+/g.exec(identifier);
 				let ctrl: AbstractControl = null;
-				if(match && match.length > 0){
+				if (match && match.length > 0) {
 					ctrl = this.theForm.get(match[1]).get(identifier);
-				}else{
+				} else {
 					ctrl = this.theForm.get(identifier);
 				}
 				ctrl.setValue(this.outsideChanged[identifier]);
@@ -76,7 +76,7 @@ export class FormSelectionView {
 				let control = form.controls[id];
 				if (control instanceof FormGroup) {
 					parse(control, data);
-				} else{
+				} else {
 					data[id] = control.value;
 				}
 			}
@@ -85,10 +85,10 @@ export class FormSelectionView {
 		return data;
 	}
 
-	public selectEntry(identifier: string){
+	public selectEntry(identifier: string) {
 		this.select.emit(identifier);
 	}
-	
+
 	private setupFormGroup() {
 		if (this.sub) {
 			this.sub.unsubscribe();
@@ -124,12 +124,12 @@ export class FormSelectionView {
 		}, 150);
 	}
 
-	private getDefaultValue(element: FormElement): any{
-		switch(element.type){
+	private getDefaultValue(element: FormElement): any {
+		switch (element.type) {
 			case FormElementType.checkbox:
 				let data = [];
 				element.options.forEach((opt) => {
-					if(opt.is_default == 1){
+					if (opt.is_default == 1) {
 						data.push(opt.option);
 					}
 				});
@@ -138,7 +138,7 @@ export class FormSelectionView {
 			case FormElementType.radio:
 				let d = "";
 				element.options.forEach((opt) => {
-					if(opt.is_default == 1){
+					if (opt.is_default == 1) {
 						d = opt.option;
 					}
 				});
@@ -149,7 +149,7 @@ export class FormSelectionView {
 	}
 
 	private makeValidators(element: FormElement): any[] {
-		var validators = [];
+		var validators = []
 		if (element.is_required) {
 			validators.push(Validators.required);
 		}
@@ -162,7 +162,7 @@ export class FormSelectionView {
 				break;
 			case "text":
 				validators.push(Validators.maxLength(255));
-				break;				
+				break;
 			case "phone":
 				validators.push(CustomValidators.phone());
 				break;

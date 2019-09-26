@@ -1,3 +1,4 @@
+import { FileInfo } from './../model/protocol/file-upload-request';
 import { Platform } from "ionic-angular/platform/platform";
 import { Injectable } from "@angular/core";
 import { File } from '@ionic-native/file';
@@ -182,6 +183,19 @@ export class Util {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  public createFile(data, name, size) {
+    let entry = new FileInfo();
+    let d = data.split(";base64,");
+    entry.data = d[1];
+    entry.name = name.split('.').shift();
+    entry.size = size;
+
+    if (entry.size == 0) {
+      entry.size = atob(entry.data).length;
+    }
+    entry.mime_type = d[0].substr(5);
+    return entry;
+  }
 
   public moveFile(filePath: string, newFolder: string, needRename: boolean = false): Observable<string> {
     return new Observable<string>((obs: Observer<string>) => {

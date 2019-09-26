@@ -1162,10 +1162,9 @@ export class DBClient {
 			this.saveAllEnabled = true;
 			let index = 0;
 			let name = "save" + type;
-			console.log("Start save all " + type + " " + items.length);
 
 			let exec = (done: boolean) => {
-				console.log('Save all data: ' + this.saveAllData.length);
+				// console.log('Save all data: ' + this.saveAllData.length);
 				if (this.saveAllData.length == 0) {
 					this.saveAllEnabled = false;
 					obs.next(true);
@@ -1203,14 +1202,14 @@ export class DBClient {
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
 				if (index + 1 % page == 0) {  // bug here
-					console.log("save " + type + " " + index);
+					// console.log("save " + type + " " + index);
 					exec(index == items.length);
 					if (index == items.length) {
 						return;
 					}
 				} else if (index == items.length) {
 					this.saveAllEnabled = false;
-					console.log("save " + type + " " + index);
+					// console.log("save " + type + " " + index);
 					exec(true);
 					return;
 				} else if (index < items.length) {

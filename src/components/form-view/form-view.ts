@@ -229,9 +229,6 @@ export class FormView {
     }, 150);
   }
 
-  private splitEls(first) : FormElement[]{
-    return first ? this.form.elements.slice(0,this.separateAt) : this.form.elements.slice(this.separateAt+1)
-  }
 
   private createFormControl(element, identifier: string) {
     element["identifier"] = identifier;
@@ -244,7 +241,7 @@ export class FormView {
         opts[entry["identifier"]] = new FormControl({
           value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element),
           disabled: element.is_readonly || this.readOnly
-        }, this.makeValidators(element['sub_elements'][index]));
+        },  this.makeValidators(element['sub_elements'][index]));
       });
       control = this.fb.group(opts);
     } else {
@@ -282,6 +279,7 @@ export class FormView {
   }
 
   private makeValidators(element: FormElement): any[] {
+		if(!element) return;  // A.S a bug here
     var validators = [];
     if (element.is_required) {
       validators.push(Validators.required);
@@ -374,6 +372,10 @@ export class FormView {
         return elementValue && this.isValueMatched(ruleValue, elementValue);
       }
     }
+  }
+
+   splitEls(first) : FormElement[]{
+    return first ? this.form.elements.slice(0,this.separateAt) : this.form.elements.slice(this.separateAt+1)
   }
 
   private isValueMatched(ruleValue: [any], value) {

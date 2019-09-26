@@ -87,6 +87,7 @@ export class Forms {
     this.client.getForms().subscribe(forms => {
       this.forms = this.filterPipe.transform(forms);
       this.getItems({ target: { value: "" } });
+      this.getSubmissions();
     });
   }
 
@@ -111,7 +112,6 @@ export class Forms {
 
   sync() {
     this.client.getUpdates().subscribe(() => {
-      console.log('hi from client updates')
     });
   }
 
@@ -121,8 +121,6 @@ export class Forms {
     this.filteredForms = this.forms.filter(form => {
       return !val || regexp.test(form.name);
     });
-
-    // this.getSubmissions(form);
   }
 
   presentActionSheet(form: Form) {

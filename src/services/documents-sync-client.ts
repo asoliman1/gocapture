@@ -22,7 +22,7 @@ export class DocumentsSyncClient {
     if (this._isSyncing) {
       return;
     }
-
+console.log('Start syncing docs')
     return this.dbClient.getForms().subscribe(async (forms) => {
       if (forms.length) {
         this._isSyncing = true;
@@ -53,13 +53,13 @@ export class DocumentsSyncClient {
             }
 
             const currentSetDocuments = documents.map((doc) => doc);
-            console.log('DOCUMENTS FROM DB');
+            // console.log('DOCUMENTS FROM DB');
             // console.log(currentSetDocuments);
 
-            console.log('document ids fetched from the webservice');
+            // console.log('document ids fetched from the webservice');
             // console.log(JSON.stringify(currentDocuments));
 
-            console.log('current set document ids fetched from database');
+            // console.log('current set document ids fetched from database');
             // console.log(JSON.stringify(currentDocuments));
 
             // check only a small portion of the documents
@@ -69,9 +69,9 @@ export class DocumentsSyncClient {
             // documents to be inserted
             const documentsToBeInserted = differenceBy(documentsToBeChecked, documentsToBeDeleted, 'id');
 
-            console.log("DOCUMENTS TO BE DELETED => ");
-            console.log(JSON.stringify(documentsToBeDeleted));
-            console.log("DOCUMENTS TO BE INSERTED => ");
+            // console.log("DOCUMENTS TO BE DELETED => ");
+            // console.log(JSON.stringify(documentsToBeDeleted));
+            // console.log("DOCUMENTS TO BE INSERTED => ");
             // console.log(JSON.stringify(documentsToBeInserted));
 
             if (documentsToBeDeleted.length) {
@@ -96,10 +96,10 @@ export class DocumentsSyncClient {
 
               forkJoin(documentObservables)
                 .subscribe(() => {
-                  console.log('ALL DOCUMENTS SYNCED');
+                  // console.log('ALL DOCUMENTS SYNCED');
                   this._isSyncing = false;
                 }, (error) => {
-                  console.log('DOCUMENTS COULDNT BE SYNCED');
+                  // console.log('DOCUMENTS COULDNT BE SYNCED');
                   this._isSyncing = false;
                 })
             }

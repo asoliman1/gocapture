@@ -287,7 +287,6 @@ export class BussinessClient {
           let newD = new Date();
           this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
             // 
-            console.log('hi from updates')
           },
             (err) => {
               obs.error(err);

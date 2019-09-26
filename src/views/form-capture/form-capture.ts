@@ -181,7 +181,7 @@ export class FormCapture implements AfterViewInit {
           setTimeout(() => {
             this.showScreenSaver()
           }, 20);
-          console.log('idle mode')
+          console.log('idle mode started')
         })
         .start();
   }
@@ -189,7 +189,6 @@ export class FormCapture implements AfterViewInit {
   private showScreenSaver() {
     if (!this.isLoadingImages()) {
       if (!this._modal) {
-        console.log('images downloaded successfully');
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
         this._modal.present();
         this._modal.onDidDismiss(() => {
@@ -455,10 +454,8 @@ export class FormCapture implements AfterViewInit {
   ionViewDidLeave() {
     this.menuCtrl.enable(true);
     this.insomnia.allowSleepAgain()
-      .then(
-        () => console.log('success'),
-        () => console.log('error')
-      );
+    .then(()=>{})
+    .catch((err)=>console.log(err));
     this.stopIdleMode();
   }
 
