@@ -29,6 +29,7 @@
 			</ion-item>
 			<ion-item *ngSwitchCase="'phone'">
 				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<!-- readOnly param is not declared so there is a syntax error so i declared it till you see this comment and remove it or give its function properly -->
 				<ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
 				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
 			</ion-item>

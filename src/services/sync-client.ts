@@ -1,12 +1,12 @@
-import {SettingsService} from './settings-service';
-import {Injectable} from "@angular/core";
-import {Observable} from "rxjs/Observable";
-import {Observer} from "rxjs/Observer";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {DBClient} from './db-client';
-import {RESTClient} from './rest-client';
+import { SettingsService } from './settings-service';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+import { Observer } from "rxjs/Observer";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { DBClient } from './db-client';
+import { RESTClient } from './rest-client';
 
-import {File} from '@ionic-native/file';
+import { File, Entry } from '@ionic-native/file';
 import {
   BarcodeStatus,
   DeviceFormMembership,
@@ -17,13 +17,12 @@ import {
   SubmissionStatus,
   SyncStatus
 } from "../model";
-import {FileInfo, FileUploadRequest} from "../model/protocol";
-import {HTTP} from '@ionic-native/http';
-import {StorageProvider} from "./storage-provider";
-import {settingsKeys} from '../constants/constants';
-import {SubmissionsRepository} from "./submissions-repository";
-
-declare var cordova: any;
+import { FileUploadRequest } from "../model/protocol";
+import { HTTP } from '@ionic-native/http';
+import { settingsKeys } from '../constants/constants';
+import { SubmissionsRepository } from "./submissions-repository";
+import { DocumentsSyncClient } from './documents-sync-client';
+import { Util } from '../util/util';
 
 
 @Injectable()
@@ -59,13 +58,17 @@ export class SyncClient {
 
   private dataUrlRegexp: RegExp = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
 
+  // A.S
+  private hasNewData: boolean;
+
   constructor(private rest: RESTClient,
-              private db: DBClient,
-              private file: File,
-              private http: HTTP,
-              private storageProvider: StorageProvider,
-              private settingsService: SettingsService,
-              private submissionsRepository: SubmissionsRepository) {
+    private db: DBClient,
+    private file: File,
+    private http: HTTP,
+    private settingsService: SettingsService,
+    private documentsSync: DocumentsSyncClient,
+    private submissionsRepository: SubmissionsRepository,
+    private util:Util) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
     this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -84,9 +87,14 @@ export class SyncClient {
     return this.lastSyncStatus;
   }
 
+  // A.S
+  public setSync(status) {
+    console.log('Sync is off');
+    this._isSyncing = status;
+  }
+
   public download(lastSyncDate: Date, shouldDownloadAllContacts?: boolean): Observable<DownloadData> {
     return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
-      console.log("Should download all contacts " + shouldDownloadAllContacts);
       let result = new DownloadData();
       var map: { [key: string]: SyncStatus } = {
         forms: new SyncStatus(true, false, 0, "Forms", 10),
@@ -100,35 +108,47 @@ export class SyncClient {
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
-
-      this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
-        obs.next(result);
-        this.db.getForms().subscribe(forms => {
-          let filteredForms = [];
-          let current = new Date();
-          forms.forEach(form => {
-            if (new Date(form.archive_date) > current) {
-              filteredForms.push(form);
-            } else {
-              console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
-            }
+      this.downloadForms(lastSyncDate, map, result).subscribe(async (forms) => {
+        // A.S check if form has data to be downloaded
+        if (this.hasNewData) {
+        // A.S GOC-326 
+          forms = await this.downloadFormData(forms);
+          console.log('Downloading finished')
+          this.db.saveForms(forms).subscribe((data) => {
+            this.entitySyncedSource.next("Forms") // A.S emit forms updates
           });
-          this.downloadSubmissions(filteredForms, lastSyncDate, map, result).subscribe(() => {
+        } 
+        obs.next(result);
+        // this.db.getForms().subscribe(async forms => {
+          // let filteredForms = [];
+          // let current = new Date();
+          // forms.forEach(form => {
+          //   if (new Date(form.archive_date) > current) {
+          //     filteredForms.push(form);
+          //   } else {
+          //     console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
+          //   }
+          // });
+          console.log('Getting latest submissions')
+          this.downloadSubmissions(forms, lastSyncDate, map, result).subscribe(() => {
             obs.next(result);
-            console.log("Downloading contacts 1");
 
-            let formsWithList = filteredForms.filter((form) => {
+            let formsWithList = forms.filter((form) => {
               return form.list_id > 0;
             });
 
-            this.downloadContacts(formsWithList, map, result).subscribe(() => {
+            console.log("Should download all contacts " + shouldDownloadAllContacts);
 
+            this.downloadContacts(formsWithList, map, result).subscribe(() => {
               formsWithList.forEach((form) => {
                 form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
               });
-
+              this.lastSyncStatus = [];
               this.db.saveForms(formsWithList).subscribe(result => {
-                //
+                console.log('Data saved');
+               this.documentsSync.syncAll(); 
+
+                console.log(result);
               }, (err) => {
                 console.error(err);
               }, () => {
@@ -145,9 +165,9 @@ export class SyncClient {
             obs.error(err);
             this.syncCleanup();
           });
-        }, (err) => {
-          this.syncCleanup();
-        });
+        // }, (err) => {
+        //   this.syncCleanup();
+        // });
       }, (err) => {
         obs.error(err);
         this.syncCleanup();
@@ -155,7 +175,48 @@ export class SyncClient {
     });
   }
 
-  private syncCleanup(){
+  // A.S download all images for all forms
+  private async downloadFormData(forms: Form[]) {
+    let entry: Entry;
+    this.hasNewData = false;
+    console.log('Downloading forms data')
+    return await Promise.all(forms.map(async (form) => {
+      this.setFormSync(form, false, 10);
+      if (form.event_style.event_record_background && form.event_style.event_record_background.startsWith('https://')) {
+        try {
+          entry = await this.downloadFile(form.event_style.event_record_background, `background_${form.form_id}_`);
+          form.event_style.event_record_background = entry.nativeURL;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      this.setFormSync(form, false, 50);
+      if (form.event_style.screensaver_media_items) {
+        form.event_style.screensaver_media_items = await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
+          if (item.startsWith('https://')) {
+            try {
+              entry = await this.downloadFile(item, `screen_saver_${form.form_id}_`);
+              item = entry.nativeURL;
+            } catch (error) {
+              console.log(error);
+            }
+          }
+          return item;
+        }))
+      }
+      this.setFormSync(form, true, 100);
+      return form;
+    }))
+  }
+
+  // A.S function to push for updates in syncing process
+  private setFormSync(form: Form, complete: boolean, percent: number) {
+    let formStatus: SyncStatus = new SyncStatus(!complete, complete, form.form_id, form.name, percent);
+    this.pushNewSyncStatus(formStatus);
+  }
+
+
+  private syncCleanup() {
     this._isSyncing = false;
     this.syncSource.complete();
     this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -176,7 +237,6 @@ export class SyncClient {
           submissions: [],
           status: new SyncStatus(false, false, form.form_id, form.name)
         };
-        this.lastSyncStatus.push(map[form.form_id].status);
       });
       submissions.forEach(sub => {
         map[sub.form_id + ""].submissions.push(sub);
@@ -185,14 +245,10 @@ export class SyncClient {
       let formIds = Object.keys(map);
       let index = 0;
       map[formIds[index]].status.loading = true;
-
-      this.syncSource.next(this.lastSyncStatus);
+      this.pushNewSyncStatus(map[formIds[index]].status)
 
       let onError = (err) => {
-        this._isSyncing = false;
-        this.syncSource.complete();
-        this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
-        this.onSync = this.syncSource.asObservable();
+        this.syncCleanup();
         obs.error(err);
         this.errorSource.next(err);
       };
@@ -201,15 +257,13 @@ export class SyncClient {
         result.push.apply(result, submitted);
         map[formIds[index]].status.complete = true;
         map[formIds[index]].status.loading = false;
-        this.syncSource.next(this.lastSyncStatus);
+        this.pushNewSyncStatus(map[formIds[index]].status)
         index++;
         if (index >= formIds.length) {
-          this._isSyncing = false;
           obs.next(result);
           obs.complete();
-          this.syncSource.complete();
-          this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
-          this.onSync = this.syncSource.asObservable();
+          this.lastSyncStatus = [];
+          this.syncCleanup()
           return;
         }
         setTimeout(() => {
@@ -276,6 +330,7 @@ export class SyncClient {
     }
     return hasUrls;
   }
+
 
   private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission> {
 
@@ -470,7 +525,7 @@ export class SyncClient {
 
         this.submissionsRepository.handleMergedSubmission(d.id, submission, d.submission, form)
           .subscribe((ok) => {
-            if(d.id > 0){
+            if (d.id > 0) {
               submission.id = submission.activity_id;
             }
             obs.next(submission);
@@ -488,6 +543,8 @@ export class SyncClient {
         this.errorSource.next(msg);
 
       })
+      this.entitySyncedSource.next("Submissions"); // A.S push new submission updates to update number of submissions for each event
+
     }, err => {
       obs.error(err);
       let msg = "Could not process submission for form " + form.name;
@@ -495,6 +552,7 @@ export class SyncClient {
       msg += ". Error - " + err;
       console.error(msg);
     });
+
   }
 
   private isSubmissionValid(submission: FormSubmission) {
@@ -535,83 +593,79 @@ export class SyncClient {
 
           this.file.resolveDirectoryUrl(folder)
             .then(dir => {
-              return this.file.getFile(dir, file, { create: false })})
+              return this.file.getFile(dir, file, { create: false })
+            })
             .then(fileEntry => {
 
               fileEntry.getMetadata((metadata) => {
 
                 this.file.readAsDataURL(folder, file)
                   .then((data: string) => {
-                    let entry = this.createFile(data, file, metadata.size);
+                    let entry = this.util.createFile(data, file, metadata.size);
                     request.files.push(entry);
                     filesUploader.push(this.rest.uploadFiles(request));
                     index++;
                     handler();
                   }).catch((err) => {
-                  obs.error(err);
-                })
+                    obs.error(err);
+                  })
               }, err => {
                 obs.error(err);
               });
             }).catch(err => {
-            obs.error(err);
-          });
+              obs.error(err);
+            });
         }
       };
       handler();
     });
   }
 
-  private createFile(data, name, size) {
-    let entry = new FileInfo();
-    let d = data.split(";base64,");
-    entry.data = d[1];
-    entry.name =  name.split('.').shift();
-    entry.size = size;
-
-    if (entry.size == 0) {
-      entry.size = atob(entry.data).length;
-    }
-    entry.mime_type = d[0].substr(5);
-    return entry;
-  }
 
   private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<Form[]> {
     return new Observable<any>(obs => {
+      console.log('Getting latest forms')
 
       let mapEntry = map["forms"];
       mapEntry.loading = true;
       mapEntry.percent = 10;
 
-      this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
+      this.pushNewSyncStatus(mapEntry);
 
-        let remoteFormsIds = remoteForms.map((form) => form.form_id);
+      this.rest.getAllForms(lastSyncDate).subscribe(async (remoteForms) => {
 
-        remoteForms.forEach(form => {
+
+      let remoteFormsIds = remoteForms.map((form) => form.form_id);
+      let current = new Date();
+
+      remoteForms = remoteForms.filter(form => {
           form.id = form.form_id + "";
+          if (new Date(form.archive_date) > current) return true;
+          else  console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
         });
 
-        result.forms = remoteForms;
+        console.log(remoteForms);
+
+        result.forms = await this.checkFormData(remoteForms)
 
         this.clearLocalForms().flatMap(() => {
-            mapEntry.percent = 50;
-            this.syncSource.next(this.lastSyncStatus);
-            return this.db.getForms();
-          }).flatMap((localForms)=> {
-            let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
-            if (localFormsIds && localFormsIds.length > 0) {
-              result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
-            }
-            return this.db.saveForms(remoteForms);
-          }).subscribe(reply => {
-            mapEntry.complete = true;
-            mapEntry.loading = false;
-            mapEntry.percent = 100;
-            this.entitySyncedSource.next(mapEntry.formName);
-            this.syncSource.next(this.lastSyncStatus);
-
-            obs.next(remoteForms);
-            obs.complete();
+          mapEntry.percent = 50;
+          this.pushNewSyncStatus(mapEntry);
+          return this.db.getForms();
+        }).flatMap((localForms) => {
+          let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
+          if (localFormsIds && localFormsIds.length > 0) {
+            result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
+          }
+          return this.db.saveForms(remoteForms);
+        }).subscribe(reply => {
+          mapEntry.complete = true;
+          mapEntry.loading = false;
+          mapEntry.percent = 100;
+          this.entitySyncedSource.next(mapEntry.formName);
+          this.pushNewSyncStatus(mapEntry);
+          obs.next(remoteForms);
+          obs.complete();
         }, (err) => {
           obs.error(err);
         })
@@ -638,21 +692,21 @@ export class SyncClient {
 
   private downloadContacts(forms: Form[], map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
+      console.log('Getting the latest contacts')
       let mapEntry = map["contacts"];
       mapEntry.loading = true;
       mapEntry.percent = 10;
-      console.log("Downloading contacts 2");
+      this.pushNewSyncStatus(mapEntry);
       this.rest.getAllDeviceFormMemberships(forms, result.newFormIds).subscribe((contacts) => {
-        console.log("Downloading contacts 3");
         result.memberships.push.apply(result.memberships, contacts);
         mapEntry.percent = 50;
-        this.syncSource.next(this.lastSyncStatus);
+        this.pushNewSyncStatus(mapEntry)
         this.db.saveMemberships(contacts).subscribe(res => {
           mapEntry.complete = true;
           mapEntry.loading = false;
           mapEntry.percent = 100;
           this.entitySyncedSource.next(mapEntry.formName);
-          this.syncSource.next(this.lastSyncStatus);
+          this.pushNewSyncStatus(mapEntry)
           obs.next(null);
           obs.complete();
         }, err => {
@@ -662,6 +716,12 @@ export class SyncClient {
         obs.error(err);
       });
     });
+  }
+  
+  // A.S fn to push any new status
+  private pushNewSyncStatus(element: SyncStatus) {
+    this.syncSource.next(this.lastSyncStatus);
+    this.lastSyncStatus.push(element);
   }
 
   /*
@@ -712,9 +772,12 @@ export class SyncClient {
       let mapEntry = map["submissions"];
       mapEntry.loading = true;
       mapEntry.percent = 10;
+
+      this.pushNewSyncStatus(mapEntry);
+
       this.rest.getAllSubmissions(forms, lastSyncDate, result.newFormIds).subscribe(submissions => {
         mapEntry.percent = 50;
-        this.syncSource.next(this.lastSyncStatus);
+        this.pushNewSyncStatus(mapEntry);
         result.submissions = submissions;
         //let forms: Form[] = [];
         this.downloadData(forms, submissions).subscribe(subs => {
@@ -723,7 +786,7 @@ export class SyncClient {
             mapEntry.loading = false;
             mapEntry.percent = 100;
             this.entitySyncedSource.next(mapEntry.formName);
-            this.syncSource.next(this.lastSyncStatus);
+            this.pushNewSyncStatus(mapEntry);
             obs.next(null);
             obs.complete();
           }, err => {
@@ -761,7 +824,7 @@ export class SyncClient {
         obs.complete();
         return;
       }
-      var urls = Object.keys(urlMap).filter((url) => {return url.startsWith("https://")});
+      var urls = Object.keys(urlMap).filter((url) => { return url.startsWith("https://") });
       let index = 0;
       let handler = () => {
         if (index == urls.length) {
@@ -790,13 +853,10 @@ export class SyncClient {
           obs.next(submissions);
           obs.complete();
         } else {
-          let ext = urls[index].substr(urls[index].lastIndexOf("."));
-          let name = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-          let pathToDownload = encodeURI(urls[index]);
-          let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
-          let path = newFolder + name;
+          // A.S
+          let file = this.util.getFilePath(urls[index],'');
 
-          this.http.downloadFile(pathToDownload, {}, {}, path).then(entry => {
+          this.http.downloadFile(file.pathToDownload, {}, {}, file.path).then(entry => {
             urlMap[urls[index]] = urls[index];
             index++;
             setTimeout(() => {
@@ -815,12 +875,50 @@ export class SyncClient {
     });
   }
 
-  private folderForFile(ext: string) {
-    if (ext == '.png' || ext == '.jpg' || ext == '.heic') {
-      return "images/";
-    }
-    return "audio/";
+  // A.S GOC-326 download form images
+  private async downloadFile(url: string, id: string) {
+    let file = this.util.getFilePath(url,id);
+    return this.http.downloadFile(file.pathToDownload, {}, {}, file.path)
   }
+
+  // A.S GOC-326 check file if downloaded
+  async checkFile(url: string, id: string) {
+    let file = this.util.getFilePath(url,id);
+    try {
+      let data = await this.file.resolveLocalFilesystemUrl(file.path);
+      return data.nativeURL;
+    } catch (error) {
+      this.hasNewData = true;
+      return file.pathToDownload;
+    }
+  }
+
+
+  // A.S GOC-326 check form data if downloaded
+  private async checkFormData(forms: Form[]) {
+    return await Promise.all(forms.map(async (form) => {
+      if (form.event_style.event_record_background != '' && form.event_style.event_record_background) {
+        try {
+          form.event_style.event_record_background = await this.checkFile(form.event_style.event_record_background, `background_${form.form_id}_`);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      if (form.event_style.screensaver_media_items) {
+        await await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
+          try {
+            item = await this.checkFile(item, `screen_saver_${form.form_id}_`);
+          } catch (error) {
+            console.log(error);
+          }
+        }))
+      }
+      return form;
+    }))
+  }
+
+
 
   private isExternalUrl(url: string) {
     return url.indexOf("http") == 0;

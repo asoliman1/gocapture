@@ -2,15 +2,15 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { DBClient } from './db-client';
-import {FormSubmission} from "../model";
-import {SubmissionMapper} from "./submission-mapper";
+import { FormSubmission } from "../model";
+import { SubmissionMapper } from "./submission-mapper";
 
 
 @Injectable()
 export class SubmissionsRepository {
 
   constructor(private dbClient: DBClient,
-              private submMapper: SubmissionMapper) {
+    private submMapper: SubmissionMapper) {
     //
   }
 

@@ -1,11 +1,13 @@
+import { Util } from './../util/util';
 import { Injectable } from '@angular/core';
-import {SocialSharing} from "@ionic-native/social-sharing";
-import {ToastController} from "ionic-angular";
+import { SocialSharing } from "@ionic-native/social-sharing";
+import { Popup } from '../providers/popup/popup';
 
 @Injectable()
 export class ShareService {
 
-  constructor(public socialSharing: SocialSharing, private toast: ToastController) {}
+  constructor(public socialSharing: SocialSharing, private popup: Popup , private util:Util) { 
+  }
 
   public shareViaEmail(
     message: string,
@@ -15,6 +17,8 @@ export class ShareService {
     bcc?: string[],
     files?: string | string[]
   ): Promise<boolean> {
+    this.util.setPluginPrefs();
+
     return this.socialSharing.canShareViaEmail()
       .then((_) => {
         return this.socialSharing.shareViaEmail(message, subject, to, cc, bcc, files)
@@ -35,6 +39,8 @@ export class ShareService {
   }
 
   public shareViaSMS(message: string, phoneNumber: string): Promise<boolean> {
+    this.util.setPluginPrefs();
+
     return this.socialSharing.shareViaSMS(message, phoneNumber)
       .then((_) => {
         console.log('SMS SHARED SUCCESSFULLY');
@@ -47,7 +53,24 @@ export class ShareService {
       });
   }
 
+  // A.S GOC-300
+  public share(title = '', message: string): Promise<boolean> {
+    this.util.setPluginPrefs();
+
+    return this.socialSharing.share(message, title)
+      .then((_) => {
+        console.log('Data SHARED SUCCESSFULLY');
+        return true;
+      })
+      .catch((err) => {
+        console.log("Data COULDN'T BE SENT ", err);
+        this.showErrorToast('A problem occured when trying to share your content');
+        return false;
+      });
+  }
   public shareViaFacebook(message: string, image?: string, url?: string): Promise<boolean> {
+    this.util.setPluginPrefs();
+
     return this.socialSharing.shareViaFacebook(message, image, url)
       .then((_) => {
         console.log('SHARED VIA FACEBOOK SUCCESSFULLY');
@@ -55,12 +78,14 @@ export class ShareService {
       })
       .catch((err) => {
         console.log("COULDN'T SHARE VIA FACEBOOK ", JSON.stringify(err));
-        // this.showErrorToast();
+        this.showErrorToast();
         return false;
       })
   }
 
   public shareViaInstagram(message: string, image: string): Promise<boolean> {
+    this.util.setPluginPrefs();
+
     return this.socialSharing.shareViaInstagram(message, image)
       .then((_) => {
         console.log('SHARED VIA INSTAGRAM SUCCESSFULLY');
@@ -75,6 +100,7 @@ export class ShareService {
 
 
   public shareViaWhatsApp(message: string, image?: string, url?: string): Promise<boolean> {
+    this.util.setPluginPrefs();
     return this.socialSharing.shareViaWhatsApp(message, image, url)
       .then((_) => {
         console.log('SHARED VIA WHATSAPP SUCCESSFULLY');
@@ -87,12 +113,7 @@ export class ShareService {
       })
   }
 
-  private showErrorToast() {
-    this.toast.create({
-      message: `A problem occurred when trying to share your document(s). Please try again.`,
-      duration: 5000,
-      position: "top",
-      cssClass: "error"
-    }).present();
+  private showErrorToast(errorMsg = `A problem occurred when trying to share your document(s). Please try again.`) {
+    this.popup.showToast(errorMsg);
   }
 }

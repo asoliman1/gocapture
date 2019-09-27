@@ -1,22 +1,20 @@
-import {AfterViewInit, Component} from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import {
-  ActionSheetController,
   IonicPage,
   NavController,
   NavParams,
   Platform,
-  ToastController,
   ViewController
 } from 'ionic-angular';
-import {Util} from "../../util/util";
-import {ThemeProvider} from "../../providers/theme/theme";
-import {IDocument, IDocumentSet} from "../../model";
-import {DocumentViewer} from "@ionic-native/document-viewer";
+import { Util } from "../../util/util";
+import { ThemeProvider } from "../../providers/theme/theme";
+import { IDocument, IDocumentSet } from "../../model";
+import { DocumentViewer } from "@ionic-native/document-viewer";
 import { File } from '@ionic-native/file';
-import {FileOpener} from "@ionic-native/file-opener";
-import {DocumentsService} from "../../services/documents-service";
-import {ShareService} from "../../services/share-service";
-import {DocumentsSyncClient} from "../../services/documents-sync-client";
+import { FileOpener } from "@ionic-native/file-opener";
+import { ShareService } from "../../services/share-service";
+import { DocumentsSyncClient } from "../../services/documents-sync-client";
+import { Popup } from '../../providers/popup/popup';
 
 export enum DocumentShareMode {
   SUBMISSION,
@@ -29,25 +27,23 @@ export enum DocumentShareMode {
   templateUrl: 'documents.html',
 })
 export class Documents implements AfterViewInit {
-  private DocumentShareMode = DocumentShareMode;
-  private documentSet: IDocumentSet;
-  private selectedTheme;
-  private shareMode: DocumentShareMode;
-  private readonlyMode: boolean = false;
+   DocumentShareMode = DocumentShareMode;
+   documentSet: IDocumentSet;
+   selectedTheme;
+   shareMode: DocumentShareMode;
+   readonlyMode: boolean = false;
 
-  private selectedDocCount: number = 0;
+   selectedDocCount: number = 0;
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public util: Util,
-    private actionSheetCtrl: ActionSheetController,
     private themeProvider: ThemeProvider,
     private documentViewer: DocumentViewer,
     private file: File,
     private fileOpener: FileOpener,
-    private toast: ToastController,
-    private documentsService: DocumentsService,
+    private popup: Popup,
     private documentsSyncClient: DocumentsSyncClient,
     private shareService: ShareService,
     public viewCtrl: ViewController,
@@ -81,7 +77,7 @@ export class Documents implements AfterViewInit {
     }
 
     // open the PDF viewer
-    let filename =  document.file_path.split('/').pop();
+    let filename = document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;
     if (document.file_type === 'application/pdf' && this.platform.is('ios')) {
       console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
@@ -89,7 +85,7 @@ export class Documents implements AfterViewInit {
       return this.documentViewer.viewDocument(
         documentFilePath,
         'application/pdf',
-        {title: document.name},
+        { title: document.name },
         null,
         null,
         null,
@@ -114,16 +110,16 @@ export class Documents implements AfterViewInit {
   submitSelectedDocuments() {
     console.log('SEND THE DOCUMENT IDs TO THE SERVER');
     this.viewCtrl.dismiss(
-     this.documentSet.documents
-      .filter((document) => document.selected)
-      .map((document) => document.id)
+      this.documentSet.documents
+        .filter((document) => document.selected)
+        .map((document) => document.id)
     );
   }
 
   shareDocuments() {
     const links = this.prepareDocumentLinks();
 
-    const buttons: [any] = [
+    const buttons: any = [
       {
         text: 'Email',
         icon: "mail",
@@ -172,13 +168,12 @@ export class Documents implements AfterViewInit {
       }
     ];
 
-    const actionSheet = this.actionSheetCtrl.create({
-      title: 'How do you want to send the docs?',
+    this.popup.showActionSheet(
+      'How do you want to send the docs?',
       buttons,
-      cssClass: this.selectedTheme.toString()
-    });
+      this.selectedTheme.toString()
+    );
 
-    actionSheet.present();
   }
 
 
@@ -198,21 +193,10 @@ export class Documents implements AfterViewInit {
   }
 
   private showDocumentOpeningErrorToast() {
-    this.toast.create({
-      message: `Couldn’t open the document. Please try again.`,
-      duration: 5000,
-      position: "top",
-      cssClass: "error"
-    }).present();
+    this.popup.showToast(`Couldn’t open the document. Please try again.`)
   }
 
   private showEditingReadOnlyDocumentsErrorToast() {
-    this.toast.create({
-      message: `You cannot edit submissions in Preview Mode. Click Edit first before making changes.`,
-      duration: 5000,
-      position: "top",
-      cssClass: "error",
-
-    }).present();
+    this.popup.showToast(`You cannot edit submissions in Preview Mode. Click Edit first before making changes.`)
   }
 }

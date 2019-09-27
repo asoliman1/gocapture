@@ -1,6 +1,7 @@
 $theme-color: color($colors, green);
+$theme-text-color : color($colors, black);
 
 .green-theme {
-  @include theme($theme-color);
+  @include theme($theme-color,$theme-text-color);
 }
 

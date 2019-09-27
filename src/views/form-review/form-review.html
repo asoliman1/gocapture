@@ -12,7 +12,7 @@
           <ion-label *ngIf="selectedFilters.length" class="top-text">({{selectedFilters.length}})</ion-label>
         </ion-icon>
       </button>
-			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend">
+			<button ion-button (click)="sync()" [disabled]="!hasSubmissionsToSend  || syncing">
 				<ion-icon name="cloud-upload" class="sync-submissions"></ion-icon>
 			</button>
 		</ion-buttons>

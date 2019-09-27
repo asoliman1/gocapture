@@ -1,4 +1,4 @@
-import {ModalController, ToastController} from "ionic-angular";
+import {ModalController} from "ionic-angular";
 import {DocumentShareMode} from "../../../../views/documents/documents";
 import {Component, forwardRef, Input} from "@angular/core";
 import {DocumentsService} from "../../../../services/documents-service";
@@ -6,6 +6,7 @@ import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../m
 import {BaseElement} from "../base-element";
 import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {ThemeProvider} from "../../../../providers/theme/theme";
+import { Popup } from "../../../../providers/popup/popup";
 
 @Component({
   selector: 'document',
@@ -24,13 +25,13 @@ export class Document extends BaseElement {
   @Input() isEditing?: boolean;
   @Input() submission?: FormSubmission;
 
-  private selectedThemeColor: string;
+   selectedThemeColor: string;
 
   constructor(
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
-    private toast: ToastController,
-    private themeService: ThemeProvider
+    private themeService: ThemeProvider,
+    private popup : Popup
   ) {
     super();
     this.themeService.getActiveTheme().subscribe((theme: string) => this.selectedThemeColor = theme.split('-')[0]);
@@ -78,13 +79,7 @@ export class Document extends BaseElement {
       modal.present();
 
     }, (error) => {
-      let toaster = this.toast.create({
-        message: `A problem occurred while opening your documents. Please try again.`,
-        duration: 3000,
-        position: "top",
-        cssClass: "error"
-      });
-      toaster.present();
+      this.popup.showToast( `A problem occurred while opening your documents. Please try again.`);
     });
   }
 

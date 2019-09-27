@@ -57,7 +57,7 @@ export enum IonPullUpFooterBehavior {
     selector: 'ion-pullup',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-    <ion-footer #footer>
+    <ion-footer  #footer>
       <ng-content></ng-content>
     </ion-footer>
     `
