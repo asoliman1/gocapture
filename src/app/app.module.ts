@@ -103,6 +103,12 @@ import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { EventItemComponent } from '../components/event-item/event-item';
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
+import { ComponentsModule } from "../components/components.module";
+import { FilterPage } from "../pages/filter/filter";
+import { FilterService } from "../services/filter-service";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { FormsModule } from "@angular/forms";
+import { SectionBlock } from '../components/section-block';
 
 @NgModule({
   declarations: [
@@ -144,7 +150,8 @@ import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
     DynamicFormElementComponent,
     StationsPage,
     EventItemComponent,
-    ScreenSaverPage
+    ScreenSaverPage,
+    SectionBlock
   ],
   imports: [
     BrowserModule,
@@ -159,6 +166,9 @@ import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
     PipesModule,
     BusinessCardOverlayPageModule,
     IonicImageLoader.forRoot(),
+    ComponentsModule,
+    NgSelectModule,
+    FormsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -261,7 +271,8 @@ import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
     SubmissionsRepository,
     SubmissionMapper,
     ShareService,
-    Insomnia
+    Insomnia,
+    FilterService
   ]
 })
 export class AppModule { }

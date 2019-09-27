@@ -71,18 +71,24 @@ ion-content[scroll=false] div.scroll-content{
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
  }
- 
+
  @-webkit-keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
  }
- 
+
  @keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
  }
- 
+
  .fadeIn {
     -webkit-animation-name: fadeIn;
     animation-name: fadeIn;
  }
+
+.card-ios .item-ios.item-block .item-inner,
+.card-md .item-md.item-block .item-inner,
+.card-wp .item-wp.item-block .item-inner {
+	border-bottom: 0.55px solid #c8c7cc;
+}

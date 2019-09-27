@@ -1,11 +1,27 @@
 <div class="form-view {{barcodeStatusMap[submission ? submission.barcode_processed : displayForm.barcode_processed ]}}">
   <!--button ion-button (click)="showSelection()"></button-->
- 
+
   <!-- A.S GOC-319 -->
   <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
     <ion-row *ngIf="isSeparatable">
       <ion-col>
         <ion-row *ngFor="let element of splitEls(true)">
+          <section-block *ngIf="element.type == 'section_block' && !element.is_hidden" [title]="element.title" [collapseContent]="element.collapse_content">
+            <ng-container *ngFor="let child of element.children">
+              <dynamic-form-element
+                *ngIf="shouldElementBeDisplayedInsideSection(child)"
+                [theForm]="theForm"
+                [element]="child"
+                [submitAttempt]="submitAttempt"
+                [readOnly]="readOnly"
+                [isEditing]="isEditing"
+                [form]="form"
+                [submission]="submission"
+                (onProcessingEvent)="onProcessing($event)">
+              </dynamic-form-element>
+            </ng-container>
+          </section-block>
+
           <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
             [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
             [submission]="submission" (onProcessingEvent)="onProcessing($event)">
@@ -15,6 +31,21 @@
       <div class="spacer"></div>
       <ion-col>
         <ion-row *ngFor="let element of splitEls(false)">
+          <section-block *ngIf="element.type == 'section_block' && !element.is_hidden" [title]="element.title" [collapseContent]="element.collapse_content">
+            <ng-container *ngFor="let child of element.children">
+              <dynamic-form-element
+                *ngIf="shouldElementBeDisplayedInsideSection(child)"
+                [theForm]="theForm"
+                [element]="child"
+                [submitAttempt]="submitAttempt"
+                [readOnly]="readOnly"
+                [isEditing]="isEditing"
+                [form]="form"
+                [submission]="submission"
+                (onProcessingEvent)="onProcessing($event)">
+              </dynamic-form-element>
+            </ng-container>
+          </section-block>
           <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
             [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
             [submission]="submission" (onProcessingEvent)="onProcessing($event)">
@@ -24,10 +55,34 @@
     </ion-row>
 
     <div *ngIf="!isSeparatable">
-      <div class="" *ngFor="let element of displayForm.elements" #notSeparatable>
-        <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
-          [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
-          [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+      <div class="" *ngFor="let element of displayForm.elements; let i = index; trackBy: trackByFn" #notSeparatable>
+
+        <section-block *ngIf="element.type == 'section_block' && !element.is_hidden" [title]="element.title" [collapseContent]="element.collapse_content">
+          <ng-container *ngFor="let child of element.children">
+            <dynamic-form-element
+              *ngIf="shouldElementBeDisplayedInsideSection(child)"
+              [theForm]="theForm"
+              [element]="child"
+              [submitAttempt]="submitAttempt"
+              [readOnly]="readOnly"
+              [isEditing]="isEditing"
+              [form]="form"
+              [submission]="submission"
+              (onProcessingEvent)="onProcessing($event)">
+            </dynamic-form-element>
+          </ng-container>
+        </section-block>
+
+        <dynamic-form-element
+          *ngIf="shouldElementBeDisplayed(element) && element.type != 'section_block'"
+          [theForm]="theForm"
+          [element]="element"
+          [submitAttempt]="submitAttempt"
+          [readOnly]="readOnly"
+          [isEditing]="isEditing"
+          [form]="form"
+          [submission]="submission"
+          (onProcessingEvent)="onProcessing($event)">
         </dynamic-form-element>
       </div>
     </div>

@@ -56,8 +56,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations , event_address , event_style, is_enable_rapid_scan_mode , (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode , event_address , event_style ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)",
 				"deleteAll": "delete from forms"
@@ -85,7 +85,7 @@ export class DBClient {
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
@@ -348,87 +348,97 @@ export class DBClient {
 					"alter table submissions add column barcode_processed integer default 0"
 				]
 			},
-			9: {
-				queries: [
-					"alter table forms add column members_last_sync_date VARCHAR(50)"
-				]
-			},
-			10: {
-				queries: [
-					"alter table submissions add column submission_type VARCHAR(50)"
-				]
-			},
-			11: {
-				queries: [
-					"alter table submissions add column fullName VARCHAR(50)"
-				]
-			},
-			12: {
-				queries: [
-					"alter table forms add column is_mobile_quick_capture_mode integer default 0"
-				]
-			},
-			13: {
-				queries: [
-					"alter table forms add column is_enforce_instructions_initially integer default 0",
-					"alter table forms add column instructions_content text"
-				]
-			},
-			14: {
-				queries: [
-					"alter table submissions add column last_sync_date text"
-				]
-			},
-			15: {
-				queries: [
-					"alter table submissions add column hold_submission integer",
-					"alter table submissions add column hold_submission_reason text"
-				]
-			},
-			16: {
-				queries: [
-					"alter table submissions add column hidden_elements text"
-				]
-			},
-			17: {
-				queries: [
-					"alter table forms add column event_stations text"
-				]
-			},
-			18: {
-				queries: [
-					"alter table submissions add column station_id text"
-				]
-			},
-			19: {
-				queries: [
-					"alter table forms add column is_enable_rapid_scan_mode integer default 0"
-				]
-			},
-			20: {
-				queries: [
-					"alter table submissions add column is_rapid_scan integer default 0"
-				]
-			},
-			21: {
-				queries: [
-					"alter table submissions add column stations text"
-				]
-			},
-			22: {
-				queries: [
-					"alter table documents add column preview_urls text"
-				]
-			},
-			23: {
-				queries: [
-					"alter table forms add column event_address text",
-				]
-			},
-			24: {
-				queries: [
-					"alter table forms add column event_style text",
-				]
+      9: {
+        queries: [
+          "alter table forms add column members_last_sync_date VARCHAR(50)"
+        ]
+      },
+      10: {
+        queries: [
+          "alter table submissions add column submission_type VARCHAR(50)"
+        ]
+      },
+      11: {
+        queries: [
+          "alter table submissions add column fullName VARCHAR(50)"
+        ]
+      },
+      12: {
+        queries: [
+          "alter table forms add column is_mobile_quick_capture_mode integer default 0"
+        ]
+      },
+      13: {
+        queries: [
+          "alter table forms add column is_enforce_instructions_initially integer default 0",
+          "alter table forms add column instructions_content text"
+        ]
+      },
+      14: {
+        queries: [
+          "alter table submissions add column last_sync_date text"
+        ]
+      },
+      15: {
+        queries: [
+          "alter table submissions add column hold_submission integer",
+          "alter table submissions add column hold_submission_reason text"
+        ]
+      },
+      16: {
+        queries: [
+          "alter table submissions add column hidden_elements text"
+        ]
+      },
+      17: {
+        queries: [
+          "alter table forms add column event_stations text"
+        ]
+      },
+      18: {
+        queries: [
+          "alter table submissions add column station_id text"
+        ]
+      },
+      19: {
+        queries: [
+          "alter table forms add column is_enable_rapid_scan_mode integer default 0"
+        ]
+      },
+      20: {
+        queries: [
+          "alter table submissions add column is_rapid_scan integer default 0"
+        ]
+      },
+      21: {
+        queries: [
+          "alter table submissions add column stations text"
+        ]
+      },
+      22: {
+        queries: [
+          "alter table documents add column preview_urls text"
+        ]
+      },
+      23: {
+        queries: [
+          "alter table submissions add column captured_by_user_name text"
+        ]
+      },
+      24: {
+        queries: [
+          "alter table forms add column available_for_users text"
+        ]
+      },
+      25: {
+			  queries: [
+			    "alter table forms add column event_address text",
+        ]
+      },
+      26: {
+			  queries: [
+			    "alter table forms add column event_style text",
+        ]
 			}
 		}
 	};
@@ -515,6 +525,7 @@ export class DBClient {
 		form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
 		form.event_address = typeof dbForm.event_address == "string" ? JSON.parse(dbForm.event_address) : dbForm.event_address;
 		form.event_style = typeof dbForm.event_style == "string" ? JSON.parse(dbForm.event_style) : dbForm.event_style;
+    form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
 
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
@@ -583,8 +594,8 @@ export class DBClient {
 			JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0,
 			form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 			form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
-			form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.event_address), JSON.stringify(form.event_style)]);
-
+			form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
+        JSON.stringify(form.event_address), JSON.stringify(form.event_style)]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -773,7 +784,7 @@ export class DBClient {
 			.map((data) => {
 				let forms = [];
 				data.forEach((dbForm: any) => {
-					let form = this.submissonFromDBEntry(dbForm);
+					let form = this.submissionFromDBEntry(dbForm);
 					forms.push(form);
 				});
 				return forms;
@@ -788,7 +799,7 @@ export class DBClient {
 						let submission: FormSubmission;
 						if (data && data.rows.length > 0) {
 							let dbForm = data.rows.item(0);
-							submission = this.submissonFromDBEntry(dbForm);
+							submission = this.submissionFromDBEntry(dbForm);
 						}
 						responseObserver.next(submission);
 						responseObserver.complete();
@@ -808,7 +819,7 @@ export class DBClient {
 						for (let i = 0; i < data.rows.length; i++) {
 							let dbForm = data.rows.item(i);
 
-							let form = this.submissonFromDBEntry(dbForm);
+							let form = this.submissionFromDBEntry(dbForm);
 							resp.push(form);
 						}
 						responseObserver.next(resp);
@@ -821,7 +832,7 @@ export class DBClient {
 	}
 
 
-	private submissonFromDBEntry(dbForm) { // bug here
+	private submissionFromDBEntry(dbForm) { // bug here
 		let form = new FormSubmission();
 		form.id = dbForm.id;
 		form.form_id = dbForm.formId;
@@ -843,6 +854,7 @@ export class DBClient {
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations =  dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
+    form.captured_by_user_name = dbForm.captured_by_user_name;
 		return form;
 	}
 
@@ -929,7 +941,8 @@ export class DBClient {
 			JSON.stringify(form.hidden_elements),
 			form.station_id,
 			form.is_rapid_scan,
-			JSON.stringify(form.stations)];
+			JSON.stringify(form.stations),
+      form.captured_by_user_name];
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {

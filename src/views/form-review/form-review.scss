@@ -1,3 +1,16 @@
+form-review {
+  .searchbar-input {
+    font-size: 20px !important;
+    font-weight: 600;
+  }
+
+  .top-text {
+    vertical-align: text-top;
+    font-size: 10px;
+    display: inline-block;
+  }
+}
+
 .form-summary ion-item button{
 	height: 100% !important;
 	margin: 0 !important;
@@ -111,4 +124,39 @@
 			color: #f53d3d;
 		}
 	}
+}
+
+#filters-view {
+  transform: translateY(-120%);
+  -webkit-transform: translateY(-120%);
+}
+
+
+
+.slide-in {
+  animation: slide-in 0.5s forwards;
+  -webkit-animation: slide-in 0.5s forwards;
+}
+
+.slide-out {
+  animation: slide-out 0.5s forwards;
+  -webkit-animation: slide-out 0.5s forwards;
+}
+
+@keyframes slide-in {
+  100% { transform: translateY(0%); }
+}
+
+@-webkit-keyframes slide-in {
+  100% { -webkit-transform: translateY(0%); }
+}
+
+@keyframes slide-out {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-120%); }
+}
+
+@-webkit-keyframes slide-out {
+  0% { -webkit-transform: translateY(0%); }
+  100% { -webkit-transform: translateY(-120%); }
 }

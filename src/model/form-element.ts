@@ -1,15 +1,17 @@
 import { IDocumentSet } from "./documentSet";
 
 export class FormElement {
-	id: number;
-	title: string;
-	guidelines: string;
-	field_error_message: string;
-	size: string;
-	is_required: boolean;
-	is_always_display: boolean;
-	is_conditional: boolean;
-	is_not_prefilled: boolean;
+	id : number;
+	parent_element_id: number;
+	title : string;
+	guidelines : string;
+	field_error_message : string;
+	size : string;
+	is_required : boolean;
+	is_always_display : boolean;
+	is_conditional : boolean;
+	is_not_prefilled : boolean;
+
 	is_scan_cards_and_prefill_form: 0 | 1;
 	is_hidden: boolean;
 	is_readonly: boolean;
@@ -32,6 +34,8 @@ export class FormElement {
 	is_filled_from_list: boolean;
 	post_show_reconciliation: boolean;
 	documents_set?: IDocumentSet;
+	children?: FormElement[];
+	collapse_content?: boolean;
 }
 
 export class Option {

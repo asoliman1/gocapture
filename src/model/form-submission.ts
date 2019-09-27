@@ -19,10 +19,11 @@ export class FormSubmission {
 	invalid_fields: number = 0;
 	fields: { [key: string]: string | string[] } = {};
 	sub_date: string;
-	last_sync_date: string;
-	hidden_elements: string[];
-	is_filled_from_list: boolean = false;
-	is_rapid_scan: number = 0;
+  last_sync_date: string;
+  hidden_elements: string[];
+  is_filled_from_list: boolean = false;
+  is_rapid_scan: number = 0;
+  captured_by_user_name: string =  "";
 
 	station_id: string;
 
@@ -78,8 +79,9 @@ export enum SubmissionStatus {
 }
 
 export enum FormSubmissionType {
-	normal = 'normal',
-	barcode = 'barcode',
-	list = 'list'
+  normal = 'normal',
+  barcode = 'barcode',
+  list = 'list',
+  transcription = 'transcription'
 }
 
