@@ -62,14 +62,12 @@ export class DocumentsService {
           const adjustedPath = this.util.adjustFilePath(filePath);
           return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
             .then((entry:Entry) => {
-              console.log(entry)
               documentFromTheAPI.file_path = entry.nativeURL
               return this.dbClient.saveDocument(documentFromTheAPI)
                 .subscribe((ok) => {
                   obs.next(documentFromTheAPI);
                   obs.complete();
-                  console.log('Document saved successfully');
-                  console.log(JSON.stringify(ok));
+                  console.log(`Document ${entry.name} saved successfully`);
                 }, (error) => {
                   obs.error(error);
                   console.log(`Couldn't save document on the db`);

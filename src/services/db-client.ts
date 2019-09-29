@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
+import 'rxjs/add/observable/forkJoin';
 import { Observer } from "rxjs/Observer";
 import {
 	User,
@@ -29,7 +30,7 @@ export class DBClient {
 	private saveAllEnabled = false;
 	private saveAllPageSize = 50;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
-
+	
 	private tables: Table[] = [
 		{
 			name: 'forms',
@@ -159,7 +160,8 @@ export class DBClient {
 				"select": "SELECT * FROM configuration where key =?",
 				"selectAll": "SELECT * from configuration",
 				"update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
-				"delete": "DELETE FROM configuration WHERE key = (?)"
+				"delete": "DELETE FROM configuration WHERE key = (?)",
+				"deleteAll": "delete from configuration"
 			}
 		},
 		{
@@ -188,7 +190,8 @@ export class DBClient {
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
 				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
-				'updateRegistration': 'UPDATE org_master set registrationId = ?'
+				'updateRegistration': 'UPDATE org_master set registrationId = ?',
+				"deleteAll": "delete from org_master"
 			}
 		},
 		{
@@ -435,7 +438,7 @@ export class DBClient {
 	/**
 	 *
 	 */
-	constructor(private platform: Platform,private sql:SQLite) {
+	constructor(private platform: Platform) {
 		this.migrator = new Migrator();
 		this.migrator.setMigrations(this.versions);
 		this.manager = new Manager(platform, this.migrator, this.tables);
@@ -1117,13 +1120,17 @@ export class DBClient {
 		});
 	}
 
-	public deleteRegistration(authId: string)  {
+	public deleteRegistration()  {
 		localStorage.clear();
-		return this.dropDb()
+		this.dropDb()
 	}
 
 	private remove(type: string, table: string, parameters: any[], key = "delete"): Observable<boolean> {
 		return this.doUpdate(type, key, table, parameters);
+	}
+
+	private removeAll(type: string, table: string): Observable<boolean> {
+		return this.doUpdate(type, "deleteAll", table);
 	}
 
 	private saveAll<T>(items: T[], type: string, pageSize?: number): Observable<boolean> {
@@ -1356,6 +1363,13 @@ export class DBClient {
 
 	// A.S drop db on unauthenticate
 	public async dropDb(){
-		return this.sql.deleteDatabase({name:'tradeshow.db',location:'default'})
+	 this.tables.forEach(async(e)=>{
+		 this.removeAll(e.master ? MASTER : WORK,e.name).subscribe((data)=>{
+			 console.log(`${e.name} removed from db`)
+		 },err=>{
+			 console.log(err);
+			 console.log(`failed to remove ${e.name} from db`)
+		 })
+		})
 	}
 }

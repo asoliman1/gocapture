@@ -25,7 +25,7 @@ import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinit
 import { ThemeProvider } from "../../providers/theme/theme";
 import { FormInstructions } from "../form-instructions";
 import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
-import { ModalController } from "ionic-angular";
+import { ModalController, Events } from "ionic-angular";
 import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
 
@@ -79,8 +79,12 @@ export class Forms {
     private duplicateLeadsService: DuplicateLeadsService,
     private syncClient: SyncClient,
     private modalCtrl: ModalController,
-    private documentsService: DocumentsService) {
+    private documentsService: DocumentsService,
+    private event:Events) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+    this.event.subscribe('button-bar',(data)=>{
+      console.log(`data from forms page : ${data}`)
+    })
   }
 
   doRefresh(refresher?) {

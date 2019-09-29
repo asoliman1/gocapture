@@ -255,7 +255,7 @@ export class Util {
     let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
     let path = newFolder + name;
 
-    return { path, pathToDownload }
+    return { path, pathToDownload , name , folderPath:newFolder }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works

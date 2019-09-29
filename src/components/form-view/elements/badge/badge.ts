@@ -44,9 +44,12 @@ export class Badge extends BaseElement implements OnInit {
     public ndef: Ndef,
     public actionService: ActionService,
     public duplicateLeadsService: DuplicateLeadsService,
-    public appPreferences: AppPreferences) {
+    public appPreferences: AppPreferences,
+    ) {
     super();
+
   }
+
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
@@ -56,7 +59,7 @@ export class Badge extends BaseElement implements OnInit {
     return this.scanner ? this.scanner.statusMessage : "";
   }
 
-  scan() {
+  public scan() {
     if (this.readonly) return;
 
     this.isScanning = true;

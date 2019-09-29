@@ -225,11 +225,11 @@ export class MyApp {
   private checkDir(dirName) {
     this.file.checkDir(cordova.file.dataDirectory + "leadliaison/", dirName)
       .then((exists) => {
-        console.log(dirName + " folder present");
+        // console.log(dirName + " folder present");
       }).catch(err => {
         this.file.createDir(cordova.file.dataDirectory + "leadliaison/", dirName, true)
           .then(ok => {
-            console.log("Created " + dirName + " folder");
+            // console.log("Created " + dirName + " folder");
           }).catch(err => {
             console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
           })
@@ -247,7 +247,7 @@ export class MyApp {
 
   handleAccessTokenValidationResult(status, user) {
 
-    console.log('Device status - ' + JSON.stringify(status));
+    // console.log('Device status - ' + JSON.stringify(status));
 
     // this.popup.dismissAll();
 

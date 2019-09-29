@@ -27,6 +27,7 @@ export class DynamicFormElementComponent {
   }
 
   onProcessing(event) {
+    console.log(event);
   }
 
   ngOnInit(){

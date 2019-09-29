@@ -78,15 +78,15 @@ export class Migrator{
 		let statement = "INSERT INTO versions(version, updated_at) values (" + index + ", strftime('%Y-%m-%d %H:%M:%S', 'now'))"
 		if(migration.custom){
 			migration.custom(db, ()=>{
-				console.log("Done 1");
+				// console.log("Done 1");
 				db.executeSql(statement, {}).then(result => {
-					console.log("Done");
+					// console.log("Done");
 					resolve({});
 				});
 			})
 		}else{
 			db.executeSql(statement, {}).then(result => {
-				console.log("Done");
+				// console.log("Done");
 				resolve({});
 			});
 		}

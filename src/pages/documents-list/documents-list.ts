@@ -32,7 +32,7 @@ export class DocumentsListPage {
   }
 
   private init() {
-    console.log(this.form);
+    // console.log(this.form);
     this.documentSets = this.form.elements
       .filter((el) => el.type === 'documents' && el.documents_set)
       .map((el) => {

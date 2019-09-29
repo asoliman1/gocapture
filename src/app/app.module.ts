@@ -103,6 +103,7 @@ import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { EventItemComponent } from '../components/event-item/event-item';
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
+import { buttonBar } from '../components/form-view/button-bar/button-bar';
 
 @NgModule({
   declarations: [
@@ -144,7 +145,8 @@ import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
     DynamicFormElementComponent,
     StationsPage,
     EventItemComponent,
-    ScreenSaverPage
+    ScreenSaverPage,
+    buttonBar
   ],
   imports: [
     BrowserModule,
@@ -197,7 +199,8 @@ import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
     OcrSelector,
     StationsPage,
     EventItemComponent,
-    ScreenSaverPage
+    ScreenSaverPage,
+    buttonBar
   ],
   exports: [
     DynamicFormElementComponent

@@ -86,7 +86,7 @@
     color: $theme-color;
   }
 
-  .info-box{
+  .info-box,ion-text{
     color: $theme-text-color // A.S to set a text color for each theme
   }
 }

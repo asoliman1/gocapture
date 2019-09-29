@@ -159,7 +159,7 @@ export class FormReview {
 		} else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
 			return "Scanned";
 		}
-		return submission.id; // A.S GOC-336
+		return submission.id > -1 ? submission.id : ''; // A.S GOC-336
 	}
 
 	isNoProcessedRapidScan(submission) {

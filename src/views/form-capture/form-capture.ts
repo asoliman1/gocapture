@@ -1,3 +1,4 @@
+import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, HostListener } from '@angular/core';
 
 import {
@@ -118,8 +119,8 @@ export class FormCapture implements AfterViewInit {
     private popoverCtrl: PopoverController,
     private syncClient: SyncClient,
     private dbClient: DBClient,
+    private utils : Util,
     private insomnia: Insomnia) {
-    console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
@@ -187,6 +188,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private showScreenSaver() {
+    if(!this.utils.getPluginPrefs())
     if (!this.isLoadingImages()) {
       if (!this._modal) {
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
@@ -203,7 +205,7 @@ export class FormCapture implements AfterViewInit {
   private isLoadingImages() {
     for (let index = 0; index < this.form.event_style.screensaver_media_items.length; index++) {
       const element = this.form.event_style.screensaver_media_items[index];
-      if (element.startsWith('https://')) return true;
+      if (element.path.startsWith('https://')) return true;
     }
     return false;
   }
@@ -562,7 +564,7 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
-  doSave(shouldSyncData = true) {
+  public doSave(shouldSyncData = true) {
     this.submitAttempt = true;
 
     /*
@@ -648,7 +650,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   onProcessing(event) {
-    this.isProcessing = JSON.parse(event);
+    this.isProcessing =  JSON.parse(event);
   }
 
   searchProspect() {

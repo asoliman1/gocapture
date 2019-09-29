@@ -27,6 +27,7 @@ export class FormView {
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() ButtonEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
@@ -224,7 +225,7 @@ export class FormView {
         //     title: 'POST SHOW Docs'
         //   }
         // ];
-        console.log(this.displayForm);
+        // console.log(this.displayForm);
       });
     }, 150);
   }
@@ -473,5 +474,9 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+
+  onButtonEvent(event){
+    this.ButtonEvent.emit(event);
   }
 }
