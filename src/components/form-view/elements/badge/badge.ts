@@ -16,6 +16,7 @@ import { ActionService } from "../../../../services/action-service";
 import { DuplicateLeadsService } from "../../../../services/duplicate-leads-service";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { Popup } from '../../../../providers/popup/popup';
+import {BussinessClient} from "../../../../services/business-service";
 
 @Component({
   selector: 'badge',
@@ -36,6 +37,7 @@ export class Badge extends BaseElement implements OnInit {
   isScanning: boolean = false;
   constructor(
     private client: RESTClient,
+    private businessService: BussinessClient,
     private popup: Popup,
     public barcodeScanner: BarcodeScanner,
     public utils: Util,
@@ -121,7 +123,7 @@ export class Badge extends BaseElement implements OnInit {
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);
       }
-    }, err => {
+    }, (err) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       this.popup.dismiss('loading');
@@ -131,6 +133,7 @@ export class Badge extends BaseElement implements OnInit {
       this.fillInElementsWithPlaceholderValue("Scanned");
 
       this.handleAcceptingInvalidBadgeData(err);
+
     });
   }
 
@@ -144,7 +147,7 @@ export class Badge extends BaseElement implements OnInit {
   }
 
   private handleAcceptingInvalidBadgeData(err) {
-    if (this.element.accept_invalid_barcode) {
+    if (this.element.accept_invalid_barcode && err.status == 400) {
       this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
       this.form["barcode_processed"] = BarcodeStatus.Processed;
       this.submission.hold_submission = 1;

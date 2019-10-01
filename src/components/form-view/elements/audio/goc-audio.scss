@@ -25,6 +25,16 @@
       }
     }
 
+    .recording-dot {
+      height: 15px;
+      width: 15px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+      float: right;
+      margin-right: 10px;
+    }
+
     .stop-btn {
       border-color: black;
       color: black;
@@ -48,6 +58,16 @@
   .counter {
     display: inline-block;
     margin-bottom: 10px;
+  }
+
+  .blink {
+    animation: blinker 1s linear infinite;
+  }
+
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
   }
 
 }
