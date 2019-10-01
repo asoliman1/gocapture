@@ -27,10 +27,10 @@
       <div class="" *ngFor="let element of displayForm.elements" #notSeparatable>
         <dynamic-form-element *ngIf="shouldElementBeDisplayed(element)" [theForm]="theForm" [element]="element"
           [submitAttempt]="submitAttempt" [readOnly]="readOnly" [isEditing]="isEditing" [form]="form"
-          [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+          [submission]="submission" (onProcessingEvent)="onProcessing($event)" >
         </dynamic-form-element>
       </div>
     </div>
   </form>
-  <!-- <button-bar [form]="form" ></button-bar> -->
+  <button-bar [form]="form" ></button-bar>
 </div>

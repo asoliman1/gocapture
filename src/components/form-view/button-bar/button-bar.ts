@@ -1,7 +1,8 @@
-import { Badge } from './../elements/badge/badge';
+import { Subscription } from 'rxjs/Subscription';
+import { formViewService } from './../form-view-service';
 import { Form } from './../../../model/form';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ViewChildren } from '@angular/core';
-import { NavController, Events } from 'ionic-angular';
+import { Component, OnInit, Input } from '@angular/core';
+import { NavController } from 'ionic-angular';
 
 @Component({
     selector: 'button-bar',
@@ -19,16 +20,19 @@ export class buttonBar implements OnInit {
     ];
 
     @Input() form: Form;
-
-    constructor(private navCtrl: NavController,public event:Events
+    EventSubscription : Subscription;
+    constructor(
+        private navCtrl: NavController,
+        private formViewService:formViewService
         ) {
-
+         
     }
 
 
     ngOnInit() {
         this.setButtons()
     }
+
 
 
     setButtons() {
@@ -59,7 +63,7 @@ export class buttonBar implements OnInit {
     }
 
     onClick(btn) {
-        this.event.publish('button-bar',btn.type);
+        this.formViewService.pushEvent(btn.type);
     }
 
 

@@ -104,6 +104,7 @@ import { IonicImageLoader } from "ionic-image-loader";
 import { EventItemComponent } from '../components/event-item/event-item';
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
 import { buttonBar } from '../components/form-view/button-bar/button-bar';
+import { formViewService } from '../components/form-view/form-view-service';
 
 @NgModule({
   declarations: [
@@ -264,7 +265,8 @@ import { buttonBar } from '../components/form-view/button-bar/button-bar';
     SubmissionsRepository,
     SubmissionMapper,
     ShareService,
-    Insomnia
+    Insomnia,
+    formViewService
   ]
 })
 export class AppModule { }

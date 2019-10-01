@@ -20,7 +20,7 @@ export class ScreenSaverPage {
   themeColor: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private viewCtrl: ViewController, private themeProvider: ThemeProvider, private StatusBar: StatusBar) {
-    this.eventStyle = this.navParams.get('event_style');
+    this.eventStyle = this.navParams.data.event_style;
     this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme', ''));
   }
 
@@ -43,5 +43,6 @@ export class ScreenSaverPage {
   isLoading(item: string) {
     return item.startsWith('https://')
   }
+
 
 }

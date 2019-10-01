@@ -1,5 +1,5 @@
 import { Util } from './../../util/util';
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, HostListener } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 
 import {
   AlertController,
@@ -119,7 +119,7 @@ export class FormCapture implements AfterViewInit {
     private popoverCtrl: PopoverController,
     private syncClient: SyncClient,
     private dbClient: DBClient,
-    private utils : Util,
+    private utils: Util,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -161,7 +161,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private setupIdleMode() {
-    if (this.form.event_style.is_enable_screensaver) {
+    if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode) {
       this.insomnia.keepAwake()
         .then(() => this.handleIdleMode()
         ).catch((err) => {
@@ -169,7 +169,6 @@ export class FormCapture implements AfterViewInit {
           this.handleIdleMode()
         }
         )
-
     }
   }
 
@@ -188,9 +187,10 @@ export class FormCapture implements AfterViewInit {
   }
 
   private showScreenSaver() {
-    if(!this.utils.getPluginPrefs())
+
     if (!this.isLoadingImages()) {
       if (!this._modal) {
+        this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
         this._modal.present();
         this._modal.onDidDismiss(() => {
@@ -198,8 +198,14 @@ export class FormCapture implements AfterViewInit {
         })
       }
     } else {
-      console.log('still downloading images');
+      console.log('still downloading images...');
     }
+  }
+
+  
+  private handleScreenSaverRandomize(){
+    if(this.form.event_style.is_randomize)
+    this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
 
   private isLoadingImages() {
@@ -211,7 +217,8 @@ export class FormCapture implements AfterViewInit {
   }
 
   private stopIdleMode() {
-    this.idle.stop();
+    this.idle.stop()
+    console.log('idle mode stopped');
   }
 
   private setupForm() {
@@ -456,8 +463,8 @@ export class FormCapture implements AfterViewInit {
   ionViewDidLeave() {
     this.menuCtrl.enable(true);
     this.insomnia.allowSleepAgain()
-    .then(()=>{})
-    .catch((err)=>console.log(err));
+      .then(() => { })
+      .catch((err) => console.log(err));
     this.stopIdleMode();
   }
 
@@ -650,7 +657,9 @@ export class FormCapture implements AfterViewInit {
   }
 
   onProcessing(event) {
-    this.isProcessing =  JSON.parse(event);
+    this.isProcessing = JSON.parse(event);
+    if(this.isProcessing) this.stopIdleMode();
+    else this.setupIdleMode()
   }
 
   searchProspect() {

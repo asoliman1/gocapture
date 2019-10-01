@@ -473,6 +473,7 @@ export class FormView {
   }
 
   onProcessing(event) {
+    console.log('form view on processing : '+event);
     this.onProcessingEvent.emit(event);
   }
 

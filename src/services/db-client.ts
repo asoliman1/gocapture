@@ -602,13 +602,13 @@ export class DBClient {
 				return;
 			}
 			this.manager.db(WORK).subscribe((db) => {
-				console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
+				// console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
 				db.executeSql(this.getQuery("forms", "deleteIn").replace("?", list.join(",")), [])
 					.then((data) => {
-						console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
+						// console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
 						db.executeSql(this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), [])
 							.then((data) => {
-								console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
+								// console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
 								db.executeSql(this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), [])
 									.then((data) => {
 										responseObserver.next(true);
