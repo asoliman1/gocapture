@@ -13,6 +13,8 @@ export class AudioCaptureService {
 
   fileName: string;
 
+  isRecordingPaused: boolean = false;
+
   constructor(private media: Media,
               private fileService: File,
               private platform: Platform,
@@ -37,7 +39,7 @@ export class AudioCaptureService {
       if (this.platform.is("ios")) {
         this.fileService.createFile(audioFolder, this.fileName, true)
           .then(() => {
-            this.startAudioRecording(filePath).subscribe(status => {
+            this.startAudioRecording(filePath).subscribe((status) => {
               obs.next(status);
             });
           }).catch(error => {
@@ -45,7 +47,7 @@ export class AudioCaptureService {
           obs.error(error);
         });
       } else {
-        this.startAudioRecording(this.fileName).subscribe(status => {
+        this.startAudioRecording(this.fileName).subscribe((status) => {
           obs.next(status);
         });
       }
@@ -70,6 +72,13 @@ export class AudioCaptureService {
     })
   }
 
+  pauseRecord() {
+    this.audioFile.pauseRecord();
+  }
+
+  resumeRecord() {
+    this.audioFile.resumeRecord();
+  }
 
   playRecord(filePath): Observable<MEDIA_STATUS> {
     let fileName = filePath.split('/').pop();
