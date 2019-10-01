@@ -1,12 +1,12 @@
-import {Component, forwardRef, Input, NgZone} from "@angular/core";
-import {BaseElement} from "../base-element";
-import {Form, FormElement, FormSubmission} from "../../../../model";
-import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {AudioCaptureService} from "../../../../services/audio-capture-service";
-import {ThemeProvider} from "../../../../providers/theme/theme";
-import {Content} from "ionic-angular";
-import {Popup} from "../../../../providers/popup/popup";
-import {MEDIA_STATUS} from "@ionic-native/media";
+import { Component, forwardRef, Input, NgZone } from "@angular/core";
+import { BaseElement } from "../base-element";
+import { Form, FormElement, FormSubmission } from "../../../../model";
+import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { AudioCaptureService } from "../../../../services/audio-capture-service";
+import { ThemeProvider } from "../../../../providers/theme/theme";
+import { Content } from "ionic-angular";
+import { Popup } from "../../../../providers/popup/popup";
+import { MEDIA_STATUS } from "@ionic-native/media";
 
 
 @Component({

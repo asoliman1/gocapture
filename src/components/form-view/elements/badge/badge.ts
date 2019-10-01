@@ -16,7 +16,6 @@ import { ActionService } from "../../../../services/action-service";
 import { DuplicateLeadsService } from "../../../../services/duplicate-leads-service";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { Popup } from '../../../../providers/popup/popup';
-import {BussinessClient} from "../../../../services/business-service";
 
 @Component({
   selector: 'badge',
@@ -37,7 +36,6 @@ export class Badge extends BaseElement implements OnInit {
   isScanning: boolean = false;
   constructor(
     private client: RESTClient,
-    private businessService: BussinessClient,
     private popup: Popup,
     public barcodeScanner: BarcodeScanner,
     public utils: Util,
