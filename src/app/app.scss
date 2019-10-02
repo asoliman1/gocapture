@@ -19,6 +19,10 @@ ion-content[scroll=false] div.scroll-content{
     }
 }
 
+.disable-scroll .modal-wrapper .ion-page {
+    pointer-events: all;
+  }
+
 .action-sheet-group {
 	overflow: auto;
 }

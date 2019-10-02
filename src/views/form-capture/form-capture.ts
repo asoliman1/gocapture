@@ -181,24 +181,23 @@ export class FormCapture implements AfterViewInit {
         .whenNotInteractive()
         .within(this.form.event_style.screensaver_rotation_period, 1000)
         .do(() => {
-          setTimeout(() => {
             this.showScreenSaver()
-          }, 20);
           console.log('idle mode started')
         })
         .start();
   }
 
-  private showScreenSaver() {
+  private async showScreenSaver() {
 
     if (!this.isLoadingImages()) {
       if (!this._modal) {
         this.handleScreenSaverRandomize()
-        this.popup.dismiss('alert')
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
-        this._modal.present();
+       await this._modal.present();
+        console.log('Screen saver started.')
         this._modal.onDidDismiss(() => {
           this._modal = null
+          console.log('Screen saver dismissed.')
         })
       }
     } else {

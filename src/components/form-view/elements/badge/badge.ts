@@ -71,17 +71,14 @@ export class Badge extends BaseElement implements OnInit {
 
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
+      this.onProcessingEvent.emit('false');
 
-      if (response.isCancelled) {
-        this.onProcessingEvent.emit('false');
-
-        return;
-      }
+      if (response.isCancelled) return;
+    
 
       this.onChange(response.scannedId);
 
       if (this.element.post_show_reconciliation) {
-        this.onProcessingEvent.emit('false');
         this.scanner.restart();
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";
