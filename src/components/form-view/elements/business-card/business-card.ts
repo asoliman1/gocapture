@@ -1,5 +1,5 @@
 import { Device } from '@ionic-native/device';
-import {Component, Input, forwardRef, NgZone, ViewChild, OnDestroy} from '@angular/core';
+import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
@@ -11,16 +11,16 @@ import { ActionSheetController } from 'ionic-angular/components/action-sheet/act
 import { Platform } from 'ionic-angular/platform/platform';
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
 import { File } from '@ionic-native/file';
-import {Util} from "../../../../util/util";
+import { Util } from "../../../../util/util";
 
-import {ThemeProvider} from "../../../../providers/theme/theme";
-import {Popup} from "../../../../providers/popup/popup";
-import {PhotoViewer} from "@ionic-native/photo-viewer";
-import {PhotoLibrary} from "@ionic-native/photo-library";
-import {ImageViewer} from "./image-viewer";
-import {SettingsService} from "../../../../services/settings-service";
-import {settingsKeys} from "../../../../constants/constants";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import { ThemeProvider } from "../../../../providers/theme/theme";
+import { Popup } from "../../../../providers/popup/popup";
+import { PhotoViewer } from "@ionic-native/photo-viewer";
+import { PhotoLibrary } from "@ionic-native/photo-library";
+import { ImageViewer } from "./image-viewer";
+import { SettingsService } from "../../../../services/settings-service";
+import { settingsKeys } from "../../../../constants/constants";
+import { ScreenOrientation } from "@ionic-native/screen-orientation";
 
 declare var CameraPreview;
 declare var screen;
@@ -32,13 +32,13 @@ declare var screen;
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => BusinessCard), multi: true }
   ]
 })
-export class BusinessCard extends BaseElement implements OnDestroy{
+export class BusinessCard extends BaseElement implements OnDestroy {
 
   @ViewChild("frontImage")
-  private frontImage:any;
+  private frontImage: any;
 
   @ViewChild("backImage")
-  private backImage:any;
+  private backImage: any;
 
   @Input() element: FormElement;
   @Input() formGroup: FormGroup;
@@ -62,21 +62,23 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
 
   constructor(private actionCtrl: ActionSheetController,
-              private camera: Camera,
-              private device: Device,
-              private zone: NgZone,
-              private platform: Platform,
-              private modalCtrl: ModalController,
-              private imageProc: ImageProcessor,
-              public fileService: File,
-              public util: Util,
-              private themeProvider: ThemeProvider,
-              private popup: Popup,
-              private photoViewer: PhotoViewer,
-              private photoLibrary: PhotoLibrary,
-              private settingsService: SettingsService,
-              private screen: ScreenOrientation) {
+    private camera: Camera,
+    private device: Device,
+    private zone: NgZone,
+    private platform: Platform,
+    private modalCtrl: ModalController,
+    private imageProc: ImageProcessor,
+    public fileService: File,
+    public util: Util,
+    private themeProvider: ThemeProvider,
+    private popup: Popup,
+    private photoViewer: PhotoViewer,
+    private photoLibrary: PhotoLibrary,
+    private settingsService: SettingsService,
+    private screen: ScreenOrientation) {
+
     super();
+
     this.currentVal = {
       front: this.front,
       back: this.back
@@ -97,7 +99,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     quality: 100
   };
 
-  ngAfterContentInit(){
+  ngAfterContentInit() {
     this.theVal = {
       front: this.util.imageUrl(this.currentVal.front),
       back: this.util.imageUrl(this.currentVal.back)
@@ -110,12 +112,16 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     }
   }
 
+  ngOnInit() {
+    
+  }
+
   captureImage(type: number) {
     let buttons = [];
     if ((type == this.FRONT && this.currentVal.front != this.front) ||
       (type == this.BACK && this.currentVal.back != this.back)) {
 
-      if(this.readonly) {
+      if (this.readonly) {
         buttons = this.actionsForReadonlyCards(type);
       } else {
         buttons = this.actionsForCards(type);
@@ -158,10 +164,10 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
           this.photoLibrary.requestAuthorization().then(() => {
             this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
-              this.popup.showAlert('Info', 'Business card was saved to the Photo Library!',[{
-                  text: 'Ok',
-                  role: 'cancel'
-                }],
+              this.popup.showAlert('Info', 'Business card was saved to the Photo Library!', [{
+                text: 'Ok',
+                role: 'cancel'
+              }],
                 this.selectedTheme);
             });
           });
@@ -202,7 +208,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         text: 'Remove',
         role: 'destructive',
         handler: () => {
-          this.zone.run(() =>{
+          this.zone.run(() => {
             this.setValue(type, type == this.FRONT ? this.front : this.back);
           });
         }
@@ -226,7 +232,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
       saveToPhotoAlbum: false,
       encodingType: this.camera.EncodingType.JPEG,
       targetWidth: 1000,
-      targetHeight:1000,
+      targetHeight: 1000,
       destinationType: this.destinationType(),
       shouldDisplayOverlay: true,
       previewPositionX: 12,
@@ -252,15 +258,15 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.saveData({dataUrl: imageData}, type, shouldRecognize, captureType);
+      this.saveData({ dataUrl: imageData }, type, shouldRecognize, captureType);
 
       this.screen.unlock();
     }, (error) => {
       this.onProcessingEvent.emit('false');
       this.screen.unlock();
-      this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
+      this.popup.showAlert("Error", error, [{ text: 'Ok', role: 'cancel' }], this.selectedTheme);
       console.error(error);
-      this.zone.run(()=>{
+      this.zone.run(() => {
         this.frontLoading = false;
         this.backLoading = false;
       });
@@ -273,13 +279,13 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     let newName = new Date().getTime() + '.jpg';
     let promise = this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
 
-    promise.then((entry)=>{
-        console.log('Image was saved with success');
-        this.handleImageSaving(type, newFolder, newName, data, shouldRecognize, captureType);
-      },
+    promise.then((entry) => {
+      console.log('Image was saved with success');
+      this.handleImageSaving(type, newFolder, newName, data, shouldRecognize, captureType);
+    },
       (err) => {
         console.error(err);
-        this.zone.run(()=>{
+        this.zone.run(() => {
           this.frontLoading = false;
           this.backLoading = false;
         });
@@ -318,35 +324,35 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     });
   }
 
-  recognizeText(info: Info){
-    let modal = this.modalCtrl.create(OcrSelector, {imageInfo:info, form: this.form, submission: this.submission});
+  recognizeText(info: Info) {
+    let modal = this.modalCtrl.create(OcrSelector, { imageInfo: info, form: this.form, submission: this.submission });
     modal.onDidDismiss((changedValues) => {
       //this.currentVal.front = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
       // this.screen.unlock && this.screen.unlock();
-      if(changedValues){
+      if (changedValues) {
         var vals = {};
-        for(let id in this.formGroup.controls){
-          if(this.formGroup.controls[id]["controls"]){
+        for (let id in this.formGroup.controls) {
+          if (this.formGroup.controls[id]["controls"]) {
             vals[id] = {};
-            for(let subid in this.formGroup.controls[id]["controls"]){
+            for (let subid in this.formGroup.controls[id]["controls"]) {
               vals[id][subid] = this.formGroup.controls[id]["controls"][subid].value;
             }
-          }else{
+          } else {
             vals[id] = this.formGroup.controls[id].value;
           }
         }
         let ctrl: AbstractControl = null;
-        for(var id in changedValues){
+        for (var id in changedValues) {
           let match = /(\w+\_\d+)\_\d+/g.exec(id);
-          if(match && match.length > 0){
-            if(!vals[match[1]]){
+          if (match && match.length > 0) {
+            if (!vals[match[1]]) {
               vals[match[1]] = {};
             }
             vals[match[1]][id] = changedValues[id];
             ctrl = this.formGroup.get(match[1]).get(id);
             ctrl.markAsTouched();
             ctrl.markAsDirty();
-          }else{
+          } else {
             vals[id] = changedValues[id];
             ctrl = this.formGroup.get(id);
             ctrl.markAsTouched();
@@ -360,7 +366,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     //screen.orientation.lock && screen.orientation.lock("landscape");
   }
 
-  setValue(type, newPath){
+  setValue(type, newPath) {
     if (type == this.FRONT) {
       this.currentVal.front = newPath;
       this.theVal.front = this.util.adjustImagePath(this.currentVal.front);
@@ -382,26 +388,26 @@ export class BusinessCard extends BaseElement implements OnDestroy{
   }
 
   onImageLoaded(event, front) {
-    if(front){
+    if (front) {
       this.frontLoading = false;
-    }else{
+    } else {
       this.backLoading = false;
     }
   }
 
-  flip(type){
+  flip(type) {
     let image = "";
-    if(type == this.FRONT){
+    if (type == this.FRONT) {
       image = this.currentVal.front;
-    }else{
+    } else {
       image = this.currentVal.back;
     }
     let z = this.zone;
     let t = this;
-    this.imageProc.flip(this.normalizeURL(image)).subscribe( info => {
+    this.imageProc.flip(this.normalizeURL(image)).subscribe(info => {
       let name = image.substr(image.lastIndexOf("/") + 1).replace(/\?.*/, "");
       let folder = image.substr(0, image.lastIndexOf("/"));
-      this.fileService.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), {replace: true}).then((entry)=>{
+      this.fileService.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), { replace: true }).then((entry) => {
         z.run(() => {
           t.setValue(type, folder + "/" + name);
           if (type == this.FRONT) {
@@ -431,7 +437,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     }
   }
 
-  private viewImage(type){
+  private viewImage(type) {
     //const imageViewer = this.imageViewerCtrl.create((type == this.FRONT ? this.frontImage : this.backImage).nativeElement);
     //imageViewer.present();
     let imageFullPath = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
@@ -440,7 +446,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     let imagePath = this.imagesFolder() + "/" + imageName;
 
     if (this.platform.is("windows")) {
-      this.modalCtrl.create(ImageViewer, {image: imagePath}).present();
+      this.modalCtrl.create(ImageViewer, { image: imagePath }).present();
     } else {
       this.photoViewer.show(imagePath);
     }
@@ -451,7 +457,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
   }
 
   private adjustImagePath(path) {
-    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random())*1000) + "")
+    return path.replace(/\?.*/, "") + "#" + parseInt(((1 + Math.random()) * 1000) + "")
   }
 
   private destinationType() {
@@ -482,15 +488,15 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
     this.frontLoading = type == this.FRONT;
     this.backLoading = type != this.FRONT;
-    this.onProcessingEvent.emit(true);
+    this.onProcessingEvent.emit('true');
 
-    CameraPreview.startCamera(cameraPreviewOpts, function(result) {
-      this.onProcessingEvent.emit('false');
+    CameraPreview.startCamera(cameraPreviewOpts, (result) => {
 
       let imageData = result["picture"];
 
       if (imageData) {
         self.screen.unlock();
+        self.onProcessingEvent.emit('false');
 
         imageData = 'data:image/jpg;base64,' + imageData;
 
@@ -509,11 +515,11 @@ export class BusinessCard extends BaseElement implements OnDestroy{
           let newName = new Date().getTime() + '.jpg';
 
           let blob = self.imageProc.dataURItoBlob(data.dataUrl);
-          self.file.writeFile(newFolder, newName, blob).then((entry)=>{
-              console.log(JSON.stringify(entry));
+          self.file.writeFile(newFolder, newName, blob).then((entry) => {
+            console.log(JSON.stringify(entry));
 
-              self.handleImageSaving(type,newFolder, newName, data, shouldRecognize, 1);
-            },
+            self.handleImageSaving(type, newFolder, newName, data, shouldRecognize, 1);
+          },
             (err) => {
               console.error(err);
             });
@@ -522,9 +528,10 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         self.frontLoading = false;
         self.backLoading = false;
         self.screen.unlock();
+        self.onProcessingEvent.emit('false');
       }
     }, function (error) {
-      this.onProcessingEvent.emit('false');
+      self.onProcessingEvent.emit('false');
       self.screen.unlock();
       console.log(error);
       self.popup.showAlert('Error', error, ['Ok']);

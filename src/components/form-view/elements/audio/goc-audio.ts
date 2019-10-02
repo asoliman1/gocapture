@@ -28,7 +28,7 @@ export class GOCAudio extends BaseElement {
 
 	selectedTheme;
 	isRecording = false;
-  isRecordingPaused = false;
+	isRecordingPaused = false;
 	isPlaying = false;
 
 	trackDuration = 0;
@@ -58,16 +58,16 @@ export class GOCAudio extends BaseElement {
 		this.onProcessingEvent.emit('true');
 		this.trackDuration = 0;
 		this.audioCaptureService.startRecord().subscribe((status) => {
-      this.isRecordingPaused = status == MEDIA_STATUS.PAUSED;
+			this.isRecordingPaused = status == MEDIA_STATUS.PAUSED;
 			if (status == MEDIA_STATUS.RUNNING) {
 				this.updateRecordDuration();
 				this.isRecording = true;
 			}
 			if (this.isRecordingPaused) {
-			  this.updateRecordDuration(true);
-      }
+				this.updateRecordDuration(true);
+			}
 		}, (error) => {
-		this.onProcessingEvent.emit('false');
+			this.onProcessingEvent.emit('false');
 
 			this.popup.showAlert('Error', "Can't start recording", [{
 				text: 'Cancel',
@@ -89,14 +89,14 @@ export class GOCAudio extends BaseElement {
 	}
 
 	pauseRecording() {
-	  this.isRecordingPaused = true;
-    this.audioCaptureService.pauseRecord();
-  }
+		this.isRecordingPaused = true;
+		this.audioCaptureService.pauseRecord();
+	}
 
-  resumeRecording() {
-    this.isRecordingPaused = false;
-    this.audioCaptureService.resumeRecord();
-  }
+	resumeRecording() {
+		this.isRecordingPaused = false;
+		this.audioCaptureService.resumeRecord();
+	}
 
 	removeRecord() {
 		this.removeAudio();
