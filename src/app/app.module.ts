@@ -103,8 +103,9 @@ import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { EventItemComponent } from '../components/event-item/event-item';
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
+import { buttonBar } from '../components/form-view/button-bar/button-bar';
+import { formViewService } from '../components/form-view/form-view-service';
 import { ComponentsModule } from "../components/components.module";
-import { FilterPage } from "../pages/filter/filter";
 import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
@@ -151,7 +152,8 @@ import { SectionBlock } from '../components/section-block';
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    SectionBlock
+    buttonBar,
+    SectionBlock,
   ],
   imports: [
     BrowserModule,
@@ -168,7 +170,7 @@ import { SectionBlock } from '../components/section-block';
     IonicImageLoader.forRoot(),
     ComponentsModule,
     NgSelectModule,
-    FormsModule
+    FormsModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -207,7 +209,8 @@ import { SectionBlock } from '../components/section-block';
     OcrSelector,
     StationsPage,
     EventItemComponent,
-    ScreenSaverPage
+    ScreenSaverPage,
+    buttonBar,
   ],
   exports: [
     DynamicFormElementComponent
@@ -272,7 +275,8 @@ import { SectionBlock } from '../components/section-block';
     SubmissionMapper,
     ShareService,
     Insomnia,
-    FilterService
+    formViewService,
+    FilterService,
   ]
 })
 export class AppModule { }

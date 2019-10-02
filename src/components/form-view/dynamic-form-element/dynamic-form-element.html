@@ -125,7 +125,7 @@
     <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
-                     [formControlName]="element.identifier" [form]="form" [submission]="submission">
+                     [formControlName]="element.identifier" [form]="form" [submission]="submission" (onProcessingEvent)="onProcessing($event)">
       </business-card>
     </ion-item>
 

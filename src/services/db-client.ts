@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
+import 'rxjs/add/observable/forkJoin';
 import { Observer } from "rxjs/Observer";
 import {
 	User,
@@ -12,7 +13,7 @@ import {
 	IDocument
 } from "../model";
 import { Migrator, Manager, Table } from "./db";
-import { SQLiteObject, SQLite } from '@ionic-native/sqlite';
+import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
 
 let MASTER = "master";
@@ -29,7 +30,7 @@ export class DBClient {
 	private saveAllEnabled = false;
 	private saveAllPageSize = 50;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
-
+	
 	private tables: Table[] = [
 		{
 			name: 'forms',
@@ -159,7 +160,8 @@ export class DBClient {
 				"select": "SELECT * FROM configuration where key =?",
 				"selectAll": "SELECT * from configuration",
 				"update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
-				"delete": "DELETE FROM configuration WHERE key = (?)"
+				"delete": "DELETE FROM configuration WHERE key = (?)",
+				"deleteAll": "delete from configuration"
 			}
 		},
 		{
@@ -188,7 +190,8 @@ export class DBClient {
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
 				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
-				'updateRegistration': 'UPDATE org_master set registrationId = ?'
+				'updateRegistration': 'UPDATE org_master set registrationId = ?',
+				"deleteAll": "delete from org_master"
 			}
 		},
 		{
@@ -431,13 +434,13 @@ export class DBClient {
         ]
       },
       25: {
-			  queries: [
-			    "alter table forms add column event_address text",
+		queries: [
+		  "alter table forms add column event_address text",
         ]
       },
       26: {
-			  queries: [
-			    "alter table forms add column event_style text",
+		queries: [
+		  "alter table forms add column event_style text",
         ]
 			}
 		}
@@ -445,7 +448,7 @@ export class DBClient {
 	/**
 	 *
 	 */
-	constructor(private platform: Platform,private sql:SQLite) {
+	constructor(private platform: Platform) {
 		this.migrator = new Migrator();
 		this.migrator.setMigrations(this.versions);
 		this.manager = new Manager(platform, this.migrator, this.tables);
@@ -525,7 +528,7 @@ export class DBClient {
 		form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
 		form.event_address = typeof dbForm.event_address == "string" ? JSON.parse(dbForm.event_address) : dbForm.event_address;
 		form.event_style = typeof dbForm.event_style == "string" ? JSON.parse(dbForm.event_style) : dbForm.event_style;
-    form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
+   		form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
 
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
@@ -610,13 +613,13 @@ export class DBClient {
 				return;
 			}
 			this.manager.db(WORK).subscribe((db) => {
-				console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
+				// console.log("executing ", this.getQuery("forms", "deleteIn").replace("?", list.join(",")), []);
 				db.executeSql(this.getQuery("forms", "deleteIn").replace("?", list.join(",")), [])
 					.then((data) => {
-						console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
+						// console.log("executing ", this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), []);
 						db.executeSql(this.getQuery("submissions", "deleteIn").replace("?", list.join(",")), [])
 							.then((data) => {
-								console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
+								// console.log("executing ", this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), []);
 								db.executeSql(this.getQuery("contacts", "deleteIn").replace("?", list.join(",")), [])
 									.then((data) => {
 										responseObserver.next(true);
@@ -1130,13 +1133,17 @@ export class DBClient {
 		});
 	}
 
-	public deleteRegistration(authId: string)  {
+	public deleteRegistration()  {
 		localStorage.clear();
-		return this.dropDb()
+		this.dropDb()
 	}
 
 	private remove(type: string, table: string, parameters: any[], key = "delete"): Observable<boolean> {
 		return this.doUpdate(type, key, table, parameters);
+	}
+
+	private removeAll(type: string, table: string): Observable<boolean> {
+		return this.doUpdate(type, "deleteAll", table);
 	}
 
 	private saveAll<T>(items: T[], type: string, pageSize?: number): Observable<boolean> {
@@ -1368,7 +1375,13 @@ export class DBClient {
 	}
 
 	// A.S drop db on unauthenticate
-	public async dropDb(){
-		return this.sql.deleteDatabase({name:'tradeshow.db',location:'default'})
+	public dropDb(){
+	 this.tables.forEach(async(e)=>{
+		 this.removeAll(e.master ? MASTER : WORK,e.name).subscribe((data)=>{
+			 console.log(`${e.name} removed from db`)
+		 },err=>{
+			 console.log(err);
+		 })
+		})
 	}
 }

@@ -255,7 +255,7 @@ export class Util {
     let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
     let path = newFolder + name;
 
-    return { path, pathToDownload }
+    return { path, pathToDownload , name , folderPath:newFolder }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
@@ -274,6 +274,26 @@ export class Util {
   // A.S check the if any plugin is used or not 
   public getPluginPrefs() {
     return this.localStorage.get('android-plugin')
+  }
+
+  // A.S randomize an array
+  shuffle(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
   }
 
 }

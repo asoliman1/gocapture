@@ -64,7 +64,7 @@ export class Manager {
 	}
 
 	private initializeDb(platform: Platform, type: string): Observable<SQLiteObject> {
-		console.log("Initialize " + type);
+		// console.log("Initialize " + type);
 		return new Observable<SQLiteObject>((obs: Observer<SQLiteObject>) => {
 			let db: SQLite = null;
 			if (platform.is("cordova")) {
@@ -72,7 +72,7 @@ export class Manager {
 			} else {
 				db = <any>new LocalSql();
 			}
-			console.log("OPen db " + this.map[type].dbName);
+			// console.log("OPen db " + this.map[type].dbName);
 			let settings = {
 				name: this.map[type].dbName,
 				location: 'default', // the location field is required
@@ -178,7 +178,7 @@ class LocalSql {
 					resolve(t);
 				});
 			} catch (e) {
-				console.log(e);
+				// console.log(e);
 			}
 			setTimeout(() => {
 				resolve(t);

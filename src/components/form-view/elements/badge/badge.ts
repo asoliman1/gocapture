@@ -44,9 +44,12 @@ export class Badge extends BaseElement implements OnInit {
     public ndef: Ndef,
     public actionService: ActionService,
     public duplicateLeadsService: DuplicateLeadsService,
-    public appPreferences: AppPreferences) {
+    public appPreferences: AppPreferences,
+    ) {
     super();
+
   }
+
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
@@ -56,7 +59,7 @@ export class Badge extends BaseElement implements OnInit {
     return this.scanner ? this.scanner.statusMessage : "";
   }
 
-  scan() {
+  public scan() {
     if (this.readonly) return;
 
     this.isScanning = true;
@@ -68,17 +71,14 @@ export class Badge extends BaseElement implements OnInit {
 
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
+      this.onProcessingEvent.emit('false');
 
-      if (response.isCancelled) {
-        this.onProcessingEvent.emit('false');
-
-        return;
-      }
+      if (response.isCancelled) return;
+    
 
       this.onChange(response.scannedId);
 
       if (this.element.post_show_reconciliation) {
-        this.onProcessingEvent.emit('false');
         this.scanner.restart();
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";

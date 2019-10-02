@@ -17,12 +17,11 @@ export class EventItemComponent {
   imageLoading : boolean = true;
   themeColor : string;
   syncSub : Subscription;
-  themeSub : Subscription;
   constructor(private platform:Platform,private themeProvider:ThemeProvider,private syncClient : SyncClient) {
   }
 
   ionViewWillEnter(){
-    this.themeSub = this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme',''));
+   this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme',''));
   }
 
   ngOnInit(){
@@ -49,11 +48,10 @@ export class EventItemComponent {
   // }
 
   ionViewDidLeave(){
-    this.themeSub.unsubscribe();
   }
 
   checkImageDownload(){
-    if(this.form.event_style.event_record_background.startsWith('https://'))
+    if(this.form.event_style.event_record_background.path.startsWith('https://'))
     this.imageLoading = true;
     else
     this.imageLoading = false;

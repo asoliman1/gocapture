@@ -13,8 +13,8 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class SectionBlock extends BaseElement implements OnChanges, AfterViewInit, AfterViewChecked, DoCheck {
-  private active: boolean = true;
-  private selectedThemeColor: string;
+   active: boolean = true;
+   selectedThemeColor: string;
   private contentHeight: number;
   private visibleElementsCount: number;
   private shouldResetSectionHeight: boolean = false;

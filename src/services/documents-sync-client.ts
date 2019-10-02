@@ -22,7 +22,7 @@ export class DocumentsSyncClient {
     if (this._isSyncing) {
       return;
     }
-console.log('Start syncing docs')
+// console.log('Start syncing docs')
     return this.dbClient.getForms().subscribe(async (forms) => {
       if (forms.length) {
         this._isSyncing = true;

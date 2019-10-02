@@ -57,8 +57,9 @@ export class RapidCaptureService {
     }
     this.isProcessing = true;
     let formId = await this.appPreferences.fetch("rapidScan", "formId");
-    console.log('FORM ID - ' + formId);
     if (formId) {
+    console.log('FORM ID - ' + formId);
+
       let barcodes = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), formId + "");
       console.log('BARCODES - ' + JSON.stringify(barcodes));
 

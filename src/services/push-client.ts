@@ -92,7 +92,7 @@ export class PushClient {
 	}
 
 	private onRegistration(data : PushResponse){
-		console.log("registration", data);
+		// console.log("registration", data);
 		this.registrationSource.next(data.registrationId);
 	}
 

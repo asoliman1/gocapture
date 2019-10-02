@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, HostListener } from '@angular/core';
+import { Util } from './../../util/util';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 
 import {
   AlertController,
@@ -118,8 +119,8 @@ export class FormCapture implements AfterViewInit {
     private popoverCtrl: PopoverController,
     private syncClient: SyncClient,
     private dbClient: DBClient,
+    private utils: Util,
     private insomnia: Insomnia) {
-    console.log("FormCapture");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
@@ -163,7 +164,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private setupIdleMode() {
-    if (this.form.event_style.is_enable_screensaver) {
+    if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode) {
       this.insomnia.keepAwake()
         .then(() => this.handleIdleMode()
         ).catch((err) => {
@@ -171,7 +172,6 @@ export class FormCapture implements AfterViewInit {
           this.handleIdleMode()
         }
         )
-
     }
   }
 
@@ -181,38 +181,47 @@ export class FormCapture implements AfterViewInit {
         .whenNotInteractive()
         .within(this.form.event_style.screensaver_rotation_period, 1000)
         .do(() => {
-          setTimeout(() => {
             this.showScreenSaver()
-          }, 20);
           console.log('idle mode started')
         })
         .start();
   }
 
-  private showScreenSaver() {
+  private async showScreenSaver() {
+
     if (!this.isLoadingImages()) {
       if (!this._modal) {
+        this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
-        this._modal.present();
+       await this._modal.present();
+        console.log('Screen saver started.')
         this._modal.onDidDismiss(() => {
           this._modal = null
+          console.log('Screen saver dismissed.')
         })
       }
     } else {
-      console.log('still downloading images');
+      console.log('still downloading images...');
     }
+  }
+
+  
+  private handleScreenSaverRandomize(){
+    if(this.form.event_style.is_randomize)
+    this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
 
   private isLoadingImages() {
     for (let index = 0; index < this.form.event_style.screensaver_media_items.length; index++) {
       const element = this.form.event_style.screensaver_media_items[index];
-      if (element.startsWith('https://')) return true;
+      if (element.path.startsWith('https://')) return true;
     }
     return false;
   }
 
   private stopIdleMode() {
-    this.idle.stop();
+    this.idle.stop()
+    console.log('idle mode stopped');
   }
 
   private setupForm() {
@@ -457,8 +466,8 @@ export class FormCapture implements AfterViewInit {
   ionViewDidLeave() {
     this.menuCtrl.enable(true);
     this.insomnia.allowSleepAgain()
-    .then(()=>{})
-    .catch((err)=>console.log(err));
+      .then(() => { })
+      .catch((err) => console.log(err));
     this.stopIdleMode();
   }
 
@@ -565,7 +574,7 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
-  doSave(shouldSyncData = true) {
+  public doSave(shouldSyncData = true) {
     this.submitAttempt = true;
 
     /*
@@ -669,6 +678,8 @@ export class FormCapture implements AfterViewInit {
 
   onProcessing(event) {
     this.isProcessing = JSON.parse(event);
+    if(this.isProcessing) this.stopIdleMode();
+    else this.setupIdleMode()
   }
 
   searchProspect() {

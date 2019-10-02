@@ -27,6 +27,7 @@ export class FormView {
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() ButtonEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
@@ -209,6 +210,22 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
+        // this.displayForm.elements = [
+        //   ...this.displayForm.elements,
+        //   {
+        //     ...this.displayForm.elements[0],
+        //     id: 999,
+        //     type: 'document',
+        //     title: 'ELM Documents'
+        //   },
+        //   {
+        //     ...this.displayForm.elements[0],
+        //     id: 9999,
+        //     type: 'document',
+        //     title: 'POST SHOW Docs'
+        //   }
+        // ];
+        // console.log(this.displayForm);
         this.buildSections();
       });
     }, 150);
@@ -461,7 +478,12 @@ export class FormView {
   }
 
   onProcessing(event) {
+    console.log('form view on processing : '+event);
     this.onProcessingEvent.emit(event);
+  }
+
+  onButtonEvent(event){
+    this.ButtonEvent.emit(event);
   }
 
   private buildSections() {
@@ -484,8 +506,12 @@ export class FormView {
     })
   }
 
+  show(el){
+    console.log(el);
+  }
+
   // used by the *ngFor
-  private trackByFn(index: number, item: FormElement) {
+   trackByFn(index: number, item: FormElement) {
     if (!item) {
       return null;
     }
