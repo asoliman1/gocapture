@@ -8,9 +8,23 @@
 
     <div *ngIf="isRecording">
       <div class="counter">{{trackDuration | timeIntervalPipe}}</div>
-      <button class="stop-btn" ion-button icon-only outline block (click)="stopRecording()">
-        <ion-icon name="square"></ion-icon>
-      </button>
+      <div class="recording-dot blink" *ngIf="!isRecordingPaused"></div>
+      <div class="recording-dot" *ngIf="isRecordingPaused"></div>
+      <ion-row>
+        <ion-col>
+          <button ion-button icon-only outline block (click)="pauseRecording()" *ngIf="!isRecordingPaused">
+            <ion-icon name="pause"></ion-icon>
+          </button>
+          <button  ion-button icon-only outline block (click)="resumeRecording()" *ngIf="isRecordingPaused">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-col>
+        <ion-col>
+          <button class="stop-btn" ion-button icon-only outline block (click)="stopRecording()">
+            <ion-icon name="square"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
     </div>
 
   </div>

@@ -7,9 +7,12 @@ import { Subscription } from "rxjs/Subscription";
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { Util } from "../../util/util";
-import { Content } from "ionic-angular";
-import { Popup } from '../../providers/popup/popup';
-
+import { Content, ModalController } from "ionic-angular";
+import { FilterType, GCFilter } from "../../components/filters-view/gc-filter";
+import { FilterService, Modifier, Modifiers } from "../../services/filter-service";
+import { ThemeProvider } from "../../providers/theme/theme";
+import { DateTimeUtil } from "../../util/date-time-util";
+import { Popup } from "../../providers/popup/popup";
 
 @Component({
 	selector: 'form-review',
@@ -21,7 +24,7 @@ export class FormReview {
 
 	form: Form = new Form();
 
-	filter : any = {};
+	statusFilter = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -33,11 +36,21 @@ export class FormReview {
 
 	private isDispatch;
 
-	filters : any;
+	statusFilters;
+	selectedFilters: GCFilter[] = [];
 
 	filteredSubmissions: FormSubmission[] = [];
+	searchedSubmissions: FormSubmission[] = [];
 
 	hasSubmissionsToSend: boolean = false;
+
+	isFilterExpanded: boolean = false;
+
+	filterPageModal;
+
+	private selectedTheme;
+
+	filters: GCFilter[] = this.filterService.filters(true);
 
 	constructor(private navCtrl: NavController,
 		private navParams: NavParams,
@@ -45,39 +58,51 @@ export class FormReview {
 		private zone: NgZone,
 		private syncClient: SyncClient,
 		private popup: Popup,
-		private util: Util,
-	) {
+    private util: Util,
+    private modalCtrl: ModalController,
+    private filterService: FilterService,
+    private themeProvider: ThemeProvider
+              ) {
 
-		this.filters = [
-			{ id: 'all', title: "All", status: 0, description: "Tap an entry to edit/review." },
-			{ id: 'sent', title: "Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review." },
-			{ id: 'hold', title: "Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review." },
-			{ id: 'ready', title: "Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete." },
-			{ id: 'blocked', title: "Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete." },
-		];
-		this.filter = this.filters[0];
+	  this.statusFilters = [
+	    {id: 'all', title:"All", status: 0,  description: "Tap an entry to edit/review."},
+	    {id: 'sent', title:"Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review."},
+	    {id: 'hold', title:"Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review."},
+	    {id: 'ready', title:"Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."},
+	    {id: 'blocked', title:"Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."},
+	    ];
+	  this.statusFilter = this.statusFilters[0];
+
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
+    this.form = this.navParams.get("form");
+    this.isDispatch = this.navParams.get("isDispatch");
+    this.loading = true;
+    this.doRefresh();
+    this.syncing = this.syncClient.isSyncing();
+
+    this.sub = this.syncClient.onSync.subscribe(stats => { },
+      (err) => { },
+      () => {
+        this.syncing = this.syncClient.isSyncing();
+        this.doRefresh();
+      });
 	}
 
 	ionViewDidEnter() {
-		this.form = this.navParams.get("form");
-		this.isDispatch = this.navParams.get("isDispatch");
-		this.loading = true;
-		this.doRefresh();
-		this.syncing = this.syncClient.isSyncing();
-
-		this.sub = this.syncClient.onSync.subscribe(stats => { },
-			(err) => { },
-			() => {
-				this.syncing = this.syncClient.isSyncing();
-				this.doRefresh();
-			});
+		//
 	}
 
+	ionViewWillLeave() {
+	  this.isFilterExpanded = false;
+  }
+
 	ionViewDidLeave() {
-		if (this.sub) {
-			this.sub.unsubscribe();
-			this.sub = null;
-		}
+	  if (this.sub) {
+      this.sub.unsubscribe();
+      this.sub = null;
+      this.filterService.clearFilters();
+    }
 	}
 
 	getIcon(sub: FormSubmission) {
@@ -196,10 +221,22 @@ export class FormReview {
 		});
 	}
 
+  getSearchedItems(event) {
+    let val = event.target.value;
+    let regexp = new RegExp(val, "i");
+    this.searchedSubmissions = [].concat(this.filteredSubmissions.filter((submission) => {
+      return !val || regexp.test(submission.email) || regexp.test(submission.first_name + ' ' + submission.last_name);
+    }));
+  }
+
+  isSearchingAvailable() {
+    return !(this.filteredSubmissions.length == 0 || this.filteredSubmissions[0].id == -1);
+  }
+
 	onFilterChanged() {
 		this.zone.run(() => {
-			let f = this.filter;
-			this.filteredSubmissions = this.submissions.filter((sub) => {
+			let f = this.statusFilter;
+			this.filteredSubmissions = this.submissions.filter((sub)=>{
 				sub["hasOnlyBusinessCard"] = this.hasOnlyBusinessCard(sub);
 				//Under “Ready” we should show the list of ready submissions + submissions with status = sending (with no datetime condition)
 				if (Number(f["status"]) == SubmissionStatus.ToSubmit) {
@@ -224,7 +261,13 @@ export class FormReview {
 				this.filteredSubmissions.push(fakeSubmission);
 			}
 
-			this.content.resize();
+			this.searchedSubmissions = this.filteredSubmissions;
+
+      this.selectedFilters.forEach((filter) => {
+        this.filterDataWithFilter(filter, this.searchedSubmissions);
+      });
+
+      this.content.resize();
 		});
 	}
 
@@ -249,6 +292,65 @@ export class FormReview {
 		});
 	}
 
+	openFilter() {
+	  this.isFilterExpanded = !this.isFilterExpanded;
+    this.content.resize();
+  }
+
+  openFilterView(filter: GCFilter) {
+    if (this.selectedFilters.filter(f => f.id === filter.id).length == 0) {
+      this.selectedFilters.push(filter);
+    }
+
+    this.filterPageModal = this.modalCtrl.create('FilterPage', {
+      items: this.filterService.composeData(filter, this.submissions, this.form),
+      selectedItems: filter.selected,
+      title: filter.title,
+      filter: filter
+    }, {cssClass: this.selectedTheme});
+    this.filterPageModal.present();
+
+    this.filterPageModal.onDidDismiss((data: {data: any, modifier: Modifier}) => {
+
+      if (!data) {
+        return;
+      }
+
+      filter.selected = data.data;
+      filter.modifier = data.modifier;
+
+      this.searchedSubmissions = this.filteredSubmissions;
+      this.selectedFilters.forEach((filter) => {
+        this.filterDataWithFilter(filter, this.searchedSubmissions);
+      })
+    });
+  }
+
+  filterDataWithFilter(filter, data) {
+    if (filter.id == FilterType.Name) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        let name = submission.first_name + ' ' + submission.last_name;
+        return FilterService.filterItems(filter.selected, name, filter.modifier);
+      }));
+    } else if (filter.id == FilterType.Email) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return FilterService.filterItems(filter.selected, submission.email, filter.modifier);
+      }));
+    } else if (filter.id == FilterType.CaptureType) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.submission_type) != -1;
+      }));
+    } else if (filter.id == FilterType.CapturedBy) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(submission.captured_by_user_name) != -1;
+      }));
+    } else if (filter.id == FilterType.CaptureDate) {
+      this.searchedSubmissions = [].concat(data.filter((submission) => {
+        return filter.selected.indexOf(DateTimeUtil.submissionDisplayedTime(submission.sub_date)) != -1;
+      }));
+    }
+  }
+
 	statusClick(event: Event, submission: FormSubmission) {
 		event.stopImmediatePropagation();
 		event.stopPropagation();
@@ -271,4 +373,23 @@ export class FormReview {
 
 		return false;
 	}
+
+	onBack() {
+	  this.isFilterExpanded = false;
+
+    this.content.resize();
+    this.filters = this.filterService.filters(true);
+    this.searchedSubmissions = this.filteredSubmissions;
+    this.selectedFilters = [];
+  }
+
+  resetFilter() {
+    this.filters = this.filterService.filters(true);
+    this.searchedSubmissions = this.filteredSubmissions;
+    this.selectedFilters = [];
+  }
+
+  itemTracker(index, item) {
+    return item.id;
+  }
 }

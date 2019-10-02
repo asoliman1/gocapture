@@ -1,0 +1,45 @@
+section-block {
+  .section {
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+
+    .card-header {
+      color: #fff;
+      padding: 0px !important;
+      
+      .item-block {
+        border: 0 !important;
+
+        .item-inner {
+          border: 0 !important;
+        }
+      }
+
+      .label {
+        color: #ffffff !important;
+        text-transform: uppercase;
+      }
+
+      ion-icon {
+        transition: all 350ms ease-in-out;
+
+        &.active {
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    .card-content {
+      padding: 0px !important; 
+      transition-property: all;
+	    transition-duration: 350ms;
+	    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+      border: 0.55px solid #c8c7cc;
+      margin-left: 1px;
+    }
+
+  }
+}

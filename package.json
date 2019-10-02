@@ -53,6 +53,7 @@
     "@ionic-native/vibration": "^4.20.0",
     "@ionic-native/wheel-selector": "^4.20.0",
     "@ionic/storage": "2.1.3",
+    "@ng-select/ng-select": "^1.4.2",
     "angular2-signaturepad": "^2.6.1",
     "angular2-text-mask": "^8.0.4",
     "com-sarriaroman-photoviewer": "1.1.18",

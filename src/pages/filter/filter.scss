@@ -1,0 +1,23 @@
+page-filter {
+  @import "select.material.theme";
+  .filter-name {
+    font-size: 1.2em;
+  }
+
+  .searchbar-input {
+    font-size: 20px !important;
+    font-weight: 600;
+  }
+
+  .ng-value-label, .ng-option-label {
+    font-size: 16px;
+  }
+
+  .ng-input {
+    line-height: 2em !important;
+  }
+
+  .ng-value-container {
+    margin-right: 35px;
+  }
+}

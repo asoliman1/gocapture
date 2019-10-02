@@ -55,12 +55,12 @@ export class MyApp {
   private subscribeThemeChanges() {
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val.toString();
-      // A.S 
+      // A.S
       const spinnerColor = this.selectedTheme.replace('-theme','');
 
       const colorKey = val.split('-');
       const color = Colors[colorKey[0]] || Colors[colorKey[1]] ;
-    
+
       if (this.platform.is('android')) {
         this.statusBar.backgroundColorByHexString(color);
       }
@@ -269,7 +269,7 @@ export class MyApp {
         }
       ];
 
-      
+
       this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
     }
   }

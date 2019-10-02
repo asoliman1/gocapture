@@ -27,7 +27,10 @@ export class LocalNotificationsService {
 	    return;
     }
 
-	  this.settingsService.getSetting(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS).subscribe(result => {
+	  this.settingsService.getSetting(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS).subscribe((result) => {
+	    if (!result || result.length == 0) {
+	      return;
+      }
 	    let remindObj = JSON.parse(result);
 	    if (remindObj && remindObj['remind']) {
         this.localNotifications.cancelAll().then(result => {

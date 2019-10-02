@@ -14,7 +14,6 @@ import {
   Form,
   FormElementType,
   FormSubmission,
-  FormSubmissionType,
   SubmissionStatus,
   SyncStatus
 } from "../model";
@@ -444,14 +443,6 @@ export class SyncClient {
     console.log("Submit form: " + JSON.stringify(submission));
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
-    }
-
-    if (submission.barcode_processed == BarcodeStatus.Processed) {
-      submission.submission_type = FormSubmissionType.barcode;
-    }
-
-    if (submission.prospect_id) {
-      submission.submission_type = FormSubmissionType.list;
     }
 
     this.rest.submitForm(submission).subscribe((d) => {

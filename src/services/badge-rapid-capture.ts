@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FormElement } from "../model";
+import { FormElement, FormSubmissionType } from "../model";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Scanner, ScannerResponse, ScannerType } from "../components/form-view/elements/badge/Scanners/Scanner";
 import { GOCNFCScanner } from "../components/form-view/elements/badge/Scanners/GOCNFCScanner";
@@ -17,6 +17,7 @@ import { Util } from "../util/util";
 export class BadgeRapidCapture implements RapidCapture {
 
   scanner: Scanner;
+  type: FormSubmissionType;
 
   constructor(public barcodeScanner: BarcodeScanner,
     public platform: Platform,
@@ -27,7 +28,7 @@ export class BadgeRapidCapture implements RapidCapture {
     public share: ShareService,
     public util:Util
   ) {
-    
+  this.type = FormSubmissionType.barcode;
   }
 
   private getScanner(element): Scanner {
@@ -45,7 +46,7 @@ export class BadgeRapidCapture implements RapidCapture {
       return response.barcodes;
     })
   }
-  
+
   // A.S GOC-300
   testCapture(type: ScannerType) {
     this.util.setPluginPrefs()
@@ -61,15 +62,11 @@ export class BadgeRapidCapture implements RapidCapture {
           , { text: 'Done', role: 'cancel',  }
         ])
       }
-
     }).catch((err) => {
       this.popup.showAlert(`${type == ScannerType.Barcode ? 'Barcode' : 'NFC'} Error`, err, [
         { text: 'Ok', role: 'cancel' }
       ])
     })
-
-
   }
-
 }
 

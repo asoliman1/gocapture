@@ -226,6 +226,7 @@ export class FormView {
         //   }
         // ];
         // console.log(this.displayForm);
+        this.buildSections();
       });
     }, 150);
   }
@@ -428,7 +429,11 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element) {
+  private shouldElementBeDisplayed(element: FormElement) {
+    return element.isMatchingRules && !element.parent_element_id;
+  }
+
+  private shouldElementBeDisplayedInsideSection(element: FormElement) {
     return element.isMatchingRules;
   }
 
@@ -479,5 +484,38 @@ export class FormView {
 
   onButtonEvent(event){
     this.ButtonEvent.emit(event);
+  }
+
+  private buildSections() {
+    const sections = {};
+
+    const findSectionChildElements = (sectionId) => {
+      return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
+    }
+
+    this.displayForm.elements
+      .filter((d) => d.type == 'section_block')
+      .forEach((section) => {
+        section.children = findSectionChildElements(section.id);
+        sections[section.id] = section;
+      });
+
+    Object.keys(sections).forEach((key: any) => {
+      const dataIndex = this.displayForm.elements.findIndex((d) => d.id == key);
+      this.displayForm[dataIndex] = sections[key];
+    })
+  }
+
+  show(el){
+    console.log(el);
+  }
+
+  // used by the *ngFor
+   trackByFn(index: number, item: FormElement) {
+    if (!item) {
+      return null;
+    }
+
+    return item.id;
   }
 }

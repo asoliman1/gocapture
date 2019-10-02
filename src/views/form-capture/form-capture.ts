@@ -17,7 +17,7 @@ import {
   DeviceFormMembership,
   DispatchOrder,
   Form,
-  FormSubmission,
+  FormSubmission, FormSubmissionType,
   SubmissionStatus
 } from "../../model";
 
@@ -136,9 +136,12 @@ export class FormCapture implements AfterViewInit {
 
     let instructions = this.localStorage.get("FormInstructions");
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
+    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1;
 
-    if (this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1) {
-      let instructionsModal = this.modal.create(FormInstructions, { form: this.form, isModal: true });
+
+    if (shouldShowInstruction) {
+      let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
+
       instructionsModal.present().then((result) => {
         formsInstructions.push(this.form.id);
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
@@ -437,7 +440,7 @@ export class FormCapture implements AfterViewInit {
       })
     }
     this.onFormUpdate = this.syncClient.entitySynced.subscribe((e) => {
-      if (e === 'Forms') this.checkFormUpdates() // check for any form update 
+      if (e === 'Forms') this.checkFormUpdates() // check for any form update
     })
   }
 
@@ -575,7 +578,8 @@ export class FormCapture implements AfterViewInit {
     this.submitAttempt = true;
 
     /*
-     When transcription is enabled, the app is still requiring name and email. If there is a business card attached and transcription is turned on, we should not require either of these fields.
+     When transcription is enabled, the app is still requiring name and email.
+     If there is a business card attached and transcription is turned on, we should not require either of these fields.
      */
 
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
@@ -586,13 +590,11 @@ export class FormCapture implements AfterViewInit {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
+      } else if (!this.valid) {
+        this.errorMessage = this.formView.getError();
+        this.content.resize();
+        return;
       }
-    }
-
-    if (noTranscriptable && !this.valid) {
-      this.errorMessage = this.formView.getError();
-      this.content.resize();
-      return;
     }
 
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
@@ -611,6 +613,8 @@ export class FormCapture implements AfterViewInit {
       this.submission.station_id = this.selectedStation;
     }
 
+    this.setSubmissionType();
+
     this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
       this.tryClearDocumentsSelection();
 
@@ -623,28 +627,44 @@ export class FormCapture implements AfterViewInit {
         return;
       }
 
-      if (this.form.is_mobile_kiosk_mode) {
-        this.clearPlaceholders();
-        this.submission = null;
-        this.form = null;
-        this.dispatch = null;
-        this.popup.showToast(
-          "Submission Successful.",
-          'bottom',
-          'success',
-          1500,
-        );
-        setTimeout(() => {
-          this.zone.run(() => {
-            this.setupForm();
-          });
-        }, 10);
-      } else {
-        this.navCtrl.pop();
-      }
+      this.kioskModeCallback();
     }, (err) => {
       console.error(err);
     });
+  }
+
+  kioskModeCallback() {
+    if (this.form.is_mobile_kiosk_mode) {
+      this.clearPlaceholders();
+      this.submission = null;
+      this.form = null;
+      this.dispatch = null;
+      this.popup.showToast(
+        "Submission Successful.",
+        'bottom',
+        'success',
+        1500,
+      );
+      setTimeout(() => {
+        this.zone.run(() => {
+          this.setupForm();
+        });
+      }, 10);
+    } else {
+      this.navCtrl.pop();
+    }
+  }
+
+  setSubmissionType() {
+    if (this.submission.barcode_processed == BarcodeStatus.Processed ||
+      this.submission.barcode_processed == BarcodeStatus.Queued ||
+      this.submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
+      this.submission.submission_type = FormSubmissionType.barcode;
+    } else if (this.submission.prospect_id) {
+      this.submission.submission_type = FormSubmissionType.list;
+    } else if (this.isTranscriptionEnabled() && this.isBusinessCardAdded()) {
+      this.submission.submission_type = FormSubmissionType.transcription;
+    }
   }
 
   onValidationChange(valid: boolean) {
