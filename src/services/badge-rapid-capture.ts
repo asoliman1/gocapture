@@ -32,7 +32,7 @@ export class BadgeRapidCapture implements RapidCapture {
   }
 
   private getScanner(element): Scanner {
-    this.util.setPluginPrefs()
+    this.util.setPluginPrefs();
     if (element.badge_type == ScannerType.Nfc) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
@@ -40,7 +40,7 @@ export class BadgeRapidCapture implements RapidCapture {
   }
 
   capture(element: FormElement, id: string) {
-    this.util.setPluginPrefs()
+    this.util.setPluginPrefs();
     this.scanner = this.getScanner(element);
     return this.scanner.scan(true, id).then((response) => {
       return response.barcodes;

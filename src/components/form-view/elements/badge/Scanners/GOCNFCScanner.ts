@@ -19,7 +19,7 @@ export class GOCNFCScanner implements Scanner {
     return new Promise<ScannerResponse>(((resolve, reject) => {
       this.nfc.enabled().then(() => {
         this.readNfc(resolve, reject);
-      }, error => {
+      }, (error) => {
         this.statusMessage = "Could not scan " + this.name;
         reject("Nfc is not available");
       });
@@ -30,14 +30,24 @@ export class GOCNFCScanner implements Scanner {
     this.statusMessage = "Ready to scan. Hold the device near the badge.";
     this.nfc.addNdefListener(() => {
       if (this.platform.is("ios")) {
-        this.nfc.beginSession().subscribe();
+        this.nfc.beginSession(() => {
+          console.log('NFC session was started with success');
+        }, (error) => {
+          console.error('Session was invalidated with error ' + error);
+          reject(error);
+        }).subscribe((data) => {
+          console.log('NFC session was started with success (subscribe)');
+        }, (error)=>{
+          console.error('Session was invalidated with error ' + error + ('subscribe'));
+          reject(error);
+        } );
       }
-    }, error => {
+    }, (error) => {
       reject("Could not scan " + this.name);
     }).subscribe((event) => {
       console.log('Received ndef event - ' + JSON.stringify(event));
       resolve({ scannedId: this.convertData(event.tag.ndefMessage[0].payload) });
-    }, err => {
+    }, (err) => {
       this.statusMessage = "Could not scan " + this.name;
       reject(err);
     });

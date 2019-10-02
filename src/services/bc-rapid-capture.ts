@@ -23,7 +23,7 @@ export class BCRapidCapture implements RapidCapture {
 	}
 
   capture(element: FormElement): Promise<any[]> {
-    this.util.setPluginPrefs()
+    this.util.setPluginPrefs();
 
     return new Promise<any[]>((resolve, reject) => {
       let width = Math.min(this.platform.width(), this.platform.height());

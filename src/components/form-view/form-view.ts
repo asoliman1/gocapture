@@ -491,7 +491,7 @@ export class FormView {
 
     const findSectionChildElements = (sectionId) => {
       return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
-    }
+    };
 
     this.displayForm.elements
       .filter((d) => d.type == 'section_block')

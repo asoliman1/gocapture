@@ -261,7 +261,7 @@ export class Util {
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
   public setPluginPrefs() {
     if (this.platform.is('android'))
-      this.localStorage.set('android-plugin', true)
+      this.localStorage.set('android-plugin', true);
     else
       this.localStorage.set('android-plugin', false);
   }
@@ -271,7 +271,7 @@ export class Util {
     this.localStorage.remove('android-plugin')
   }
 
-  // A.S check the if any plugin is used or not 
+  // A.S check the if any plugin is used or not
   public getPluginPrefs() {
     return this.localStorage.get('android-plugin')
   }
@@ -279,20 +279,20 @@ export class Util {
   // A.S randomize an array
   shuffle(array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
-  
+
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-  
+
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-  
+
       // And swap it with the current element.
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-  
+
     return array;
   }
 

@@ -50,6 +50,9 @@ export class RapidCaptureService {
     return this.captureService.capture(element, id);
   }
 
+  getType() {
+    return this.captureService.type;
+  }
 
   public async processUnsentBadges(forms, theme) {
     if (forms.length == 0 || this.isProcessing) {
@@ -73,16 +76,17 @@ export class RapidCaptureService {
 
       console.log('Station id - ' + stationId);
       let elementId = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "elementId");
-
       console.log('Element id - ' + elementId);
 
+      let captureType = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "captureType");
+
       if (barcodes && barcodes.length > 0) {
-        this.showUserPrompt(barcodes, selectedForm, stationId, elementId, theme);
+        this.showUserPrompt(barcodes, selectedForm, stationId, elementId, theme, captureType);
       }
     }
   }
 
-  private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme) {
+  private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme, captureType) {
     const buttons = [
       {
         text: 'Delete',
@@ -95,7 +99,7 @@ export class RapidCaptureService {
       {
         text: 'Process',
         handler: () => {
-          this.processRapidScanResult(barcodes, selectedForm, stationId, elementId);
+          this.processRapidScanResult(barcodes, selectedForm, stationId, elementId, captureType);
         }
       }];
     this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.name + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
@@ -106,6 +110,7 @@ export class RapidCaptureService {
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), formId);
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), "stationId");
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), "elementId");
+    this.appPreferences.remove(RapidCaptureService.dictKey(formId), "captureType");
   }
 
 
@@ -113,14 +118,14 @@ export class RapidCaptureService {
     return "rapidScan-" + formId + "";
   }
 
-  private processRapidScanResult(items, form, station, elementId) {
+  private processRapidScanResult(items, form, station, elementId, captureType) {
     let submissions = [];
 
     let i = 100;
     let timestamp = new Date().getTime();
     for (let item of items) {
       let submId = parseInt(timestamp + "" + i);
-      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId, submId);
+      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId, submId, captureType);
       i++;
       submissions.push(saveSubmObservable);
     }
@@ -142,7 +147,7 @@ export class RapidCaptureService {
   }
 
   //saving subm from rapid scan mode
-  private saveSubmissionWithData(data, form, station, element, submId) {
+  private saveSubmissionWithData(data, form, station, element, submId, captureType) {
     let submission = new FormSubmission();
     let elementId = "element_" + element;
     submission.fields[elementId] = data;
@@ -157,10 +162,10 @@ export class RapidCaptureService {
 
     submission.station_id = station;
 
-    if (this.captureService.type == FormSubmissionType.barcode) {
+    if (captureType == FormSubmissionType.barcode) {
       submission.barcode_processed = BarcodeStatus.Queued;
       submission.submission_type = FormSubmissionType.barcode;
-    } else if (this.captureService.type == FormSubmissionType.transcription) {
+    } else if (captureType == FormSubmissionType.transcription) {
       submission.submission_type = FormSubmissionType.transcription;
     }
 
