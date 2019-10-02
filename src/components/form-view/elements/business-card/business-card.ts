@@ -240,7 +240,11 @@ export class BusinessCard extends BaseElement implements OnDestroy{
     this.frontLoading = type == this.FRONT;
     this.backLoading = type != this.FRONT;
 
+    this.onProcessingEvent.emit('true');
+
     (<any>navigator).camera.getPicture((imageData) => {
+
+      this.onProcessingEvent.emit('false');
 
       console.log('Picture was taken');
 
@@ -252,6 +256,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
       this.screen.unlock();
     }, (error) => {
+      this.onProcessingEvent.emit('false');
       this.screen.unlock();
       this.popup.showAlert("Error", error, [{text: 'Ok', role: 'cancel'}], this.selectedTheme);
       console.error(error);
@@ -477,8 +482,10 @@ export class BusinessCard extends BaseElement implements OnDestroy{
 
     this.frontLoading = type == this.FRONT;
     this.backLoading = type != this.FRONT;
+    this.onProcessingEvent.emit(true);
 
     CameraPreview.startCamera(cameraPreviewOpts, function(result) {
+      this.onProcessingEvent.emit('false');
 
       let imageData = result["picture"];
 
@@ -517,6 +524,7 @@ export class BusinessCard extends BaseElement implements OnDestroy{
         self.screen.unlock();
       }
     }, function (error) {
+      this.onProcessingEvent.emit('false');
       self.screen.unlock();
       console.log(error);
       self.popup.showAlert('Error', error, ['Ok']);

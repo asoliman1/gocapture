@@ -194,6 +194,7 @@ export class FormCapture implements AfterViewInit {
     if (!this.isLoadingImages()) {
       if (!this._modal) {
         this.handleScreenSaverRandomize()
+        this.popup.dismiss('alert')
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
         this._modal.present();
         this._modal.onDidDismiss(() => {

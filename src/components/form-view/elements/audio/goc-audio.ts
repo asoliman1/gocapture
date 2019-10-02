@@ -67,6 +67,8 @@ export class GOCAudio extends BaseElement {
 			  this.updateRecordDuration(true);
       }
 		}, (error) => {
+		this.onProcessingEvent.emit('false');
+
 			this.popup.showAlert('Error', "Can't start recording", [{
 				text: 'Cancel',
 				role: 'cancel'

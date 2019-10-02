@@ -68,6 +68,8 @@ export class Migrator{
 					}else{
 						this.finishMigration(migration, migrationNo, db, resolve);
 					}
+				}).catch((err)=>{
+					console.log(err);
 				});
 			};
 			handler();

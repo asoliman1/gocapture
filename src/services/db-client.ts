@@ -13,7 +13,7 @@ import {
 	IDocument
 } from "../model";
 import { Migrator, Manager, Table } from "./db";
-import { SQLiteObject, SQLite } from '@ionic-native/sqlite';
+import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
 
 let MASTER = "master";
@@ -528,7 +528,7 @@ export class DBClient {
 		form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
 		form.event_address = typeof dbForm.event_address == "string" ? JSON.parse(dbForm.event_address) : dbForm.event_address;
 		form.event_style = typeof dbForm.event_style == "string" ? JSON.parse(dbForm.event_style) : dbForm.event_style;
-    form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
+   		form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
 
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
