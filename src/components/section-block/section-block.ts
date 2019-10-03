@@ -1,7 +1,7 @@
 import { FormElement } from './../../model/form-element';
 import { BaseElement } from './../form-view/elements/base-element';
 import { Colors } from '../../constants/colors';
-import { Component, Input, ViewChild, Renderer2, OnChanges, AfterViewInit, forwardRef, AfterViewChecked, DoCheck } from '@angular/core';
+import { Component, Input, ViewChild, Renderer2, OnChanges, forwardRef } from '@angular/core';
 import { ThemeProvider } from '../../providers/theme/theme';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -12,13 +12,14 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SectionBlock), multi: true }
   ]
 })
-export class SectionBlock extends BaseElement implements OnChanges, AfterViewInit, AfterViewChecked, DoCheck {
-   active: boolean = true;
-   selectedThemeColor: string;
+export class SectionBlock extends BaseElement implements OnChanges {
+  active: boolean = true;
+  selectedThemeColor: string;
+  
   private contentHeight: number;
   private visibleElementsCount: number;
   private shouldResetSectionHeight: boolean = false;
-
+  
   @Input('element') element: FormElement;
   @ViewChild("content") content: any;
 
@@ -42,21 +43,22 @@ export class SectionBlock extends BaseElement implements OnChanges, AfterViewIni
     }
   }
 
-  ngAfterViewInit() {
-    this.updateSectionHeight();
-    this.visibleElementsCount = this.getNumberOfVisibleElements();
-  }
+  // TODO: check the height calculation for better animations later
+  // ngAfterViewInit() {
+  //   this.updateSectionHeight();
+  //   this.visibleElementsCount = this.getNumberOfVisibleElements();
+  // }
 
-  ngAfterViewChecked() {
-    if (this.shouldResetSectionHeight) {
-      this.updateSectionHeight();
-    }
-  }
+  // ngAfterViewChecked() {
+  //   if (this.shouldResetSectionHeight) {
+  //     this.updateSectionHeight();
+  //   }
+  // }
 
-  ngDoCheck() {
-    const currentVisibleElements = this.getNumberOfVisibleElements();
-    this.shouldResetSectionHeight = currentVisibleElements !== this.visibleElementsCount;
-  }
+  // ngDoCheck() {
+  //   const currentVisibleElements = this.getNumberOfVisibleElements();
+  //   this.shouldResetSectionHeight = currentVisibleElements !== this.visibleElementsCount;
+  // }
 
   toggleSection() {
     this.active = !this.active;
@@ -64,25 +66,29 @@ export class SectionBlock extends BaseElement implements OnChanges, AfterViewIni
   }
 
   private updateSectionHeight() {
-    if (this.content.nativeElement && this.content.nativeElement.scrollHeight) {
-      const defaultPadding = 5;
-      this.contentHeight = this.content.nativeElement.scrollHeight + defaultPadding;
+    // if (this.content.nativeElement && this.content.nativeElement.scrollHeight) {
+    //   const defaultPadding = 5;
+    //   this.contentHeight = this.content.nativeElement.scrollHeight + defaultPadding;
 
-      const contentHeight = this.contentHeight ? this.contentHeight + 'px' : 'initial';
-      const maxHeighValue = this.active ? contentHeight : "0px";
+    //   const contentHeight = this.contentHeight ? this.contentHeight + 'px' : 'initial';
+    //   const maxHeighValue = this.active ? contentHeight : "0px";
+    if (this.content.nativeElement) {
+      const maxHeighValue = this.active ? 'initial' : "0px";
       this.renderer.setStyle(this.content.nativeElement, "max-height", maxHeighValue);
     }
   }
 
-  private getNumberOfVisibleElements() {
-    let count = 0;
+  // private getNumberOfVisibleElements() {
+  //   let count = 0;
 
-    this.element.children.forEach((child: FormElement) => {
-      if (child.isMatchingRules) {
-        count++;
-      }
-    });
+  //   if (this.element.children) {
+  //     this.element.children.forEach((child: FormElement) => {
+  //       if (child.isMatchingRules) {
+  //         count++;
+  //       }
+  //     });
+  //   }
   
-    return count;
-  }
+  //   return count;
+  // }
 }

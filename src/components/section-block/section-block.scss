@@ -1,10 +1,13 @@
 section-block {
+  width: 100% !important;
+
   .section {
     margin: 0;
     border-radius: 0;
-    width: 100%;
+    width: 100% !important;
     background: transparent;
     box-shadow: none;
+    height: initial;
 
     .card-header {
       color: #fff;
