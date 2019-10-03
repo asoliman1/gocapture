@@ -77,11 +77,13 @@ export class SectionBlock extends BaseElement implements OnChanges, AfterViewIni
   private getNumberOfVisibleElements() {
     let count = 0;
 
-    this.element.children.forEach((child: FormElement) => {
-      if (child.isMatchingRules) {
-        count++;
-      }
-    });
+    if (this.element.children) {
+      this.element.children.forEach((child: FormElement) => {
+        if (child.isMatchingRules) {
+          count++;
+        }
+      });
+    }
   
     return count;
   }
