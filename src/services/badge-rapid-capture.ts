@@ -49,7 +49,7 @@ export class BadgeRapidCapture implements RapidCapture {
 
   // A.S GOC-300
   testCapture(type: ScannerType) {
-    this.util.setPluginPrefs()
+    this.util.setPluginPrefs();
     let scanner = this.getScanner({ badge_type: type });
     scanner.testScanner().then((scannedId: ScannerResponse) => {
       if (!scannedId.isCancelled) {
