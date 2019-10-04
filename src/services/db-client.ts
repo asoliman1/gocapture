@@ -15,6 +15,7 @@ import {
 import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
+import { settingsKeys } from "../constants/constants";
 
 let MASTER = "master";
 let WORK = "work";
@@ -1116,6 +1117,7 @@ export class DBClient {
 			user.theme,
 			user.device_id
 		]).map(data => {
+		    this.saveConfig(settingsKeys.AUTO_UPLOAD, "true").subscribe();
 			this.registration = user;
 			return data;
 		});

@@ -713,10 +713,9 @@ export class SyncClient {
     return newForms.map((form) => {
      let oldForm = oldForms.filter(f => f.form_id == form.form_id)[0];
      let img = form.event_style.event_record_background;
-     form.event_style.event_record_background = { path: this.checkFile(img,oldForm ? oldForm.event_style.event_record_background : null , `background_${form.form_id}_`) , url: img };
-
+     form.event_style.event_record_background = { path: this.checkFile(img,oldForm && oldForm.event_style ? oldForm.event_style.event_record_background : null , `background_${form.form_id}_`) , url: img };
       if (form.event_style.screensaver_media_items.length) {
-        let oldImgs = oldForm ? oldForm.event_style.screensaver_media_items : [];
+        let oldImgs = oldForm && oldForm.event_style ? oldForm.event_style.screensaver_media_items : [];
         form.event_style.screensaver_media_items = form.event_style.screensaver_media_items.map((item) => {
           img = item;
           let oldImg = oldImgs.filter((e) => e.url == img)[0] ;

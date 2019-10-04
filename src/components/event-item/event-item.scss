@@ -55,7 +55,7 @@ $secondary : map-get($map: $colors, $key:"secondary" );
 
  ion-chip{
      font-weight: bold;
-     line-height: 2vh !important;
+     line-height: 2.1vh !important;
      height: 2.1vh !important;
      
      ion-icon{
@@ -63,7 +63,7 @@ $secondary : map-get($map: $colors, $key:"secondary" );
         width: 2vh;
     }
     ion-label{
-        font-size: 1.65vh;
+        font-size: 2.8vmin;
     }
  }
 

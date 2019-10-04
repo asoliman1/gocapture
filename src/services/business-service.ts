@@ -136,8 +136,8 @@ export class BussinessClient {
     if (!this.setup) {
       this.setup = true;
       this.pushSubs.push(this.push.error.subscribe((err) => {
-        // console.error("notification", err);
-        // console.error(JSON.stringify(err));
+        console.error("notification", err);
+        console.error(JSON.stringify(err));
       }));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
