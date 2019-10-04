@@ -22,7 +22,12 @@ export class GOCNFCScanner implements Scanner {
       }, (error) => {
         this.statusMessage = "Could not scan " + this.name;
         reject("Nfc is not available");
-      });
+
+      }).catch((error)=>{
+        console.log(error)
+        this.statusMessage = "Could not scan " + this.name;
+        reject("Nfc is not available");
+      })
     }));
   }
 
@@ -44,6 +49,7 @@ export class GOCNFCScanner implements Scanner {
       }
     }, (error) => {
       reject("Could not scan " + this.name);
+      console.log(error);
     }).subscribe((event) => {
       console.log('Received ndef event - ' + JSON.stringify(event));
       resolve({ scannedId: this.convertData(event.tag.ndefMessage[0].payload) });

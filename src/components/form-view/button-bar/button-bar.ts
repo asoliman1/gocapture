@@ -3,6 +3,7 @@ import { formViewService } from './../form-view-service';
 import { Form } from './../../../model/form';
 import { Component, OnInit, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { FormReview } from '../../../views/form-review';
 
 @Component({
     selector: 'button-bar',
@@ -20,12 +21,12 @@ export class buttonBar implements OnInit {
     ];
 
     @Input() form: Form;
-    EventSubscription : Subscription;
+    EventSubscription: Subscription;
     constructor(
         private navCtrl: NavController,
-        private formViewService:formViewService
-        ) {
-         
+        private formViewService: formViewService
+    ) {
+
     }
 
 
@@ -63,12 +64,14 @@ export class buttonBar implements OnInit {
     }
 
     onClick(btn) {
-        this.formViewService.pushEvent(btn.type);
+        if (btn.type == 'recall') this.recall();
+        else if (btn.type == 'leads') this.navCtrl.push(FormReview, { form: this.form, isDispatch: false });
+        else this.formViewService.pushEvent(btn.type);
     }
 
 
     recall() {
-        
+        console.log('recall')
     }
 
 

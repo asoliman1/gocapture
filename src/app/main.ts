@@ -5,7 +5,7 @@ import * as dev from "../config/dev";
 import * as prod from "../config/prod";
 import 'hammerjs';
 
-//enableProdMode();
+enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);
 
 isDevMode() ? dev.setupConfig() : prod.setupConfig();

@@ -28,6 +28,7 @@ plugins*/
 plugins/android.json
 plugins/ios.json
 www/
+src/app/config.ts
 .analysis/
 !3rdParty/**/*
 !cordova-plugin-gocapture-ocr/www
