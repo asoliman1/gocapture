@@ -1,3 +1,4 @@
+import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 
@@ -100,7 +101,7 @@ export class FormCapture implements AfterViewInit {
   private _modal: Modal;
 
   onFormUpdate: Subscription;
-
+  buttonBar : Subscription;
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
     private client: BussinessClient,
@@ -120,6 +121,7 @@ export class FormCapture implements AfterViewInit {
     private syncClient: SyncClient,
     private dbClient: DBClient,
     private utils: Util,
+    private formViewService:formViewService,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -444,6 +446,10 @@ export class FormCapture implements AfterViewInit {
     this.onFormUpdate = this.syncClient.entitySynced.subscribe((e) => {
       if (e === 'Forms') this.checkFormUpdates() // check for any form update
     })
+    this.buttonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+      if(data == 'reset') this.clear();
+      else if (data == 'submit') this.doSave();
+    })
   }
 
   checkFormUpdates() {
@@ -463,6 +469,7 @@ export class FormCapture implements AfterViewInit {
       this.stationsPopover.dismiss();
     }
     this.onFormUpdate.unsubscribe();
+    this.stopIdleMode();
   }
 
   ionViewDidLeave() {
@@ -470,7 +477,7 @@ export class FormCapture implements AfterViewInit {
     this.insomnia.allowSleepAgain()
       .then(() => { })
       .catch((err) => console.log(err));
-    this.stopIdleMode();
+    this.buttonBar.unsubscribe();
   }
 
   doRefresh(refresher) {

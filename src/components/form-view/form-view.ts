@@ -1,3 +1,4 @@
+import { formViewService } from './form-view-service';
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import {
@@ -58,13 +59,13 @@ export class FormView {
 
   isSeparatable : boolean = false;
   separateAt: number;
-
+  buttonBar : Subscription;
   constructor(
     private fb: FormBuilder,
     private zone: NgZone,
     private modal: ModalController,
-    private documentsService: DocumentsService,
-    private platform : Platform
+    private platform : Platform,
+    private formViewService:formViewService,
   ) {
     this.theForm = new FormGroup({});
     //this.documentsService.syncByForm(this.form.id);
@@ -85,6 +86,12 @@ export class FormView {
         })
       });
     });
+  }
+
+  ionViewDidEnter(){
+   this.buttonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+     if(data == 'reset') this.clear();
+   })
   }
 
   public hasChanges(): boolean {
@@ -210,22 +217,6 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
-        // this.displayForm.elements = [
-        //   ...this.displayForm.elements,
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 999,
-        //     type: 'document',
-        //     title: 'ELM Documents'
-        //   },
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 9999,
-        //     type: 'document',
-        //     title: 'POST SHOW Docs'
-        //   }
-        // ];
-        // console.log(this.displayForm);
         this.buildSections();
       });
     }, 150);
