@@ -51,7 +51,7 @@ export class EventItemComponent {
   }
 
   checkImageDownload(){
-    if(this.form.event_style.event_record_background.path.startsWith('https://'))
+    if(this.form.event_style && this.form.event_style.event_record_background.path.startsWith('https://'))
     this.imageLoading = true;
     else
     this.imageLoading = false;
