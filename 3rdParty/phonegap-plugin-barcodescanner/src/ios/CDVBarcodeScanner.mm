@@ -1005,6 +1005,7 @@ parentViewController:(UIViewController*)parentViewController
                      action:@selector(flipCameraButtonPressed:)
                      ];
 
+    id actionButton = shouldShowDoneBtn ? doneButton : cancelButton;
 
     NSMutableArray *items;
 
@@ -1016,17 +1017,15 @@ parentViewController:(UIViewController*)parentViewController
                         ];
 
     if (_processor.isShowFlipCameraButton) {
-        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, flipCamera, shutterButton, nil];
+        items = [NSMutableArray arrayWithObjects:flexSpace, actionButton, flexSpace, flipCamera, shutterButton, nil];
     } else {
-        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, shutterButton, nil];
+        items = [NSMutableArray arrayWithObjects:flexSpace, actionButton, flexSpace, shutterButton, nil];
     }
 #else
     if (_processor.isShowFlipCameraButton) {
-        items = [@[flexSpace, cancelButton, flexSpace, flipCamera] mutableCopy];
-    } else if (shouldShowDoneBtn) {
-        items = [@[flexSpace, doneButton, flexSpace] mutableCopy];
+        items = [@[flexSpace, actionButton, flexSpace, flipCamera] mutableCopy];
     } else {
-        items = [@[flexSpace, cancelButton, flexSpace] mutableCopy];
+        items = [@[flexSpace, actionButton, flexSpace] mutableCopy];
     }
 #endif
 

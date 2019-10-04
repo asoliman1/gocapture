@@ -207,7 +207,7 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  
+
   private handleScreenSaverRandomize(){
     if(this.form.event_style.is_randomize)
     this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
@@ -295,6 +295,8 @@ export class FormCapture implements AfterViewInit {
     }).catch((err) => {
       this.popup.dismiss('loading');
     });
+
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "captureType", this.rapidCaptureService.getType());
   }
 
 
