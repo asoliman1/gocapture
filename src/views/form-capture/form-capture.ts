@@ -42,6 +42,7 @@ import { ScreenSaverPage } from '../../pages/screen-saver/screen-saver';
 import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
+import { Station } from '../../model/station';
 
 
 
@@ -78,7 +79,7 @@ export class FormCapture implements AfterViewInit {
 
   isProcessing: boolean = false;
 
-  selectedStation: string = '';
+  selectedStation: Station ;
 
   private backUnregister;
 
@@ -254,7 +255,7 @@ export class FormCapture implements AfterViewInit {
 
   private setStation(submission) {
     if (submission && submission.station_id) {
-      this.selectedStation = submission.station_id;
+      this.selectedStation = this.getStationById( submission.station_id );
     }
   }
 
@@ -286,7 +287,7 @@ export class FormCapture implements AfterViewInit {
   private startRapidScan(element) {
     //save form id for which we have rapidscan
     this.appPreferences.store("rapidScan", "formId", this.form.form_id);
-    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation);
+    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
     this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
     this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
       this.popup.dismiss('loading');
@@ -359,7 +360,7 @@ export class FormCapture implements AfterViewInit {
     submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      submission.station_id = this.selectedStation;
+      submission.station_id = this.selectedStation.id;
     }
 
     return this.client.saveSubmission(submission, this.form, false);
@@ -619,7 +620,7 @@ export class FormCapture implements AfterViewInit {
     this.submission.hidden_elements = this.form.getHiddenElementsPerVisibilityRules();
 
     if (this.selectedStation) {
-      this.submission.station_id = this.selectedStation;
+      this.submission.station_id = this.selectedStation.id;
     }
 
     this.setSubmissionType();
@@ -952,7 +953,7 @@ export class FormCapture implements AfterViewInit {
             label: scanSource.name,
             value: scanSource.id,
             type: 'radio',
-            checked: scanSource.id == this.selectedStation
+            checked: scanSource.id == this.selectedStation.id
           });
         }
 
@@ -961,12 +962,11 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  stationTitle(stationId) {
-    for (let station of this.form.event_stations) {
-      if (station.id == stationId) {
-        return station.name;
-      }
-    }
-    return '';
+  // A.S
+  getStationById(stationId) {
+    for (let station of this.form.event_stations) 
+      if (station.id == stationId) return station;
+
+    return null;
   }
 }

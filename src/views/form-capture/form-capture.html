@@ -6,7 +6,7 @@
         <!-- A.S GOC-321 -->
         {{form ? form.name + ' (' + form.total_sent + ')' : ''}}
         <br *ngIf="form?.event_stations?.length" >
-        <span *ngIf="selectedStation" >{{stationTitle(selectedStation)}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
+        <span *ngIf="selectedStation" >{{selectedStation.name}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
         <br>
       </div>
     </ion-title>
