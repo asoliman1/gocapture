@@ -19,8 +19,8 @@
     </ion-item-divider>
     <ion-item no-lines *ngFor="let station of filteredStations">
       <ion-label>{{station.name}}</ion-label>
-      <ion-radio [value]="station.id"
-                 [checked]="station.id == this.selectedStation"></ion-radio>
+      <ion-radio [value]="station"
+                 [checked]="station.id == selectedStation?.id"></ion-radio>
     </ion-item>
   </ion-list>
 
