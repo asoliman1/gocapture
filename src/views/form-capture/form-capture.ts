@@ -594,7 +594,7 @@ export class FormCapture implements AfterViewInit {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (isNotScanned && noTranscriptable && !this.submission.is_filled_from_list) {
+    if (isNotScanned && noTranscriptable) {
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
