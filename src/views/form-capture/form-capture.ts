@@ -287,7 +287,9 @@ export class FormCapture implements AfterViewInit {
   private startRapidScan(element) {
     //save form id for which we have rapidscan
     this.appPreferences.store("rapidScan", "formId", this.form.form_id);
-    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
+    if (this.selectedStation) {
+      this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
+    }
     this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
     this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
       this.popup.dismiss('loading');
