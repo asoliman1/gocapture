@@ -51,36 +51,37 @@ export class Document extends BaseElement {
       return this.documentsService.showNoDocumentsToast();
     }
 
-    this.documentsService.getDocumentsByIds(this.element.documents_set.documents.map((d) => d.id)).subscribe((documents) => {
-      if (documents && documents.length) {
-        this.element.documents_set.documents = documents;
-      }
+    this.documentsService.getDocumentsByIds(this.element.documents_set.documents.map((d) => d.id))
+      .subscribe((documents) => {
+        if (documents && documents.length) {
+          this.element.documents_set.documents = documents;
+        }
 
-      this.prepareSelectedDocuments();
+        this.prepareSelectedDocuments();
 
-      const modal =  this.modalCtrl
-        .create("Documents", {
-          documentSet: this.element.documents_set,
-          shareMode: this.shareMode,
-          readOnly: this.isReadOnlyMode()
+        const modal = this.modalCtrl
+          .create("Documents", {
+            documentSet: this.element.documents_set,
+            shareMode: this.shareMode,
+            readOnly: this.isReadOnlyMode()
+          });
+
+        modal.onDidDismiss((data: number[]) => {
+          console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
+          if (data && Array.isArray(data)) {
+            this.element.documents_set.selectedDocumentIdsForSubmission = data;
+
+            if (this.shareMode === DocumentShareMode.SUBMISSION) {
+              data.length ? this.onChange(data) : this.onChange(null);
+            }
+          }
         });
 
-      modal.onDidDismiss((data: number[]) => {
-        console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
-        if (data && Array.isArray(data)) {
-          this.element.documents_set.selectedDocumentIdsForSubmission = data;
+        modal.present();
 
-          if (this.shareMode === DocumentShareMode.SUBMISSION) {
-            data.length ? this.onChange(data) : this.onChange(null);
-          }
-        }
+      }, (error) => {
+        this.popup.showToast( `A problem occurred while opening your documents. Please try again.`);
       });
-
-      modal.present();
-
-    }, (error) => {
-      this.popup.showToast( `A problem occurred while opening your documents. Please try again.`);
-    });
   }
 
   prepareSelectedDocuments() {
