@@ -140,19 +140,12 @@
         <variable name="FCM_VERSION" value="11.6.2" />
     </plugin>
     <plugin name="cordova-plugin-media" spec="^5.0.2" />
-    <plugin name="phonegap-nfc" spec="^1.0.3">
-        <variable name="NFC_USAGE_DESCRIPTION" value="Read NFC Tags" />
-    </plugin>
-    <plugin name="cordova-plugin-photo-library" spec="git+https://github.com/nilebma/cordova-plugin-photo-library.git">
-        <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value=" " />
-    </plugin>
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
     <plugin name="cordova-wheel-selector-plugin" spec="1.1.2" />
     <plugin name="cordova-plugin-gocapture-ocr" spec="file:cordova-plugin-gocapture-ocr" />
     <plugin name="cordova-plugin-app-preferences" spec="file:3rdParty/me.apla.cordova.app-preferences-cordova-9.0.0" />
     <plugin name="cordova-plugin-camera" spec="file:3rdParty/cordova-plugin-camera" />
-    <plugin name="phonegap-plugin-barcodescanner" spec="file:3rdParty/phonegap-plugin-barcodescanner" />
     <plugin name="cordova-plugin-camera-preview" spec="file:3rdParty/cordova-plugin-camera-preview">
         <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="25+" />
     </plugin>

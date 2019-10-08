@@ -1,5 +1,5 @@
 $theme-color: color($colors, red);
-$theme-text-color : color($colors, black);
+$theme-text-color : color($colors, white);
 
 .red-theme {
   @include theme($theme-color,$theme-text-color);

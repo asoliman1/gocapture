@@ -1,14 +1,22 @@
 button-bar{
-    ion-footer{
-        position: sticky;
-    }
-    ion-row{
-        margin-top:10px;
-        margin-bottom:10px;
-        font-size: small;
-        text-align:center;
-    }
+
     ion-toolbar{
-        justify-content: center !important;
+        margin: -5px;
+        width: unset !important;
     }
+
+
+    .top-text{
+        ion-icon{
+            margin-bottom: 7px;
+        }
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+
+      .sticky{
+          position: sticky;
+          bottom: 0;
+      }
 }

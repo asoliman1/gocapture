@@ -14,7 +14,6 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import { ModalController, Platform } from "ionic-angular";
-import { DocumentsService } from "../../services/documents-service";
 
 @Component({
   selector: 'form-view',
@@ -69,6 +68,7 @@ export class FormView {
   ) {
     this.theForm = new FormGroup({});
     //this.documentsService.syncByForm(this.form.id);
+    console.log(this.isEditing)
   }
 
   showSelection() {

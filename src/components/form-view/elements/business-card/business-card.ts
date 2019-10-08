@@ -1,3 +1,5 @@
+import { formViewService } from './../../form-view-service';
+import { Subscription } from 'rxjs/Subscription';
 import { Device } from '@ionic-native/device';
 import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
@@ -49,6 +51,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   front: string = "assets/images/business-card-front.svg";
   back: string = "assets/images/business-card-back.svg";
+  ButtonBar : Subscription;
 
   backLoading: boolean = false;
   frontLoading: boolean = false;
@@ -75,6 +78,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     private photoViewer: PhotoViewer,
     private photoLibrary: PhotoLibrary,
     private settingsService: SettingsService,
+    private formViewService : formViewService,
     private screen: ScreenOrientation) {
 
     super();
@@ -110,11 +114,16 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     if (this.actionSubscription) {
       this.actionSubscription.unsubscribe();
     }
+    this.ButtonBar.unsubscribe();
+
   }
 
   ngOnInit() {
-    
+    this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+      if(data === 'scan_business_card') this.captureImage(this.FRONT);
+    })
   }
+
 
   captureImage(type: number) {
     let buttons = [];

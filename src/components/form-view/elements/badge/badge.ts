@@ -52,19 +52,20 @@ export class Badge extends BaseElement implements OnInit {
 
   }
 
-  ionViewDidEnter(){
-   this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-     console.log(data)
-      if(data === 'scan') this.scan();
-    })
-  }
-
   ionViewDidLeave(){
    this.ButtonBar.unsubscribe();
   } 
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
+    this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+       if(data === 'scan_barcode') this.scan();
+     })
+  }
+
+  
+  ngOnDestroy(){
+    this.ButtonBar.unsubscribe();
   }
 
   scannerStatusMessage() {
@@ -76,7 +77,7 @@ export class Badge extends BaseElement implements OnInit {
 
     this.isScanning = true;
     // if(this.element.type !== 'nfc')
-    // this.onProcessingEvent.emit('true');
+    this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
 

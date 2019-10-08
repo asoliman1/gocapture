@@ -13,19 +13,25 @@ import { ThemeProvider } from '../../providers/theme/theme';
 // A.S GOC-333
 
 export class ScreenSaverPage {
+ 
+
 
   eventStyle: EventStyle;
   @ViewChild(Slides) slides: Slides;
   currentIndex: number;
   themeColor: string;
-
+  loading : boolean;
   constructor(public navCtrl: NavController, public navParams: NavParams, private viewCtrl: ViewController, private themeProvider: ThemeProvider, private StatusBar: StatusBar) {
     this.eventStyle = this.navParams.data.event_style;
     this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme', ''));
   }
 
-  dismiss() {
-    this.viewCtrl.dismiss(this.currentIndex, '', { animate: true });
+
+  async dismiss()  {
+    if(this.loading) return; 
+    this.loading = true;
+    await this.viewCtrl.dismiss(this.currentIndex, '', { animate: true });
+    this.loading = false;
   }
 
   slideChanged() {
@@ -38,10 +44,6 @@ export class ScreenSaverPage {
 
   ionViewWillLeave() {
     this.StatusBar.show()
-  }
-
-  isLoading(item: string) {
-    return item.startsWith('https://')
   }
 
 
