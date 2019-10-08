@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import {Media, MEDIA_STATUS, MediaObject} from "@ionic-native/media";
-import {File, RemoveResult} from '@ionic-native/file';
-import {Observable, Observer} from "rxjs";
-import {Platform} from "ionic-angular";
-import {Util} from "../util/util";
+import { Media, MEDIA_STATUS, MediaObject } from "@ionic-native/media";
+import { File, RemoveResult } from '@ionic-native/file';
+import { Observable, Observer } from "rxjs";
+import { Platform } from "ionic-angular";
+import { Util } from "../util/util";
+import { SyncClient } from "./sync-client";
 
 @Injectable()
 
@@ -18,7 +19,8 @@ export class AudioCaptureService {
   constructor(private media: Media,
               private fileService: File,
               private platform: Platform,
-              private utils: Util) {
+              private utils: Util,
+              private syncClient: SyncClient) {
     //
   }
 
@@ -125,5 +127,13 @@ export class AudioCaptureService {
 
   private audioFolder(): string {
     return this.fileService.dataDirectory + "leadliaison/audio";
+  }
+
+  public async isRecordExist(url: string) {
+    return this.utils.fileExist(url);
+  }
+
+  public downloadRecord(url) {
+    return this.syncClient.downloadFileWithPath(url);
   }
 }

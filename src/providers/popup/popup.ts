@@ -28,7 +28,7 @@ export class Popup {
     public loadingCtrl: LoadingController) {
     //
   }
-  
+
   // A.S
   showLoading(message,theme?) {
     this.loading = this.loadingCtrl.create({ content: message,cssClass:theme });
@@ -89,10 +89,10 @@ export class Popup {
 
   // A.S
   dismissAll() {
-    this.dismiss('alert')
-    this.dismiss('loading')
-    this.dismiss('toast')
-    this.dismiss('actionSheet')
+    this.dismiss('alert');
+    this.dismiss('loading');
+    this.dismiss('toast');
+    this.dismiss('actionSheet');
   }
 
   // A.S

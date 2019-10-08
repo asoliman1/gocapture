@@ -220,6 +220,11 @@ export class Util {
     });
   }
 
+  public fileExist(url) {
+    let file =this.getFilePath(url, '');
+    return this.file.checkFile(file.folderPath + '/', file.name);
+  }
+
   public adjustFilePath(filePath) {
     if (this.platform.is("ios")) {
 
@@ -239,7 +244,7 @@ export class Util {
   private folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
       return "images/";
-    else if (ext == '.mp3' || ext == 'aac' || ext == 'wma')
+    else if (ext == '.mp3' || ext == 'aac' || ext == 'wma' || ext == 'm4a')
       return "audio/";
     else
       return "videos/"
