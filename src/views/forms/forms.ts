@@ -162,24 +162,26 @@ export class Forms {
 
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
-      buttons.push({
+      buttons.push({ 
         text: 'Documents',
         icon: 'bookmarks',
         handler: async () => {
           if (documentSets.length === 1) {
             const docs = await this.documentsService
               .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
-              .toPromise();
+              .toPromise(); 
 
             let documents;
             if (docs && docs.length) {
               documents = unionBy(docs, documentSets[0].documents, 'id');
+            } else {
+              documents = documentSets[0].documents;
             }
 
             this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
           } else {
-            this.navCtrl.push("DocumentsListPage", { form });
-          }
+            this.navCtrl.push("DocumentsListPage", { form }); 
+          } 
         }
       })
       // }
