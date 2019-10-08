@@ -25,7 +25,7 @@ export class GOCNFCScanner implements Scanner {
         reject("Nfc is not available");
 
       }).catch((error)=>{
-        console.log(error)
+        console.log(error);
         this.statusMessage = "Could not scan " + this.name;
         reject("Nfc is not available");
       })

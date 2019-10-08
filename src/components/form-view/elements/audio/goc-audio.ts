@@ -78,10 +78,10 @@ export class GOCAudio extends BaseElement {
 
 	stopRecording() {
 
-		this.audioCaptureService.stopRecord().then(filePath => {
+		this.audioCaptureService.stopRecord().then((filePath) => {
 			this.onProcessingEvent.emit('false');
 			this.isRecording = false;
-			this.onChange([filePath]);
+			this.onChange(filePath);
 			this.updateRecordDuration(true);
 
 			this.updateTimeLabels(0, this.trackDuration);
@@ -113,7 +113,7 @@ export class GOCAudio extends BaseElement {
 
 	releaseResources() {
 		super.releaseResources();
-		return this.audioCaptureService.removeRecord(this.currentVal[0]);
+		return this.audioCaptureService.removeRecord(this.currentVal);
 	}
 
 
@@ -161,7 +161,7 @@ export class GOCAudio extends BaseElement {
 
 	startPlayback() {
 
-		let filePath = typeof this.currentVal === 'object' ? this.currentVal[0] : this.currentVal;
+		let filePath = this.currentVal;
 
 		this.audioCaptureService.playRecord(filePath).subscribe(status => {
 			this.isPlaying = (status == MEDIA_STATUS.RUNNING);

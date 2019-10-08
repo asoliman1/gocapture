@@ -284,7 +284,9 @@ export class FormCapture implements AfterViewInit {
   private startRapidScan(element) {
     //save form id for which we have rapidscan
     this.appPreferences.store("rapidScan", "formId", this.form.form_id);
-    this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
+    if (this.selectedStation) {
+      this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
+    }
     this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
     this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
       this.popup.dismiss('loading');
@@ -592,7 +594,7 @@ export class FormCapture implements AfterViewInit {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (isNotScanned && noTranscriptable && !this.submission.is_filled_from_list) {
+    if (isNotScanned && noTranscriptable) {
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage = "Email or name is required";
         this.content.resize();
