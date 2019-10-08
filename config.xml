@@ -143,7 +143,7 @@
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
     <plugin name="cordova-wheel-selector-plugin" spec="1.1.2" />
-    <plugin name="cordova-plugin-gocapture-ocr" spec="file:cordova-plugin-gocapture-ocr" />
+    <plugin name="cordova-plugin-gocapture-ocr" spec="file:3rdParty/cordova-plugin-gocapture-ocr" />
     <plugin name="cordova-plugin-app-preferences" spec="file:3rdParty/me.apla.cordova.app-preferences-cordova-9.0.0" />
     <plugin name="cordova-plugin-camera" spec="file:3rdParty/cordova-plugin-camera" />
     <plugin name="cordova-plugin-camera-preview" spec="file:3rdParty/cordova-plugin-camera-preview">

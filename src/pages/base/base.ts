@@ -25,7 +25,6 @@ export class BasePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad BasePage');
   }
 
 }

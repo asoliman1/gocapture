@@ -27,7 +27,6 @@ export class DynamicFormElementComponent {
   }
 
   onProcessing(event) {
-    // console.log(event);
     this.onProcessingEvent.emit(event);
   }
 

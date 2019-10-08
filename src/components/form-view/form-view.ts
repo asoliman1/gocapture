@@ -469,7 +469,7 @@ export class FormView {
   }
 
   onProcessing(event) {
-    console.log('form view on processing : '+event);
+    console.log('Form view on processing : '+event);
     this.onProcessingEvent.emit(event);
   }
 

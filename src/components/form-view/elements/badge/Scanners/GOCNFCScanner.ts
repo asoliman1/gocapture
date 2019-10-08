@@ -1,7 +1,6 @@
 import { Ndef, NFC } from "@ionic-native/nfc";
 import { Platform } from "ionic-angular";
 import { ScannerResponse, Scanner } from "./Scanner";
-declare var nfc: any;
 
 export class GOCNFCScanner implements Scanner {
 
@@ -47,12 +46,6 @@ export class GOCNFCScanner implements Scanner {
           console.error('Session was invalidated with error ' + error + ('subscribe'));
           reject(error);
         } );
-        nfc.invalidateSession(()=>{
-          console.log('joo');
-        },()=>{
-          console.log('loo');
-
-        });
       }
     }, (error) => {
       reject("Could not scan " + this.name);

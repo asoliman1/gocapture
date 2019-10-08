@@ -192,7 +192,7 @@ export class FormCapture implements AfterViewInit {
 
   private async showScreenSaver() {
 
-    if (!this.isLoadingImages()) {
+    if (this.imagesDownloaded()) {
       if (!this._modal) {
         this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
@@ -214,7 +214,7 @@ export class FormCapture implements AfterViewInit {
     this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
 
-  private isLoadingImages() {
+  private imagesDownloaded() {
     this.form.event_style.screensaver_media_items = this.form.event_style.screensaver_media_items.filter((e)=> !e.path.startsWith('https://'))
     return this.form.event_style.screensaver_media_items.length;
   }
