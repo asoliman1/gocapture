@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable,Subject } from 'rxjs';
 
 @Injectable()
 export class formViewService {
-    private buttonEmitSource: BehaviorSubject<string>;
+    private buttonEmitSource: Subject<string>;
 
     onButtonEmit: Observable<any>;
 
     constructor() {
-        this.buttonEmitSource = new BehaviorSubject<any>(null);
+        this.buttonEmitSource = new Subject();
         this.onButtonEmit = this.buttonEmitSource.asObservable();
     }
 
     pushEvent(data:string){
+        console.log(`pushed ${data}`)
         this.buttonEmitSource.next(data);
     }
 }

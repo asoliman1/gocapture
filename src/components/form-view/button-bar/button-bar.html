@@ -1,16 +1,23 @@
-<ion-footer  >
-    <ion-toolbar color="primary" >
-      <ion-buttons left *ngFor="let btn of buttons" >
-        <button (click)="onClick(btn)" ion-button icon-end >
-          <ion-col align-self-center>
-              <ion-row align-items-center>
-                <ion-icon [name]="getIcon(btn)" ></ion-icon>    
-            </ion-row>
-              <ion-row align-items-center>
+<div class="sticky" >
+<ion-footer *ngIf="tabButtons.length" >
+    <ion-toolbar >
+      <ion-row justify-content-around >
+        <button *ngFor="let btn of tabButtons"  clear color="white" (click)="onClick(btn.type)"  ion-button >
+          <div class="top-text" >
+          <ion-icon [name]="getIcon(btn)" ></ion-icon> 
                   {{btn.label}}
-              </ion-row>
-          </ion-col>
+          </div>
         </button>
-      </ion-buttons>   
+    </ion-row>
     </ion-toolbar>
   </ion-footer>
+
+<custom-fab-menu 
+*ngIf="fabButtons.length" 
+[hasMargin]="tabButtons.length" 
+[fabIcon]="'more'" 
+[items]="fabMenuItems" 
+(onItemSelected)="onItemSelected($event)">
+</custom-fab-menu>
+
+  </div>

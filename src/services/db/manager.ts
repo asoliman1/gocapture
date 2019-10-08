@@ -67,7 +67,7 @@ export class Manager {
 		// console.log("Initialize " + type);
 		return new Observable<SQLiteObject>((obs: Observer<SQLiteObject>) => {
 			let db: SQLite = null;
-			if (platform.is("cordova")) {
+			if (platform.is("mobile")) {
 				db = new SQLite();
 			} else {
 				db = <any>new LocalSql();

@@ -1,5 +1,5 @@
 $theme-color: color($colors, purple);
-$theme-text-color : color($colors, black);
+$theme-text-color : color($colors, white);
 
 .purple-theme {
   @include theme($theme-color,$theme-text-color);

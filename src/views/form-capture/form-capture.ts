@@ -192,7 +192,7 @@ export class FormCapture implements AfterViewInit {
 
   private async showScreenSaver() {
 
-    if (!this.isLoadingImages()) {
+    if (this.imagesDownloaded()) {
       if (!this._modal) {
         this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
@@ -204,7 +204,7 @@ export class FormCapture implements AfterViewInit {
         })
       }
     } else {
-      console.log('still downloading images...');
+      console.log('Still downloading images...');
     }
   }
 
@@ -214,12 +214,9 @@ export class FormCapture implements AfterViewInit {
     this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
 
-  private isLoadingImages() {
-    for (let index = 0; index < this.form.event_style.screensaver_media_items.length; index++) {
-      const element = this.form.event_style.screensaver_media_items[index];
-      if (element.path.startsWith('https://')) return true;
-    }
-    return false;
+  private imagesDownloaded() {
+    this.form.event_style.screensaver_media_items = this.form.event_style.screensaver_media_items.filter((e)=> !e.path.startsWith('https://'))
+    return this.form.event_style.screensaver_media_items.length;
   }
 
   private stopIdleMode() {

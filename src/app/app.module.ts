@@ -110,6 +110,7 @@ import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
+import { CustomFabMenu } from '../components/form-view/ionic-fab-label-backdrop/fab-menu';
 
 @NgModule({
   declarations: [
@@ -154,6 +155,7 @@ import { SectionBlock } from '../components/section-block';
     ScreenSaverPage,
     buttonBar,
     SectionBlock,
+    CustomFabMenu
   ],
   imports: [
     BrowserModule,
@@ -211,6 +213,8 @@ import { SectionBlock } from '../components/section-block';
     EventItemComponent,
     ScreenSaverPage,
     buttonBar,
+    CustomFabMenu
+
   ],
   exports: [
     DynamicFormElementComponent

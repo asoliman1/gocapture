@@ -82,7 +82,7 @@ export class Popup {
       message: message,
       inputs: inputs,
       buttons: buttons,
-      cssClass: theme.toString()
+      cssClass: theme
     });
     return this.alert.present();
   }

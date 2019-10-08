@@ -46,6 +46,7 @@ export class GOCBarcodeScanner implements Scanner {
       let self = this;
 
       cordova.plugins.barcodeScanner.scan(function (scannedData) {
+        console.log(scannedData);
         if (scannedData.cancelled) {
           self.statusMessage = "Scan " + self.name;
           resolve({ isCancelled: true });
@@ -66,6 +67,7 @@ export class GOCBarcodeScanner implements Scanner {
         }
         resolve({ scannedId: scannedData.text });
       }, function (error) {
+        console.log(error);
         self.statusMessage = "Could not scan " + self.name;
         reject(error);
       }, options);

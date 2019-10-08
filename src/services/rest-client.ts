@@ -61,6 +61,7 @@ export class RESTClient {
 		req.device_manufacture = this.device.manufacturer;
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
+		console.log(this.device);
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
 				if (resp.status != "200") {
