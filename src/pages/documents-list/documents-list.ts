@@ -32,7 +32,6 @@ export class DocumentsListPage {
   }
 
   private init() {
-    // console.log(this.form);
     this.documentSets = this.form.elements
       .filter((el) => el.type === 'documents' && el.documents_set)
       .map((el) => {
@@ -50,7 +49,7 @@ export class DocumentsListPage {
 
   openDocuments(documentSet: IDocumentSet) {
     this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
-      if (documents && documents.length) {
+      if (documents && documents.length) { 
         documentSet.documents = unionBy(documents, documentSet, 'id');
       }
 

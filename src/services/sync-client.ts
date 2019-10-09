@@ -111,7 +111,7 @@ export class SyncClient {
       this.downloadForms(lastSyncDate, map, result).subscribe(async (forms) => {
         // A.S check if form has data to be downloaded
         if (this.hasNewData) {
-          // A.S GOC-326 
+          // A.S GOC-326
           forms = await this.downloadFormData(forms);
           this.hasNewData = false;
           console.log('Downloading finished')
@@ -647,7 +647,7 @@ export class SyncClient {
   // A.S download all images for all forms
   private async downloadFormData(forms: Form[]) {
     let entry: Entry;
-    console.log('Downloading forms data...')
+    console.log('Downloading forms data...');
     return await Promise.all(forms.map(async (form: Form) => {
       this.setFormSync(form, false, 10);
       if (form.event_style.event_record_background.url != '' && form.event_style.event_record_background.path.startsWith('https://')) {
@@ -684,6 +684,11 @@ export class SyncClient {
     return this.http.downloadFile(pathToDownload, {}, {}, path)
   }
 
+  public downloadFileWithPath(path) {
+    let file = this.util.getFilePath(path, '');
+    return this.downloadFile(file.pathToDownload, file.path);
+  }
+
   // A.S GOC-326 check file if downloaded
    checkFile(newUrl: string, oldUrl: Image, id: string) {
     let i = id.split('_');
@@ -699,7 +704,7 @@ export class SyncClient {
       return newUrl;
     } else {
       if(oldUrl.path.startsWith('https://')) {
-     console.log(`form ${i[2] || i[1]} will download again ${i[0]}`);        
+     console.log(`form ${i[2] || i[1]} will download again ${i[0]}`);
       this.hasNewData = true;
     }
   // A.S for ios if the app updated , app's directory will change
@@ -923,9 +928,6 @@ export class SyncClient {
       handler();
     });
   }
-
-
-
 
   private isExternalUrl(url: string) {
     return url.indexOf("http") == 0;

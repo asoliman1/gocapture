@@ -145,23 +145,6 @@ export class Documents implements AfterViewInit {
           await this.shareService.shareViaWhatsApp(links);
         }
       },
-      // TODO: not needed for the moment
-      // {
-      //   text: 'Facebook',
-      //   icon: "logo-facebook",
-      //   handler: () => {
-      //     console.log('facebook clicked');
-      //     this.shareService.shareViaFacebook(links, null, null);
-      //   }
-      // },
-      // {
-      //   text: 'Instagram',
-      //   icon: "logo-instagram",
-      //   handler: async () => {
-      //     console.log('instagram clicked');
-      //     await this.shareService.shareViaInstagram(links, null);
-      //   }
-      // },
       {
         text: 'Cancel',
         role: 'cancel',
