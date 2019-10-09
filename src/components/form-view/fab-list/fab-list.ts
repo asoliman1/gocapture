@@ -23,11 +23,11 @@ export class CustomFabMenu {
 
   @Output("onItemSelected") anOutput = new EventEmitter<FabMenuItem>();
 
-  @Input("hasMargin") hasMargin : boolean;
+  @Input("hasMargin") hasMargin: boolean;
 
   public showMenuItem: boolean = false;
 
-  labels : FabMenuItem[] = [];
+  labels: FabMenuItem[] = [];
 
   constructor() {
 
