@@ -1,3 +1,5 @@
+import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
+import { buttonBar } from './../components/form-view/button-bar/button-bar';
 import { Keyboard } from '@ionic-native/keyboard';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -153,6 +155,8 @@ import { SectionBlock } from '../components/section-block';
     EventItemComponent,
     ScreenSaverPage,
     SectionBlock,
+    buttonBar,
+    CustomFabMenu
   ],
   imports: [
     BrowserModule,
@@ -209,7 +213,7 @@ import { SectionBlock } from '../components/section-block';
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-
+    CustomFabMenu
   ],
   exports: [
     DynamicFormElementComponent
