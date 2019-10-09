@@ -251,7 +251,7 @@ export class Util {
   }
 
   // A.S
-  getFilePath(url, id?) {
+  getFilePath(url, id = '') {
     let isSplashImage = url.includes('https://images.unsplash.com/');
     url = isSplashImage ? url.split('?')[0] : url;
     let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));

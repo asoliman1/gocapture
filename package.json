@@ -37,6 +37,7 @@
     "@ionic-native/http": "^4.12.2",
     "@ionic-native/image-picker": "^4.5.3",
     "@ionic-native/insomnia": "^4.20.0",
+    "@ionic-native/keyboard": "^4.20.0",
     "@ionic-native/local-notifications": "^4.20.0",
     "@ionic-native/media": "^4.19.0",
     "@ionic-native/network": "^4.5.3",
