@@ -115,7 +115,6 @@ export class SyncClient {
           forms = await this.downloadFormData(forms);
           this.hasNewData = false;
           console.log('Downloading finished')
-          console.log(forms)
           this.db.saveForms(forms).subscribe((data) => {
             this.entitySyncedSource.next("Forms") // A.S emit forms updates
           });
@@ -703,7 +702,9 @@ export class SyncClient {
      console.log(`form ${i[2] || i[1]} will download again ${i[0]}`);        
       this.hasNewData = true;
     }
-      return oldUrl.path;
+  // A.S for ios if the app updated , app's directory will change
+      let oldPathWithNewDirectory = this.util.getFilePath(oldUrl.url,id).path
+      return oldPathWithNewDirectory; 
     }
   }
 

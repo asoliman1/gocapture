@@ -3,7 +3,7 @@
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.7:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -154,4 +154,5 @@
     <allow-navigation href="http://localhost:8100" sessionid="31050d9b" />
     <allow-navigation href="http://localhost:8080/*" />
     <plugin name="cordova-plugin-document-viewer" spec="0.9.13" />
+    <allow-navigation href="http://192.168.1.7:8100" sessionid="3db1c3d5" />
 </widget>

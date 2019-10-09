@@ -1,3 +1,4 @@
+import { Keyboard } from '@ionic-native/keyboard';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -103,14 +104,12 @@ import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { EventItemComponent } from '../components/event-item/event-item';
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
-import { buttonBar } from '../components/form-view/button-bar/button-bar';
 import { formViewService } from '../components/form-view/form-view-service';
 import { ComponentsModule } from "../components/components.module";
 import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
-import { CustomFabMenu } from '../components/form-view/ionic-fab-label-backdrop/fab-menu';
 
 @NgModule({
   declarations: [
@@ -153,9 +152,7 @@ import { CustomFabMenu } from '../components/form-view/ionic-fab-label-backdrop/
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    buttonBar,
     SectionBlock,
-    CustomFabMenu
   ],
   imports: [
     BrowserModule,
@@ -212,8 +209,6 @@ import { CustomFabMenu } from '../components/form-view/ionic-fab-label-backdrop/
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    buttonBar,
-    CustomFabMenu
 
   ],
   exports: [
@@ -281,6 +276,7 @@ import { CustomFabMenu } from '../components/form-view/ionic-fab-label-backdrop/
     Insomnia,
     formViewService,
     FilterService,
+    Keyboard
   ]
 })
 export class AppModule { }

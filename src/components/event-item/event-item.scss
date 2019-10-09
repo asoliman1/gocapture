@@ -10,10 +10,11 @@ $secondary : map-get($map: $colors, $key:"secondary" );
 
  .text{
      position: absolute;
-     bottom: 5vh;
+     bottom: 4vh;
      margin-bottom: 10px;
      left: 20px;
  }
+
 
  .title{
      font-size: 3.6vh;

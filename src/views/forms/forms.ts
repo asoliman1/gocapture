@@ -1,3 +1,4 @@
+import { Keyboard } from '@ionic-native/keyboard';
 import {
   Component, ViewChild
 } from '@angular/core';
@@ -80,7 +81,8 @@ export class Forms {
     private syncClient: SyncClient,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
-    private event:Events) {
+    private event:Events,
+    private Keyboard : Keyboard) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     this.event.subscribe('button-bar',(data)=>{
       console.log(`data from forms page : ${data}`)
@@ -214,6 +216,7 @@ export class Forms {
   }
 
   ionViewDidEnter() {
+    this.Keyboard.setResizeMode("ionic");
     this.doRefresh();
     this.sub = this.syncClient.entitySynced.subscribe((type) => {
       // A.S i changed condition as it render the page many times
@@ -225,6 +228,7 @@ export class Forms {
   ionViewDidLeave() {
     // A.S
     this.sub.unsubscribe();
+    this.Keyboard.setResizeMode("native");
   }
 
   // A.S GOC-315
