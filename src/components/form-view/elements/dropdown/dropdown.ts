@@ -56,18 +56,20 @@ export class Dropdown extends BaseElement implements ISearch {
 
 	getOptions() {
 	  let items = [];
-    this.element.options.forEach(item => {
+    this.element.options.forEach((item) => {
       let optionItem = new OptionItem({
         id: item.position.toString(),
-        title: item.option_label || item.option,
+        title: this.itemValue(item),
         subtitle: null,
-        search: item.option_label || item.option,
-        value: (item.option_label || item.option)});
-      if (this.currentVal == item.option) {
-        optionItem.isSelected = true;
-      }
+        search: this.itemValue(item),
+        value: this.itemValue(item)});
+      optionItem.isSelected = this.currentVal == this.itemValue(item);
       items.push(optionItem);
     });
     return items;
+  }
+
+  itemValue(item) {
+	  return item.option_label || item.option;
   }
 }

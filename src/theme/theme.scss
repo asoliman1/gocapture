@@ -1,4 +1,4 @@
-@mixin theme ($theme-color) {
+@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
   $alert-ios-button-text-color: $theme-color;
 
   $action-sheet-ios-button-text-color: $theme-color;
@@ -10,7 +10,8 @@
   .footer .toolbar-background,
   .toolbar .toolbar-background,
   .toggle-ios.toggle-checked .toggle-icon,
-  .toggle-md.toggle-checked .toggle-icon {
+  .toggle-md.toggle-checked .toggle-icon,
+  .fab-md-in-list , .fab-md-in-list , .fab , .fab.activated{
     background-color: $theme-color;
   }
 
@@ -68,6 +69,19 @@
     color: $theme-color;
   }
 
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    background-color: $theme-color !important;
+  }
+
+  .ng-select-container:after {
+    border-color: $theme-color !important;
+  }
+
+  .ng-arrow,
+  .ng-option.ng-option-selected {
+    color: $theme-color !important;
+  }
+
   .checkbox-checked,
   .radio-md .radio-inner,
   .alert-radio-inner {
@@ -84,5 +98,9 @@
 
   .bar-button {
     color: $theme-color;
+  }
+
+  .info-box,ion-text{
+    color: $theme-text-color // A.S to set a text color for each theme
   }
 }

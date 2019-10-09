@@ -9,20 +9,16 @@
       &.activated {
         background-color: rgba(250, 34, 0, 0.1);
       }
+    }
 
-      .mic-icon {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        left: 50%;
-        transform: translate(-50%);
-        -webkit-transform: translate(-50%);
-
-        &.red {
-          background: url("../assets/images/mic-red.png") no-repeat center;
-          background-size: cover;
-        }
-      }
+    .recording-dot {
+      height: 15px;
+      width: 15px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+      float: right;
+      margin-right: 10px;
     }
 
     .stop-btn {
@@ -32,6 +28,25 @@
       &.activated {
         background-color: rgba(0, 0, 0, 0.1);
       }
+    }
+  }
+
+  .mic-icon {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 50%;
+    transform: translate(-50%);
+    -webkit-transform: translate(-50%);
+
+    &.red {
+      background: url("../assets/images/mic-red.png") no-repeat center;
+      background-size: cover;
+    }
+
+    &.orange {
+      background: url("../assets/images/mic-orange.png") no-repeat center;
+      background-size: cover;
     }
   }
 
@@ -48,6 +63,16 @@
   .counter {
     display: inline-block;
     margin-bottom: 10px;
+  }
+
+  .blink {
+    animation: blinker 1s linear infinite;
+  }
+
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
   }
 
 }

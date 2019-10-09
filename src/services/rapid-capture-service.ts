@@ -1,22 +1,21 @@
-import {BarcodeStatus, FormElement, FormSubmission, SubmissionStatus} from "../model";
-import {BarcodeScanner} from "@ionic-native/barcode-scanner";
-import {Platform} from "ionic-angular";
-import {Ndef, NFC} from "@ionic-native/nfc";
-import {BadgeRapidCapture} from "./badge-rapid-capture";
-import {BCRapidCapture} from "./bc-rapid-capture";
-import {Injectable} from "@angular/core";
-import {ImageProcessor} from "./image-processor";
-import {File} from "@ionic-native/file";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
-import {Camera} from "@ionic-native/camera";
-import {Util} from "../util/util";
-import {AppPreferences} from "@ionic-native/app-preferences";
-import {Popup} from "../providers/popup/popup";
-import {Observable} from "rxjs";
-import {BussinessClient} from "./business-service";
-import {ScannerType} from "../components/form-view/elements/badge/Scanners/Scanner";
+import {BarcodeStatus, FormElement, FormSubmission, FormSubmissionType, SubmissionStatus} from "../model";
+import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { Platform } from "ionic-angular";
+import { Ndef, NFC } from "@ionic-native/nfc";
+import { BadgeRapidCapture } from "./badge-rapid-capture";
+import { BCRapidCapture } from "./bc-rapid-capture";
+import { Injectable } from "@angular/core";
+import { ImageProcessor } from "./image-processor";
+import { File } from "@ionic-native/file";
+import { Camera } from "@ionic-native/camera";
+import { Util } from "../util/util";
+import { AppPreferences } from "@ionic-native/app-preferences";
+import { Popup } from "../providers/popup/popup";
+import { Observable } from "rxjs";
+import { BussinessClient } from "./business-service";
 
 export interface RapidCapture {
+  type: FormSubmissionType;
   capture(element: FormElement, id?: string): Promise<any[]>;
 }
 
@@ -24,20 +23,20 @@ export interface RapidCapture {
 
 export class RapidCaptureService {
 
-  captureService : RapidCapture;
+  captureService: RapidCapture;
   isProcessing: boolean = false;
 
   constructor(public barcodeScanner: BarcodeScanner,
-              public platform: Platform,
-              public nfc: NFC,
-              public ndef: Ndef,
-              public imageProc: ImageProcessor,
-              public fileService: File,
-              public camera: Camera,
-              public util: Util,
-              public appPreferences: AppPreferences,
-              public popup: Popup,
-              public client: BussinessClient) {
+    public platform: Platform,
+    public nfc: NFC,
+    public ndef: Ndef,
+    public imageProc: ImageProcessor,
+    public fileService: File,
+    public camera: Camera,
+    public util: Util,
+    public appPreferences: AppPreferences,
+    public popup: Popup,
+    public client: BussinessClient) {
     //
   }
 
@@ -45,12 +44,15 @@ export class RapidCaptureService {
     if (element.type == "business_card") {
       this.captureService = new BCRapidCapture(this.imageProc, this.fileService, this.platform, this.camera, this.util);
     } else {
-      this.captureService = new BadgeRapidCapture(this.barcodeScanner, this.platform, this.nfc, this.ndef, this.appPreferences);
+      // A.S
+      this.captureService = new BadgeRapidCapture(this.barcodeScanner, this.platform, this.nfc, this.ndef, this.appPreferences, null, null , this.util);
     }
-
     return this.captureService.capture(element, id);
   }
 
+  getType() {
+    return this.captureService.type;
+  }
 
   public async processUnsentBadges(forms, theme) {
     if (forms.length == 0 || this.isProcessing) {
@@ -58,8 +60,9 @@ export class RapidCaptureService {
     }
     this.isProcessing = true;
     let formId = await this.appPreferences.fetch("rapidScan", "formId");
-    console.log('FORM ID - ' + formId);
     if (formId) {
+    console.log('FORM ID - ' + formId);
+
       let barcodes = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), formId + "");
       console.log('BARCODES - ' + JSON.stringify(barcodes));
 
@@ -73,16 +76,17 @@ export class RapidCaptureService {
 
       console.log('Station id - ' + stationId);
       let elementId = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "elementId");
-
       console.log('Element id - ' + elementId);
 
+      let captureType = await this.appPreferences.fetch(RapidCaptureService.dictKey(formId), "captureType");
+
       if (barcodes && barcodes.length > 0) {
-        this.showUserPrompt(barcodes, selectedForm, stationId, elementId, theme);
+        this.showUserPrompt(barcodes, selectedForm, stationId, elementId, theme, captureType);
       }
     }
   }
 
-  private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme) {
+  private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme, captureType) {
     const buttons = [
       {
         text: 'Delete',
@@ -95,7 +99,7 @@ export class RapidCaptureService {
       {
         text: 'Process',
         handler: () => {
-          this.processRapidScanResult(barcodes, selectedForm, stationId, elementId);
+          this.processRapidScanResult(barcodes, selectedForm, stationId, elementId, captureType);
         }
       }];
     this.popup.showAlert("Important", "You have Rapid Scanned badges for " + selectedForm.name + " saved in local storage on this device that have not been submitted. Do you want to submit or delete them?", buttons, theme);
@@ -106,6 +110,7 @@ export class RapidCaptureService {
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), formId);
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), "stationId");
     this.appPreferences.remove(RapidCaptureService.dictKey(formId), "elementId");
+    this.appPreferences.remove(RapidCaptureService.dictKey(formId), "captureType");
   }
 
 
@@ -113,14 +118,14 @@ export class RapidCaptureService {
     return "rapidScan-" + formId + "";
   }
 
-  private processRapidScanResult(items, form, station, elementId) {
+  private processRapidScanResult(items, form, station, elementId, captureType) {
     let submissions = [];
 
     let i = 100;
     let timestamp = new Date().getTime();
     for (let item of items) {
-      let submId = parseInt( timestamp + "" + i);
-      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId, submId);
+      let submId = parseInt(timestamp + "" + i);
+      let saveSubmObservable = this.saveSubmissionWithData(item, form, station, elementId, submId, captureType);
       i++;
       submissions.push(saveSubmObservable);
     }
@@ -142,7 +147,7 @@ export class RapidCaptureService {
   }
 
   //saving subm from rapid scan mode
-  private saveSubmissionWithData(data, form, station, element, submId) {
+  private saveSubmissionWithData(data, form, station, element, submId, captureType) {
     let submission = new FormSubmission();
     let elementId = "element_" + element;
     submission.fields[elementId] = data;
@@ -157,7 +162,12 @@ export class RapidCaptureService {
 
     submission.station_id = station;
 
-    submission.barcode_processed = BarcodeStatus.Queued;
+    if (captureType == FormSubmissionType.barcode) {
+      submission.barcode_processed = BarcodeStatus.Queued;
+      submission.submission_type = FormSubmissionType.barcode;
+    } else if (captureType == FormSubmissionType.transcription) {
+      submission.submission_type = FormSubmissionType.transcription;
+    }
 
     return this.client.saveSubmission(submission, form, false);
   }

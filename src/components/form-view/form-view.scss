@@ -1,6 +1,6 @@
 $barcode-fill-color: #f0f0f0;
 
-form-view, .form-view{
+form-view, .form-view {
 	.selection{
 		ion-item{
 			display: flex;
@@ -105,4 +105,16 @@ form-view, .form-view{
   .hidden {
     display: none;
   }
+
+  .spacer{
+		width: 1.5px;
+		background-color: lightgray;
+		margin: 5px;
+	}
+	
+	.spacing {
+		display: block;
+		width: 100%;
+		height: 150px;
+	}
 }

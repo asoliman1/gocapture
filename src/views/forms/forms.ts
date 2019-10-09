@@ -1,7 +1,6 @@
-import { ToastController } from 'ionic-angular/components/toast/toast-controller';
-import { Popup } from '../../providers/popup/popup';
+import { Keyboard } from '@ionic-native/keyboard';
 import {
-  Component, ViewChild, NgZone
+  Component, ViewChild
 } from '@angular/core';
 
 import {
@@ -16,22 +15,20 @@ import { Subscription } from "rxjs/Subscription";
 
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import {Form, SubmissionStatus} from "../../model";
+import { Form, SubmissionStatus } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { FormControlPipe } from "../../pipes/form-control-pipe";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
-import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
-import {ThemeProvider} from "../../providers/theme/theme";
-import {FormInstructions} from "../form-instructions";
-import {DuplicateLeadsService} from "../../services/duplicate-leads-service";
-import {DocumentsListPage} from "../../pages/documents-list/documents-list";
-import {ModalController} from "ionic-angular";
-import {DocumentsService} from "../../services/documents-service";
-import {unionBy} from 'lodash';
+import { ThemeProvider } from "../../providers/theme/theme";
+import { FormInstructions } from "../form-instructions";
+import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
+import { ModalController, Events } from "ionic-angular";
+import { DocumentsService } from "../../services/documents-service";
+import { unionBy } from 'lodash';
 
 @Component({
   selector: 'forms',
@@ -70,41 +67,41 @@ export class Forms {
   forms: Form[] = [];
   filteredForms: Form[] = [];
 
-  private sub : Subscription;
+  private sub: Subscription;
 
   private filterPipe: FormControlPipe = new FormControlPipe();
 
   private selectedTheme;
 
   constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private client: BussinessClient,
-              private zone: NgZone,
-              private actionCtrl: ActionSheetController,
-              private syncClient: SyncClient,
-              private themeProvider: ThemeProvider,
-              private popup: Popup,
-              private toast: ToastController,
-              private duplicateLeadsService: DuplicateLeadsService,
-              private modalCtrl: ModalController,
-              private documentsService: DocumentsService) {
+    private client: BussinessClient,
+    private actionCtrl: ActionSheetController,
+    private themeProvider: ThemeProvider,
+    private duplicateLeadsService: DuplicateLeadsService,
+    private syncClient: SyncClient,
+    private modalCtrl: ModalController,
+    private documentsService: DocumentsService,
+    private event:Events,
+    private Keyboard : Keyboard) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+    this.event.subscribe('button-bar',(data)=>{
+      console.log(`data from forms page : ${data}`)
+    })
   }
 
   doRefresh(refresher?) {
     this.client.getForms().subscribe(forms => {
-      this.zone.run(()=>{
-        this.forms = this.filterPipe.transform(forms, "");
-        this.getItems({target: {value: ""}});
-      });
+      this.forms = this.filterPipe.transform(forms);
+      this.getItems({ target: { value: "" } });
+      this.getSubmissions();
     });
   }
 
   toggleSearch() {
     this.searchMode = !this.searchMode;
     this.searchTrigger = this.searchMode ? "visible" : "hidden";
-    if(this.searchMode){
-      setTimeout(()=>{
+    if (this.searchMode) {
+      setTimeout(() => {
         this.searchbar.setFocus();
       }, 100);
     }
@@ -120,24 +117,21 @@ export class Forms {
   }
 
   sync() {
-    this.client.getUpdates().subscribe(()=> {});
+    this.client.getUpdates().subscribe(() => {
+    });
   }
 
   getItems(event) {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
-    this.filteredForms = [].concat(this.forms.filter(form => {
+    this.filteredForms = this.forms.filter(form => {
       return !val || regexp.test(form.name);
-    }));
-
-    this.filteredForms.forEach(form => {
-      this.getUnsentSubmissions(form);
-    })
+    });
   }
 
   presentActionSheet(form: Form) {
 
-    let buttons: [any] =  [
+    let buttons: [any] = [
       {
         text: 'Capture',
         icon: "magnet",
@@ -170,26 +164,28 @@ export class Forms {
 
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
-        buttons.push({
-          text: 'Documents',
-          icon: 'bookmarks',
-          handler: async () => {
-            if (documentSets.length === 1) {
-              const docs = await this.documentsService
-                .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
-                .toPromise();
+      buttons.push({ 
+        text: 'Documents',
+        icon: 'bookmarks',
+        handler: async () => {
+          if (documentSets.length === 1) {
+            const docs = await this.documentsService
+              .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
+              .toPromise(); 
 
-              let documents;
-              if (docs && docs.length) {
-                documents = unionBy(docs, documentSets[0].documents, 'id');
-              }
-
-              this.modalCtrl.create('Documents', {documentSet: {...documentSets[0], documents}}).present();
+            let documents;
+            if (docs && docs.length) {
+              documents = unionBy(docs, documentSets[0].documents, 'id');
             } else {
-              this.navCtrl.push("DocumentsListPage", { form });
+              documents = documentSets[0].documents;
             }
-          }
-        })
+
+            this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
+          } else {
+            this.navCtrl.push("DocumentsListPage", { form }); 
+          } 
+        }
+      })
       // }
     }
 
@@ -222,25 +218,40 @@ export class Forms {
   }
 
   ionViewDidEnter() {
+    this.Keyboard.setResizeMode("ionic");
     this.doRefresh();
-    this.sub = this.syncClient.entitySynced.subscribe((type)=>{
-      if(type == "Forms" || type == "Submissions") {
-        this.doRefresh();
-      }
+    this.sub = this.syncClient.entitySynced.subscribe((type) => {
+      // A.S i changed condition as it render the page many times
+      if (type == "Forms") this.doRefresh();
+      else if (type == "Submissions") this.getSubmissions();
     });
   }
 
   ionViewDidLeave() {
+    // A.S
     this.sub.unsubscribe();
+    this.Keyboard.setResizeMode("native");
   }
 
-  getUnsentSubmissions(form: Form) {
-    this.client.getSubmissions(form, false).subscribe(submissions => {
-      form.total_unsent = submissions.filter((sub)=>{
-        return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
-      }).length;
-    });
+  // A.S GOC-315
+  getSubmissions() {
+    this.filteredForms.forEach(form => {
+      this.client.getSubmissions(form, false).subscribe(submissions => {
+        form.total_unsent = submissions.filter((sub) => {
+          return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
+        }).length;
+
+        form.total_sent = submissions.filter((sub) => {
+          return sub.status == SubmissionStatus.Submitted
+        }).length
+
+        form.total_hold = submissions.filter(sub => {
+          return sub.status == SubmissionStatus.OnHold
+        }).length
+      });
+    })
   }
+
 
   private getDocuments(form: Form) {
     return form.elements

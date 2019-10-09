@@ -1,3 +1,4 @@
+import { formViewService } from './form-view-service';
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import {
@@ -12,8 +13,7 @@ import { ValidatorFn, FormBuilder, AbstractControl, FormControl, FormGroup, Vali
 import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
-import {ModalController} from "ionic-angular";
-import {DocumentsService} from "../../services/documents-service";
+import { ModalController, Platform } from "ionic-angular";
 
 @Component({
   selector: 'form-view',
@@ -27,6 +27,7 @@ export class FormView {
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() ButtonEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
@@ -50,36 +51,47 @@ export class FormView {
   barcodeStatusMap = {
     undefined: "",
     null: "",
-    0 : "",
-    1 : "",
-    2 : "queued"
+    0: "",
+    1: "",
+    2: "queued"
   };
 
+  isSeparatable : boolean = false;
+  separateAt: number;
+  buttonBar : Subscription;
   constructor(
     private fb: FormBuilder,
     private zone: NgZone,
     private modal: ModalController,
-    private documentsService: DocumentsService
+    private platform : Platform,
+    private formViewService:formViewService,
   ) {
     this.theForm = new FormGroup({});
     //this.documentsService.syncByForm(this.form.id);
+    console.log(this.isEditing)
   }
 
-  showSelection(){
-    let modal = this.modal.create(OcrSelector, {imageInfo:"", form: this.form, submission: this.submission});
+  showSelection() {
+    let modal = this.modal.create(OcrSelector, { imageInfo: "", form: this.form, submission: this.submission });
     modal.present();
   }
 
   ngAfterViewInit() {
     setTimeout(() => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-      var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0,-1);
+      var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
       this.dateTimes.changes.subscribe((dateTime) => {
         this.dateTimes.forEach((dt) => {
           dt.setValue(localISOTime);
         })
       });
     });
+  }
+
+  ionViewDidEnter(){
+   this.buttonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+     if(data == 'reset') this.clear();
+   })
   }
 
   public hasChanges(): boolean {
@@ -101,7 +113,7 @@ export class FormView {
         let control = form.controls[id];
         if (control instanceof FormGroup) {
           parse(control, data);
-        } else{
+        } else {
           data[id] = control.value;
         }
       }
@@ -117,13 +129,13 @@ export class FormView {
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
       if (this.form && this.submission) {
-        setTimeout(()=> {
+        setTimeout(() => {
           this.setupFormGroup();
         }, 1);
       }
     } else if (changes['prospect'] && this.prospect) {
       let keys = Object.keys(this.prospect.fields);
-      for (let i = 0; i < keys.length; i ++) {
+      for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
         let element = this.getElementForProspectItemId(key);
         if (element) {
@@ -176,15 +188,20 @@ export class FormView {
     }
     let f = this.fb.group({});
 
-    this.form.elements.forEach((element) => {
+    this.form.elements.forEach((element,index) => {
       let identifier = this.elementIdentifier(element);
       let control = this.createFormControl(element, identifier);
       element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
+
+      // A.S GOC-319
+      if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
+        this.isSeparatable = true;
+        this.separateAt = index;
+      }
     });
 
     this.theForm = f;
-
     this.updateForm();
 
     //console.log(this.form, f);
@@ -200,25 +217,11 @@ export class FormView {
     setTimeout(() => {
       this.zone.run(() => {
         this.displayForm = this.form;
-        // this.displayForm.elements = [
-        //   ...this.displayForm.elements,
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 999,
-        //     type: 'document',
-        //     title: 'ELM Documents'
-        //   },
-        //   {
-        //     ...this.displayForm.elements[0],
-        //     id: 9999,
-        //     type: 'document',
-        //     title: 'POST SHOW Docs'
-        //   }
-        // ];
-        console.log(this.displayForm);
+        this.buildSections();
       });
     }, 150);
   }
+
 
   private createFormControl(element, identifier: string) {
     element["identifier"] = identifier;
@@ -231,7 +234,7 @@ export class FormView {
         opts[entry["identifier"]] = new FormControl({
           value: this.data[entry["identifier"]] ? this.data[entry["identifier"]] : this.getDefaultValue(element),
           disabled: element.is_readonly || this.readOnly
-        }, this.makeValidators(element['sub_elements'][index]));
+        },  this.makeValidators(element['sub_elements'][index]));
       });
       control = this.fb.group(opts);
     } else {
@@ -244,12 +247,12 @@ export class FormView {
     return control;
   }
 
-  private getDefaultValue(element: FormElement): any{
-    switch(element.type){
+  private getDefaultValue(element: FormElement): any {
+    switch (element.type) {
       case FormElementType.checkbox:
         let data = [];
         element.options.forEach((opt) => {
-          if(opt.is_default == 1){
+          if (opt.is_default == 1) {
             data.push(opt.option);
           }
         });
@@ -258,7 +261,7 @@ export class FormView {
       case FormElementType.radio:
         let d = "";
         element.options.forEach((opt) => {
-          if(opt.is_default == 1){
+          if (opt.is_default == 1) {
             d = opt.option;
           }
         });
@@ -269,6 +272,7 @@ export class FormView {
   }
 
   private makeValidators(element: FormElement): any[] {
+		if(!element) return;  // A.S a bug here
     var validators = [];
     if (element.is_required) {
       validators.push(Validators.required);
@@ -316,9 +320,9 @@ export class FormView {
     }
   }
 
-  private wrapValidator(form: Form, element: FormElement, submission: FormSubmission, validator: ValidatorFn) : ValidatorFn{
-    return (control: AbstractControl): {[key: string]: any} => {
-      if(form.barcode_processed == BarcodeStatus.Queued && element.is_filled_from_barcode){
+  private wrapValidator(form: Form, element: FormElement, submission: FormSubmission, validator: ValidatorFn): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } => {
+      if (form.barcode_processed == BarcodeStatus.Queued && element.is_filled_from_barcode) {
         return null;
       }
       return validator(control);
@@ -342,25 +346,29 @@ export class FormView {
     let elementValue = this.theForm && this.theForm.value[identifier];
 
     switch (rule.condition) {
-      case "equals" : {
+      case "equals": {
         return this.isValueEqual(ruleValue, elementValue);
       }
-      case "not_equal" : {
+      case "not_equal": {
         return !this.isValueEqual(ruleValue, elementValue);
       }
-      case "has_value" : {
+      case "has_value": {
         return elementValue && elementValue.length > 0;
       }
-      case "is_blank" : {
+      case "is_blank": {
         return elementValue && elementValue.length == 0;
       }
-      case "doesnot_contain" : {
+      case "doesnot_contain": {
         return elementValue && !this.isValueMatched(ruleValue, elementValue);
       }
-      case "contains" : {
+      case "contains": {
         return elementValue && this.isValueMatched(ruleValue, elementValue);
       }
     }
+  }
+
+   splitEls(first) : FormElement[]{
+    return first ? this.form.elements.slice(0,this.separateAt) : this.form.elements.slice(this.separateAt+1)
   }
 
   private isValueMatched(ruleValue: [any], value) {
@@ -412,7 +420,11 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element) {
+  private shouldElementBeDisplayed(element: FormElement) {
+    return element.isMatchingRules && !element.parent_element_id;
+  }
+
+  private shouldElementBeDisplayedInsideSection(element: FormElement) {
     return element.isMatchingRules;
   }
 
@@ -457,6 +469,44 @@ export class FormView {
   }
 
   onProcessing(event) {
+    console.log('Form view on processing : '+event);
     this.onProcessingEvent.emit(event);
+  }
+
+  onButtonEvent(event){
+    this.ButtonEvent.emit(event);
+  }
+
+  private buildSections() {
+    const sections = {};
+
+    const findSectionChildElements = (sectionId) => {
+      return this.displayForm.elements.filter((d) => d.parent_element_id == sectionId);
+    };
+
+    this.displayForm.elements
+      .filter((d) => d.type == 'section_block')
+      .forEach((section) => {
+        section.children = findSectionChildElements(section.id);
+        sections[section.id] = section;
+      });
+
+    Object.keys(sections).forEach((key: any) => {
+      const dataIndex = this.displayForm.elements.findIndex((d) => d.id == key);
+      this.displayForm[dataIndex] = sections[key];
+    })
+  }
+
+  show(el){
+    console.log(el);
+  }
+
+  // used by the *ngFor
+   trackByFn(index: number, item: FormElement) {
+    if (!item) {
+      return null;
+    }
+
+    return item.id;
   }
 }

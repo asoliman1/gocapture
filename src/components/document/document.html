@@ -4,7 +4,7 @@
   <div tappable (tap)="select()" class="preview" (press)="openDocument()">
 <!--    <img [src]="thumbnail" alt="{{document.name}}" />-->
     <ion-icon *ngIf="document.selected" name="checkmark-circle"></ion-icon>
-    <img-loader [src]="thumbnail" useImg></img-loader>
+    <img-loader [src]="thumbnail" [fallbackUrl]="fallbackUrl" useImg></img-loader>
   </div>
 
 </div>

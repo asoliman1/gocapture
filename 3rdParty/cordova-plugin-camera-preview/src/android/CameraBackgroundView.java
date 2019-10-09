@@ -54,7 +54,7 @@ public class CameraBackgroundView extends View {
         RectF outerRectangle = new RectF(0, 0, getWidth(), getHeight());
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(getResources().getColor(R.color.colorPrimary));
+        paint.setColor(getResources().getColor(R.color.colorBlack));
         paint.setAlpha(220);
         osCanvas.drawRect(outerRectangle, paint);
 

@@ -5,7 +5,7 @@ import { Form } from "../model";
 	name: "formControl"
 })
 export class FormControlPipe {
-	transform(array: Array<Form>, args: string): Array<Form> {
+	transform(array: Array<Form>, args ?: string): Array<Form> {
 		let arr = array.filter(value => {
 			return !value.archive_date || new Date(value.archive_date) > new Date();
 		}).sort((a, b) => {

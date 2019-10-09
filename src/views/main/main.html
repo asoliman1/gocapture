@@ -24,9 +24,9 @@
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
 
 
-<ion-pullup #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [hidden]="!shouldShowSyncBar">
+<ion-pullup class="animated fadeIn" #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [hidden]="!shouldShowSyncBar">
 
-  <ion-toolbar #toolbar class="sync-header">
+  <ion-toolbar #toolbar  class="sync-header animated fadeIn">
     <ion-spinner></ion-spinner>
     <div class="action">Syncing...</div>
     <div class="element">{{currentSyncForm}}</div>

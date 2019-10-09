@@ -1,24 +1,29 @@
 import { Injectable } from "@angular/core";
-import {FormElement} from "../model";
-import {RapidCapture} from "./rapid-capture-service";
-import {ImageProcessor} from "./image-processor";
-import {File} from "@ionic-native/file";
-import {Platform} from "ionic-angular";
-import {Camera} from "@ionic-native/camera";
-import {Util} from "../util/util";
+import {FormElement, FormSubmissionType} from "../model";
+import { RapidCapture } from "./rapid-capture-service";
+import { ImageProcessor } from "./image-processor";
+import { File } from "@ionic-native/file";
+import { Platform } from "ionic-angular";
+import { Camera } from "@ionic-native/camera";
+import { Util } from "../util/util";
 
 @Injectable()
 
 export class BCRapidCapture implements RapidCapture {
+
+  type: FormSubmissionType;
+
 	constructor(public imageProc: ImageProcessor,
               public fileService: File,
               public platform: Platform,
               public camera: Camera,
               public util: Util) {
-	  //
+
+	  this.type = FormSubmissionType.transcription;
 	}
 
   capture(element: FormElement): Promise<any[]> {
+    this.util.setPluginPrefs();
 
     return new Promise<any[]>((resolve, reject) => {
       let width = Math.min(this.platform.width(), this.platform.height());
@@ -29,7 +34,7 @@ export class BCRapidCapture implements RapidCapture {
         saveToPhotoAlbum: false,
         encodingType: this.camera.EncodingType.JPEG,
         targetWidth: 1000,
-        targetHeight:1000,
+        targetHeight: 1000,
         destinationType: this.destinationType(),
         shouldDisplayOverlay: true,
         previewPositionX: 12,
@@ -45,7 +50,7 @@ export class BCRapidCapture implements RapidCapture {
         this.handleRapidScanSubmit(imageData).then((paths) => {
 
           let values = paths.map((path) => {
-            return {"front": path, back: null};
+            return { "front": path, back: null };
           });
 
           resolve(values);
@@ -61,7 +66,7 @@ export class BCRapidCapture implements RapidCapture {
     let promises = [];
     for (let item of data) {
       let imageItemData = 'data:image/jpg;base64,' + item;
-      promises.push(this.saveFileLocally({dataUrl: imageItemData}));
+      promises.push(this.saveFileLocally({ dataUrl: imageItemData }));
     }
     return Promise.all(promises);
   }

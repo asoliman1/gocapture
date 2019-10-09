@@ -18,19 +18,19 @@ export class HttpService extends Http {
 		let threshold = 512;
 		return super.request(url, options).map(response => {
 			let text = response.text();			
-			console.log(JSON.stringify({
-				request: {
-					method: this.method(url.method),
-					url: url.url.replace(/access\_token\=[\w\d]+/, "access_token=HIDDEN"),
-					headers: url.headers.toJSON(),
-					data: data.length > threshold ? data.substr(0, threshold) : data
-				},
-				response: {
-					status: response.status,
-					headers: response.headers.toJSON(),
-					data: text.length > threshold ? text.substr(0, threshold) : response.text
-				}				
-			}, null, 2));
+			// console.log(JSON.stringify({
+			// 	request: {
+			// 		method: this.method(url.method),
+			// 		url: url.url.replace(/access\_token\=[\w\d]+/, "access_token=HIDDEN"),
+			// 		headers: url.headers.toJSON(),
+			// 		data: data.length > threshold ? data.substr(0, threshold) : data
+			// 	},
+			// 	response: {
+			// 		status: response.status,
+			// 		headers: response.headers.toJSON(),
+			// 		data: text.length > threshold ? text.substr(0, threshold) : response.text
+			// 	}				
+			// }, null, 2));
 
 			return response;
 		});

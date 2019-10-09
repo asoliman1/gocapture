@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import {Media, MEDIA_STATUS, MediaObject} from "@ionic-native/media";
-import {File, RemoveResult} from '@ionic-native/file';
-import {Observable, Observer} from "rxjs";
-import {Platform} from "ionic-angular";
-import {Util} from "../util/util";
+import { Media, MEDIA_STATUS, MediaObject } from "@ionic-native/media";
+import { File, RemoveResult } from '@ionic-native/file';
+import { Observable, Observer } from "rxjs";
+import { Platform } from "ionic-angular";
+import { Util } from "../util/util";
+import { SyncClient } from "./sync-client";
 
 @Injectable()
 
@@ -13,10 +14,13 @@ export class AudioCaptureService {
 
   fileName: string;
 
+  isRecordingPaused: boolean = false;
+
   constructor(private media: Media,
               private fileService: File,
               private platform: Platform,
-              private utils: Util) {
+              private utils: Util,
+              private syncClient: SyncClient) {
     //
   }
 
@@ -37,7 +41,7 @@ export class AudioCaptureService {
       if (this.platform.is("ios")) {
         this.fileService.createFile(audioFolder, this.fileName, true)
           .then(() => {
-            this.startAudioRecording(filePath).subscribe(status => {
+            this.startAudioRecording(filePath).subscribe((status) => {
               obs.next(status);
             });
           }).catch(error => {
@@ -45,7 +49,7 @@ export class AudioCaptureService {
           obs.error(error);
         });
       } else {
-        this.startAudioRecording(this.fileName).subscribe(status => {
+        this.startAudioRecording(this.fileName).subscribe((status) => {
           obs.next(status);
         });
       }
@@ -70,6 +74,13 @@ export class AudioCaptureService {
     })
   }
 
+  pauseRecord() {
+    this.audioFile.pauseRecord();
+  }
+
+  resumeRecord() {
+    this.audioFile.resumeRecord();
+  }
 
   playRecord(filePath): Observable<MEDIA_STATUS> {
     let fileName = filePath.split('/').pop();
@@ -116,5 +127,13 @@ export class AudioCaptureService {
 
   private audioFolder(): string {
     return this.fileService.dataDirectory + "leadliaison/audio";
+  }
+
+  public async isRecordExist(url: string) {
+    return this.utils.fileExist(url);
+  }
+
+  public downloadRecord(url) {
+    return this.syncClient.downloadFileWithPath(url);
   }
 }

@@ -3,14 +3,16 @@
 
     <ion-title>
       <div #formTitle (click)="onOpenStations()">
-        {{form ? form.name : ''}}
+        <!-- A.S GOC-321 -->
+        {{form ? form.name + ' (' + form.total_sent + ')' : ''}}
+        <br *ngIf="form?.event_stations?.length" >
+        <span *ngIf="selectedStation" >{{selectedStation.name}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
         <br>
-        <span *ngIf="form && selectedStation" >{{stationTitle(selectedStation)}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
       </div>
     </ion-title>
 
     <ion-buttons end>
-			<button ion-button (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
+			<button ion-button  (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
 				Submit
 			</button>
 
@@ -41,7 +43,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="form-summary">
+<ion-content  class="form-summary">
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
@@ -59,7 +61,8 @@
         [readOnly]="isReadOnly(submission) && !isEditing"
         [isEditing]="isEditing"
         [submitAttempt]="submitAttempt"
-        (onProcessingEvent)="onProcessing($event)">
+        (onProcessingEvent)="onProcessing($event)"
+        >
       </form-view>
     </ion-row>
 

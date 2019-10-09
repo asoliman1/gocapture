@@ -5,13 +5,14 @@ export interface ScannerResponse {
 }
 
 export const enum ScannerType {
-  NFC = 'nfc',
+  Nfc = 'nfc',
   Barcode = 'barcode'
 }
 
 export interface Scanner {
   readonly name: string;
   scan(isRapidScan: boolean, id?: string): Promise<ScannerResponse>;
+  testScanner(): Promise<ScannerResponse>; // A.S GOC-300
   restart();
   statusMessage: string;
 }

@@ -1,3 +1,5 @@
+import { AppPreferences } from '@ionic-native/app-preferences';
+import { Popup } from './../providers/popup/popup';
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
@@ -17,10 +19,8 @@ import { RESTClient } from './rest-client';
 import { SyncClient } from './sync-client';
 import { PushClient } from "./push-client";
 import { Network } from '@ionic-native/network';
-import {StatusResponse} from "../model/protocol/status-response";
-import {FileTransfer} from "@ionic-native/file-transfer";
-import {LocalNotificationsService} from "./local-notifications-service";
-import {ToastController} from "ionic-angular";
+import { StatusResponse } from "../model/protocol/status-response";
+import { LocalNotificationsService } from "./local-notifications-service";
 declare var cordova: any;
 
 @Injectable()
@@ -56,14 +56,16 @@ export class BussinessClient {
    */
   error: Observable<any>;
 
+
+
   constructor(private db: DBClient,
-              private rest: RESTClient,
-              private sync: SyncClient,
-              private push: PushClient,
-              private net: Network,
-              private fileTransfer: FileTransfer,
-              private localNotificationsService: LocalNotificationsService,
-              private toast: ToastController) {
+    private rest: RESTClient,
+    private sync: SyncClient,
+    private push: PushClient,
+    private net: Network,
+    private localNotificationsService: LocalNotificationsService,
+    private appPreferences:AppPreferences,
+    private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -71,6 +73,8 @@ export class BussinessClient {
     this.networkOff = this.net.onDisconnect().subscribe(() => {
       console.log("network was disconnected :-(");
       this.setOnline(false);
+      // A.S setting sync off when network is off
+      this.sync.setSync(false);
     });
 
     this.networkOn = this.net.onConnect().subscribe(() => {
@@ -80,6 +84,8 @@ export class BussinessClient {
 
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
+
+
   }
 
   public isOnline(): boolean {
@@ -109,19 +115,10 @@ export class BussinessClient {
         console.error(error);
       });
     } else {
-      this.showErrorToast('No internet connection available');
+      this.popup.showToast('No internet connection available.',"top","warning")
     }
   }
 
-  private showErrorToast(errorMessage) {
-    let toaster = this.toast.create({
-      message: errorMessage,
-      duration: 3000,
-      position: "top",
-      cssClass: "error"
-    });
-    toaster.present();
-  }
 
   public scheduleUnsubmittedLeadsNotification() {
     this.getToSubmitLeads().subscribe(leads => {
@@ -233,15 +230,19 @@ export class BussinessClient {
 
         this.registration = reply;
         reply.pushRegistered = 1;
-        reply.is_production = Config.isProd? 1 : 0;
+        reply.is_production = Config.isProd ? 1 : 0;
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
             obs.next({ user: reply, message: "Done" });
             obs.complete();
+          },err=>{
+            console.log(err);
           });
+        },err=>{
+          console.log(err);
         });
-      }, err =>{
+      }, err => {
         obs.error("Invalid authentication code");
       });
     });
@@ -249,20 +250,19 @@ export class BussinessClient {
 
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
-      this.rest.unauthenticate(user.access_token).subscribe((done) => {
+      this.rest.unauthenticate(user.access_token).subscribe(async(done)  => {
         if (done) {
-          this.db.deleteRegistration(user.id + "").subscribe(() => {
+            this.db.deleteRegistration();
             this.push.shutdown();
             this.pushSubs.forEach(sub => {
               sub.unsubscribe();
             });
+            await this.appPreferences.clearAll();
             this.pushSubs = [];
             this.setup = false;
             obs.next(user);
             obs.complete();
-          }, err => {
-            obs.error(err);
-          });
+        
         } else {
           obs.error("Could not unauthenticate");
         }
@@ -291,8 +291,8 @@ export class BussinessClient {
           }
           let newD = new Date();
           this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-              //
-            },
+            // 
+          },
             (err) => {
               obs.error(err);
             },
@@ -351,7 +351,7 @@ export class BussinessClient {
 
   public doSync(formId?: number): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
-      if (!this.online) {
+      if (!this.isOnline()) {
         obs.error('No internet connection available');
         return;
       }
@@ -404,13 +404,14 @@ export class BussinessClient {
           filteredSubmissions.forEach((sub) => {
             sub.status = SubmissionStatus.Submitting;
             sub.last_sync_date = new Date().toISOString();
-            let subUpdateObs =  this.db.updateSubmissionStatus(sub);
+            let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);
           });
 
           Observable.zip(...dbUpdates).subscribe(() => {
             this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
               console.log("Sync process is completed");
+
               obs.next(true);
               this.localNotificationsService.cancelAll();
               obs.complete();

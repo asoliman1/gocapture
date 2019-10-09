@@ -4,7 +4,7 @@ import { Form, FormElement, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AudioCaptureService } from "../../../../services/audio-capture-service";
 import { ThemeProvider } from "../../../../providers/theme/theme";
-import {ActionSheetController, Content} from "ionic-angular";
+import { Content } from "ionic-angular";
 import { Popup } from "../../../../providers/popup/popup";
 import { MEDIA_STATUS } from "@ionic-native/media";
 
@@ -26,12 +26,13 @@ export class GOCAudio extends BaseElement {
 	@Input() form: Form;
 	@Input() submission: FormSubmission;
 
-	private selectedTheme;
-	private isRecording = false;
-	private isPlaying = false;
+	selectedTheme;
+	isRecording = false;
+	isRecordingPaused = false;
+	isPlaying = false;
 
-	private trackDuration = 0;
-	private currentPosition = 0;//%
+	trackDuration = 0;
+	currentPosition = 0;//%
 
 	private audioTimer;
 	private recordTimer;
@@ -40,29 +41,34 @@ export class GOCAudio extends BaseElement {
 
 	private isSeeked = false;
 
-	private timeUp;
-	private timeDown;
+	timeUp;
+	timeDown;
 
 	constructor(private audioCaptureService: AudioCaptureService,
 		private themeProvider: ThemeProvider,
-		private actionCtrl: ActionSheetController,
 		private popup: Popup,
 		private zone: NgZone,
-    private content:Content) {
+		private content: Content) {
 		super();
 
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	startRecording() {
-    this.onProcessingEvent.emit('true');
+		this.onProcessingEvent.emit('true');
 		this.trackDuration = 0;
-		this.audioCaptureService.startRecord().subscribe(status => {
+		this.audioCaptureService.startRecord().subscribe((status) => {
+			this.isRecordingPaused = status == MEDIA_STATUS.PAUSED;
 			if (status == MEDIA_STATUS.RUNNING) {
 				this.updateRecordDuration();
 				this.isRecording = true;
 			}
-		}, error => {
+			if (this.isRecordingPaused) {
+				this.updateRecordDuration(true);
+			}
+		}, (error) => {
+			this.onProcessingEvent.emit('false');
+
 			this.popup.showAlert('Error', "Can't start recording", [{
 				text: 'Cancel',
 				role: 'cancel'
@@ -72,14 +78,24 @@ export class GOCAudio extends BaseElement {
 
 	stopRecording() {
 
-		this.audioCaptureService.stopRecord().then(filePath => {
-      this.onProcessingEvent.emit('false');
+		this.audioCaptureService.stopRecord().then((filePath) => {
+			this.onProcessingEvent.emit('false');
 			this.isRecording = false;
-			this.onChange([filePath]);
+			this.onChange(filePath);
 			this.updateRecordDuration(true);
 
 			this.updateTimeLabels(0, this.trackDuration);
 		});
+	}
+
+	pauseRecording() {
+		this.isRecordingPaused = true;
+		this.audioCaptureService.pauseRecord();
+	}
+
+	resumeRecording() {
+		this.isRecordingPaused = false;
+		this.audioCaptureService.resumeRecord();
 	}
 
 	removeRecord() {
@@ -97,7 +113,7 @@ export class GOCAudio extends BaseElement {
 
 	releaseResources() {
 		super.releaseResources();
-		return this.audioCaptureService.removeRecord(this.currentVal[0]);
+		return this.audioCaptureService.removeRecord(this.currentVal);
 	}
 
 
@@ -109,7 +125,7 @@ export class GOCAudio extends BaseElement {
 			return;
 		}
 
-		this.recordTimer = setInterval(x => {
+		this.recordTimer = setInterval((x) => {
 			this.zone.run(() => {
 				this.trackDuration += 1000;
 			});
@@ -143,9 +159,23 @@ export class GOCAudio extends BaseElement {
 		}, this.step);
 	}
 
-	startPlayback() {
+	async startPlayback() {
 
-	  let filePath = typeof this.currentVal === 'object' ? this.currentVal[0] : this.currentVal;
+		let filePath = this.currentVal;
+
+    let fileExist = false;
+
+    try {
+      fileExist = await this.audioCaptureService.isRecordExist(filePath);
+    } catch(e) {
+      fileExist = false;
+    }
+
+		if (!fileExist) {
+		  this.popup.showLoading("Record downloading...");
+		  await this.audioCaptureService.downloadRecord(filePath);
+		  this.popup.dismissAll();
+    }
 
 		this.audioCaptureService.playRecord(filePath).subscribe(status => {
 			this.isPlaying = (status == MEDIA_STATUS.RUNNING);
@@ -186,20 +216,24 @@ export class GOCAudio extends BaseElement {
 				text: 'Remove',
 				role: '',
 				handler: () => {
-					this.releaseResources().then(result => {
-						if (result) {
-							console.log('Audio file was removed');
-							this.onChange(null);
-							this.content.resize();
-						}
-					}).catch(error => {
-						console.log('Audio file can\'t be removed');
-					});
+					this.removeRecordingHandler();
 				}
 			}];
 
 		this.popup.showAlert('Warning', "Do you want to delete the recording?", buttons, this.selectedTheme);
 	}
+
+	removeRecordingHandler() {
+    this.releaseResources().then(result => {
+      if (result) {
+        console.log('Audio file was removed');
+        this.onChange(null);
+        this.content.resize();
+      }
+    }).catch(error => {
+      console.log('Audio file can\'t be removed');
+    });
+  }
 
 	private updateTimeLabels(position, duration) {
 		this.timeUp = position * duration / 100;

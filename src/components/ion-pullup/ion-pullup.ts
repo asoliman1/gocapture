@@ -57,7 +57,7 @@ export enum IonPullUpFooterBehavior {
     selector: 'ion-pullup',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-    <ion-footer #footer>
+    <ion-footer  #footer>
       <ng-content></ng-content>
     </ion-footer>
     `
@@ -105,11 +105,11 @@ export class IonPullUpComponent  {
   
   ngOnInit() {
     window.addEventListener("orientationchange", () => {
-      console.info('Changed orientation => updating');
+      // console.info('Changed orientation => updating');
       this.updateUI();
     });
     this.platform.resume.subscribe(() => {
-      console.info('Resumed from background => updating');
+      // console.info('Resumed from background => updating');
       this.updateUI();
     });
     /*window.addEventListener("resume", () => {

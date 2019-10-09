@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {File} from '@ionic-native/file';
+import {File, Entry} from '@ionic-native/file';
 import {FileTransfer, FileTransferObject} from "@ionic-native/file-transfer";
 import {DBClient} from "./db-client";
 import {RESTClient} from "./rest-client";
@@ -7,8 +7,8 @@ import {Observable} from "rxjs";
 import {Util} from "../util/util";
 import {FileUtils} from "../util/file";
 import {IDocument} from "../model";
-import {ToastController} from "ionic-angular";
 import {forkJoin} from "rxjs/observable/forkJoin";
+import { Popup } from "../providers/popup/popup";
 
 @Injectable()
 export class DocumentsService {
@@ -18,7 +18,7 @@ export class DocumentsService {
     private dbClient: DBClient,
     private restClient: RESTClient,
     private util: Util,
-    private toast: ToastController
+    private popup: Popup
   ) {}
 
   saveDocument(document: IDocument) {
@@ -61,14 +61,13 @@ export class DocumentsService {
           const filePath = this.getDocumentsDirectory() + documentFromTheAPI.name + extension;
           const adjustedPath = this.util.adjustFilePath(filePath);
           return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
-            .then((entry) => {
-              documentFromTheAPI.file_path = entry.toURL();
+            .then((entry:Entry) => {
+              documentFromTheAPI.file_path = entry.nativeURL
               return this.dbClient.saveDocument(documentFromTheAPI)
                 .subscribe((ok) => {
                   obs.next(documentFromTheAPI);
                   obs.complete();
-                  console.log('Document saved successfully');
-                  console.log(JSON.stringify(ok));
+                  console.log(`Document ${entry.name} saved successfully`);
                 }, (error) => {
                   obs.error(error);
                   console.log(`Couldn't save document on the db`);
@@ -214,13 +213,6 @@ export class DocumentsService {
   }
 
   showNoDocumentsToast() {
-    let toaster = this.toast.create({
-      message: `The selected documents set doesn't contains any documents.`,
-      duration: 3000,
-      position: "top",
-      cssClass: "error"
-    });
-
-    toaster.present();
+   this.popup.showToast(`The selected documents set doesn't contains any documents.`);
   }
 }

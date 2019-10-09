@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
-import {File} from "@ionic-native/file";
 import {Platform} from "ionic-angular";
 
 @Component({
@@ -13,15 +12,18 @@ export class Document implements OnChanges {
   @Output() onOpen = new EventEmitter();
   @Output() onSelect = new EventEmitter();
 
-  private selectedTheme: String;
-  private thumbnail: string;
+  public selectedTheme: String;
+  public thumbnail: string;
+  fallbackUrl : string;
 
   constructor(
     private themeProvider: ThemeProvider,
-    private fileService: File,
     private platform: Platform
   ) {
-    this.themeProvider.getActiveTheme().subscribe((theme) => this.selectedTheme = theme);
+    this.themeProvider.getActiveTheme().subscribe((theme) => {
+      this.selectedTheme = theme;
+      this.fallbackUrl = `assets/images/doc-placeholder-${theme.replace('-theme','')}.png`
+    });
   }
 
   ngOnChanges() {

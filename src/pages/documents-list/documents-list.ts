@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {IonicPage, ModalController, NavController, NavParams, ToastController} from 'ionic-angular';
+import {IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
 import {Form, IDocumentSet} from "../../model";
 import {DocumentsService} from "../../services/documents-service";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {unionBy} from 'lodash';
+import { Popup } from '../../providers/popup/popup';
 
 @IonicPage()
 @Component({
@@ -23,7 +24,7 @@ export class DocumentsListPage {
     public navParams: NavParams,
     private modal: ModalController,
     private documentsService: DocumentsService,
-    private toast: ToastController,
+    private popup: Popup,
     private themeService: ThemeProvider
   ) {
     this.form = this.navParams.get('form');
@@ -31,7 +32,6 @@ export class DocumentsListPage {
   }
 
   private init() {
-    console.log(this.form);
     this.documentSets = this.form.elements
       .filter((el) => el.type === 'documents' && el.documents_set)
       .map((el) => {
@@ -49,7 +49,7 @@ export class DocumentsListPage {
 
   openDocuments(documentSet: IDocumentSet) {
     this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
-      if (documents && documents.length) {
+      if (documents && documents.length) { 
         documentSet.documents = unionBy(documents, documentSet, 'id');
       }
 
@@ -58,13 +58,7 @@ export class DocumentsListPage {
       console.log('SOMETHING WENT WRONG OPENING THE DOCUMENT SET');
       console.log(JSON.stringify(error));
 
-      let toaster = this.toast.create({
-        message: `Something went wrong while opening the documents. Please try again later.`,
-        duration: 3000,
-        position: "top",
-        cssClass: "error"
-      });
-      toaster.present();
+     this.popup.showToast( `A problem occurred while opening your documents. Please try again.`)
     });
   }
 

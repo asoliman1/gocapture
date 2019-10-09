@@ -48,7 +48,7 @@
 //------------------------------------------------------------------------------
 // class that does the grunt work
 //------------------------------------------------------------------------------
-@interface CDVbcsProcessor : NSObject <AVCaptureMetadataOutputObjectsDelegate> {}
+@interface CDVbcsProcessor : NSObject <AVCaptureMetadataOutputObjectsDelegate, UIAdaptivePresentationControllerDelegate> {}
 @property (nonatomic, retain) CDVBarcodeScanner*           plugin;
 @property (nonatomic, retain) NSString*                   callback;
 @property (nonatomic, retain) UIViewController*           parentViewController;
@@ -392,9 +392,13 @@ parentViewController:(UIViewController*)parentViewController
     // here we set the orientation delegate to the MainViewController of the app (orientation controlled in the Project Settings)
     self.viewController.orientationDelegate = self.plugin.viewController;
 
+    self.viewController.presentationController.delegate = self;
+
     // delayed [self openDialog];
     [self performSelector:@selector(openDialog) withObject:nil afterDelay:1];
 }
+
+
 
 //--------------------------------------------------------------------------
 - (void)openDialog {
@@ -729,6 +733,13 @@ parentViewController:(UIViewController*)parentViewController
     return formatObjectTypes;
 }
 
+#pragma mark - UIPresentationControllerDelegate
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [self barcodeScanCancelled];
+}
+
 @end
 
 //------------------------------------------------------------------------------
@@ -806,6 +817,9 @@ parentViewController:(UIViewController*)parentViewController
     /* return file path back to cordova */
     [self.plugin returnImage:filePath format:@"QR_CODE" callback: self.callback];
 }
+
+#pragma mark - UIAdaptivePresentationControllerDelegate
+
 @end
 
 //------------------------------------------------------------------------------
@@ -1005,6 +1019,7 @@ parentViewController:(UIViewController*)parentViewController
                      action:@selector(flipCameraButtonPressed:)
                      ];
 
+    id actionButton = shouldShowDoneBtn ? doneButton : cancelButton;
 
     NSMutableArray *items;
 
@@ -1016,17 +1031,15 @@ parentViewController:(UIViewController*)parentViewController
                         ];
 
     if (_processor.isShowFlipCameraButton) {
-        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, flipCamera, shutterButton, nil];
+        items = [NSMutableArray arrayWithObjects:flexSpace, actionButton, flexSpace, flipCamera, shutterButton, nil];
     } else {
-        items = [NSMutableArray arrayWithObjects:flexSpace, cancelButton, flexSpace, shutterButton, nil];
+        items = [NSMutableArray arrayWithObjects:flexSpace, actionButton, flexSpace, shutterButton, nil];
     }
 #else
     if (_processor.isShowFlipCameraButton) {
-        items = [@[flexSpace, cancelButton, flexSpace, flipCamera] mutableCopy];
-    } else if (shouldShowDoneBtn) {
-        items = [@[flexSpace, doneButton, flexSpace] mutableCopy];
+        items = [@[flexSpace, actionButton, flexSpace, flipCamera] mutableCopy];
     } else {
-        items = [@[flexSpace, cancelButton, flexSpace] mutableCopy];
+        items = [@[flexSpace, actionButton, flexSpace] mutableCopy];
     }
 #endif
 
@@ -1169,5 +1182,7 @@ parentViewController:(UIViewController*)parentViewController
     [self.reticleView setFrame:rectArea];
     self.reticleView.center = CGPointMake(self.view.center.x, self.view.center.y-self.toolbar.frame.size.height/2);
 }
+
+
 
 @end

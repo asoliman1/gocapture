@@ -1,5 +1,6 @@
 $theme-color: color($colors, blue);
+$theme-text-color : color($colors, white);
 
 .blue-theme {
-  @include theme($theme-color);
+  @include theme($theme-color,$theme-text-color);
 }
