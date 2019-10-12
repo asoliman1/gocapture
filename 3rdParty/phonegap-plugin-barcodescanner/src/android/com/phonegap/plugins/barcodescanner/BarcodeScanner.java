@@ -280,6 +280,8 @@ public class BarcodeScanner extends CordovaPlugin {
 
                     String barcode = intent.getStringExtra("SCAN_RESULT");
 
+                    barcode = barcode.replace("\n", "").replace("\r", "");
+
                     barcode = "\"" + barcode + "\"";
 
                     if (!this.barcodes.contains(barcode)) {

@@ -61,7 +61,18 @@ export class GOCBarcodeScanner implements Scanner {
               console.error("Can't save badges to the defaults - " + error);
             });
           } else {
-            resolve({ barcodes: self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"]) });
+            let barcodes = [];
+
+            if (self.platform.is('ios')) {
+              barcodes = scannedData["barcodes"];
+            } else {
+              try {
+                barcodes = JSON.parse(scannedData["barcodes"]);
+              } catch (e) {
+                console.error("Can't parse badge data - " + e);
+              }
+            }
+            resolve({ barcodes: barcodes });
           }
           return;
         }

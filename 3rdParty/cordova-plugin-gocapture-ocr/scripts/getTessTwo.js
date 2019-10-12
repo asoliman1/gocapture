@@ -1,6 +1,6 @@
 module.exports = function(context) {
 
-	var Q = context.requireCordovaModule('q');
+	var Q = require('q');
     var deferral = new Q.defer();
 
     var request = require('request'),
@@ -11,7 +11,7 @@ module.exports = function(context) {
 	path = require("path"),
 	out = fs.createWriteStream('platforms/android/tess-two-master.zip'),
 	child = require("child_process");
-	
+
 	console.log("Downloading Tesseract...");
 	var reqStream = request('https://github.com/rmtheis/tess-two/archive/master.zip').pipe(out);
 	reqStream.on('error', function(err) {
@@ -28,13 +28,13 @@ module.exports = function(context) {
 				file: 'platforms/android/tess-two-master.zip',
 				storeEntries: true
 			});
-			
+
 			// Handle errors
-			zip.on('error', err => { 
+			zip.on('error', err => {
 				console.error(err);
 				deferral.reject("Tesseract archive is corrupt");
 			});
-						
+
 			zip.on('ready', () => {
 				console.log("zip ready");
 				zip.extract('tess-two-master/tess-two', 'platforms/android/tess-two', err => {
