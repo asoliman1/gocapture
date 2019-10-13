@@ -108,6 +108,7 @@
     "lodash": "^4.17.15",
     "mime-types": "^2.1.24",
     "moment": "^2.22.2",
+    "ng-imgcache": "^1.0.1",
     "ng2-validation": "^4.2.0",
     "phonegap-nfc": "^1.0.3",
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",

@@ -10,7 +10,7 @@ export class FabMenuItem {
 
 @Component({
   selector: 'custom-fab-menu',
-  templateUrl: 'custom-fab-menu.html'
+  templateUrl: 'fab-list.html'
 })
 
 export class CustomFabMenu {

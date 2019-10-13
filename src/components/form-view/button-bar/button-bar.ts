@@ -1,3 +1,4 @@
+import { MenuButtons } from './../../../model/menuButton';
 import { FormElement } from './../../../model/form-element';
 import { Popup } from './../../../providers/popup/popup';
 import { FormSubmission, BarcodeStatus } from './../../../model/form-submission';
@@ -9,7 +10,7 @@ import { FormReview } from '../../../views/form-review';
 import { DBClient } from '../../../services/db-client';
 import { FormCapture } from '../../../views/form-capture';
 import { ActionSheetButton } from 'ionic-angular/components/action-sheet/action-sheet-options';
-import { FabMenuItem } from '../ionic-fab-label-backdrop/fab-menu';
+import { FabMenuItem } from '../fab-list/fab-list'
 
 @Component({
     selector: 'button-bar',
@@ -17,20 +18,9 @@ import { FabMenuItem } from '../ionic-fab-label-backdrop/fab-menu';
 })
 
 export class buttonBar implements OnInit {
-    @Input() tabButtons = [
-        { "type": "submit", "show": 1, "label": "Submit", "order": 1 },
-        { "type": "reset", "show": 1, "label": "Reset", "order": 2 },
-        { "type": "scan", "show": 1, "label": "Scan", "order": 3 },
-        { "type": "recall", "show": 1, "label": "Recall", "order": 4 },
-        { "type": "leads", "show": 1, "label": "Leads", "order": 5 },
-    ];
-    @Input() fabButtons = [
-        { "type": "submit", "show": 1, "label": "Submit", "order": 1 },
-        { "type": "reset", "show": 1, "label": "Reset", "order": 2 },
-        { "type": "scan", "show": 1, "label": "Scan", "order": 3 },
-        { "type": "recall", "show": 1, "label": "Recall", "order": 4 },
-        { "type": "leads", "show": 1, "label": "Leads", "order": 5 },
-    ]
+    tabButtons: MenuButtons;
+    fabButtons: MenuButtons;
+
     @Input() form: Form;
 
     public fabMenuItems: Array<FabMenuItem> = [];
@@ -44,9 +34,22 @@ export class buttonBar implements OnInit {
         private dbClient: DBClient,
         private popup: Popup,
     ) {
- 
+
     }
 
+    isTabsVisible(): boolean {
+        if (this.form.event_style.buttons_menu) {
+            if (this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
+        }
+        return false;
+    }
+
+    isFabsVisible(): boolean {
+        if (this.form.event_style.floating_buttons) {
+            if (this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
+        }
+        return false;
+    }
 
     ngOnInit() {
         this.setButtons()
@@ -57,25 +60,35 @@ export class buttonBar implements OnInit {
     }
 
     setButtons() {
-        this.filterButtonsWithShow(this.fabButtons);
-        this.filterButtonsWithShow(this.tabButtons);
-        this.sortButtons(this.fabButtons);
-        this.sortButtons(this.tabButtons);
+        this.setTabs();
+        this.setFabs();
+        this.validateBtns()
+    }
+
+    setFabs() {
+        this.fabButtons = this.form.event_style.floating_buttons;
+        this.fabButtons.buttons = [...this.filterButtonsWithShow(this.fabButtons.buttons)];
+        this.fabButtons.buttons = [...this.sortButtons(this.fabButtons.buttons)];
         this.addFabs();
-        this.scanningEls = this.form.elements.filter((e) => e.type == 'barcode' || e.type == 'business_card')
+    }
+
+    setTabs() {
+        this.tabButtons = this.form.event_style.buttons_menu;
+        this.tabButtons.buttons = [...this.filterButtonsWithShow(this.tabButtons.buttons)];
+        this.tabButtons.buttons = [...this.sortButtons(this.tabButtons.buttons)];
     }
 
     addFabs() {
-        this.fabButtons.forEach((e) => {
+        this.fabButtons.buttons.forEach((e) => {
             this.fabMenuItems.push(new FabMenuItem(e.type, this.getIcon(e), e.label));
         })
     }
 
     sortButtons(buttons) {
-        buttons = buttons.sort((a, b) => {
-            if (a.order > b.order)
+        return buttons.sort((a, b) => {
+            if (a.order * 1 > b.order * 1)
                 return 1;
-            else if (a.order < b.order)
+            else if (a.order * 1 < b.order * 1)
                 return -1;
             else
                 return 0;
@@ -83,7 +96,15 @@ export class buttonBar implements OnInit {
     }
 
     filterButtonsWithShow(buttons) {
-        buttons = buttons.filter((e) => e.show == 1);
+        return buttons.filter((e) => e.show == "1");
+    }
+
+    validateBtns() {
+        this.scanningEls = this.form.elements.filter((e) => e.type == 'barcode' || e.type == 'business_card')
+        if (!this.scanningEls.length) {
+            this.fabButtons.buttons = this.fabButtons.buttons.filter((e) => e.type != 'scan')
+            this.tabButtons.buttons = this.tabButtons.buttons.filter((e) => e.type != 'scan')
+        }
     }
 
     getIcon(btn) {

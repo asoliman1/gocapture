@@ -1,23 +1,20 @@
-<div class="sticky" >
-<ion-footer *ngIf="tabButtons.length" >
-    <ion-toolbar >
-      <ion-row justify-content-around >
-        <button *ngFor="let btn of tabButtons"  clear color="white" (click)="onClick(btn.type)"  ion-button >
-          <div class="top-text" >
-          <ion-icon [name]="getIcon(btn)" ></ion-icon> 
-                  {{btn.label}}
+<div class="sticky">
+  <ion-footer *ngIf="isTabsVisible()">
+    <ion-toolbar>
+      <ion-row justify-content-around>
+        <button *ngFor="let btn of tabButtons.buttons" clear color="white" (click)="onClick(btn.type)" ion-button>
+          <div class="top-text">
+            <ion-icon [name]="getIcon(btn)"></ion-icon>
+            {{btn.label}}
           </div>
         </button>
-    </ion-row>
+      </ion-row>
     </ion-toolbar>
   </ion-footer>
 
-<custom-fab-menu 
-*ngIf="fabButtons.length" 
-[hasMargin]="tabButtons.length" 
-[fabIcon]="'more'" 
-[items]="fabMenuItems" 
-(onItemSelected)="onItemSelected($event)">
-</custom-fab-menu>
+  <custom-fab-menu *ngIf="isFabsVisible()"
+    [hasMargin]="tabButtons.buttons.length && tabButtons.is_show" [fabIcon]="'more'" [items]="fabMenuItems"
+    (onItemSelected)="onItemSelected($event)">
+  </custom-fab-menu>
 
-  </div>
+</div>
