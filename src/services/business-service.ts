@@ -102,7 +102,6 @@ export class BussinessClient {
   }
 
   public doAutoSync() {
-    console.log('doAutoSync');
     if (this.isOnline()) {
       this.db.isWorkDbInited() && this.db.getConfig("autoUpload").flatMap((val) => {
         if (val + "" == "true") {

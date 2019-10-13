@@ -1,25 +1,28 @@
 <ion-header>
 	<ion-navbar color="primary">
 		<button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
+			<ion-icon name="menu"></ion-icon>
+		</button>
 		<ion-title>Events</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="sync()" class="larger" >
+			<button ion-button (click)="sync()" class="larger">
 				<ion-icon name="sync"></ion-icon>
 			</button>
 			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
-        <ion-icon name="search"></ion-icon>
-      </button>
+				<ion-icon name="search"></ion-icon>
+			</button>
 		</ion-buttons>
 	</ion-navbar>
 </ion-header>
 
 <ion-content class="forms">
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
-	<ion-list approxItemHeight="30.5vh">
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger">
+	</ion-searchbar>
+	<ion-list approxItemHeight="300px" >
 		<!-- A.S GOC-326 -->
-		<event-item (click)="presentActionSheet(form)" *ngFor="let form of filteredForms;let i = index" [form]="form"  ></event-item>
+		<!-- <div *virtualItem="let form"> -->
+			<event-item (click)="presentActionSheet(form)" *ngFor="let form of filteredForms" [form]="form"></event-item>
+		<!-- </div> -->
 	</ion-list>
 	<!--ion-refresher (ionRefresh)="doRefresh($event)">
 		<ion-refresher-content pull-max="200"></ion-refresher-content>

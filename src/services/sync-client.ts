@@ -151,23 +151,20 @@ export class SyncClient {
               console.error(err);
             }, () => {
               obs.next(result);
-              // this.syncCleanup();
+              this.syncCleanup();
             });
 
           }, (err) => {
             obs.error(err);
-            // this.syncCleanup();
+            this.syncCleanup();
           });
         }, (err) => {
           obs.error(err);
-          // this.syncCleanup();
+          this.syncCleanup();
         });
-        // }, (err) => {
-        //   this.syncCleanup();
-        // });
       }, (err) => {
         obs.error(err);
-        // this.syncCleanup();
+        this.syncCleanup();
       });
     });
   }
