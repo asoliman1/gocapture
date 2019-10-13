@@ -144,6 +144,7 @@ export class MyApp {
 
   private onAppResumes() {
     this.platform.resume.subscribe(() => {
+      this.popup.dismissAll();
       // A.S check device status when app resumes
       if(!this.util.getPluginPrefs()){
         this.checkDeviceStatus();

@@ -1,3 +1,4 @@
+import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { Popup } from './../providers/popup/popup';
 import { Injectable } from "@angular/core";
@@ -64,7 +65,8 @@ export class BussinessClient {
     private push: PushClient,
     private net: Network,
     private localNotificationsService: LocalNotificationsService,
-    private appPreferences:AppPreferences,
+    private appPreferences: AppPreferences,
+    private util: Util,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -100,7 +102,6 @@ export class BussinessClient {
   }
 
   public doAutoSync() {
-    console.log('doAutoSync');
     if (this.isOnline()) {
       this.db.isWorkDbInited() && this.db.getConfig("autoUpload").flatMap((val) => {
         if (val + "" == "true") {
@@ -115,7 +116,7 @@ export class BussinessClient {
         console.error(error);
       });
     } else {
-      this.popup.showToast('No internet connection available.',"top","warning")
+      this.popup.showToast('No internet connection available.', "top", "warning")
     }
   }
 
@@ -236,10 +237,10 @@ export class BussinessClient {
             this.db.setupWorkDb(reply.db);
             obs.next({ user: reply, message: "Done" });
             obs.complete();
-          },err=>{
+          }, err => {
             console.log(err);
           });
-        },err=>{
+        }, err => {
           console.log(err);
         });
       }, err => {
@@ -250,19 +251,20 @@ export class BussinessClient {
 
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
-      this.rest.unauthenticate(user.access_token).subscribe(async(done)  => {
+      this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
         if (done) {
-            this.db.deleteRegistration();
-            this.push.shutdown();
-            this.pushSubs.forEach(sub => {
-              sub.unsubscribe();
-            });
-            await this.appPreferences.clearAll();
-            this.pushSubs = [];
-            this.setup = false;
-            obs.next(user);
-            obs.complete();
-        
+          this.db.deleteRegistration();
+          this.push.shutdown();
+          this.pushSubs.forEach(sub => {
+            sub.unsubscribe();
+          });
+          await this.appPreferences.clearAll();
+          this.util.rmDir("leadliaison", "");
+          this.pushSubs = [];
+          this.setup = false;
+          obs.next(user);
+          obs.complete();
+
         } else {
           obs.error("Could not unauthenticate");
         }

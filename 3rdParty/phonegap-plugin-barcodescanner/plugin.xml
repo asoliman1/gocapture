@@ -24,6 +24,7 @@
     <!-- frameworks -->
     <framework src="AVFoundation.framework" />
     <framework src="AudioToolbox.framework" />
+      <framework src="Toast" type="podspec" spec="~> 4.0.0"/>
   </platform>
   <platform name="android">
     <source-file src="src/android/com/phonegap/plugins/barcodescanner/BarcodeScanner.java" target-dir="src/com/phonegap/plugins/barcodescanner"/>

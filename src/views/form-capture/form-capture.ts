@@ -191,9 +191,9 @@ export class FormCapture implements AfterViewInit {
   }
 
   private async showScreenSaver() {
-
+    let active = this.navCtrl.last().instance instanceof FormCapture;
     if (this.imagesDownloaded()) {
-      if (!this._modal) {
+      if (!this._modal && active) {
         this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
        await this._modal.present();
@@ -952,7 +952,7 @@ export class FormCapture implements AfterViewInit {
             label: scanSource.name,
             value: scanSource.id,
             type: 'radio',
-            checked: scanSource.id == this.selectedStation.id
+            checked: this.selectedStation && scanSource.id == this.selectedStation.id
           });
         }
 

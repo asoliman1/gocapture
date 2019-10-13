@@ -31,7 +31,8 @@ www/
 src/app/config.ts
 .analysis/
 !3rdParty/**/*
-!cordova-plugin-gocapture-ocr/www
+!3rdParty/cordova-plugin-gocapture-ocr/www
+3rdParty/cordova-plugin-gocapture-ocr/node_modules/
 
 $RECYCLE.BIN/
 
