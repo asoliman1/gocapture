@@ -20,11 +20,10 @@ module.exports = function (context) {
     var configXmlPath = path.join(rootPath, 'config.xml');
     var configParser = getConfigParser(context, configXmlPath);
     var appName = configParser.name();
-    var oldMinVersion = configParser.getPreference('pods_ios_min_version', 'ios') ||
-        configParser.getPreference('pods_ios_min_version');
+    var oldMinVersion = '11.0';
     var iosMinVersion = configParser.getPreference('deployment-target', 'ios') ||
         configParser.getPreference('deployment-target') ||
-        oldMinVersion || '7.0';
+        oldMinVersion || '11.0';
     var useFrameworks = configParser.getPreference('pods_use_frameworks', 'ios') || configParser.getPreference('pods_use_frameworks') || 'false';
     var podConfigPath = path.join(rootPath, 'platforms', 'ios', '.pods.json');
     var pod, podName;

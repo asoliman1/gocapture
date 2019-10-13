@@ -952,7 +952,7 @@ export class FormCapture implements AfterViewInit {
             label: scanSource.name,
             value: scanSource.id,
             type: 'radio',
-            checked: scanSource.id == this.selectedStation.id
+            checked: this.selectedStation && scanSource.id == this.selectedStation.id
           });
         }
 
