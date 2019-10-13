@@ -221,7 +221,7 @@ export class Util {
   }
 
   public fileExist(url) {
-    let file =this.getFilePath(url, '');
+    let file = this.getFilePath(url, '');
     return this.file.checkFile(file.folderPath + '/', file.name);
   }
 
@@ -260,7 +260,7 @@ export class Util {
     let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
     let path = newFolder + name;
 
-    return { path, pathToDownload , name , folderPath:newFolder }
+    return { path, pathToDownload, name, folderPath: newFolder }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
@@ -299,6 +299,31 @@ export class Util {
     }
 
     return array;
+  }
+
+  // A.S remove a file
+  async  rmFile(folder: string, name: string) {
+    let path = this.file.dataDirectory + "leadliaison/" + folder + "/";
+    try {
+      let result = await this.file.removeFile(path, name);
+      console.log(`File ${result.fileRemoved.name} removed.`);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  // A.S remove a dir
+  async rmDir(folder: string, subPath = 'leadliaison/') {
+    let path = this.file.dataDirectory + subPath;
+    try {
+      let result = await this.file.removeRecursively(path, folder);
+      console.log(`Folder ${result.fileRemoved.name} removed`);
+      return result
+    } catch (error) {
+      return error;
+    }
   }
 
 }
