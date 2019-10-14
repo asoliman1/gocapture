@@ -186,7 +186,8 @@
       "phonegap-plugin-barcodescanner": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-gocapture-ocr": {}
+      "cordova-plugin-gocapture-ocr": {},
+      "cordova-plugin-app-preferences": {}
     },
     "platforms": [
       "browser",
