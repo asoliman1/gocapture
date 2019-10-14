@@ -151,23 +151,20 @@ export class SyncClient {
               console.error(err);
             }, () => {
               obs.next(result);
-              // this.syncCleanup();
+              this.syncCleanup();
             });
 
           }, (err) => {
             obs.error(err);
-            // this.syncCleanup();
+            this.syncCleanup();
           });
         }, (err) => {
           obs.error(err);
-          // this.syncCleanup();
+          this.syncCleanup();
         });
-        // }, (err) => {
-        //   this.syncCleanup();
-        // });
       }, (err) => {
         obs.error(err);
-        // this.syncCleanup();
+        this.syncCleanup();
       });
     });
   }
@@ -656,7 +653,7 @@ export class SyncClient {
           entry = await this.downloadFile(file.pathToDownload, file.path);
           form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
         } catch (error) {
-          console.log(error);
+          console.log('Error downloading a file',error)
         }
       }
       this.setFormSync(form, false, 50);
@@ -668,7 +665,7 @@ export class SyncClient {
               entry = await this.downloadFile(file.pathToDownload, file.path);
               item = { path: entry.nativeURL, url: item.url };
             } catch (error) {
-              console.log(error);
+              console.log('Error downloading a file',error)
             }
           }
           return item;
@@ -690,26 +687,28 @@ export class SyncClient {
   }
 
   // A.S GOC-326 check file if downloaded
-   checkFile(newUrl: string, oldUrl: Image, id: string) {
-    let i = id.split('_');
-
-    if(!oldUrl){
+  checkFile(newUrl: string, oldUrl: Image, id: string) {
+    let i = id.split('_'), fileCongif;
+    if (!oldUrl) {
       console.log(`form ${i[2] || i[1]} has new ${i[0]}`);
       this.hasNewData = true;
       return newUrl;
     }
-   else if (newUrl != oldUrl.url) {
+    else if (newUrl != oldUrl.url) {
       console.log(`form ${i[2] || i[1]} has updated ${i[0]}`);
       this.hasNewData = true;
+      fileCongif = this.util.getFilePath(oldUrl.url, id);
+      this.util.rmFile("images", fileCongif.name)
       return newUrl;
-    } else {
-      if(oldUrl.path.startsWith('https://')) {
-     console.log(`form ${i[2] || i[1]} will download again ${i[0]}`);
+    } else if (oldUrl.path.startsWith('https://')) {
+      console.log(`form ${i[2] || i[1]} will download again ${i[0]}`);
       this.hasNewData = true;
-    }
-  // A.S for ios if the app updated , app's directory will change
-      let oldPathWithNewDirectory = this.util.getFilePath(oldUrl.url,id).path
-      return oldPathWithNewDirectory; 
+      return oldUrl.path;
+    } else {
+      // console.log(`form ${i[2] || i[1]} has a ${i[0]} `)
+      // A.S for ios if the app updated , app's directory will change so we need to check app directory.
+      fileCongif = this.util.getFilePath(oldUrl.url, id);
+      return fileCongif.path;
     }
   }
 
@@ -717,15 +716,15 @@ export class SyncClient {
   // A.S GOC-326 check form data if downloaded
   private checkFormData(newForms: any[], oldForms: Form[]) {
     return newForms.map((form) => {
-     let oldForm = oldForms.filter(f => f.form_id == form.form_id)[0];
-     let img = form.event_style.event_record_background;
-     form.event_style.event_record_background = { path: this.checkFile(img,oldForm && oldForm.event_style ? oldForm.event_style.event_record_background : null , `background_${form.form_id}_`) , url: img };
+      let oldForm = oldForms.filter(f => f.form_id == form.form_id)[0];
+      let img = form.event_style.event_record_background;
+      form.event_style.event_record_background = { path: this.checkFile(img, oldForm && oldForm.event_style ? oldForm.event_style.event_record_background : null, `background_${form.form_id}_`), url: img };
       if (form.event_style.screensaver_media_items.length) {
         let oldImgs = oldForm && oldForm.event_style ? oldForm.event_style.screensaver_media_items : [];
         form.event_style.screensaver_media_items = form.event_style.screensaver_media_items.map((item) => {
           img = item;
-          let oldImg = oldImgs.filter((e) => e.url == img)[0] ;
-          item = { path: this.checkFile(img, oldImg, `screen_saver_${form.form_id}_`) , url: img };
+          let oldImg = oldImgs.filter((e) => e.url == img)[0];
+          item = { path: this.checkFile(img, oldImg, `screen_saver_${form.form_id}_`), url: img };
           return item;
         })
       }

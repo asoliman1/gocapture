@@ -10,5 +10,5 @@ export class EventStyle {
     screensaver_media_items: Image[];
     transition_effect: string;
     switch_frequency: number;
-    is_randomize : boolean
+    is_randomize : boolean;
 }

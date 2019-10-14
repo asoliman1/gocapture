@@ -76,7 +76,6 @@ import { Ndef, NFC } from "@ionic-native/nfc";
 import { GOCAudio } from "../components/form-view/elements/audio/goc-audio";
 import { AudioCaptureService } from "../services/audio-capture-service";
 import { Media } from "@ionic-native/media";
-import { StorageProvider } from "../services/storage-provider";
 import { PhotoLibrary } from "@ionic-native/photo-library";
 import { SettingsService } from "../services/settings-service";
 import { LocalNotifications } from '@ionic-native/local-notifications';
@@ -89,7 +88,6 @@ import { ActionService } from "../services/action-service";
 import { RapidCaptureService } from "../services/rapid-capture-service";
 import { BadgeRapidCapture } from "../services/badge-rapid-capture";
 import { BCRapidCapture } from "../services/bc-rapid-capture";
-import { ProgressHud } from "../services/progress-hud";
 import { DuplicateLeadsService } from "../services/duplicate-leads-service";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { DocumentViewer } from "@ionic-native/document-viewer";
@@ -249,7 +247,6 @@ import { SectionBlock } from '../components/section-block';
     LocalStorageProvider,
     AudioCaptureService,
     Media,
-    StorageProvider,
     PhotoViewer,
     PhotoLibrary,
     SettingsService,
@@ -262,7 +259,6 @@ import { SectionBlock } from '../components/section-block';
     RapidCaptureService,
     BadgeRapidCapture,
     BCRapidCapture,
-    ProgressHud,
     DuplicateLeadsService,
     AppPreferences,
     DocumentViewer,

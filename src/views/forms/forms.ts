@@ -117,6 +117,11 @@ export class Forms {
   }
 
   sync() {
+    if(this.syncClient.isSyncing()){
+      console.log('Sync is in progress')
+      return;
+    } 
+      console.log('Sync started');
     this.client.getUpdates().subscribe(() => {
     });
   }
