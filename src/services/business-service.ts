@@ -226,9 +226,7 @@ export class BussinessClient {
       req.invitation_code = authCode;
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
-        let ext = reply.user_profile_picture.split('.').pop();
-        let target = cordova.file.dataDirectory + 'leadliaison/profile/current.' + ext;
-
+        this.util.checkFilesDirectories();
         this.registration = reply;
         reply.pushRegistered = 1;
         reply.is_production = Config.isProd ? 1 : 0;

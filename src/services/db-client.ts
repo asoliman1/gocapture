@@ -326,7 +326,6 @@ export class DBClient {
 				custom: (db: SQLiteObject, callback) => {
 					let t = this;
 					db.executeSql("select id, formId from contacts where formId is not NULL", []).then(data => {
-						console.log(data.rows.length);
 						let list = [];
 						let index = 0;
 						while (index < data.rows.length) {
@@ -869,9 +868,7 @@ export class DBClient {
 			return new Observable<boolean>((obs: Observer<boolean>) => {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
-						console.log(data.rows.length);
 						if (data.rows.length == 1) {
-							console.log("1 row");
 							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
@@ -881,7 +878,6 @@ export class DBClient {
 								});
 							return;
 						} else if (data.rows.length > 1) {
-							console.log("more than a row");
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
 									console.log(data);
