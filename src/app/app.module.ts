@@ -162,7 +162,7 @@ import { SectionBlock } from '../components/section-block';
     BrowserModule,
     HttpModule,
     BrowserAnimationsModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp,{}),
     IonicImageViewerModule,
     TextMaskModule,
     PipesModule,

@@ -1,4 +1,7 @@
 custom-fab-menu {
+  .fab-margin{
+    bottom: $toolbar-ios-height + $fab-size;
+  }
     .labelContainer {
         position: fixed;
         top: 0;

@@ -1,6 +1,5 @@
-<div class="sticky">
   <ion-footer *ngIf="isTabsVisible()">
-    <ion-toolbar>
+    <ion-toolbar >
       <ion-row justify-content-around>
         <button *ngFor="let btn of tabButtons.buttons" clear color="white" (click)="onClick(btn.type)" ion-button>
           <div class="top-text">
@@ -16,5 +15,3 @@
     [hasMargin]="tabButtons.buttons.length && tabButtons.is_show" [fabIcon]="'more'" [items]="fabMenuItems"
     (onItemSelected)="onItemSelected($event)">
   </custom-fab-menu>
-
-</div>
