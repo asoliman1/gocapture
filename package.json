@@ -121,8 +121,7 @@
   "devDependencies": {
     "@ionic/app-scripts": "^3.2.4",
     "typescript": "2.4.2",
-    "webpack-bundle-analyzer": "^2.10.0",
-    "cordova-fabric-plugin": "^1.1.14-dev"
+    "webpack-bundle-analyzer": "^2.10.0"
   },
   "description": "An Ionic project",
   "cordova": {
@@ -188,10 +187,6 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-gocapture-ocr": {},
-      "cordova-fabric-plugin": {
-        "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
-        "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
-      },
       "cordova-plugin-app-preferences": {}
     },
     "platforms": [
