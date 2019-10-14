@@ -326,4 +326,37 @@ export class Util {
     }
   }
 
+  // check folders and create new if not found
+  checkFilesDirectories() {
+    //ensure folders exist
+    this.file.checkDir(this.file.dataDirectory, "leadliaison")
+      .then((exists) => {
+        this.checkDir('images');
+        this.checkDir('audio');
+        this.checkDir('documents');
+        this.checkDir('videos');
+      }).catch(err => {
+        this.file.createDir(this.file.dataDirectory, "leadliaison", true)
+          .then(ok => {
+            this.checkDir("images");
+            this.checkDir("audio");
+            this.checkDir('documents');
+            this.checkDir('videos');
+          })
+      });
+  }
+  checkDir(dirName) {
+    this.file.checkDir(this.file.dataDirectory + "leadliaison/", dirName)
+      .then((exists) => {
+        // console.log(dirName + " folder present");
+      }).catch(err => {
+        this.file.createDir(this.file.dataDirectory + "leadliaison/", dirName, true)
+          .then(ok => {
+            // console.log("Created " + dirName + " folder");
+          }).catch(err => {
+            console.error("Can't create " + this.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
+          })
+      });
+  }
+
 }
