@@ -653,7 +653,6 @@ export class SyncClient {
           entry = await this.downloadFile(file.pathToDownload, file.path);
           form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
         } catch (error) {
-          form.event_style.event_record_background = { path: form.event_style.event_record_background.url, url: form.event_style.event_record_background.url };          
           console.log('Error downloading a file',error)
         }
       }
@@ -666,7 +665,6 @@ export class SyncClient {
               entry = await this.downloadFile(file.pathToDownload, file.path);
               item = { path: entry.nativeURL, url: item.url };
             } catch (error) {
-              item = { path: item.url, url: item.url };
               console.log('Error downloading a file',error)
             }
           }
