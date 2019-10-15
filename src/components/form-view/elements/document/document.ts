@@ -1,11 +1,11 @@
-import {ModalController} from "ionic-angular";
-import {DocumentShareMode} from "../../../../views/documents/documents";
-import {Component, forwardRef, Input} from "@angular/core";
-import {DocumentsService} from "../../../../services/documents-service";
-import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
-import {BaseElement} from "../base-element";
-import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {ThemeProvider} from "../../../../providers/theme/theme";
+import { ModalController } from "ionic-angular";
+import { DocumentShareMode } from "../../../../views/documents/documents";
+import { Component, forwardRef, Input } from "@angular/core";
+import { DocumentsService } from "../../../../services/documents-service";
+import { Form, FormElement, FormSubmission, SubmissionStatus } from "../../../../model";
+import { BaseElement } from "../base-element";
+import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ThemeProvider } from "../../../../providers/theme/theme";
 import { Popup } from "../../../../providers/popup/popup";
 
 @Component({
@@ -25,13 +25,13 @@ export class Document extends BaseElement {
   @Input() isEditing?: boolean;
   @Input() submission?: FormSubmission;
 
-   selectedThemeColor: string;
+  selectedThemeColor: string;
 
   constructor(
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
     private themeService: ThemeProvider,
-    private popup : Popup
+    private popup: Popup
   ) {
     super();
     this.themeService.getActiveTheme().subscribe((theme: string) => this.selectedThemeColor = theme.split('-')[0]);
@@ -43,7 +43,7 @@ export class Document extends BaseElement {
   }
 
   ngOnChanges() {
-    console.log(this.element);
+    // console.log(this.element);
   }
 
   openDocuments() {
@@ -80,7 +80,7 @@ export class Document extends BaseElement {
         modal.present();
 
       }, (error) => {
-        this.popup.showToast( `A problem occurred while opening your documents. Please try again.`);
+        this.popup.showToast(`A problem occurred while opening your documents. Please try again.`);
       });
   }
 
