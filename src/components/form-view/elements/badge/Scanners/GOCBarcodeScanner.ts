@@ -42,6 +42,7 @@ export class GOCBarcodeScanner implements Scanner {
     options["isRapidScanMode"] = isRapidScan;
     options["rapidScanModeDelay"] = 2;
     options["resultDisplayDuration"] = 100;
+
     return new Promise<ScannerResponse>((resolve, reject) => {
       let self = this;
 
@@ -100,11 +101,13 @@ export class GOCBarcodeScanner implements Scanner {
     options["isRapidScanMode"] = false;
     return new Promise<ScannerResponse>((resolve, reject) => {
       cordova.plugins.barcodeScanner.scan(function (scannedData) {
+
         if (scannedData.cancelled) {
           this.statusMessage = "Scan " + this.name;
           resolve({ isCancelled: true });
           return;
         }
+
         resolve({ scannedId: scannedData.text });
       }, function (error) {
         this.statusMessage = "Could not scan " + this.name;

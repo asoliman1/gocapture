@@ -264,21 +264,21 @@ export class Util {
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
-  public setPluginPrefs() {
+  public setPluginPrefs(plugin = 'android-plugin') {
     if (this.platform.is('android'))
-      this.localStorage.set('android-plugin', true);
+      this.localStorage.set(plugin, true);
     else
-      this.localStorage.set('android-plugin', false);
+      this.localStorage.set(plugin, false);
   }
 
   // A.S this is fn to delete after returning from plugin
-  public rmPluginPrefs() {
-    this.localStorage.remove('android-plugin')
+  public rmPluginPrefs(plugin = 'android-plugin') {
+    this.localStorage.remove(plugin)
   }
 
   // A.S check the if any plugin is used or not
-  public getPluginPrefs() {
-    return this.localStorage.get('android-plugin')
+  public getPluginPrefs(plugin = 'android-plugin') {
+    return this.localStorage.get(plugin)
   }
 
   // A.S randomize an array
