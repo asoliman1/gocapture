@@ -113,7 +113,7 @@ export class MyApp {
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)
       .flatMap(setting => {
-        if (typeof setting == 'undefined' || setting.length == 0) {
+        if (typeof setting == 'undefined' || !setting || setting.length == 0) {
           return this.settingsService.setSetting(settingsKeys.AUTOSAVE_BC_CAPTURES, true);
         }
         return Observable.of((setting == 'true'));
@@ -123,7 +123,7 @@ export class MyApp {
   private setLogging() {
     if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-        if (typeof setting == "undefined" || setting.length == 0) {
+        if (typeof setting == "undefined" || !setting || setting.length == 0) {
           this.logger.enableLogging(false);
         } else {
           this.logger.enableLogging(setting);
