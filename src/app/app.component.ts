@@ -9,6 +9,7 @@ import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { Config } from "../config";
+import { isProductionEnvironment }  from "./config" ; 
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from "../providers/popup/popup";
 import { Platform } from 'ionic-angular/platform/platform';
@@ -121,10 +122,12 @@ export class MyApp {
 
   private setLogging() {
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-      if (typeof setting == "undefined" || setting.length == 0) {
-        this.logger.enableLogging(true);
-      } else {
-        this.logger.enableLogging(setting);
+      if(isProductionEnvironment){
+        if (typeof setting == "undefined" || setting.length == 0) {
+          this.logger.enableLogging(false);
+        } else {
+          this.logger.enableLogging(setting);
+        }
       }
     });
   }
@@ -145,9 +148,8 @@ export class MyApp {
     this.platform.resume.subscribe(() => {
       this.popup.dismissAll();
       // A.S check device status when app resumes
-      if(!this.util.getPluginPrefs()){
+      if(!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')){
         this.checkDeviceStatus();
-
         this.client.getUpdates().subscribe(() => {
           // this.documentsSync.syncAll();
         });
