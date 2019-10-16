@@ -10,7 +10,7 @@
 
 <!-- menu items -->
 <a (click)="hideMenuFab()" class="labelContainer show"  *ngIf="showMenuItem">
-	<div class="container" class="{{hasMargin ? 'fab-margin' : ''}}" >
+	<div class="container {{hasMargin ? 'margin' : ''}}" >
 	  <a  *ngFor="let item of labels" (click)="action(item)"><div class="label show" >{{item.label}}</div></a>
 	</div>
 </a>
