@@ -121,15 +121,16 @@ export class MyApp {
   }
 
   private setLogging() {
+    if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-      if(isProductionEnvironment){
         if (typeof setting == "undefined" || setting.length == 0) {
           this.logger.enableLogging(false);
         } else {
           this.logger.enableLogging(setting);
         }
-      }
     });
+  }
+
   }
 
   private checkDeviceStatus() {
