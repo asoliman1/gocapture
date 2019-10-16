@@ -78,6 +78,17 @@
       android:adjustViewBounds="true"
       android:scaleType="centerInside" />
 
+    <ImageView
+      android:id="@+id/business_card_overlay"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="@dimen/camera_overlay_horizontal_margin"
+      android:layout_marginTop="@dimen/camera_overlay_top_margin"
+      android:layout_marginRight="@dimen/camera_overlay_horizontal_margin"
+      android:adjustViewBounds="true"
+      android:scaleType="centerInside"
+      android:src="@drawable/business_card_overlay" />
+
   </RelativeLayout>
 
   <FrameLayout
