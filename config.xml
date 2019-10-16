@@ -136,9 +136,6 @@
         <variable name="FABRIC_API_KEY" value="87c5f596ba1288e89c53293ff749dca7b2f1ec1a" />
         <variable name="FABRIC_API_SECRET" value="1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7" />
     </plugin>
-    <plugin name="phonegap-plugin-push" spec="^2.1.3">
-        <variable name="FCM_VERSION" value="11.6.2" />
-    </plugin>
     <plugin name="cordova-plugin-media" spec="^5.0.2" />
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
