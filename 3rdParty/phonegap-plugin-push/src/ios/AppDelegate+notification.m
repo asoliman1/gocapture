@@ -155,7 +155,6 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
         pushHandler.notificationMessage = userInfo;
         pushHandler.isInline = true;
         [pushHandler notificationReceived];
-
     }
 }
 

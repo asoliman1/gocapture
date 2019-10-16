@@ -113,7 +113,7 @@ export class MyApp {
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)
       .flatMap(setting => {
-        if (typeof setting == 'undefined' || setting.length == 0) {
+        if (typeof setting == 'undefined' || !setting || setting.length == 0) {
           return this.settingsService.setSetting(settingsKeys.AUTOSAVE_BC_CAPTURES, true);
         }
         return Observable.of((setting == 'true'));
@@ -121,15 +121,16 @@ export class MyApp {
   }
 
   private setLogging() {
+    if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-      if(isProductionEnvironment){
-        if (typeof setting == "undefined" || setting.length == 0) {
+        if (typeof setting == "undefined" || !setting || setting.length == 0) {
           this.logger.enableLogging(false);
         } else {
           this.logger.enableLogging(setting);
         }
-      }
     });
+  }
+
   }
 
   private checkDeviceStatus() {
@@ -148,9 +149,8 @@ export class MyApp {
     this.platform.resume.subscribe(() => {
       this.popup.dismissAll();
       // A.S check device status when app resumes
-      if(!this.util.getPluginPrefs()){
+      if(!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')){
         this.checkDeviceStatus();
-
         this.client.getUpdates().subscribe(() => {
           // this.documentsSync.syncAll();
         });
