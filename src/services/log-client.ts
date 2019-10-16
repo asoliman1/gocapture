@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Observable, BehaviorSubject } from "rxjs/Rx";
 import { Util } from "../util/util";
-import {DBClient} from "./db-client";
+import { DBClient } from "./db-client";
 
 @Injectable()
-export class LogClient{
+export class LogClient {
 
 	private logSource: BehaviorSubject<LogEntry>;
     /**
@@ -12,7 +12,7 @@ export class LogClient{
      */
 	log: Observable<LogEntry>;
 
-	private logs : LogEntry[] = [];
+	private logs: LogEntry[] = [];
 
 	private consoleHandler: any;
 
@@ -27,46 +27,46 @@ export class LogClient{
 		this.log = this.logSource.asObservable();
 	}
 
-	public getLogs(offset: number, limit: number): LogEntry[]{
+	public getLogs(offset: number, limit: number): LogEntry[] {
 		return this.logs.slice(offset, offset + limit);
 	}
 
 	public clearLogs() {
-	  this.logs = [];
-  }
+		this.logs = [];
+	}
 
-  public enableLogging(isEnabled) {
-	  this.isLoggingEnabled = String(isEnabled) == "true";
-  }
+	public enableLogging(isEnabled) {
+		this.isLoggingEnabled = String(isEnabled) == "true";
+	}
 
-	private makeConsole() : any{
+	private makeConsole(): any {
 		return {
-			log: Util.proxy(function(message){
-								this.logEntry(arguments, LogSeverity.LOG)
-							}, this),
-			error: Util.proxy(function(message){
-								this.logEntry(arguments, LogSeverity.ERROR)
-							}, this),
-			info: Util.proxy(function(message){
-								this.logEntry(arguments, LogSeverity.INFO)
-							}, this),
-			warn: Util.proxy(function(message){
-								this.logEntry(arguments, LogSeverity.WARN)
-							}, this)
+			log: Util.proxy(function (message) {
+				this.logEntry(arguments, LogSeverity.LOG)
+			}, this),
+			error: Util.proxy(function (message) {
+				this.logEntry(arguments, LogSeverity.ERROR)
+			}, this),
+			info: Util.proxy(function (message) {
+				this.logEntry(arguments, LogSeverity.INFO)
+			}, this),
+			warn: Util.proxy(function (message) {
+				this.logEntry(arguments, LogSeverity.WARN)
+			}, this)
 		}
 	}
 
-	private logEntry(messages: any[], severity: LogSeverity){
-	  if (!this.isLoggingEnabled) {
-	    return;
-    }
+	private logEntry(messages: any[], severity: LogSeverity) {
+		if (!this.isLoggingEnabled) {
+			return;
+		}
 		this.consoleHandler[severity.name].apply(this.consoleHandler, messages);
 		var message = messages[0];
-		if(typeof(message) == "object"){
+		if (typeof (message) == "object") {
 			var cache = [];
-			message = JSON.stringify(message, function(key, value) {
-				if(value instanceof Date){
-					if(!value.toISOString){
+			message = JSON.stringify(message, function (key, value) {
+				if (value instanceof Date) {
+					if (!value.toISOString) {
 						return "<DATE>";
 					}
 					return value;
@@ -87,19 +87,19 @@ export class LogClient{
 	}
 }
 
-export class LogEntry{
+export class LogEntry {
 	date: Date;
 	severity: LogSeverity;
 	message: string;
 
-	constructor(message: string, severity: LogSeverity){
+	constructor(message: string, severity: LogSeverity) {
 		this.message = message;
 		this.severity = severity;
-		this.date =  new Date();
+		this.date = new Date();
 	}
 }
 
-export class LogSeverity{
+export class LogSeverity {
 	public static WARN: LogSeverity = new LogSeverity("warn");
 	public static LOG: LogSeverity = new LogSeverity("log");
 	public static INFO: LogSeverity = new LogSeverity("info");
@@ -107,7 +107,7 @@ export class LogSeverity{
 
 	public name: string;
 
-	private constructor(name: string){
+	private constructor(name: string) {
 		this.name = name;
 	}
 }

@@ -1,2 +1,2 @@
 //MARK: change to true for production builds
-export let isProductionEnvironment = true;
+export let isProductionEnvironment = false;
