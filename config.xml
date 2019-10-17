@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203720" id="com.leadliaison.mobilitease" ios-CFBundleVersion="372" version="2.4.20" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2203760" id="com.leadliaison.mobilitease" ios-CFBundleVersion="376" version="2.4.20" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://localhost:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -15,7 +15,7 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="26" />
+    <preference name="android-targetSdkVersion" value="28" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="SplashScreen" value="screen" />
@@ -151,6 +151,4 @@
     <allow-navigation href="http://localhost:8100" sessionid="31050d9b" />
     <allow-navigation href="http://localhost:8080/*" />
     <plugin name="cordova-plugin-document-viewer" spec="0.9.13" />
-    <allow-navigation href="http://192.168.1.7:8100" sessionid="a99b82a3" />
-    <allow-navigation href="http://192.168.1.7:8101" sessionid="ca4c4739" />
 </widget>

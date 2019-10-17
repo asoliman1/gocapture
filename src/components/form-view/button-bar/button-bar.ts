@@ -38,14 +38,14 @@ export class buttonBar implements OnInit {
     }
 
     isTabsVisible(): boolean {
-        if (this.form.event_style.buttons_menu) {
+        if (this.form && this.form.event_style.buttons_menu) {
             if (this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
         }
         return false;
     }
 
     isFabsVisible(): boolean {
-        if (this.form.event_style.floating_buttons) {
+        if (this.form && this.form.event_style.floating_buttons) {
             if (this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
         }
         return false;

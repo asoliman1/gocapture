@@ -163,19 +163,19 @@ export class GOCAudio extends BaseElement {
 
 		let filePath = this.currentVal;
 
-    let fileExist = false;
+		let fileExist = false;
 
-    try {
-      fileExist = await this.audioCaptureService.isRecordExist(filePath);
-    } catch(e) {
-      fileExist = false;
-    }
+		try {
+			fileExist = await this.audioCaptureService.isRecordExist(filePath);
+		} catch (e) {
+			fileExist = false;
+		}
 
 		if (!fileExist) {
-		  this.popup.showLoading("Record downloading...");
-		  await this.audioCaptureService.downloadRecord(filePath);
-		  this.popup.dismissAll();
-    }
+			this.popup.showLoading("Record downloading...");
+			await this.audioCaptureService.downloadRecord(filePath);
+			this.popup.dismiss('loading');
+		}
 
 		this.audioCaptureService.playRecord(filePath).subscribe(status => {
 			this.isPlaying = (status == MEDIA_STATUS.RUNNING);
@@ -224,16 +224,16 @@ export class GOCAudio extends BaseElement {
 	}
 
 	removeRecordingHandler() {
-    this.releaseResources().then(result => {
-      if (result) {
-        console.log('Audio file was removed');
-        this.onChange(null);
-        this.content.resize();
-      }
-    }).catch(error => {
-      console.log('Audio file can\'t be removed');
-    });
-  }
+		this.releaseResources().then(result => {
+			if (result) {
+				console.log('Audio file was removed');
+				this.onChange(null);
+				this.content.resize();
+			}
+		}).catch(error => {
+			console.log('Audio file can\'t be removed');
+		});
+	}
 
 	private updateTimeLabels(position, duration) {
 		this.timeUp = position * duration / 100;
