@@ -114,7 +114,7 @@
     "phonegap-nfc": "^1.0.3",
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",
     "phonegap-plugin-multidex": "^1.0.0",
-    "phonegap-plugin-push": "git+https://github.com/phonegap/phonegap-plugin-push.git",
+    "phonegap-plugin-push": "file:3rdParty/phonegap-plugin-push",
     "rxjs": "^5.5.11",
     "signature_pad": "^2.3.2",
     "sw-toolbox": "3.6.0",
@@ -123,8 +123,7 @@
   "devDependencies": {
     "@ionic/app-scripts": "^3.2.4",
     "typescript": "2.4.2",
-    "webpack-bundle-analyzer": "^2.10.0",
-    "cordova-fabric-plugin": "^1.1.14-dev"
+    "webpack-bundle-analyzer": "^2.10.0"
   },
   "description": "An Ionic project",
   "cordova": {
@@ -156,9 +155,6 @@
       "com-sarriaroman-photoviewer": {},
       "cordova-plugin-local-notification": {},
       "cordova-wheel-selector-plugin": {},
-      "cordova-plugin-camera-preview": {
-        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
-      },
       "cordova-plugin-vibration": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-ionic-webview": {
@@ -194,6 +190,9 @@
       "phonegap-plugin-push": {
         "ANDROID_SUPPORT_V13_VERSION": "27.+",
         "FCM_VERSION": "17.0.+"
+      },
+      "cordova-plugin-camera-preview": {
+        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
       }
     },
     "platforms": [

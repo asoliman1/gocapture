@@ -44,7 +44,7 @@ export class Popup {
       message: message,
       buttons: buttons,
       enableBackdropDismiss: false,
-      cssClass: theme ? theme.toString() : ""
+      cssClass: theme 
     });
     return this.alert.present();
   }
@@ -52,7 +52,7 @@ export class Popup {
   // A.S
   showActionSheet(title, buttons: ActionSheetButton[], theme?) {
     this.actionSheet = this.actionCtrl.create({
-      title, buttons, cssClass: theme.toString()
+      title, buttons, cssClass: theme
     })
     return this.actionSheet.present();
   }
