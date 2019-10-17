@@ -1,13 +1,14 @@
   <ion-footer *ngIf="isTabsVisible()">
     <ion-toolbar >
-      <ion-row justify-content-around>
+      <div class="tabs-ctn">
         <button *ngFor="let btn of tabButtons.buttons" clear color="white" (click)="onClick(btn.type)" ion-button>
           <div class="top-text">
             <ion-icon [name]="getIcon(btn)"></ion-icon>
             {{btn.label}}
           </div>
         </button>
-      </ion-row>
+        
+      </div>
     </ion-toolbar>
   </ion-footer>
 

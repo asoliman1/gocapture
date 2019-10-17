@@ -15,4 +15,10 @@ button-bar{
         align-items: center;
       }
 
+      .tabs-ctn{
+          display: flex;
+          flex-flow: row;
+          width:100%;
+          justify-content: space-around;
+      }
 }
