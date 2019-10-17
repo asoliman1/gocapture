@@ -78,6 +78,7 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
     [pushHandler didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     NSLog(@"didReceiveNotification with fetchCompletionHandler");
 
@@ -97,65 +98,45 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
         }
 
         if (silent == 1) {
-            NSLog(@"this should be a silent push");
-            void (^safeHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result){
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionHandler(result);
-                });
-            };
-
-            PushPlugin *pushHandler = [self getCommandInstance:@"PushNotification"];
-
-            if (pushHandler.handlerObj == nil) {
-                pushHandler.handlerObj = [NSMutableDictionary dictionaryWithCapacity:2];
-            }
-
-            id notId = [userInfo objectForKey:@"notId"];
-            if (notId != nil) {
-                NSLog(@"Push Plugin notId %@", notId);
-                [pushHandler.handlerObj setObject:safeHandler forKey:notId];
-            } else {
-                NSLog(@"Push Plugin notId handler");
-                [pushHandler.handlerObj setObject:safeHandler forKey:@"handler"];
-            }
-
-            pushHandler.notificationMessage = userInfo;
-            pushHandler.isInline = NO;
-            [pushHandler notificationReceived];
+            [self handleSilentPush:userInfo completionHandler:completionHandler];
         } else {
             NSLog(@"just put it in the shade");
             //save it for later
             self.launchNotification = userInfo;
             completionHandler(UIBackgroundFetchResultNewData);
         }
-
     } else {
-        NSLog(@"this should be a silent push");
-        void (^safeHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result){
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionHandler(result);
-            });
-        };
-
-        PushPlugin *pushHandler = [self getCommandInstance:@"PushNotification"];
-
-        if (pushHandler.handlerObj == nil) {
-            pushHandler.handlerObj = [NSMutableDictionary dictionaryWithCapacity:2];
-        }
-
-        id notId = [userInfo objectForKey:@"notId"];
-        if (notId != nil) {
-            NSLog(@"Push Plugin notId %@", notId);
-            [pushHandler.handlerObj setObject:safeHandler forKey:notId];
-        } else {
-            NSLog(@"Push Plugin notId handler");
-            [pushHandler.handlerObj setObject:safeHandler forKey:@"handler"];
-        }
-
-        pushHandler.notificationMessage = userInfo;
-        pushHandler.isInline = true;
-        [pushHandler notificationReceived];
+        [self handleSilentPush:userInfo completionHandler:completionHandler];
     }
+}
+
+- (void)handleSilentPush:(NSDictionary *)userInfo completionHandler: (void (^)(UIBackgroundFetchResult))completionHandler
+{
+    NSLog(@"this should be a silent push");
+    void (^safeHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(result);
+        });
+    };
+
+    PushPlugin *pushHandler = [self getCommandInstance:@"PushNotification"];
+
+    if (pushHandler.handlerObj == nil) {
+        pushHandler.handlerObj = [NSMutableDictionary dictionaryWithCapacity:2];
+    }
+
+    id notId = [userInfo objectForKey:@"notId"];
+    if (notId != nil) {
+        NSLog(@"Push Plugin notId %@", notId);
+        [pushHandler.handlerObj setObject:safeHandler forKey:notId];
+    } else {
+        NSLog(@"Push Plugin notId handler");
+        [pushHandler.handlerObj setObject:safeHandler forKey:@"handler"];
+    }
+
+    pushHandler.notificationMessage = userInfo;
+    pushHandler.isInline = true;
+    [pushHandler notificationReceived];
 }
 
 - (void)checkUserHasRemoteNotificationsEnabledWithCompletionHandler:(nonnull void (^)(BOOL))completionHandler
@@ -178,7 +159,7 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
 - (void)pushPluginOnApplicationDidBecomeActive:(NSNotification *)notification {
 
     NSLog(@"active");
-    
+
     NSString *firstLaunchKey = @"firstLaunchKey";
     NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:@"phonegap-plugin-push"];
     if (![defaults boolForKey:firstLaunchKey]) {

@@ -244,7 +244,7 @@ export class Util {
   private folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
       return "images/";
-    else if (ext == '.mp3' || ext == 'aac' || ext == 'wma' || ext == 'm4a')
+    else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a')
       return "audio/";
     else
       return "videos/"
