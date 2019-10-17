@@ -123,8 +123,7 @@
   "devDependencies": {
     "@ionic/app-scripts": "^3.2.4",
     "typescript": "2.4.2",
-    "webpack-bundle-analyzer": "^2.10.0",
-    "cordova-fabric-plugin": "^1.1.14-dev"
+    "webpack-bundle-analyzer": "^2.10.0"
   },
   "description": "An Ionic project",
   "cordova": {
