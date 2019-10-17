@@ -32,6 +32,7 @@ export class GOCNFCScanner implements Scanner {
   }
 
   private readNfc(resolve, reject) {
+    if(this.platform.is("android"))
     this.statusMessage = "Ready to scan. Hold the device near the badge.";
     this.nfc.addNdefListener(() => {
       if (this.platform.is("ios")) {
