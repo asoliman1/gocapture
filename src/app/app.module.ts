@@ -110,6 +110,7 @@ import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
+import { FormsProvider } from '../providers/forms/forms';
 
 @NgModule({
   declarations: [
@@ -217,6 +218,7 @@ import { SectionBlock } from '../components/section-block';
     DynamicFormElementComponent
   ],
   providers: [
+    FormsProvider,
     DBClient,
     RESTClient,
     PushClient,

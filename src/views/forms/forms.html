@@ -21,7 +21,7 @@
 	<ion-list approxItemHeight="300px" >
 		<!-- A.S GOC-326 -->
 		<!-- <div *virtualItem="let form"> -->
-			<event-item (click)="presentActionSheet(form)" *ngFor="let form of filteredForms" [form]="form"></event-item>
+			<event-item (click)="presentActionSheet(form)" *ngFor="let form of formsProvider.forms" [form]="form"></event-item>
 		<!-- </div> -->
 	</ion-list>
 	<!--ion-refresher (ionRefresh)="doRefresh($event)">

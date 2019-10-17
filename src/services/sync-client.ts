@@ -1,3 +1,5 @@
+import { Form } from './../model/form';
+import { FormsProvider } from './../providers/forms/forms';
 import { Image } from './../model/image';
 import { SettingsService } from './settings-service';
 import { Injectable } from "@angular/core";
@@ -11,7 +13,6 @@ import { File, Entry } from '@ionic-native/file';
 import {
   BarcodeStatus,
   DeviceFormMembership,
-  Form,
   FormElementType,
   FormSubmission,
   SubmissionStatus,
@@ -68,6 +69,7 @@ export class SyncClient {
     private settingsService: SettingsService,
     private documentsSync: DocumentsSyncClient,
     private submissionsRepository: SubmissionsRepository,
+    private formsProvider : FormsProvider,
     private util: Util) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
@@ -112,12 +114,8 @@ export class SyncClient {
         // A.S check if form has data to be downloaded
         if (this.hasNewData) {
           // A.S GOC-326
-          forms = await this.downloadFormData(forms);
+          this.downloadFormsData(forms);
           this.hasNewData = false;
-          console.log('Downloading finished')
-          this.db.saveForms(forms).subscribe((data) => {
-            this.entitySyncedSource.next("Forms") // A.S emit forms updates
-          });
         }
         obs.next(result);
 
@@ -202,6 +200,7 @@ export class SyncClient {
       });
       submissions.forEach(sub => {
         map[sub.form_id + ""].submissions.push(sub);
+        this.formsProvider.updateFormSyncStatus(sub.form_id,true);
       });
 
       let formIds = Object.keys(map);
@@ -219,6 +218,7 @@ export class SyncClient {
         result.push.apply(result, submitted);
         map[formIds[index]].status.complete = true;
         map[formIds[index]].status.loading = false;
+        this.formsProvider.updateFormSyncStatus(formIds[index],true);
         this.pushNewSyncStatus(map[formIds[index]].status)
         index++;
         if (index >= formIds.length) {
@@ -596,8 +596,6 @@ export class SyncClient {
 
       this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
 
-
-        let remoteFormsIds = remoteForms.map((form) => form.form_id);
         let current = new Date();
 
         remoteForms = remoteForms.filter(form => {
@@ -606,21 +604,11 @@ export class SyncClient {
           else console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
         });
 
-        result.forms = remoteForms
-        this.db.getForms().subscribe(async (localForms) => {
+          result.forms = remoteForms
+          let localForms = this.formsProvider.getForms();
           remoteForms = this.checkFormData(remoteForms, localForms);
-          this.clearLocalForms(localForms).flatMap(() => {
-            mapEntry.percent = 50;
-            this.pushNewSyncStatus(mapEntry);
-            return this.db.getForms();
-          }).flatMap((localForms) => {
-
-            let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
-            if (localFormsIds && localFormsIds.length > 0) {
-              result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
-            }
-            return this.db.saveForms(remoteForms);
-          }).subscribe(reply => {
+          this.clearLocalForms(localForms).subscribe(reply => {
+            this.formsProvider.saveNewForms(remoteForms);
             mapEntry.complete = true;
             mapEntry.loading = false;
             mapEntry.percent = 100;
@@ -631,10 +619,7 @@ export class SyncClient {
           }, (err) => {
             obs.error(err);
           })
-        }, (err) => {
-          obs.error(err);
-
-        })
+     
       }, err => {
         obs.error(err);
       });
@@ -642,38 +627,55 @@ export class SyncClient {
   }
 
   // A.S download all images for all forms
-  private async downloadFormData(forms: Form[]) {
-    let entry: Entry;
+  private async downloadFormsData(forms: Form[]) {
     console.log('Downloading forms data...');
-    return await Promise.all(forms.map(async (form: Form) => {
-      this.setFormSync(form, false, 10);
-      if (form.event_style.event_record_background.url != '' && form.event_style.event_record_background.path.startsWith('https://')) {
-        try {
-          let file = this.util.getFilePath(form.event_style.event_record_background.url, `background_${form.form_id}_`);
-          entry = await this.downloadFile(file.pathToDownload, file.path);
-          form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
-        } catch (error) {
-          console.log('Error downloading a file',error)
-        }
-      }
-      this.setFormSync(form, false, 50);
-      if (form.event_style.screensaver_media_items) {
-        form.event_style.screensaver_media_items = await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
-          if (item.url != '' && item.path.startsWith('https://')) {
-            try {
-              let file = this.util.getFilePath(item.path, `screen_saver_${form.form_id}_`);
-              entry = await this.downloadFile(file.pathToDownload, file.path);
-              item = { path: entry.nativeURL, url: item.url };
-            } catch (error) {
-              console.log('Error downloading a file',error)
-            }
-          }
-          return item;
-        }))
-      }
-      this.setFormSync(form, true, 100);
+     forms.map(async (form: Form) => {
+      await this.downloadFormData(form);
       return form;
-    }))
+    })
+     console.log('Downloading forms data finished');
+  }
+
+  private async downloadFormData(form : Form){
+   await this.downloadFormBackground(form);
+   await this.downloadFormScreenSaver(form);
+  }
+
+  private async downloadFormScreenSaver(form : Form){
+    if (form.event_style.screensaver_media_items) {
+      let entry: Entry;
+      this.formsProvider.updateFormSyncStatus(form.form_id,true)
+      form.event_style.screensaver_media_items = await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
+        if (item.url != '' && item.path.startsWith('https://')) {
+          try {
+            let file = this.util.getFilePath(item.path, `screen_saver_${form.form_id}_`);
+            entry = await this.downloadFile(file.pathToDownload, file.path);
+            item = { path: entry.nativeURL, url: item.url };
+          } catch (error) {
+            console.log('Error downloading a form screen saver image',error)
+          }
+        }
+        return item;
+      }))
+      this.formsProvider.updateFormScreenSaver(form.form_id,form.event_style.screensaver_media_items);
+      this.formsProvider.updateFormSyncStatus(form.form_id,false)
+    }
+  }
+
+  private async downloadFormBackground(form : Form){
+    if (form.event_style.event_record_background.url != '' && form.event_style.event_record_background.path.startsWith('https://')) {
+     let entry: Entry;
+      this.formsProvider.updateFormSyncStatus(form.form_id,true)
+      try {
+        let file = this.util.getFilePath(form.event_style.event_record_background.url, `background_${form.form_id}_`);
+        entry = await this.downloadFile(file.pathToDownload, file.path);
+        form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
+      } catch (error) {
+        console.log('Error downloading a form background image',error)
+      }
+      this.formsProvider.updateFormBackground(form.form_id,form.event_style.event_record_background);
+      this.formsProvider.updateFormSyncStatus(form.form_id,false)
+    }
   }
 
   // A.S GOC-326 download form images

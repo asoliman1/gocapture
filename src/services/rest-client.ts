@@ -24,6 +24,7 @@ import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
 import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
+import { FormsProvider } from '../providers/forms/forms';
 
 @Injectable()
 export class RESTClient {
@@ -41,7 +42,8 @@ export class RESTClient {
 
 	constructor(private http: Http,
 		private submissionsRepository: SubmissionsRepository,
-		private submissionMapper: SubmissionMapper) {
+		private submissionMapper: SubmissionMapper,
+		private formsProvider : FormsProvider) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();

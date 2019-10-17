@@ -1,3 +1,4 @@
+import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
 import {
   Component, ViewChild
@@ -81,6 +82,7 @@ export class Forms {
     private syncClient: SyncClient,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
+    public formsProvider : FormsProvider,
     private Keyboard : Keyboard) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
  
