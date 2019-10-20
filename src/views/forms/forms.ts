@@ -1,29 +1,14 @@
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
-import {
-  Component, ViewChild
-} from '@angular/core';
-
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
-
-import { Subscription } from "rxjs/Subscription";
-
+import { Component, ViewChild } from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
-import { Form, SubmissionStatus } from "../../model";
+import { Form } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
-import { FormControlPipe } from "../../pipes/form-control-pipe";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
-import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 import { ThemeProvider } from "../../providers/theme/theme";
 import { FormInstructions } from "../form-instructions";
 import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
@@ -34,28 +19,6 @@ import { unionBy } from 'lodash';
 @Component({
   selector: 'forms',
   templateUrl: 'forms.html',
-  animations: [
-    // Define an animation that adjusts the opactiy when a new item is created
-    //  in the DOM. We use the 'visible' string as the hard-coded value in the
-    //  trigger.
-    //
-    // When an item is added we wait for 300ms, and then increase the opacity to 1
-    //  over a 200ms time interval. When the item is removed we don't delay anything
-    //  and use a 200ms interval.
-    //
-    trigger('visibleTrigger', [
-      state('visible', style({ opacity: '1', height: '5.8rem' })),
-      state('hidden', style({ opacity: '0', height: '0' })),
-      transition('visible => hidden', [animate('300ms 200ms')]),
-      transition('hidden => visible', [animate('300ms 100ms')])
-    ]),
-    trigger('loadingTrigger', [
-      state('visible', style({ transform: 'translateY(256px)' })),
-      state('hidden', style({ transform: 'translateY(300px)' })),
-      transition('visible => hidden', [animate('300ms 200ms')]),
-      transition('hidden => visible', [animate('300ms 100ms')])
-    ])
-  ]
 })
 export class Forms {
 
@@ -66,13 +29,8 @@ export class Forms {
   @ViewChild("search") searchbar: Searchbar;
 
   forms: Form[] = [];
-  filteredForms: Form[] = [];
 
-  private sub: Subscription;
-
-  private filterPipe: FormControlPipe = new FormControlPipe();
-
-  private selectedTheme;
+  private selectedTheme : string;
 
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
@@ -84,16 +42,14 @@ export class Forms {
     private documentsService: DocumentsService,
     public formsProvider : FormsProvider,
     private Keyboard : Keyboard) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
- 
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val.toString());
+    this.getForms();
   }
 
-  doRefresh(refresher?) {
-    this.client.getForms().subscribe(forms => {
-      this.forms = this.filterPipe.transform(forms);
-      this.getItems({ target: { value: "" } });
-      this.getSubmissions();
-    });
+  getForms(){
+    this.formsProvider.formsObs.subscribe((val)=>{
+      if(val) this.forms = this.formsProvider.forms;
+    })
   }
 
   toggleSearch() {
@@ -106,14 +62,6 @@ export class Forms {
     }
   }
 
-  doInfinite(infiniteScroll?: InfiniteScroll) {
-    this.client.getForms().subscribe(forms => {
-      this.forms = this.forms.concat(forms);
-      if (infiniteScroll) {
-        infiniteScroll.complete();
-      }
-    });
-  }
 
   sync() {
     if(this.syncClient.isSyncing()){
@@ -128,7 +76,7 @@ export class Forms {
   getItems(event) {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
-    this.filteredForms = this.forms.filter(form => {
+    this.forms = this.formsProvider.forms.filter(form => {
       return !val || regexp.test(form.name);
     });
   }
@@ -222,40 +170,17 @@ export class Forms {
   }
 
   ionViewDidEnter() {
+    // A.S
     this.Keyboard.setResizeMode("ionic");
-    this.doRefresh();
-    this.sub = this.syncClient.entitySynced.subscribe((type) => {
-      // A.S i changed condition as it render the page many times
-      if (type == "Forms") this.doRefresh();
-      else if (type == "Submissions") this.getSubmissions();
-    });
+    this.forms = this.formsProvider.forms;
   }
 
   ionViewDidLeave() {
     // A.S
-    this.sub.unsubscribe();
     this.Keyboard.setResizeMode("native");
   }
 
   // A.S GOC-315
-  getSubmissions() {
-    this.filteredForms.forEach(form => {
-      this.client.getSubmissions(form, false).subscribe(submissions => {
-        form.total_unsent = submissions.filter((sub) => {
-          return (sub.status == SubmissionStatus.ToSubmit) || (sub.status == SubmissionStatus.Submitting) || (sub.status == SubmissionStatus.Blocked);
-        }).length;
-
-        form.total_sent = submissions.filter((sub) => {
-          return sub.status == SubmissionStatus.Submitted
-        }).length
-
-        form.total_hold = submissions.filter(sub => {
-          return sub.status == SubmissionStatus.OnHold
-        }).length
-      });
-    })
-  }
-
 
   private getDocuments(form: Form) {
     return form.elements

@@ -2,25 +2,41 @@ import { Image } from './../../model/image';
 import { DBClient } from './../../services/db-client';
 import { Form } from './../../model/form';
 import { Injectable } from '@angular/core';
-import { FormSubmission, SubmissionStatus } from '../../model';
+import { SubmissionStatus } from '../../model';
+import { Subject } from 'rxjs';
+import { FormControlPipe } from '../../pipes/form-control-pipe';
 
 
 @Injectable()
 export class FormsProvider {
+
   forms: Form[] = [];
   loaded: boolean = false;
+  formsObs : Subject<any> = new Subject();
+  private filterPipe: FormControlPipe = new FormControlPipe();
+
   constructor(private dbClient: DBClient) {
     console.log('Forms Provider started')
     this.setForms()
   }
 
   setForms() {
-    if (!this.loaded && this.dbClient.isWorkDbInited())
+    if (!this.loaded && this.dbClient.isWorkDbInited()){
+      this.loaded = true;
       this.dbClient.getForms().subscribe((forms) => {
-        this.forms = forms;
-        this.loaded = true;
-        console.log(forms)
+        this.forms = forms.map((e)=>{
+          e.isSyncing = true; 
+          return e;
+        });
+        this.sortForms();
+        this.pushUpdates();
       })
+    }
+   
+  }
+
+  sortForms() {
+      this.forms = this.filterPipe.transform(this.forms);
   }
 
   getForms(): Form[] {
@@ -29,26 +45,36 @@ export class FormsProvider {
 
   saveNewForm(form: Form) {
     this.forms.push(form);
+    this.updateFormSubmissions(form.form_id);
+    this.sortForms();
+    this.pushUpdates();
   }
 
   saveFormDb(form: Form) {
     this.dbClient.saveForm(form).subscribe(res => { }, err => { });
-    this.saveFormDb(form);
   }
 
   saveNewForms(forms: Form[]) {
     this.forms = forms;
+    this.forms.forEach((e : Form)=> {
+      this.saveFormDb(e)
+      this.updateFormSubmissions(e.form_id)
+    });
+    this.sortForms();
+    this.pushUpdates();
   }
 
   deleteForm(form: Form) {
     this.forms = this.forms.filter((e) => e.form_id !== form.form_id);
+    this.pushUpdates();
   }
 
 
   updateFormSyncStatus(form_id: any, isSyncing: boolean) {
     let form = this.forms.find((e) => e.form_id == (form_id * 1));
     form.isSyncing = isSyncing;
-    this.saveFormDb(form)
+    // this.saveFormDb(form)
+    // this.pushUpdates()
     //  console.log(`form ${form_id} syncing status is ${isSyncing}`);
   }
 
@@ -56,6 +82,7 @@ export class FormsProvider {
     let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
     this.forms[index].event_style.event_record_background = background;
     this.saveFormDb(this.forms[index])
+    // this.pushUpdates()
     // console.log(`form ${form_id} background is `,background);
   }
 
@@ -63,16 +90,24 @@ export class FormsProvider {
     let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
     this.forms[index].event_style.screensaver_media_items = screenSaver;
     this.saveFormDb(this.forms[index])
+    // this.pushUpdates()
     // console.log(`form ${form_id} screen saver items `,screenSaver);
   }
 
-  updateFormSubmissions(form_id: any, submissions: FormSubmission[]) {
-    console.log(form_id);
-    let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
-    this.forms[index].total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
-    this.forms[index].total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
-    this.forms[index].total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
-    console.log(`form ${form_id} submissions `, this.forms[index].total_submissions, this.forms[index].total_unsent, this.forms[index].total_hold);
+  updateFormSubmissions(form_id: any) {
+    let form = this.forms.find((e) => e.form_id === (form_id * 1));
+    if(form)
+    this.dbClient.getSubmissions(form.form_id,false).subscribe((submissions)=>{
+      form.total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
+      form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
+      form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
+      // console.log(`form ${form_id} submissions `, form.total_submissions, form.total_unsent, form.total_hold);
+      // this.pushUpdates();
+    })
+  }
+
+  pushUpdates(){
+    this.formsObs.next(true);
   }
 
 }

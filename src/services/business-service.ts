@@ -1,3 +1,4 @@
+import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { Popup } from './../providers/popup/popup';
@@ -67,6 +68,7 @@ export class BussinessClient {
     private localNotificationsService: LocalNotificationsService,
     private appPreferences: AppPreferences,
     private util: Util,
+    private formsProvider: FormsProvider,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -176,6 +178,7 @@ export class BussinessClient {
         if (user) {
           this.registration = user;
           this.db.setupWorkDb(user.db);
+          this.formsProvider.setForms();
           this.rest.token = user.access_token;
           obs.next(user);
           obs.complete();
