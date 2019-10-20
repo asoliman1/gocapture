@@ -23,9 +23,7 @@ export class EventItemComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes)
-    if(changes['image'])
-    this.checkImageDownload()
+    if(changes['image']) this.checkImageDownload();
   }
 
   ngOnInit(){
