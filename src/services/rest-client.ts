@@ -258,15 +258,18 @@ export class RESTClient {
 			let syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 			let handler = (data: FormSubmission[]) => {
 				result.push.apply(result, data);
+				this.formsProvider.updateFormSyncStatus(forms[index].form_id,false)
 				index++;
 				if (index < forms.length) {
 					syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 					this.getSubmissions(forms[index], syncDate).subscribe(handler);
+			        this.formsProvider.updateFormSyncStatus(forms[index].form_id,true)
 				} else {
 					obs.next(result);
 					obs.complete();
 				}
 			};
+			this.formsProvider.updateFormSyncStatus(forms[index].form_id,true)
 			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
@@ -354,8 +357,10 @@ export class RESTClient {
 					item.form_id = form.form_id;
 				});
 				result.push.apply(result, data);
+				this.formsProvider.updateFormSyncStatus(forms[index].form_id,false);
 				index++;
 				if (index < forms.length) {
+				    this.formsProvider.updateFormSyncStatus(forms[index].form_id,true);
 					doTheCall();
 				} else {
 					obs.next(result);
@@ -371,6 +376,7 @@ export class RESTClient {
 				if (syncDate) {
 					params.last_sync_date = syncDate;
 				}
+				this.formsProvider.updateFormSyncStatus(form.form_id,true);
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			};
 			doTheCall();

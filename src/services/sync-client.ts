@@ -168,14 +168,6 @@ export class SyncClient {
   }
 
 
-
-  // A.S function to push for updates in syncing process
-  private setFormSync(form: Form, complete: boolean, percent: number) {
-    let formStatus: SyncStatus = new SyncStatus(!complete, complete, form.form_id, form.name, percent);
-    this.pushNewSyncStatus(formStatus);
-  }
-
-
   private syncCleanup() {
     this._isSyncing = false;
     this.syncSource.complete();
@@ -200,7 +192,6 @@ export class SyncClient {
       });
       submissions.forEach(sub => {
         map[sub.form_id + ""].submissions.push(sub);
-        this.formsProvider.updateFormSyncStatus(sub.form_id,true);
       });
 
       let formIds = Object.keys(map);
@@ -212,13 +203,14 @@ export class SyncClient {
         this.syncCleanup();
         obs.error(err);
         this.errorSource.next(err);
+        this.formsProvider.updateFormSyncStatus(formIds[index],false);
       };
 
       let handler = (submitted: FormSubmission[]) => {
         result.push.apply(result, submitted);
         map[formIds[index]].status.complete = true;
         map[formIds[index]].status.loading = false;
-        this.formsProvider.updateFormSyncStatus(formIds[index],true);
+        this.formsProvider.updateFormSyncStatus(formIds[index],false);
         this.pushNewSyncStatus(map[formIds[index]].status)
         index++;
         if (index >= formIds.length) {
@@ -229,10 +221,11 @@ export class SyncClient {
           return;
         }
         setTimeout(() => {
+          this.formsProvider.updateFormSyncStatus(formIds[index],true);
           this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
         }, 500);
       };
-
+      this.formsProvider.updateFormSyncStatus(formIds[index],true);
       this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
     });
   }
