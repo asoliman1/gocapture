@@ -603,7 +603,7 @@ export class FormCapture implements AfterViewInit {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
-      } else if (!this.valid) {
+      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
         return;
@@ -644,6 +644,54 @@ export class FormCapture implements AfterViewInit {
     }, (err) => {
       console.error(err);
     });
+  }
+
+  invalidControls() {
+    const invalid = [];
+    const controls = this.formView.theForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
+  }
+
+  /*
+   Per our discussion, from the device side we should ignore validation Required fields if they are hidden because
+   of visibility rules and send their IDs in the hidden_elements array to our backend.
+   */
+  shouldIgnoreFormInvalidStatus() {
+    let invalidControls = this.invalidControls();
+
+    let requiredElements = this.requiredElements(invalidControls);
+
+    if (requiredElements.length == 0) {
+      return false;
+    }
+
+    let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+
+    for (let requiredElement of requiredElements) {
+      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  requiredElements(controls) {
+    let requiredElements = [];
+    for (let control of controls) {
+      let id = control.split('_').pop();
+      let invalidElement = this.form.elements.filter(element => element.id == id)[0];
+      if (invalidElement.is_required === false) {
+        return [];
+      }
+      requiredElements.push(control);
+    }
+    return requiredElements;
   }
 
   kioskModeCallback() {
@@ -967,7 +1015,7 @@ export class FormCapture implements AfterViewInit {
 
   // A.S
   getStationById(stationId) {
-    for (let station of this.form.event_stations) 
+    for (let station of this.form.event_stations)
       if (station.id == stationId) return station;
 
     return null;
