@@ -1,3 +1,4 @@
+import { FormsProvider } from './../../providers/forms/forms';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
@@ -100,8 +101,8 @@ export class FormCapture implements AfterViewInit {
 
   private _modal: Modal;
 
-  onFormUpdate: Subscription;
   buttonBar : Subscription;
+
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
     private client: BussinessClient,
@@ -117,10 +118,9 @@ export class FormCapture implements AfterViewInit {
     private alertCtrl: AlertController,
     private appPreferences: AppPreferences,
     private popoverCtrl: PopoverController,
-    private syncClient: SyncClient,
-    private dbClient: DBClient,
     private utils: Util,
     private formViewService:formViewService,
+    private formsProvider : FormsProvider,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -188,8 +188,9 @@ export class FormCapture implements AfterViewInit {
         .start();
   }
 
+  // A.S
   private async showScreenSaver() {
-    let active = this.navCtrl.last().instance instanceof FormCapture;
+    let active = this.navCtrl.last().instance instanceof FormCapture && this.form.event_style.is_enable_screensaver && !this.isRapidScanMode;
     if (this.imagesDownloaded()) {
       if (!this._modal && active) {
         this.handleScreenSaverRandomize()
@@ -206,17 +207,19 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-
+// A.S
   private handleScreenSaverRandomize(){
     if(this.form.event_style.is_randomize)
     this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
-
+  
+// A.S
   private imagesDownloaded() {
     this.form.event_style.screensaver_media_items = this.form.event_style.screensaver_media_items.filter((e)=> !e.path.startsWith('https://'))
     return this.form.event_style.screensaver_media_items.length;
   }
 
+// A.S
   private stopIdleMode() {
     this.idle.stop()
     console.log('idle mode stopped');
@@ -323,7 +326,7 @@ export class FormCapture implements AfterViewInit {
     Observable.zip(...submissions).subscribe(() => {
       //barcodes are saved to the database so we can clear the defaults
       this.rapidCaptureService.removeDefaults(this.form.form_id);
-
+      this.formsProvider.updateFormSubmissions(this.form.form_id);
       this.navCtrl.pop().then(() => {
         this.client.doSync(this.form.form_id).subscribe(() => {
           console.log('rapid scan synced items');
@@ -447,21 +450,13 @@ export class FormCapture implements AfterViewInit {
         }
       })
     }
-    this.onFormUpdate = this.syncClient.entitySynced.subscribe((e) => {
-      if (e === 'Forms') this.checkFormUpdates() // check for any form update
-    })
+
     this.buttonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
       if(data == 'reset') this.clear();
       else if (data == 'submit') this.doSave();
     })
   }
 
-  checkFormUpdates() {
-    this.dbClient.getFormsByIds([this.form.form_id]).subscribe((forms) => {
-      this.form.event_style = forms[0].event_style;
-      this.form.event_stations = forms[0].event_stations;
-    })
-  }
 
   ionViewWillLeave() {
     if (this.backUnregister) {
@@ -472,7 +467,6 @@ export class FormCapture implements AfterViewInit {
     if (this.stationsPopover) {
       this.stationsPopover.dismiss();
     }
-    this.onFormUpdate.unsubscribe();
     this.stopIdleMode();
   }
 
@@ -639,7 +633,7 @@ export class FormCapture implements AfterViewInit {
         }
         return;
       }
-
+      this.formsProvider.updateFormSubmissions(this.form.form_id);
       this.kioskModeCallback();
     }, (err) => {
       console.error(err);

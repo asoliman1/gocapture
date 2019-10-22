@@ -203,6 +203,7 @@ export class SyncClient {
         this.syncCleanup();
         obs.error(err);
         this.errorSource.next(err);
+          // A.S
         this.formsProvider.updateFormSyncStatus(formIds[index],false);
       };
 
@@ -210,6 +211,7 @@ export class SyncClient {
         result.push.apply(result, submitted);
         map[formIds[index]].status.complete = true;
         map[formIds[index]].status.loading = false;
+          // A.S
         this.formsProvider.updateFormSyncStatus(formIds[index],false);
         this.pushNewSyncStatus(map[formIds[index]].status)
         index++;
@@ -221,10 +223,12 @@ export class SyncClient {
           return;
         }
         setTimeout(() => {
+          // A.S
           this.formsProvider.updateFormSyncStatus(formIds[index],true);
           this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
         }, 500);
       };
+          // A.S
       this.formsProvider.updateFormSyncStatus(formIds[index],true);
       this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
     });
@@ -244,7 +248,8 @@ export class SyncClient {
         }
 
         this.doSubmit(data, index).subscribe((submission) => {
-
+          // A.S
+          this.formsProvider.updateFormSubmissions(data.form.form_id);
           setTimeout(() => {
             result.push(submission);
             index++;
