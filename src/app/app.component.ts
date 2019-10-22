@@ -148,7 +148,7 @@ export class MyApp {
   private onAppResumes() {
     this.platform.resume.subscribe(() => {
       // A.S check device status when app resumes
-      if(!this.util.getPluginPrefs() || !this.util.getPluginPrefs('rapid-scan')){
+      if(!(this.util.getPluginPrefs() || this.util.getPluginPrefs('rapid-scan'))){
         this.popup.dismissAll();
         this.checkDeviceStatus();
         this.client.getUpdates().subscribe(() => {
