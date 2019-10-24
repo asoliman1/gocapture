@@ -241,7 +241,7 @@ export class Util {
   }
 
   // A.S
-  private folderForFile(ext: string) {
+  public folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
       return "images/";
     else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a')

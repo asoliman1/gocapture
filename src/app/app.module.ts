@@ -59,7 +59,6 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 
-import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -157,7 +156,6 @@ import { SectionBlock } from '../components/section-block';
     HttpModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
-    IonicImageViewerModule,
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,

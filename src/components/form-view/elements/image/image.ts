@@ -5,10 +5,10 @@ import { BaseElement } from "../base-element";
 import { Camera } from '@ionic-native/camera';
 import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { Platform } from 'ionic-angular/platform/platform';
-import {Util} from "../../../../util/util";
-import {ImageProcessor} from "../../../../services/image-processor";
+import { Util } from "../../../../util/util";
+import { ImageProcessor } from "../../../../services/image-processor";
 import { DomSanitizer } from '@angular/platform-browser';
-import {ThemeProvider} from "../../../../providers/theme/theme";
+import { ThemeProvider } from "../../../../providers/theme/theme";
 declare var cordova: any;
 
 @Component({
@@ -38,29 +38,29 @@ export class Image extends BaseElement {
 
 	max = 5;
 
-  private selectedTheme;
+	private selectedTheme;
 
 	constructor(private fb: FormBuilder,
-				private actionCtrl: ActionSheetController,
-				private camera: Camera,
-				private platform: Platform,
-				private zone: NgZone,
-        public util: Util,
-        private imageProc: ImageProcessor,
+		private actionCtrl: ActionSheetController,
+		private camera: Camera,
+		private platform: Platform,
+		private zone: NgZone,
+		public util: Util,
+		private imageProc: ImageProcessor,
 		private themeProvider: ThemeProvider,
 		private dom: DomSanitizer) {
 		super();
 		this.currentVal = [];
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 
 	chooseType() {
-		if(this.readonly){
+		if (this.readonly) {
 			return;
 		}
-		if(this.selectionEnabled){
-			for(let i = this.selection.length - 1; i > -1; i--){
-				if(this.selection[i]){
+		if (this.selectionEnabled) {
+			for (let i = this.selection.length - 1; i > -1; i--) {
+				if (this.selection[i]) {
 					(<any[]>this.currentVal).splice(i, 1);
 				}
 			}
@@ -74,41 +74,47 @@ export class Image extends BaseElement {
 			return;
 		}
 
-    let camera = this.camera;
+		let camera = this.camera;
 		let sheet = this.actionCtrl.create({
 			title: "",
 			buttons: [
 				{
 					text: 'Use Camera',
 					handler: () => {
+						this.util.setPluginPrefs()
 						camera.getPicture({
 							sourceType: 1,
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
-							targetHeight:1000,
-              destinationType: this.destinationType()
+							targetHeight: 1000,
+							destinationType: this.destinationType()
 						}).then((imageData) => {
-						  this.onImageReceived(imageData);
-            })
+							this.onImageReceived(imageData);
+							this.util.rmPluginPrefs()
+						})
 							.catch(err => {
 								console.error(err);
+								this.util.rmPluginPrefs()
 							});
 					}
 				},
 				{
 					text: 'Choose from Album',
 					handler: () => {
+						this.util.setPluginPrefs()
 						camera.getPicture({
 							sourceType: 0,
 							encodingType: this.camera.EncodingType.JPEG,
 							targetWidth: 1280,
-							targetHeight:1000,
+							targetHeight: 1000,
 							destinationType: this.destinationType()
 						}).then((imageData) => {
-              this.onImageReceived(imageData);
-            })
+							this.onImageReceived(imageData);
+							this.util.rmPluginPrefs()
+						})
 							.catch(err => {
 								console.error(err);
+								this.util.rmPluginPrefs()
 							});
 					}
 				},
@@ -117,86 +123,86 @@ export class Image extends BaseElement {
 					role: 'cancel'
 				}
 			],
-      cssClass: this.selectedTheme.toString()
+			cssClass: this.selectedTheme.toString()
 		});
 		sheet.present();
 	}
 
-	toggleSelection(index : number){
-		if(this.readonly){
+	toggleSelection(index: number) {
+		if (this.readonly) {
 			return;
 		}
 		this.selection[index] = !this.selection[index];
 		this.selectionEnabled = false;
-		for(let i = 0; i < this.selection.length; i++){
-			if(!!this.selection[i]){
+		for (let i = 0; i < this.selection.length; i++) {
+			if (!!this.selection[i]) {
 				this.selectionEnabled = true;
 				break;
 			}
 		}
 	}
 
-	writeValue(obj: any):void{
-		if(!obj){
+	writeValue(obj: any): void {
+		if (!obj) {
 			this.currentVal = [];
-		}else{
+		} else {
 			this.currentVal = obj;
 		}
 	}
 
-	public  normalizeURL(url: string): any{
+	public normalizeURL(url: string): any {
 		return this.dom.bypassSecurityTrustUrl(this.util.normalizeURL(url));
 	}
 
-  private imageUrl(path) {
+	private imageUrl(path) {
 
-    let folder = this.file.dataDirectory + "leadliaison/images";
-    let name = path.substr(path.lastIndexOf("/") + 1);
-    let url = folder + "/" + name;
-    return this.normalizeURL(url);
-  }
+		let folder = this.file.dataDirectory + "leadliaison/images";
+		let name = path.substr(path.lastIndexOf("/") + 1);
+		let url = folder + "/" + name;
+		return this.normalizeURL(url);
+	}
 
-  private destinationType() {
-	  return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
-  }
+	private destinationType() {
+		return this.platform.is("android") ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL;
+	}
 
-  private onImageReceived(imageData) {
-    if (!this.currentVal) {
-      this.currentVal = [];
-    }
+	private onImageReceived(imageData) {
+		if (!this.currentVal) {
+			this.currentVal = [];
+		}
 
-    let t = this;
+		let t = this;
 
-    if (this.platform.is('android')) {
+		if (this.platform.is('android')) {
 
-      this.util.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images", true).subscribe((newPath) => {
+			this.util.moveFile(imageData, cordova.file.dataDirectory + "leadliaison/images", true).subscribe((newPath) => {
 
-        t.zone.run(()=>{
-          t.currentVal.unshift(newPath);
-          t.propagateChange(t.currentVal);
-        });
-      }, (err) => {
-        console.error(err);
-      })
-    } else {
-      imageData = 'data:image/jpg;base64,' + imageData;
+				t.zone.run(() => {
+					t.currentVal.unshift(newPath);
+					t.propagateChange(t.currentVal);
+				});
+			}, (err) => {
+				console.error(err);
+			})
+		} else {
+			imageData = 'data:image/jpg;base64,' + imageData;
 
-      let newFolder = this.file.dataDirectory + "leadliaison/images";
-      let newName = new Date().getTime() + '.jpg';
+			let newFolder = this.file.dataDirectory + "leadliaison/images";
+			let newName = new Date().getTime() + '.jpg';
 
-      t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
-        if (t.checkFileExistAtPath(newPath)) {
-          console.log('File at path - ' + newPath + ' exists');
-          t.zone.run(()=>{
-            t.currentVal.unshift(newPath);
-            t.propagateChange(t.currentVal);
-          });
-        } else {
-          console.error('File doesn\'t exist at path - ' + newPath);
-        }
-      }, (err) => {
-        console.error(err);
-      });
-    }
-  }
+			t.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(imageData)).subscribe((newPath) => {
+				if (t.checkFileExistAtPath(newPath)) {
+					console.log('File at path - ' + newPath + ' exists');
+					t.zone.run(() => {
+						t.currentVal.unshift(newPath);
+						t.propagateChange(t.currentVal);
+					});
+				} else {
+					console.error('File doesn\'t exist at path - ' + newPath);
+				}
+			}, (err) => {
+				console.error(err);
+			});
+		}
+	}
 }

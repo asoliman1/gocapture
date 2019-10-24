@@ -763,13 +763,12 @@ export class FormCapture implements AfterViewInit {
             let audioRecorderEl = this.getElementForType("audio");
 
             let isAudio = audioRecorderEl.identifier == id;
+            let value = 
+            isAudio && data.fields[field] && data.fields[field].startsWith('http') ? 
+            data.fields[field] : 
+            data.fields[field] || this.formView.getFormGroup().value[id] ;
 
-            //reset prospect audio field
-            if (isAudio) {
-              this.prospect.fields[field] = "";
-            }
-
-            this.submission.fields[id] = isAudio ? "" : data.fields[field];
+            this.submission.fields[id] = value;
 
             let identifier = id.replace("element_", "");
 
@@ -780,16 +779,13 @@ export class FormCapture implements AfterViewInit {
               parentId = identifier;
             }
 
-            console.log(`parentId - ${parentId}`);
 
             let element = this.getElementForId(parentId);
             element.is_filled_from_list = true;
 
-
-            vals.push({ id: id, value: isAudio ? "" : data.fields[field] });
+            vals.push({ id, value });
           }
         }
-
         Form.fillFormGroupData(vals, this.formView.getFormGroup());
       }
     });
