@@ -121,7 +121,7 @@ export class MyApp {
   }
 
   private setLogging() {
-    if(isProductionEnvironment){
+    // if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
         if (typeof setting == "undefined" || !setting || setting.length == 0) {
           this.logger.enableLogging(false);
@@ -129,7 +129,7 @@ export class MyApp {
           this.logger.enableLogging(setting);
         }
     });
-  }
+  // }
 
   }
 
