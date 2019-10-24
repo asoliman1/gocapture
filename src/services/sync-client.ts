@@ -342,8 +342,9 @@ export class SyncClient {
 
       }, (err) => {
         obs.error(err);
-        // let msg = "Could not process submission for form " + data.form.name;
-        // this.errorSource.next(msg);
+        console.log(err);
+        let msg = "Could not process submission for form " + data.form.name;
+        this.errorSource.next(msg);
       });
     });
   }
@@ -549,10 +550,9 @@ export class SyncClient {
             obs.error(err);
           })
         } else {
-
-          let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
+         
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-
+          let folder = this.file.dataDirectory + 'leadliaison/' + this.util.folderForFile(`.${file.split('.')[1]}`).replace('/','');
           this.file.resolveDirectoryUrl(folder)
             .then(dir => {
               return this.file.getFile(dir, file, { create: false })
