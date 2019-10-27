@@ -1,3 +1,5 @@
+import { Geolocation } from '@ionic-native/geolocation';
+import { SettingsService } from './settings-service';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { Popup } from './../providers/popup/popup';
@@ -22,6 +24,7 @@ import { PushClient } from "./push-client";
 import { Network } from '@ionic-native/network';
 import { StatusResponse } from "../model/protocol/status-response";
 import { LocalNotificationsService } from "./local-notifications-service";
+import { settingsKeys } from '../constants/constants';
 declare var cordova: any;
 
 @Injectable()
@@ -42,6 +45,7 @@ export class BussinessClient {
 
   private networkOn: Subscription;
   private networkOff: Subscription;
+  private location: Subscription;
 
   private online: boolean = true;
 
@@ -67,6 +71,8 @@ export class BussinessClient {
     private localNotificationsService: LocalNotificationsService,
     private appPreferences: AppPreferences,
     private util: Util,
+    private settingsService : SettingsService,
+    private geolocation : Geolocation,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -177,6 +183,8 @@ export class BussinessClient {
           this.registration = user;
           this.db.setupWorkDb(user.db);
           this.rest.token = user.access_token;
+          // A.S
+          this.setLocation();
           obs.next(user);
           obs.complete();
         } else {
@@ -186,6 +194,17 @@ export class BussinessClient {
       })
     });
   }
+
+    // A.S
+    private setLocation(){
+      if(!this.location)
+     this.location = this.geolocation.watchPosition({maximumAge:60000}).subscribe(position=>{
+       console.log('Current location : ');
+       console.log(position);
+       this.settingsService.setSetting(settingsKeys.LOCATION,JSON.stringify(position)).subscribe()
+      },console.log);
+ }
+
 
   public validateKioskPassword(password: string): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
@@ -233,6 +252,7 @@ export class BussinessClient {
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
+            this.setLocation();
             obs.next({ user: reply, message: "Done" });
             obs.complete();
           }, err => {
@@ -256,6 +276,8 @@ export class BussinessClient {
           this.pushSubs.forEach(sub => {
             sub.unsubscribe();
           });
+          if(this.location)
+          this.location.unsubscribe();
           await this.appPreferences.clearAll();
           this.util.rmDir("leadliaison", "");
           this.pushSubs = [];

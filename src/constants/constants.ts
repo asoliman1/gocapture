@@ -202,4 +202,5 @@ export const settingsKeys = {
   AUTO_UPLOAD: "autoUpload",
   REMIND_ABOUT_UNSUBMITTED_LEADS: "remindAboutUnsubmittedLeads",
   SINGLE_TAP_SELECTION: "singleTapSelection",
+  LOCATION : "location"
 };

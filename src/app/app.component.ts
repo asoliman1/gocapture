@@ -21,6 +21,7 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
+import { Geolocation } from '@ionic-native/geolocation';
 
 declare var cordova;
 
@@ -47,7 +48,8 @@ export class MyApp {
     public themeProvider: ThemeProvider,
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
-    private util:Util
+    private util:Util,
+    private geolocation : Geolocation
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -132,6 +134,7 @@ export class MyApp {
   // }
 
   }
+
 
   private checkDeviceStatus() {
     if (this.platform.is('cordova')) {

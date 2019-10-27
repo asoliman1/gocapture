@@ -1,3 +1,4 @@
+import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
@@ -42,6 +43,8 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
+import { Geolocation } from '@ionic-native/geolocation';
+import { settingsKeys } from '../../constants/constants';
 
 
 
@@ -121,6 +124,7 @@ export class FormCapture implements AfterViewInit {
     private dbClient: DBClient,
     private utils: Util,
     private formViewService:formViewService,
+    private settingsService : SettingsService,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -588,6 +592,8 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
+
+    
     this.submitAttempt = true;
 
     /*
@@ -610,6 +616,7 @@ export class FormCapture implements AfterViewInit {
       }
     }
 
+
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
@@ -627,23 +634,29 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
-
-    this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
-      this.tryClearDocumentsSelection();
-
-      if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode) {
-          this.navCtrl.pop();
-        } else {
-          this.navCtrl.popToRoot();
+    // A.S
+    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
+    this.submission.location = JSON.parse(data);
+      this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+        this.tryClearDocumentsSelection();
+  
+        if (this.isEditing) {
+          if (this.form.is_mobile_kiosk_mode) {
+            this.navCtrl.pop();
+          } else {
+            this.navCtrl.popToRoot();
+          }
+          return;
         }
-        return;
-      }
-
-      this.kioskModeCallback();
-    }, (err) => {
-      console.error(err);
-    });
+  
+        this.kioskModeCallback();
+      }, (err) => {
+        console.error(err);
+      });
+    },err=>{
+      console.log(err);
+    })
+ 
   }
 
   invalidControls() {
