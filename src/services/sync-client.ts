@@ -136,15 +136,7 @@ export class SyncClient {
             this.lastSyncStatus = [];
             this.db.saveForms(formsWithList).subscribe(result => {
               console.log('Getting latest docs...');
-              this.documentsSync.syncAll().then(() => {
-                this.syncCleanup();
-                obs.complete();
-                console.log('Data saved.');
-              }).catch(err => {
-                console.log(err);
-                obs.error(err);
-              });
-              console.log(result);
+              this.documentsSync.syncAll();
             }, (err) => {
               console.error(err);
             }, () => {

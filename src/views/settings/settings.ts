@@ -15,7 +15,6 @@ import { settingsKeys } from "../../constants/constants";
 import { NumberPicker } from "../../services/number-picker";
 import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
-declare var screen;
 
 @Component({
   selector: 'settings',
@@ -169,10 +168,6 @@ export class Settings {
     });
   }
 
-  sync() {
-    this.client.getUpdates().subscribe(() => { });
-  }
-  
   // A.S GOC-300
   testBadgeScanner() { 
     this.popup.showActionSheet("Select Barcode Type", [

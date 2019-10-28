@@ -139,8 +139,8 @@ export class BussinessClient {
     if (!this.setup) {
       this.setup = true;
       this.pushSubs.push(this.push.error.subscribe((err) => {
-        console.error("notification", err);
-        console.error(JSON.stringify(err));
+        // console.error("notification", err);
+        // console.error(JSON.stringify(err));
       }));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
@@ -260,6 +260,7 @@ export class BussinessClient {
             sub.unsubscribe();
           });
           await this.appPreferences.clearAll();
+          this.formsProvider.resetForms()
           this.util.rmDir("leadliaison", "");
           this.pushSubs = [];
           this.setup = false;

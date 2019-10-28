@@ -24,11 +24,11 @@ export class FormsProvider {
     if (!this.loaded && this.dbClient.isWorkDbInited()){
       this.loaded = true;
       this.dbClient.getForms().subscribe((forms) => {
+        this.sortForms();
         this.forms = forms.map((e)=>{
           e.isSyncing = true; 
           return e;
         });
-        this.sortForms();
         this.pushUpdates();
       })
     }
@@ -37,6 +37,10 @@ export class FormsProvider {
 
   sortForms() {
       this.forms = this.filterPipe.transform(this.forms);
+  }
+
+  resetForms(){
+    this.forms = [];
   }
 
   getForms(): Form[] {

@@ -880,10 +880,10 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									console.log(data);
+									// console.log(data);
 									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id])
 										.then((data) => {
-											console.log(data);
+											// console.log(data);
 											obs.next(true);
 											obs.complete();
 										}, (err) => {
@@ -1376,7 +1376,7 @@ export class DBClient {
 	public dropDb(){
 	 this.tables.forEach(async(e)=>{
 		 this.removeAll(e.master ? MASTER : WORK,e.name).subscribe((data)=>{
-			 console.log(`${e.name} removed from db`)
+			//  console.log(`${e.name} removed from db`)
 		 },err=>{
 			 console.log(err);
 		 })

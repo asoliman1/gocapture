@@ -18,6 +18,9 @@
 <ion-content class="forms">
 	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger">
 	</ion-searchbar>
+	<div text-center margin-top *ngIf="!forms.length" >
+		<ion-spinner ></ion-spinner>
+	</div>
 	<ion-list approxItemHeight="300px" >
 		<!-- A.S GOC-326 -->
 		<!-- <div *virtualItem="let form"> -->
