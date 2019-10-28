@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import { File } from "@ionic-native/file";
 import { Login } from '../views/login';
 import { Main } from '../views/main';
 
@@ -9,7 +8,6 @@ import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { Config } from "../config";
-import { isProductionEnvironment }  from "./config" ; 
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from "../providers/popup/popup";
 import { Platform } from 'ionic-angular/platform/platform';
@@ -21,9 +19,6 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
-import { Geolocation } from '@ionic-native/geolocation';
-
-declare var cordova;
 
 @Component({
   templateUrl: 'app.html'
@@ -41,7 +36,6 @@ export class MyApp {
     private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
-    private file: File,
     public statusBar: StatusBar,
     private popup: Popup,
     private logger: LogClient,
@@ -49,7 +43,6 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util:Util,
-    private geolocation : Geolocation
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
