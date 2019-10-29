@@ -301,6 +301,7 @@ export class BussinessClient {
               obs.error(err);
             },
             () => {
+               console.log('Finished syncing')
               this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
                 this.db.saveConfig("getAllContacts", "true").subscribe(() => {
                   obs.next(true);

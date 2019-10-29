@@ -59,7 +59,7 @@ export class DocumentsSyncClient {
       .subscribe(() => {
         this.formsProvider.updateFormSyncStatus(formId, false)
 
-        console.log('deleting success');
+        console.log('Documents deleted');
       }, (error) => {
         this.formsProvider.updateFormSyncStatus(formId, false)
 
@@ -82,7 +82,7 @@ export class DocumentsSyncClient {
 
     forkJoin(documentObservables)
       .subscribe(() => {
-        // console.log('ALL DOCUMENTS SYNCED');
+        console.log('Documents inserted');
         this.formsProvider.updateFormSyncStatus(formId, false)
         this._isSyncing = false;
       }, (error) => {

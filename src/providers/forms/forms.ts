@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { SubmissionStatus } from '../../model';
 import { Subject } from 'rxjs';
 import { FormControlPipe } from '../../pipes/form-control-pipe';
-
+import { merge } from 'lodash';
 
 @Injectable()
 export class FormsProvider {
@@ -24,19 +24,21 @@ export class FormsProvider {
     if (!this.loaded && this.dbClient.isWorkDbInited()){
       this.loaded = true;
       this.dbClient.getForms().subscribe((forms) => {
-        this.sortForms();
-        this.forms = forms.map((e)=>{
+        forms = forms.map((e)=>{
           e.isSyncing = true; 
           return e;
         });
+        this.forms = this.sortForms(forms);
         this.pushUpdates();
       })
     }
    
   }
 
-  sortForms() {
-      this.forms = this.filterPipe.transform(this.forms);
+
+
+  sortForms(forms) {
+      return this.filterPipe.transform(forms);
   }
 
   resetForms(){
@@ -50,7 +52,7 @@ export class FormsProvider {
   saveNewForm(form: Form) {
     this.forms.push(form);
     this.updateFormSubmissions(form.form_id);
-    this.sortForms();
+    this.forms = this.sortForms(this.forms);
     this.pushUpdates();
   }
 
@@ -59,14 +61,16 @@ export class FormsProvider {
   }
 
   saveNewForms(forms: Form[]) {
-    this.forms = forms;
-    this.forms.forEach((e : Form)=> {
-      this.saveFormDb(e)
-      this.updateFormSubmissions(e.form_id)
+    
+    forms.forEach((e : Form)=> {
+      let form = this.forms.find((f)=>f.form_id == e.form_id);
+      if(form) form = merge(form,e);
+      else this.forms.push(e);
+      this.saveFormDb(form)
     });
-    this.sortForms();
     this.pushUpdates();
   }
+
 
   deleteForm(form: Form) {
     this.forms = this.forms.filter((e) => e.form_id !== form.form_id);
@@ -105,7 +109,7 @@ export class FormsProvider {
       form.total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
       form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
       form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
-      console.log(`form ${form_id} submissions `, form.total_submissions, form.total_unsent, form.total_hold);
+      console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
       // this.pushUpdates();
     })
   }

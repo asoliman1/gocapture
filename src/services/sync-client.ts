@@ -110,7 +110,7 @@ export class SyncClient {
         map["submissions"]
       ];
       this.syncSource.next(this.lastSyncStatus);
-      this.downloadForms(lastSyncDate, map, result).subscribe(async (forms) => {
+      this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
         // A.S check if form has data to be downloaded
         if (this.hasNewData) {
           // A.S GOC-326
@@ -123,19 +123,16 @@ export class SyncClient {
         this.downloadSubmissions(forms, lastSyncDate, map, result).subscribe(() => {
           obs.next(result);
 
-          let formsWithList = forms.filter((form) => {
-            return form.list_id > 0;
-          });
+          let formsWithList = forms.filter((form) => form.list_id > 0);
 
-          // console.log("Should download all contacts " + shouldDownloadAllContacts);
-          console.log('Getting the latest contacts...')
+          console.log('Getting latest contacts...')
           this.downloadContacts(formsWithList, map, result).subscribe(() => {
             formsWithList.forEach((form) => {
               form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
             });
             this.lastSyncStatus = [];
             this.db.saveForms(formsWithList).subscribe(result => {
-              console.log('Getting latest docs...');
+              console.log('Getting latest documents...');
               this.documentsSync.syncAll();
             }, (err) => {
               console.error(err);
@@ -149,6 +146,7 @@ export class SyncClient {
             this.syncCleanup();
           });
         }, (err) => {
+          console.log(err)
           obs.error(err);
           this.syncCleanup();
         });
@@ -593,11 +591,17 @@ export class SyncClient {
           if (new Date(form.archive_date) > current) return true;
           else console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
         });
+        let remoteFormsIds = remoteForms.map((form) => form.form_id);
 
           result.forms = remoteForms
           let localForms = this.formsProvider.getForms();
           remoteForms = this.checkFormData(remoteForms, localForms);
           this.clearLocalForms(localForms).subscribe(reply => {
+
+            let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
+            if (localFormsIds && localFormsIds.length > 0) {
+              result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
+            }
             this.formsProvider.saveNewForms(remoteForms);
             mapEntry.complete = true;
             mapEntry.loading = false;
@@ -826,6 +830,7 @@ export class SyncClient {
         this.pushNewSyncStatus(mapEntry);
         result.submissions = submissions;
         this.downloadData(forms, submissions).subscribe(subs => {
+          console.log(subs)
           this.db.saveSubmisisons(subs).subscribe(reply => {
             mapEntry.complete = true;
             mapEntry.loading = false;
@@ -903,6 +908,7 @@ export class SyncClient {
 
           this.http.downloadFile(file.pathToDownload, {}, {}, file.path).then(entry => {
             urlMap[urls[index]] = urls[index];
+            console.log(urlMap[urls[index]] , urls[index])
             index++;
             setTimeout(() => {
               handler();
