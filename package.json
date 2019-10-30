@@ -62,6 +62,7 @@
     "cordova-android": "^7.1.0",
     "cordova-browser": "6.0.0",
     "cordova-clipboard": "^1.2.1",
+    "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
     "cordova-ios": "^5.0.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^2.0.4",
@@ -121,8 +122,7 @@
   "devDependencies": {
     "@ionic/app-scripts": "^3.2.4",
     "typescript": "2.4.2",
-    "webpack-bundle-analyzer": "^2.10.0",
-    "cordova-fabric-plugin": "^1.1.14-dev"
+    "webpack-bundle-analyzer": "^2.10.0"
   },
   "description": "An Ionic project",
   "cordova": {
