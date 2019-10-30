@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203780" id="com.leadliaison.mobilitease" ios-CFBundleVersion="378" version="2.4.20" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2203790" id="com.leadliaison.mobilitease" ios-CFBundleVersion="379" version="3.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -132,10 +132,6 @@
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="es6-promise-plugin" spec="^4.2.2" />
     <plugin name="cordova-clipboard" spec="^1.2.1" />
-    <plugin name="cordova-fabric-plugin" spec="^1.1.14-dev">
-        <variable name="FABRIC_API_KEY" value="87c5f596ba1288e89c53293ff749dca7b2f1ec1a" />
-        <variable name="FABRIC_API_SECRET" value="1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7" />
-    </plugin>
     <plugin name="cordova-plugin-media" spec="^5.0.2" />
     <plugin name="com-sarriaroman-photoviewer" spec="1.1.18" />
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
