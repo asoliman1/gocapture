@@ -1,3 +1,4 @@
+import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
@@ -42,6 +43,8 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
+import { Geolocation } from '@ionic-native/geolocation';
+import { settingsKeys } from '../../constants/constants';
 
 
 
@@ -99,6 +102,8 @@ export class FormCapture implements AfterViewInit {
   private idle: Idle;
 
   private _modal: Modal;
+  
+  private location;
 
   onFormUpdate: Subscription;
   buttonBar : Subscription;
@@ -121,12 +126,19 @@ export class FormCapture implements AfterViewInit {
     private dbClient: DBClient,
     private utils: Util,
     private formViewService:formViewService,
+    private settingsService : SettingsService,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
+    this.getSavedLocation()
   }
 
+  getSavedLocation(){
+    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
+      if(data) this.location = JSON.parse(data);
+    })
+  }
 
 
   ngAfterViewInit() {
@@ -366,6 +378,8 @@ export class FormCapture implements AfterViewInit {
       submission.station_id = this.selectedStation.id;
     }
 
+    submission.location = this.location;
+
     return this.client.saveSubmission(submission, this.form, false);
   }
 
@@ -588,6 +602,8 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
+
+    
     this.submitAttempt = true;
 
     /*
@@ -610,6 +626,7 @@ export class FormCapture implements AfterViewInit {
       }
     }
 
+
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
@@ -627,23 +644,25 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
-
-    this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
-      this.tryClearDocumentsSelection();
-
-      if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode) {
-          this.navCtrl.pop();
-        } else {
-          this.navCtrl.popToRoot();
+    // A.S
+  this.submission.location = this.location;
+      this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+        this.tryClearDocumentsSelection();
+  
+        if (this.isEditing) {
+          if (this.form.is_mobile_kiosk_mode) {
+            this.navCtrl.pop();
+          } else {
+            this.navCtrl.popToRoot();
+          }
+          return;
         }
-        return;
-      }
-
-      this.kioskModeCallback();
-    }, (err) => {
-      console.error(err);
-    });
+  
+        this.kioskModeCallback();
+      }, (err) => {
+        console.error(err);
+      });
+ 
   }
 
   invalidControls() {

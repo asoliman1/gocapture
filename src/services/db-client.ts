@@ -31,7 +31,7 @@ export class DBClient {
 	private saveAllEnabled = false;
 	private saveAllPageSize = 50;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
-	
+
 	private tables: Table[] = [
 		{
 			name: 'forms',
@@ -87,14 +87,14 @@ export class DBClient {
 				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
 				"selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
+				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name, location) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=?, location=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
 				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
 				"updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
-				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?",
+				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=?, location=? where hold_request_id=?",
 				"deleteAll": "delete from submissions"
 			}
 		},
@@ -351,97 +351,102 @@ export class DBClient {
 					"alter table submissions add column barcode_processed integer default 0"
 				]
 			},
-      9: {
-        queries: [
-          "alter table forms add column members_last_sync_date VARCHAR(50)"
-        ]
-      },
-      10: {
-        queries: [
-          "alter table submissions add column submission_type VARCHAR(50)"
-        ]
-      },
-      11: {
-        queries: [
-          "alter table submissions add column fullName VARCHAR(50)"
-        ]
-      },
-      12: {
-        queries: [
-          "alter table forms add column is_mobile_quick_capture_mode integer default 0"
-        ]
-      },
-      13: {
-        queries: [
-          "alter table forms add column is_enforce_instructions_initially integer default 0",
-          "alter table forms add column instructions_content text"
-        ]
-      },
-      14: {
-        queries: [
-          "alter table submissions add column last_sync_date text"
-        ]
-      },
-      15: {
-        queries: [
-          "alter table submissions add column hold_submission integer",
-          "alter table submissions add column hold_submission_reason text"
-        ]
-      },
-      16: {
-        queries: [
-          "alter table submissions add column hidden_elements text"
-        ]
-      },
-      17: {
-        queries: [
-          "alter table forms add column event_stations text"
-        ]
-      },
-      18: {
-        queries: [
-          "alter table submissions add column station_id text"
-        ]
-      },
-      19: {
-        queries: [
-          "alter table forms add column is_enable_rapid_scan_mode integer default 0"
-        ]
-      },
-      20: {
-        queries: [
-          "alter table submissions add column is_rapid_scan integer default 0"
-        ]
-      },
-      21: {
-        queries: [
-          "alter table submissions add column stations text"
-        ]
-      },
-      22: {
-        queries: [
-          "alter table documents add column preview_urls text"
-        ]
-      },
-      23: {
-        queries: [
-          "alter table submissions add column captured_by_user_name text"
-        ]
-      },
-      24: {
-        queries: [
-          "alter table forms add column available_for_users text"
-        ]
-      },
-      25: {
-		queries: [
-		  "alter table forms add column event_address text",
-        ]
-      },
-      26: {
-		queries: [
-		  "alter table forms add column event_style text",
-        ]
+			9: {
+				queries: [
+					"alter table forms add column members_last_sync_date VARCHAR(50)"
+				]
+			},
+			10: {
+				queries: [
+					"alter table submissions add column submission_type VARCHAR(50)"
+				]
+			},
+			11: {
+				queries: [
+					"alter table submissions add column fullName VARCHAR(50)"
+				]
+			},
+			12: {
+				queries: [
+					"alter table forms add column is_mobile_quick_capture_mode integer default 0"
+				]
+			},
+			13: {
+				queries: [
+					"alter table forms add column is_enforce_instructions_initially integer default 0",
+					"alter table forms add column instructions_content text"
+				]
+			},
+			14: {
+				queries: [
+					"alter table submissions add column last_sync_date text"
+				]
+			},
+			15: {
+				queries: [
+					"alter table submissions add column hold_submission integer",
+					"alter table submissions add column hold_submission_reason text"
+				]
+			},
+			16: {
+				queries: [
+					"alter table submissions add column hidden_elements text"
+				]
+			},
+			17: {
+				queries: [
+					"alter table forms add column event_stations text"
+				]
+			},
+			18: {
+				queries: [
+					"alter table submissions add column station_id text"
+				]
+			},
+			19: {
+				queries: [
+					"alter table forms add column is_enable_rapid_scan_mode integer default 0"
+				]
+			},
+			20: {
+				queries: [
+					"alter table submissions add column is_rapid_scan integer default 0"
+				]
+			},
+			21: {
+				queries: [
+					"alter table submissions add column stations text"
+				]
+			},
+			22: {
+				queries: [
+					"alter table documents add column preview_urls text"
+				]
+			},
+			23: {
+				queries: [
+					"alter table submissions add column captured_by_user_name text"
+				]
+			},
+			24: {
+				queries: [
+					"alter table forms add column available_for_users text"
+				]
+			},
+			25: {
+				queries: [
+					"alter table forms add column event_address text",
+				]
+			},
+			26: {
+				queries: [
+					"alter table forms add column event_style text",
+				]
+			},
+			27: {
+				queries: [
+					"alter table submissions add column location text",
+				]
 			}
 		}
 	};
@@ -528,7 +533,7 @@ export class DBClient {
 		form.event_stations = typeof dbForm.event_stations == "string" ? JSON.parse(dbForm.event_stations) : dbForm.event_stations;
 		form.event_address = typeof dbForm.event_address == "string" ? JSON.parse(dbForm.event_address) : dbForm.event_address;
 		form.event_style = typeof dbForm.event_style == "string" ? JSON.parse(dbForm.event_style) : dbForm.event_style;
-   		form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
+		form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
 
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
@@ -592,13 +597,13 @@ export class DBClient {
 	}
 
 	public saveForm(form: Form): Observable<boolean> {
-			return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
-			form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
-			JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0,
-			form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
-			form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
-			form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-        JSON.stringify(form.event_address), JSON.stringify(form.event_style)]);
+		return this.save(WORK, "forms", [form.id, form.form_id, form.name, form.list_id, form.title, form.description,
+		form.success_message, form.submit_error_message, form.submit_button_text, form.created_at, form.updated_at,
+		JSON.stringify(form.elements), false, null, null, null, form.archive_date, form.is_mobile_kiosk_mode ? 1 : 0,
+		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
+		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
+		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style)]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -821,7 +826,6 @@ export class DBClient {
 						var resp = [];
 						for (let i = 0; i < data.rows.length; i++) {
 							let dbForm = data.rows.item(i);
-
 							let form = this.submissionFromDBEntry(dbForm);
 							resp.push(form);
 						}
@@ -856,8 +860,9 @@ export class DBClient {
 		form.hidden_elements = dbForm.hidden_elements != "undefined" ? JSON.parse(dbForm.hidden_elements) : [];
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
-		form.stations =  dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
-    form.captured_by_user_name = dbForm.captured_by_user_name;
+		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
+		form.captured_by_user_name = dbForm.captured_by_user_name;
+		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
 		return form;
 	}
 
@@ -869,7 +874,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id, , JSON.stringify(form.location)])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -881,7 +886,7 @@ export class DBClient {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
 									console.log(data);
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id, JSON.stringify(form.location)])
 										.then((data) => {
 											console.log(data);
 											obs.next(true);
@@ -913,12 +918,11 @@ export class DBClient {
 			});
 		}
 
-
 		let params = this.composeParamsForSubmission(form);
 		return this.save(WORK, "submissions", params);
 	}
 
-	private composeParamsForSubmission(form) {
+	private composeParamsForSubmission(form: FormSubmission) {
 		return [
 			form.id,
 			form.form_id,
@@ -942,7 +946,9 @@ export class DBClient {
 			form.station_id,
 			form.is_rapid_scan,
 			JSON.stringify(form.stations),
-      form.captured_by_user_name];
+			form.captured_by_user_name,
+			JSON.stringify(form.location)
+		];
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
@@ -957,7 +963,7 @@ export class DBClient {
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
-		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
+		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id, JSON.stringify(sub.location)]);
 	}
 
 	public getDocumentsByIds(ids: number[]) {
@@ -1113,7 +1119,7 @@ export class DBClient {
 			user.theme,
 			user.device_id
 		]).map(data => {
-		    this.saveConfig(settingsKeys.AUTO_UPLOAD, "true").subscribe();
+			this.saveConfig(settingsKeys.AUTO_UPLOAD, "true").subscribe();
 			this.registration = user;
 			return data;
 		});
@@ -1131,7 +1137,7 @@ export class DBClient {
 		});
 	}
 
-	public deleteRegistration()  {
+	public deleteRegistration() {
 		localStorage.clear();
 		this.dropDb()
 	}
@@ -1231,10 +1237,10 @@ export class DBClient {
 					exec(true);
 					return;
 				} else if (index < items.length) {
-						this[name](items[index]).subscribe(handler);
+					this[name](items[index]).subscribe(handler);
 				}
 			};
-				this[name](items[0]).subscribe(handler);
+			this[name](items[0]).subscribe(handler);
 		});
 	}
 
@@ -1365,7 +1371,7 @@ export class DBClient {
 	private getQuery(table: string, type: string): string {
 		for (let i = 0; i < this.tables.length; i++) {
 			if (this.tables[i].name == table) {
-				let query =  this.tables[i].queries[type];
+				let query = this.tables[i].queries[type];
 				return query;
 			}
 		}
@@ -1373,13 +1379,13 @@ export class DBClient {
 	}
 
 	// A.S drop db on unauthenticate
-	public dropDb(){
-	 this.tables.forEach(async(e)=>{
-		 this.removeAll(e.master ? MASTER : WORK,e.name).subscribe((data)=>{
-			 console.log(`${e.name} removed from db`)
-		 },err=>{
-			 console.log(err);
-		 })
+	public dropDb() {
+		this.tables.forEach(async (e) => {
+			this.removeAll(e.master ? MASTER : WORK, e.name).subscribe((data) => {
+				console.log(`${e.name} removed from db`)
+			}, err => {
+				console.log(err);
+			})
 		})
 	}
 }

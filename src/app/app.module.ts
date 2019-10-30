@@ -270,7 +270,7 @@ import { SectionBlock } from '../components/section-block';
     Insomnia,
     formViewService,
     FilterService,
-    Keyboard
+    Keyboard,
   ]
 })
 export class AppModule { }
