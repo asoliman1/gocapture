@@ -102,6 +102,8 @@ export class FormCapture implements AfterViewInit {
   private idle: Idle;
 
   private _modal: Modal;
+  
+  private location;
 
   onFormUpdate: Subscription;
   buttonBar : Subscription;
@@ -129,8 +131,14 @@ export class FormCapture implements AfterViewInit {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
+    this.getSavedLocation()
   }
 
+  getSavedLocation(){
+    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
+      if(data) this.location = JSON.parse(data);
+    })
+  }
 
 
   ngAfterViewInit() {
@@ -369,6 +377,8 @@ export class FormCapture implements AfterViewInit {
     if (this.selectedStation) {
       submission.station_id = this.selectedStation.id;
     }
+
+    submission.location = this.location;
 
     return this.client.saveSubmission(submission, this.form, false);
   }
@@ -635,8 +645,7 @@ export class FormCapture implements AfterViewInit {
 
     this.setSubmissionType();
     // A.S
-    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
-    this.submission.location = JSON.parse(data);
+  this.submission.location = this.location;
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
   
@@ -653,9 +662,6 @@ export class FormCapture implements AfterViewInit {
       }, (err) => {
         console.error(err);
       });
-    },err=>{
-      console.log(err);
-    })
  
   }
 

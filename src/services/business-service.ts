@@ -1,4 +1,4 @@
-import { Geolocation } from '@ionic-native/geolocation';
+import { Geolocation, Geoposition, Coordinates } from '@ionic-native/geolocation';
 import { SettingsService } from './settings-service';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
@@ -45,7 +45,6 @@ export class BussinessClient {
 
   private networkOn: Subscription;
   private networkOff: Subscription;
-  private location: Subscription;
 
   private online: boolean = true;
 
@@ -143,8 +142,8 @@ export class BussinessClient {
     if (!this.setup) {
       this.setup = true;
       this.pushSubs.push(this.push.error.subscribe((err) => {
-        console.error("notification", err);
-        console.error(JSON.stringify(err));
+        // console.error("notification", err);
+        // console.error(JSON.stringify(err));
       }));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
@@ -183,8 +182,6 @@ export class BussinessClient {
           this.registration = user;
           this.db.setupWorkDb(user.db);
           this.rest.token = user.access_token;
-          // A.S
-          this.setLocation();
           obs.next(user);
           obs.complete();
         } else {
@@ -196,13 +193,37 @@ export class BussinessClient {
   }
 
     // A.S
-    private setLocation(){
-      if(!this.location)
-     this.location = this.geolocation.watchPosition({maximumAge:60000}).subscribe(position=>{
-       console.log('Current location : ');
-       console.log(position);
-       this.settingsService.setSetting(settingsKeys.LOCATION,JSON.stringify(position)).subscribe()
-      },console.log);
+   setLocation(timeout = 2000){
+     setTimeout(() => {
+      console.log('Getting location')
+      this.util.setPluginPrefs()
+      this.geolocation.getCurrentPosition({enableHighAccuracy:true,timeout:5000}).then(position=>{
+        let location = this.setLocationParams(position);
+        console.log('Current location data : ' + location);
+        this.settingsService.setSetting(settingsKeys.LOCATION,location).subscribe()
+       }).catch((err)=>{
+        console.log('Error getting location')
+        console.log(err);
+        this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
+       });
+     }, timeout);
+   
+ }
+ 
+
+ setLocationParams(position){
+  let location : any = {} ;
+  let coords : any = {} ;
+  coords.latitude = position.coords.latitude;
+  coords.longitude = position.coords.longitude;
+  coords.altitude = position.coords.altitude;
+  coords.accuracy = position.coords.accuracy;
+  coords.altitudeAccuracy = position.coords.altitudeAccuracy;
+  coords.heading = position.coords.heading;
+  coords.speed = position.coords.speed;
+  location.coords = coords;
+  location.timestamp = position.timestamp;
+  return JSON.stringify(location)
  }
 
 
@@ -252,7 +273,7 @@ export class BussinessClient {
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
-            this.setLocation();
+             this.setLocation();
             obs.next({ user: reply, message: "Done" });
             obs.complete();
           }, err => {
@@ -276,8 +297,7 @@ export class BussinessClient {
           this.pushSubs.forEach(sub => {
             sub.unsubscribe();
           });
-          if(this.location)
-          this.location.unsubscribe();
+
           await this.appPreferences.clearAll();
           this.util.rmDir("leadliaison", "");
           this.pushSubs = [];

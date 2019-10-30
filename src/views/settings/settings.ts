@@ -15,6 +15,7 @@ import { settingsKeys } from "../../constants/constants";
 import { NumberPicker } from "../../services/number-picker";
 import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
+import { Geolocation } from '@ionic-native/geolocation';
 declare var screen;
 
 @Component({
@@ -41,6 +42,7 @@ export class Settings {
     private themeProvider: ThemeProvider,
     private numberPicker: NumberPicker,
     private badgeScanner: BadgeRapidCapture,
+    public geolocation : Geolocation,
     private businessService : BussinessClient) {
 
     this.appVersion.getVersionNumber().then((version) => {
@@ -82,6 +84,10 @@ export class Settings {
         this.shouldSave = false;
       });
     });
+  }
+
+  getLocation(){
+   this.client.setLocation();
   }
 
   getName(user: User) {

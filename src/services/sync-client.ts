@@ -94,6 +94,7 @@ export class SyncClient {
   }
 
   public download(lastSyncDate: Date, shouldDownloadAllContacts?: boolean): Observable<DownloadData> {
+
     return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
       let result = new DownloadData();
       var map: { [key: string]: SyncStatus } = {
@@ -101,6 +102,7 @@ export class SyncClient {
         contacts: new SyncStatus(false, false, 0, "Contacts", 0),
         submissions: new SyncStatus(false, false, 0, "Submissions", 0)
       };
+      
       this._isSyncing = true;
       this.lastSyncStatus = [
         map["forms"],

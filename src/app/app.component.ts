@@ -19,6 +19,7 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
+import { Conditional } from '@angular/compiler';
 
 @Component({
   templateUrl: 'app.html'
@@ -42,7 +43,7 @@ export class MyApp {
     public themeProvider: ThemeProvider,
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
-    private util:Util,
+    private util: Util,
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -52,10 +53,10 @@ export class MyApp {
     this.themeProvider.getActiveTheme().subscribe(val => {
       this.selectedTheme = val.toString();
       // A.S
-      const spinnerColor = this.selectedTheme.replace('-theme','');
+      const spinnerColor = this.selectedTheme.replace('-theme', '');
 
       const colorKey = val.split('-');
-      const color = Colors[colorKey[0]] || Colors[colorKey[1]] ;
+      const color = Colors[colorKey[0]] || Colors[colorKey[1]];
 
       if (this.platform.is('android')) {
         this.statusBar.backgroundColorByHexString(color);
@@ -68,28 +69,16 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      //check user authentication at the app launch
+      this.handleApiErrors();
+      this.handleClientErrors();
+      this.handleSyncErrors();
+      this.configImageLoader();
       this.checkUserAuth();
-      //check device status at the app launch
       this.checkDeviceStatus();
-      //check app when it resumes and handle functions needed
       this.onAppResumes();
-
       this.hideSplashScreen();
-
-      if (!window["cordova"]) {
-        return;
-      }
       this.util.checkFilesDirectories();
-
     });
-
-    // A.S
-    this.handleApiErrors();
-    this.handleClientErrors();
-    this.handleSyncErrors();
-    this.configImageLoader();
-
   }
 
   private checkUserAuth() {
@@ -99,6 +88,7 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
+        this.client.setLocation();
       } else {
         this.nav.setRoot(Login);
       }
@@ -116,15 +106,13 @@ export class MyApp {
   }
 
   private setLogging() {
-    // if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-        if (typeof setting == "undefined" || !setting || setting.length == 0) {
-          this.logger.enableLogging(false);
-        } else {
-          this.logger.enableLogging(setting);
-        }
+      if (typeof setting == "undefined" || !setting || setting.length == 0) {
+        this.logger.enableLogging(true);
+      } else {
+        this.logger.enableLogging(setting);
+      }
     });
-  // }
 
   }
 
@@ -143,9 +131,11 @@ export class MyApp {
 
   private onAppResumes() {
     this.platform.resume.subscribe(() => {
+      
       // A.S check device status when app resumes
-      if(!(this.util.getPluginPrefs() || this.util.getPluginPrefs('rapid-scan'))){
-      this.popup.dismissAll();
+      if (!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')) {
+         this.client.setLocation(3000);
+        this.popup.dismissAll();
         this.checkDeviceStatus();
         this.client.getUpdates().subscribe(() => {
           // this.documentsSync.syncAll();
@@ -182,13 +172,13 @@ export class MyApp {
 
   private handleClientErrors() {
     this.client.error.subscribe((resp) => {
-      if(resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast(resp);
     });
   }
 
   private handleSyncErrors() {
     this.sync.error.subscribe((resp) => {
-      if(resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast(resp);
     });
   }
 
@@ -227,7 +217,7 @@ export class MyApp {
           text: 'Unauthenticate',
           handler: () => {
             // A.S
-             this.popup.showLoading('');
+            this.popup.showLoading('');
             this.client.unregister(user).subscribe(() => {
               this.nav.setRoot(Login, { unauthenticated: true });
               this.popup.dismiss('loading');
