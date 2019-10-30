@@ -26,6 +26,6 @@
     "xml2js": "^0.4.16"
   },
   "devDependencies": {
-    "libxmljs": "^0.18.4"
+    "libxmljs": "^0.19.7"
   }
 }

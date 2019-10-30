@@ -76,7 +76,8 @@ export class Badge extends BaseElement implements OnInit {
     if (this.readonly) return;
 
     this.isScanning = true;
-    // if(this.element.type !== 'nfc')
+
+    if(this.element.badge_type !== ScannerType.Nfc)
     this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
@@ -117,6 +118,7 @@ export class Badge extends BaseElement implements OnInit {
   }
 
   private processData(scannedId: string) {
+    this.onProcessingEvent.emit('true');
     // A.S GOC-312
     this.popup.showLoading('One moment. Loading record…');
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, 0, this.form.form_id + '').subscribe((data) => {
@@ -207,7 +209,7 @@ export class Badge extends BaseElement implements OnInit {
   }
 
   private getScanner(): Scanner {
-    if (this.element.badge_type && this.element.badge_type == "nfc") {
+    if (this.element.badge_type && this.element.badge_type == ScannerType.Nfc) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
     return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences);

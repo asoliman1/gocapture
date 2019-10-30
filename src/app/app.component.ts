@@ -9,6 +9,7 @@ import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { Config } from "../config";
+import { isProductionEnvironment }  from "./config" ; 
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from "../providers/popup/popup";
 import { Platform } from 'ionic-angular/platform/platform';
@@ -84,8 +85,7 @@ export class MyApp {
       if (!window["cordova"]) {
         return;
       }
-      // check folders and create new if not found
-      this.checkFilesDirectories();
+      this.util.checkFilesDirectories();
 
     });
 
@@ -113,7 +113,7 @@ export class MyApp {
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)
       .flatMap(setting => {
-        if (typeof setting == 'undefined' || setting.length == 0) {
+        if (typeof setting == 'undefined' || !setting || setting.length == 0) {
           return this.settingsService.setSetting(settingsKeys.AUTOSAVE_BC_CAPTURES, true);
         }
         return Observable.of((setting == 'true'));
@@ -121,13 +121,16 @@ export class MyApp {
   }
 
   private setLogging() {
+    // if(isProductionEnvironment){
     this.settingsService.getSetting(settingsKeys.ENABLE_LOGGING).subscribe(setting => {
-      if (typeof setting == "undefined" || setting.length == 0) {
-        this.logger.enableLogging(true);
-      } else {
-        this.logger.enableLogging(setting);
-      }
+        if (typeof setting == "undefined" || !setting || setting.length == 0) {
+          this.logger.enableLogging(false);
+        } else {
+          this.logger.enableLogging(setting);
+        }
     });
+  // }
+
   }
 
   private checkDeviceStatus() {
@@ -145,9 +148,9 @@ export class MyApp {
   private onAppResumes() {
     this.platform.resume.subscribe(() => {
       // A.S check device status when app resumes
-      if(!this.util.getPluginPrefs()){
+      if(!(this.util.getPluginPrefs() || this.util.getPluginPrefs('rapid-scan'))){
+      this.popup.dismissAll();
         this.checkDeviceStatus();
-
         this.client.getUpdates().subscribe(() => {
           // this.documentsSync.syncAll();
         });
@@ -156,24 +159,6 @@ export class MyApp {
     });
   }
 
-  private checkFilesDirectories() {
-    //ensure folders exist
-    this.file.checkDir(cordova.file.dataDirectory, "leadliaison")
-      .then((exists) => {
-        this.checkDir('images');
-        this.checkDir('audio');
-        this.checkDir('documents');
-        this.checkDir('videos');
-      }).catch(err => {
-        this.file.createDir(cordova.file.dataDirectory, "leadliaison", true)
-          .then(ok => {
-            this.checkDir("images");
-            this.checkDir("audio");
-            this.checkDir('documents');
-            this.checkDir('videos');
-          })
-      });
-  }
 
   private handleApiErrors() {
     this.rest.error.subscribe((resp) => {
@@ -222,19 +207,7 @@ export class MyApp {
 
   }
 
-  private checkDir(dirName) {
-    this.file.checkDir(cordova.file.dataDirectory + "leadliaison/", dirName)
-      .then((exists) => {
-        // console.log(dirName + " folder present");
-      }).catch(err => {
-        this.file.createDir(cordova.file.dataDirectory + "leadliaison/", dirName, true)
-          .then(ok => {
-            // console.log("Created " + dirName + " folder");
-          }).catch(err => {
-            console.error("Can't create " + cordova.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
-          })
-      });
-  }
+
 
 
   hideSplashScreen() {

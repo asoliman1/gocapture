@@ -34,7 +34,6 @@ import { Vibration } from "@ionic-native/vibration";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { ScannerType } from "../../components/form-view/elements/badge/Scanners/Scanner";
 import { Observable, Subscription } from "rxjs";
-import { ProgressHud } from "../../services/progress-hud";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { StationsPage } from "../stations/stations";
 import { Idle } from 'idlejs/dist';
@@ -116,7 +115,6 @@ export class FormCapture implements AfterViewInit {
     private vibration: Vibration,
     private rapidCaptureService: RapidCaptureService,
     private alertCtrl: AlertController,
-    private progressHud: ProgressHud,
     private appPreferences: AppPreferences,
     private popoverCtrl: PopoverController,
     private syncClient: SyncClient,
@@ -191,9 +189,9 @@ export class FormCapture implements AfterViewInit {
   }
 
   private async showScreenSaver() {
-
+    let active = this.navCtrl.last().instance instanceof FormCapture;
     if (this.imagesDownloaded()) {
-      if (!this._modal) {
+      if (!this._modal && active) {
         this.handleScreenSaverRandomize()
         this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
        await this._modal.present();
@@ -287,13 +285,20 @@ export class FormCapture implements AfterViewInit {
     if (this.selectedStation) {
       this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
     }
+    this.utils.setPluginPrefs('rapid-scan');
     this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
     this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
       this.popup.dismiss('loading');
+      setTimeout(() => {
+      this.utils.rmPluginPrefs('rapid-scan');
+      }, 500);
       if (items.length)
         this.processRapidScanResult(items, element);
     }).catch((err) => {
       this.popup.dismiss('loading');
+      setTimeout(() => {
+        this.utils.rmPluginPrefs('rapid-scan');
+        }, 500);
     });
 
     this.appPreferences.store("rapidScan-" + this.form.form_id, "captureType", this.rapidCaptureService.getType());
@@ -329,7 +334,6 @@ export class FormCapture implements AfterViewInit {
     }, (error) => {
       console.error(error);
       this.navCtrl.pop();
-      this.progressHud.hideLoader();
     })
   }
 
@@ -599,7 +603,7 @@ export class FormCapture implements AfterViewInit {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
-      } else if (!this.valid) {
+      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
         return;
@@ -640,6 +644,54 @@ export class FormCapture implements AfterViewInit {
     }, (err) => {
       console.error(err);
     });
+  }
+
+  invalidControls() {
+    const invalid = [];
+    const controls = this.formView.theForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
+  }
+
+  /*
+   Per our discussion, from the device side we should ignore validation Required fields if they are hidden because
+   of visibility rules and send their IDs in the hidden_elements array to our backend.
+   */
+  shouldIgnoreFormInvalidStatus() {
+    let invalidControls = this.invalidControls();
+
+    let requiredElements = this.requiredElements(invalidControls);
+
+    if (requiredElements.length == 0) {
+      return false;
+    }
+
+    let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+
+    for (let requiredElement of requiredElements) {
+      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  requiredElements(controls) {
+    let requiredElements = [];
+    for (let control of controls) {
+      let id = control.split('_').pop();
+      let invalidElement = this.form.elements.filter(element => element.id == id)[0];
+      if (invalidElement.is_required === false) {
+        return [];
+      }
+      requiredElements.push(control);
+    }
+    return requiredElements;
   }
 
   kioskModeCallback() {
@@ -711,13 +763,12 @@ export class FormCapture implements AfterViewInit {
             let audioRecorderEl = this.getElementForType("audio");
 
             let isAudio = audioRecorderEl.identifier == id;
+            let value = 
+            isAudio && data.fields[field] && data.fields[field].startsWith('http') ? 
+            data.fields[field] : 
+            data.fields[field] || this.formView.getFormGroup().value[id] ;
 
-            //reset prospect audio field
-            if (isAudio) {
-              this.prospect.fields[field] = "";
-            }
-
-            this.submission.fields[id] = isAudio ? "" : data.fields[field];
+            this.submission.fields[id] = value;
 
             let identifier = id.replace("element_", "");
 
@@ -728,16 +779,13 @@ export class FormCapture implements AfterViewInit {
               parentId = identifier;
             }
 
-            console.log(`parentId - ${parentId}`);
 
             let element = this.getElementForId(parentId);
             element.is_filled_from_list = true;
 
-
-            vals.push({ id: id, value: isAudio ? "" : data.fields[field] });
+            vals.push({ id, value });
           }
         }
-
         Form.fillFormGroupData(vals, this.formView.getFormGroup());
       }
     });
@@ -952,7 +1000,7 @@ export class FormCapture implements AfterViewInit {
             label: scanSource.name,
             value: scanSource.id,
             type: 'radio',
-            checked: scanSource.id == this.selectedStation.id
+            checked: this.selectedStation && scanSource.id == this.selectedStation.id
           });
         }
 
@@ -963,7 +1011,7 @@ export class FormCapture implements AfterViewInit {
 
   // A.S
   getStationById(stationId) {
-    for (let station of this.form.event_stations) 
+    for (let station of this.form.event_stations)
       if (station.id == stationId) return station;
 
     return null;

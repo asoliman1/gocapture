@@ -221,7 +221,7 @@ export class Util {
   }
 
   public fileExist(url) {
-    let file =this.getFilePath(url, '');
+    let file = this.getFilePath(url, '');
     return this.file.checkFile(file.folderPath + '/', file.name);
   }
 
@@ -241,10 +241,10 @@ export class Util {
   }
 
   // A.S
-  private folderForFile(ext: string) {
+  public folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
       return "images/";
-    else if (ext == '.mp3' || ext == 'aac' || ext == 'wma' || ext == 'm4a')
+    else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a')
       return "audio/";
     else
       return "videos/"
@@ -260,25 +260,25 @@ export class Util {
     let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
     let path = newFolder + name;
 
-    return { path, pathToDownload , name , folderPath:newFolder }
+    return { path, pathToDownload, name, folderPath: newFolder }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
-  public setPluginPrefs() {
+  public setPluginPrefs(plugin = 'android-plugin') {
     if (this.platform.is('android'))
-      this.localStorage.set('android-plugin', true);
+      this.localStorage.set(plugin, true);
     else
-      this.localStorage.set('android-plugin', false);
+      this.localStorage.set(plugin, false);
   }
 
   // A.S this is fn to delete after returning from plugin
-  public rmPluginPrefs() {
-    this.localStorage.remove('android-plugin')
+  public rmPluginPrefs(plugin = 'android-plugin') {
+    this.localStorage.remove(plugin)
   }
 
   // A.S check the if any plugin is used or not
-  public getPluginPrefs() {
-    return this.localStorage.get('android-plugin')
+  public getPluginPrefs(plugin = 'android-plugin') {
+    return this.localStorage.get(plugin)
   }
 
   // A.S randomize an array
@@ -299,6 +299,64 @@ export class Util {
     }
 
     return array;
+  }
+
+  // A.S remove a file
+  async  rmFile(folder: string, name: string) {
+    let path = this.file.dataDirectory + "leadliaison/" + folder + "/";
+    try {
+      let result = await this.file.removeFile(path, name);
+      console.log(`File ${result.fileRemoved.name} removed.`);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  // A.S remove a dir
+  async rmDir(folder: string, subPath = 'leadliaison/') {
+    let path = this.file.dataDirectory + subPath;
+    try {
+      let result = await this.file.removeRecursively(path, folder);
+      console.log(`Folder ${result.fileRemoved.name} removed`);
+      return result
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // check folders and create new if not found
+  checkFilesDirectories() {
+    //ensure folders exist
+    this.file.checkDir(this.file.dataDirectory, "leadliaison")
+      .then((exists) => {
+        this.checkDir('images');
+        this.checkDir('audio');
+        this.checkDir('documents');
+        this.checkDir('videos');
+      }).catch(err => {
+        this.file.createDir(this.file.dataDirectory, "leadliaison", true)
+          .then(ok => {
+            this.checkDir("images");
+            this.checkDir("audio");
+            this.checkDir('documents');
+            this.checkDir('videos');
+          })
+      });
+  }
+  checkDir(dirName) {
+    this.file.checkDir(this.file.dataDirectory + "leadliaison/", dirName)
+      .then((exists) => {
+        // console.log(dirName + " folder present");
+      }).catch(err => {
+        this.file.createDir(this.file.dataDirectory + "leadliaison/", dirName, true)
+          .then(ok => {
+            // console.log("Created " + dirName + " folder");
+          }).catch(err => {
+            console.error("Can't create " + this.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
+          })
+      });
   }
 
 }

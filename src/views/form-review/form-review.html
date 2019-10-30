@@ -62,9 +62,7 @@
         <ng-container *ngIf="!shouldShowBusinessCard(submission) && !isNoProcessedRapidScan(submission)">
           <div >
             <h1>{{displayedName(submission)}}</h1>
-            <h2>{{submission.company}}</h2>
             <h2>{{displayedProperty(submission, "email")}}</h2>
-            <h2>{{submission.telephone}}</h2>
           </div>
         </ng-container>
 

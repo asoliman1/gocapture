@@ -853,7 +853,8 @@ static NSString* toBase64(NSData* data) {
 
 - (void)onItemActions:(NSInteger)index
 {
-    UIAlertController *actionsMenu = [UIAlertController alertControllerWithTitle:nil message:@"Choose option" preferredStyle:UIAlertControllerStyleActionSheet];
+    BOOL isPhone = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone;
+    UIAlertController *actionsMenu = [UIAlertController alertControllerWithTitle:nil message:@"Choose option" preferredStyle:   isPhone ? UIAlertControllerStyleActionSheet : UIAlertControllerStyleAlert];
 
     UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [self.images removeObjectAtIndex:index];

@@ -97,7 +97,8 @@ export class Popup {
 
   // A.S
   dismiss(type) {
-    if (this[type]) return this[type].dismiss();
+    if (this[type]) this[type].dismiss();
+    this[type] = null;
   }
 
   // A.S
