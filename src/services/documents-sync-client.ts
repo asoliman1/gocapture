@@ -28,7 +28,10 @@ export class DocumentsSyncClient {
       form.elements.forEach((el) => {
         if (el.type === 'documents' && el.documents_set) {
           documentSets.push({ id: el.documents_set.id, docs: el.documents_set.documents, formId: form.form_id })
-          currentDocuments = [...currentDocuments, el.documents_set.documents.map((doc) => { return { ...doc, setId: el.documents_set.id }; })]
+          currentDocuments = [
+            ...currentDocuments, 
+            ...el.documents_set.documents.map((doc) => { return { ...doc, setId: el.documents_set.id }; })
+          ]
         }
       })
     })
@@ -41,12 +44,9 @@ export class DocumentsSyncClient {
   checkDocs(formId, setId, currentDocuments) {
     this.documentsService.getDocumentsBySet(parseInt(setId))
       .subscribe((documents) => {
-
         this.handleDocs(documents, currentDocuments, formId);
-
       }, (error) => {
-
-        console.log('Error while syncing by form');
+        console.log(`Error while syncing form ${formId}'s documents`);
         console.log(JSON.stringify(error));
         this._isSyncing = false;
 
@@ -59,11 +59,11 @@ export class DocumentsSyncClient {
       .subscribe(() => {
         this.formsProvider.updateFormSyncStatus(formId, false)
 
-        console.log('Documents deleted');
+        console.log(`Form ${formId}'s documents deleted (${docs.length})`);
       }, (error) => {
         this.formsProvider.updateFormSyncStatus(formId, false)
 
-        console.log('deleting error');
+        console.log(`Form ${formId}'s documents deletion error`);
         console.log(JSON.stringify(error)
         )
       });
@@ -82,20 +82,20 @@ export class DocumentsSyncClient {
 
     forkJoin(documentObservables)
       .subscribe(() => {
-        console.log('Documents inserted');
+        console.log(`Form ${formId}'s documents inserted (${docs.length})`);
         this.formsProvider.updateFormSyncStatus(formId, false)
         this._isSyncing = false;
       }, (error) => {
         this.formsProvider.updateFormSyncStatus(formId, false)
-        // console.log('DOCUMENTS COULDNT BE SYNCED');
+        console.log(`Form ${formId}'s documents insertion error`)
+        console.log(error);
         this._isSyncing = false;
       })
   }
 
   handleDocs(documents, currentDocuments, formId) {
     if (!documents) {
-      this._isSyncing = false;
-      return;
+      documents = [];
     }
     const currentSetDocuments = documents.map((doc) => doc);
 
@@ -120,23 +120,23 @@ export class DocumentsSyncClient {
     }
   }
 
-  syncBySet(set: IDocumentSet) {
-    const promises = set.documents.map((document) => {
-      return new Promise((resolve, reject) => {
-        this.documentsService.saveDocument(document)
-          .subscribe((_) => {
-            resolve();
-            console.log(`Document synced`);
-          }, (error) => {
-            reject(error);
-            console.log(`Couldn't sync by set. An error occurred`);
-            console.log(JSON.stringify(error));
-          })
-      });
-    });
+  // syncBySet(set: IDocumentSet) {
+  //   const promises = set.documents.map((document) => {
+  //     return new Promise((resolve, reject) => {
+  //       this.documentsService.saveDocument(document)
+  //         .subscribe((_) => {
+  //           resolve();
+  //           console.log(`Document synced`);
+  //         }, (error) => {
+  //           reject(error);
+  //           console.log(`Couldn't sync by set. An error occurred`);
+  //           console.log(JSON.stringify(error));
+  //         })
+  //     });
+  //   });
 
-    return Promise.all(promises);
-  }
+  //   return Promise.all(promises);
+  // }
 
   public isSyncing(): boolean {
     return this._isSyncing;
@@ -146,14 +146,14 @@ export class DocumentsSyncClient {
     this.popup.showToast(`Documents are still syncing. Please try again later.`);
   }
 
-  private getDocumentsSetByForm(form: Form): IDocumentSet[] {
-    return form.elements
-      .filter((el) => el.type === 'documents')
-      .map((el) => {
-        return {
-          ...el.documents_set,
-          formId: parseInt(form.id)
-        }
-      });
-  }
+  // private getDocumentsSetByForm(form: Form): IDocumentSet[] {
+  //   return form.elements
+  //     .filter((el) => el.type === 'documents')
+  //     .map((el) => {
+  //       return {
+  //         ...el.documents_set,
+  //         formId: parseInt(form.id)
+  //       }
+  //     });
+  // }
 }

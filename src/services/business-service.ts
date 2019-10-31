@@ -288,13 +288,12 @@ export class BussinessClient {
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       this.db.getConfig("lastSyncDate").subscribe(time => {
-        this.db.getConfig("getAllContacts").subscribe(getAllContacts => {
           let d = new Date();
           if (time) {
             d.setTime(parseInt(time));
           }
           let newD = new Date();
-          this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
+          this.sync.download(time ? d : null).subscribe(downloadData => {
             // 
           },
             (err) => {
@@ -308,7 +307,6 @@ export class BussinessClient {
                   obs.complete();
                 });
               })
-            });
         });
       });
     });

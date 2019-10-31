@@ -1,17 +1,19 @@
 import { Injectable } from "@angular/core";
-import {File, Entry} from '@ionic-native/file';
-import {FileTransfer, FileTransferObject} from "@ionic-native/file-transfer";
-import {DBClient} from "./db-client";
-import {RESTClient} from "./rest-client";
-import {Observable} from "rxjs";
-import {Util} from "../util/util";
-import {FileUtils} from "../util/file";
-import {IDocument} from "../model";
-import {forkJoin} from "rxjs/observable/forkJoin";
+import { File, Entry } from '@ionic-native/file';
+import { FileTransfer, FileTransferObject } from "@ionic-native/file-transfer";
+import { DBClient } from "./db-client";
+import { RESTClient } from "./rest-client";
+import { Observable } from "rxjs";
+import { Util } from "../util/util";
+import { FileUtils } from "../util/file";
+import { IDocument } from "../model";
+import { forkJoin } from "rxjs/observable/forkJoin";
 import { Popup } from "../providers/popup/popup";
 
 @Injectable()
 export class DocumentsService {
+  currentDownloadingDocs : number[] = [];
+
   constructor(
     private fileService: File,
     private fileTransfer: FileTransfer,
@@ -19,7 +21,7 @@ export class DocumentsService {
     private restClient: RESTClient,
     private util: Util,
     private popup: Popup
-  ) {}
+  ) { }
 
   saveDocument(document: IDocument) {
     const fileTransferObject: FileTransferObject = this.fileTransfer.create();
@@ -42,12 +44,13 @@ export class DocumentsService {
         }
 
         return this.restClient.getDocumentInfo(document.id).subscribe((data) => {
+         this.addToDownloadingDocs(document.id);
           if (data.status != "200") {
             return this.removeDocuments([document.id])
               .subscribe((_) => obs.complete(), (error) => obs.complete());
           }
 
-          const documentFromTheAPI: IDocument | any = {...data.records[0], setId: document.setId};
+          const documentFromTheAPI: IDocument | any = { ...data.records[0], setId: document.setId };
           documentFromTheAPI.file_extension = FileUtils.getExtensionByType(documentFromTheAPI.file_type);
           documentFromTheAPI.vanity_url = document.vanity_url;
 
@@ -61,10 +64,11 @@ export class DocumentsService {
           const filePath = this.getDocumentsDirectory() + documentFromTheAPI.name + extension;
           const adjustedPath = this.util.adjustFilePath(filePath);
           return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
-            .then((entry:Entry) => {
+            .then((entry: Entry) => {
               documentFromTheAPI.file_path = entry.nativeURL
               return this.dbClient.saveDocument(documentFromTheAPI)
                 .subscribe((ok) => {
+                  this.rmFromDownloadingDocs(document.id);
                   obs.next(documentFromTheAPI);
                   obs.complete();
                   console.log(`Document ${entry.name} saved successfully`);
@@ -87,6 +91,14 @@ export class DocumentsService {
         });
       });
     });
+  }
+
+  addToDownloadingDocs(id){
+    this.currentDownloadingDocs.push(id)
+  }
+
+  rmFromDownloadingDocs(id){
+    this.currentDownloadingDocs = this.currentDownloadingDocs.filter((e)=> e != id )
   }
 
   /**
@@ -213,6 +225,6 @@ export class DocumentsService {
   }
 
   showNoDocumentsToast() {
-   this.popup.showToast(`The selected documents set doesn't contains any documents.`);
+    this.popup.showToast(`The selected documents set doesn't contains any documents.`);
   }
 }

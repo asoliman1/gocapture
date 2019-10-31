@@ -69,7 +69,7 @@ export class SyncClient {
     private settingsService: SettingsService,
     private documentsSync: DocumentsSyncClient,
     private submissionsRepository: SubmissionsRepository,
-    private formsProvider : FormsProvider,
+    private formsProvider: FormsProvider,
     private util: Util) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
@@ -95,22 +95,13 @@ export class SyncClient {
     this._isSyncing = status;
   }
 
-  public download(lastSyncDate: Date, shouldDownloadAllContacts?: boolean): Observable<DownloadData> {
+  public download(lastSyncDate: Date): Observable<DownloadData> {
     return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
       let result = new DownloadData();
-      var map: { [key: string]: SyncStatus } = {
-        forms: new SyncStatus(true, false, 0, "Forms", 10),
-        contacts: new SyncStatus(false, false, 0, "Contacts", 0),
-        submissions: new SyncStatus(false, false, 0, "Submissions", 0)
-      };
       this._isSyncing = true;
-      this.lastSyncStatus = [
-        map["forms"],
-        map["contacts"],
-        map["submissions"]
-      ];
-      this.syncSource.next(this.lastSyncStatus);
-      this.downloadForms(lastSyncDate, map, result).subscribe((forms) => {
+
+      console.log('Getting latest forms...')
+      this.downloadForms(lastSyncDate, result).subscribe((forms) => {
         // A.S check if form has data to be downloaded
         if (this.hasNewData) {
           // A.S GOC-326
@@ -118,41 +109,29 @@ export class SyncClient {
           this.hasNewData = false;
         }
         obs.next(result);
-
         console.log('Getting latest submissions...')
-        this.downloadSubmissions(forms, lastSyncDate, map, result).subscribe(() => {
+        this.downloadSubmissions(forms, lastSyncDate, result).subscribe(() => {
+          this._isSyncing = false;
           obs.next(result);
-
-          let formsWithList = forms.filter((form) => form.list_id > 0);
-
-          console.log('Getting latest contacts...')
-          this.downloadContacts(formsWithList, map, result).subscribe(() => {
-            formsWithList.forEach((form) => {
-              form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
-            });
-            this.lastSyncStatus = [];
-            this.db.saveForms(formsWithList).subscribe(result => {
-              console.log('Getting latest documents...');
-              this.documentsSync.syncAll();
-            }, (err) => {
-              console.error(err);
-            }, () => {
-              obs.next(result);
-              this.syncCleanup();
-            });
-
-          }, (err) => {
-            obs.error(err);
-            this.syncCleanup();
-          });
+          obs.complete();
+          console.log('Getting latest documents...');
+          this.documentsSync.syncAll();
         }, (err) => {
           console.log(err)
           obs.error(err);
-          this.syncCleanup();
+        });
+        console.log('Getting latest contacts...')
+        let formsWithList = forms.filter((form) => form.list_id > 0);
+        this.downloadContacts(formsWithList, result).subscribe(() => {
+          formsWithList.forEach((form) => {
+            form.members_last_sync_date = new Date().toISOString().split(".")[0] + "+00:00";
+          });
+          this.formsProvider.saveNewForms(formsWithList);
+        }, (err) => {
+          obs.error(err);
         });
       }, (err) => {
         obs.error(err);
-        this.syncCleanup();
       });
     });
   }
@@ -187,23 +166,21 @@ export class SyncClient {
       let formIds = Object.keys(map);
       let index = 0;
       map[formIds[index]].status.loading = true;
-      this.pushNewSyncStatus(map[formIds[index]].status)
 
       let onError = (err) => {
         this.syncCleanup();
         obs.error(err);
         this.errorSource.next(err);
-          // A.S
-        this.formsProvider.updateFormSyncStatus(formIds[index],false);
+        // A.S
+        this.formsProvider.updateFormSyncStatus(formIds[index], false);
       };
 
       let handler = (submitted: FormSubmission[]) => {
         result.push.apply(result, submitted);
         map[formIds[index]].status.complete = true;
         map[formIds[index]].status.loading = false;
-          // A.S
-        this.formsProvider.updateFormSyncStatus(formIds[index],false);
-        this.pushNewSyncStatus(map[formIds[index]].status)
+        // A.S
+        this.formsProvider.updateFormSyncStatus(formIds[index], false);
         index++;
         if (index >= formIds.length) {
           obs.next(result);
@@ -214,12 +191,12 @@ export class SyncClient {
         }
         setTimeout(() => {
           // A.S
-          this.formsProvider.updateFormSyncStatus(formIds[index],true);
+          this.formsProvider.updateFormSyncStatus(formIds[index], true);
           this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
         }, 500);
       };
-          // A.S
-      this.formsProvider.updateFormSyncStatus(formIds[index],true);
+      // A.S
+      this.formsProvider.updateFormSyncStatus(formIds[index], true);
       this.doSubmitAll(map[formIds[index]]).subscribe(handler, onError);
     });
   }
@@ -572,16 +549,8 @@ export class SyncClient {
   }
 
 
-  private downloadForms(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<Form[]> {
+  private downloadForms(lastSyncDate: Date, result: DownloadData): Observable<Form[]> {
     return new Observable<any>(obs => {
-      console.log('Getting latest forms...')
-
-      let mapEntry = map["forms"];
-      mapEntry.loading = true;
-      mapEntry.percent = 10;
-
-      this.pushNewSyncStatus(mapEntry);
-
       this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
 
         let current = new Date();
@@ -593,27 +562,22 @@ export class SyncClient {
         });
         let remoteFormsIds = remoteForms.map((form) => form.form_id);
 
-          result.forms = remoteForms
-          let localForms = this.formsProvider.getForms();
-          remoteForms = this.checkFormData(remoteForms, localForms);
-          this.clearLocalForms(localForms).subscribe(reply => {
+        result.forms = remoteForms
+        let localForms = this.formsProvider.getForms();
+        remoteForms = this.checkFormData(remoteForms, localForms);
+        this.clearLocalForms(localForms).subscribe(reply => {
 
-            let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
-            if (localFormsIds && localFormsIds.length > 0) {
-              result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
-            }
-            this.formsProvider.saveNewForms(remoteForms);
-            mapEntry.complete = true;
-            mapEntry.loading = false;
-            mapEntry.percent = 100;
-            this.entitySyncedSource.next(mapEntry.formName);
-            this.pushNewSyncStatus(mapEntry);
-            obs.next(remoteForms);
-            obs.complete();
-          }, (err) => {
-            obs.error(err);
-          })
-     
+          let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
+          if (localFormsIds && localFormsIds.length > 0) {
+            result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
+          }
+          this.formsProvider.saveNewForms(remoteForms);
+          obs.next(remoteForms);
+          obs.complete();
+        }, (err) => {
+          obs.error(err);
+        })
+
       }, err => {
         obs.error(err);
       });
@@ -623,22 +587,22 @@ export class SyncClient {
   // A.S download all images for all forms
   private async downloadFormsData(forms: Form[]) {
     console.log('Downloading forms data...');
-     forms.map(async (form: Form) => {
+    forms.map(async (form: Form) => {
       await this.downloadFormData(form);
       return form;
     })
-     console.log('Downloading forms data finished');
+    console.log('Downloading forms data finished');
   }
 
-  private async downloadFormData(form : Form){
-   await this.downloadFormBackground(form);
-   await this.downloadFormScreenSaver(form);
+  private async downloadFormData(form: Form) {
+    await this.downloadFormBackground(form);
+    await this.downloadFormScreenSaver(form);
   }
 
-  private async downloadFormScreenSaver(form : Form){
+  private async downloadFormScreenSaver(form: Form) {
     if (form.event_style.screensaver_media_items) {
       let entry: Entry;
-      this.formsProvider.updateFormSyncStatus(form.form_id,true)
+      this.formsProvider.updateFormSyncStatus(form.form_id, true)
       form.event_style.screensaver_media_items = await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
         if (item.url != '' && item.path.startsWith('https://')) {
           try {
@@ -646,29 +610,29 @@ export class SyncClient {
             entry = await this.downloadFile(file.pathToDownload, file.path);
             item = { path: entry.nativeURL, url: item.url };
           } catch (error) {
-            console.log('Error downloading a form screen saver image',error)
+            console.log('Error downloading a form screen saver image', error)
           }
         }
         return item;
       }))
-      this.formsProvider.updateFormScreenSaver(form.form_id,form.event_style.screensaver_media_items);
-      this.formsProvider.updateFormSyncStatus(form.form_id,false)
+      this.formsProvider.updateFormScreenSaver(form.form_id, form.event_style.screensaver_media_items);
+      this.formsProvider.updateFormSyncStatus(form.form_id, false)
     }
   }
 
-  private async downloadFormBackground(form : Form){
+  private async downloadFormBackground(form: Form) {
     if (form.event_style.event_record_background.url != '' && form.event_style.event_record_background.path.startsWith('https://')) {
-     let entry: Entry;
-      this.formsProvider.updateFormSyncStatus(form.form_id,true)
+      let entry: Entry;
+      this.formsProvider.updateFormSyncStatus(form.form_id, true)
       try {
         let file = this.util.getFilePath(form.event_style.event_record_background.url, `background_${form.form_id}_`);
         entry = await this.downloadFile(file.pathToDownload, file.path);
         form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
       } catch (error) {
-        console.log('Error downloading a form background image',error)
+        console.log('Error downloading a form background image', error)
       }
-      this.formsProvider.updateFormBackground(form.form_id,form.event_style.event_record_background);
-      this.formsProvider.updateFormSyncStatus(form.form_id,false)
+      this.formsProvider.updateFormBackground(form.form_id, form.event_style.event_record_background);
+      this.formsProvider.updateFormSyncStatus(form.form_id, false)
     }
   }
 
@@ -741,22 +705,11 @@ export class SyncClient {
     });
   }
 
-  private downloadContacts(forms: Form[], map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
+  private downloadContacts(forms: Form[], result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
-      let mapEntry = map["contacts"];
-      mapEntry.loading = true;
-      mapEntry.percent = 10;
-      this.pushNewSyncStatus(mapEntry);
       this.rest.getAllDeviceFormMemberships(forms, result.newFormIds).subscribe((contacts) => {
         result.memberships.push.apply(result.memberships, contacts);
-        mapEntry.percent = 50;
-        this.pushNewSyncStatus(mapEntry)
         this.db.saveMemberships(contacts).subscribe(res => {
-          mapEntry.complete = true;
-          mapEntry.loading = false;
-          mapEntry.percent = 100;
-          this.entitySyncedSource.next(mapEntry.formName);
-          this.pushNewSyncStatus(mapEntry)
           obs.next(null);
           obs.complete();
         }, err => {
@@ -768,11 +721,6 @@ export class SyncClient {
     });
   }
 
-  // A.S fn to push any new status
-  private pushNewSyncStatus(element: SyncStatus) {
-    this.syncSource.next(this.lastSyncStatus);
-    this.lastSyncStatus.push(element);
-  }
 
   /*
   private downloadDispatches(lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
@@ -817,26 +765,13 @@ export class SyncClient {
   }
    */
 
-  private downloadSubmissions(forms: Form[], lastSyncDate: Date, map: { [key: string]: SyncStatus }, result: DownloadData): Observable<any> {
+  private downloadSubmissions(forms: Form[], lastSyncDate: Date, result: DownloadData): Observable<any> {
     return new Observable<any>(obs => {
-      let mapEntry = map["submissions"];
-      mapEntry.loading = true;
-      mapEntry.percent = 10;
-
-      this.pushNewSyncStatus(mapEntry);
-
       this.rest.getAllSubmissions(forms, lastSyncDate, result.newFormIds).subscribe(submissions => {
-        mapEntry.percent = 50;
-        this.pushNewSyncStatus(mapEntry);
         result.submissions = submissions;
         this.downloadData(forms, submissions).subscribe(subs => {
           console.log(subs)
           this.db.saveSubmisisons(subs).subscribe(reply => {
-            mapEntry.complete = true;
-            mapEntry.loading = false;
-            mapEntry.percent = 100;
-            this.entitySyncedSource.next(mapEntry.formName);
-            this.pushNewSyncStatus(mapEntry);
             obs.next(null);
             obs.complete();
           }, err => {
@@ -908,7 +843,7 @@ export class SyncClient {
 
           this.http.downloadFile(file.pathToDownload, {}, {}, file.path).then(entry => {
             urlMap[urls[index]] = urls[index];
-            console.log(urlMap[urls[index]] , urls[index])
+            console.log(urlMap[urls[index]], urls[index])
             index++;
             setTimeout(() => {
               handler();

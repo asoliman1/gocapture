@@ -113,10 +113,9 @@ $searchbar-ios-background-color: rgba(1, 1, 1, 0);
 
 // Fonts
 // --------------------------------------------------
-
+@import "flaticon";
 @import "roboto";
 @import "noto-sans";
-
 @import "theme";
 @import "default-theme";
 @import "red-theme";
@@ -126,4 +125,3 @@ $searchbar-ios-background-color: rgba(1, 1, 1, 0);
 @import "purple-theme";
 @import "green-theme";
 @import "dark-purple-theme";
-

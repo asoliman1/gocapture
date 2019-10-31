@@ -65,7 +65,10 @@ export class FormsProvider {
     forms.forEach((e : Form)=> {
       let form = this.forms.find((f)=>f.form_id == e.form_id);
       if(form) form = merge(form,e);
-      else this.forms.push(e);
+      else {
+        this.forms.push(e);
+        form = e;
+      }
       this.saveFormDb(form)
     });
     this.pushUpdates();

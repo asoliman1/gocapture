@@ -75,7 +75,7 @@ export class Documents implements AfterViewInit {
     if (!document.file_path) {
       return this.documentsSyncClient.showSyncingToast();
     }
-
+    this.util.setPluginPrefs()
     // open the PDF viewer
     let filename = document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;

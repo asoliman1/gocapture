@@ -1,7 +1,9 @@
+import { DocumentsService } from './../../services/documents-service';
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
 import {Platform} from "ionic-angular";
+import { Colors } from '../../constants/colors';
 
 @Component({
   selector: 'document',
@@ -15,19 +17,25 @@ export class Document implements OnChanges {
   public selectedTheme: String;
   public thumbnail: string;
   fallbackUrl : string;
+  color : any;
 
   constructor(
-    private themeProvider: ThemeProvider,
-    private platform: Platform
+    private platform: Platform,
+    private documentsService : DocumentsService,
+    private ThemeProvider : ThemeProvider
   ) {
-    this.themeProvider.getActiveTheme().subscribe((theme) => {
-      this.selectedTheme = theme;
-      this.fallbackUrl = `assets/images/doc-placeholder-${theme.replace('-theme','')}.png`
-    });
+    this.ThemeProvider.getActiveTheme().subscribe((data)=>{
+      const colorKey = data.split('-');
+      this.color = Colors[colorKey[0]] || Colors[colorKey[1]] ;
+    })
   }
 
   ngOnChanges() {
     this.prepareThumbnail();
+  }
+  
+  ngOnInit() {
+    this.fallbackUrl = `assets/images/extentions/${this.document.file_extension}.svg`;
   }
 
   prepareThumbnail() {
@@ -45,6 +53,7 @@ export class Document implements OnChanges {
     } else {
       this.thumbnail = preview_urls['normal'];
     }
+
   }
 
   select() {
@@ -53,6 +62,11 @@ export class Document implements OnChanges {
 
   openDocument() {
     this.onOpen.emit(null);
+  }
+
+  checkLoadingDoc(){
+   if(this.documentsService.currentDownloadingDocs.find((e)=> e == this.document.id)) return true;
+   return false;
   }
 
 }
