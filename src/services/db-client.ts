@@ -874,7 +874,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id, , JSON.stringify(form.location)])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, form.hold_request_id, JSON.stringify(form.location)])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -1202,6 +1202,7 @@ export class DBClient {
 						let params = this.saveAllData[i].parameters;
 						tx.executeSql(query, params, function (success) {
 						}, function (error) {
+							console.log(error);
 							tx.abort(error);
 						});
 					}
@@ -1218,7 +1219,7 @@ export class DBClient {
 					this.saveAllEnabled = false;
 					this.saveAllData = [];
 					obs.error(error);
-
+					console.log(error)
 				})
 			};
 
