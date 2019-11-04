@@ -110,6 +110,7 @@ import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
 import { FormsProvider } from '../providers/forms/forms';
+import { SubmissionsProvider } from '../providers/submissions/submissions';
 
 @NgModule({
   declarations: [
@@ -276,7 +277,8 @@ import { FormsProvider } from '../providers/forms/forms';
     Insomnia,
     formViewService,
     FilterService,
-    Keyboard
+    Keyboard,
+    SubmissionsProvider
   ]
 })
 export class AppModule { }

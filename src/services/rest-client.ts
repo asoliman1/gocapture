@@ -244,9 +244,9 @@ export class RESTClient {
 			});
 	}
 
-	public getAllSubmissions(forms: Form[], lastSync?: Date, newFormIds?: number[]): Observable<FormSubmission[]> {
-		return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
-			var result: FormSubmission[] = [];
+	public getAllSubmissions(forms: Form[], lastSync?: Date, newFormIds?: number[]): Observable<{submissions :FormSubmission[],form: Form}> {
+		return new Observable<{submissions :FormSubmission[],form: Form}>((obs: Observer<{submissions :FormSubmission[],form: Form}>) => {
+			var result: {submissions :FormSubmission[],form: Form} = {submissions:[],form:null};
 			if (!forms || forms.length == 0) {
 				setTimeout(() => {
 					obs.next(result);
@@ -257,15 +257,16 @@ export class RESTClient {
 			var index = 0;
 			let syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 			let handler = (data: FormSubmission[]) => {
-				result.push.apply(result, data);
 				this.formsProvider.updateFormSyncStatus(forms[index].form_id,false)
+				result.submissions = data;
+				result.form = forms[index];
+				obs.next(result)
 				index++;
 				if (index < forms.length) {
 					syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 					this.getSubmissions(forms[index], syncDate).subscribe(handler);
 			        this.formsProvider.updateFormSyncStatus(forms[index].form_id,true)
 				} else {
-					obs.next(result);
 					obs.complete();
 				}
 			};

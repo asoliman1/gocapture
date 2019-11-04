@@ -243,11 +243,11 @@ export class Util {
   // A.S
   private folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
-      return "images/";
+      return "images";
     else if (ext == '.mp3' || ext == 'aac' || ext == 'wma' || ext == 'm4a')
-      return "audio/";
+      return "audio";
     else
-      return "videos/"
+      return "videos"
   }
 
   // A.S
@@ -257,10 +257,11 @@ export class Util {
     let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
     let name = id + url.substr(url.lastIndexOf("/") + 1);
     let pathToDownload = encodeURI(url);
-    let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
-    let path = newFolder + name;
+    let folder = this.folderForFile(ext);
+    let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
+    let path = folderPath + name;
 
-    return { path, pathToDownload, name, folderPath: newFolder }
+    return { path, pathToDownload, name, folder , folderPath }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works

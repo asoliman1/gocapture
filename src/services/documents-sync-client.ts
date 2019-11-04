@@ -1,7 +1,7 @@
 import { FormsProvider } from './../providers/forms/forms';
 import { Injectable } from "@angular/core";
 import { DocumentsService } from "./documents-service";
-import { Form, IDocument, IDocumentSet } from "../model";
+import { IDocument } from "../model";
 import { xorBy, intersectionBy, differenceBy } from 'lodash';
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { Observable } from "rxjs";

@@ -71,7 +71,7 @@ export class DocumentsService {
                   this.rmFromDownloadingDocs(document.id);
                   obs.next(documentFromTheAPI);
                   obs.complete();
-                  console.log(`Document ${entry.name} saved successfully`);
+                  // console.log(`Document ${entry.name} saved successfully`);
                 }, (error) => {
                   obs.error(error);
                   console.log(`Couldn't save document on the db`);
