@@ -337,6 +337,7 @@ export class SyncClient {
           } else {
             this.actuallySubmitForm(data.form, submission, obs);
           }
+          this.entitySyncedSource.next("Submissions"); 
         }, (err) => {
           obs.error(err);
           this.errorSource.next("Could not save updated submission for form " + data.form.name);
@@ -466,6 +467,7 @@ export class SyncClient {
           this.db.updateSubmissionId(submission).subscribe((ok) => {
             obs.error(msg);
             this.errorSource.next(msg);
+            this.entitySyncedSource.next("Submissions");
           }, err => {
             obs.error(err);
             let msg = "Could not process submission for form " + form.name;
@@ -493,6 +495,7 @@ export class SyncClient {
             if (d.id > 0) {
               submission.id = submission.activity_id;
             }
+            this.entitySyncedSource.next("Submissions");
             obs.next(submission);
             obs.complete();
           }, err => {
@@ -508,7 +511,7 @@ export class SyncClient {
         this.errorSource.next(msg);
 
       })
-      this.entitySyncedSource.next("Submissions"); // A.S push new submission updates to update number of submissions for each event
+       // A.S push new submission updates to update number of submissions for each event
 
     }, err => {
       obs.error(err);
