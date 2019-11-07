@@ -5,8 +5,8 @@
   <img *ngIf="!imageLoading" [src]="form?.event_style?.event_record_background.path | convertFileSrc" class="image" onerror="this.src = 'assets/images/image-placeholder.jpg'" />
   <div class="text">
     <div class="title text-shadow-3"   [style.color]="form?.event_style?.event_text_color || 'white'">{{form?.name}}</div>
-    <div class="address text-shadow-3" [style.color]="form?.event_style?.event_text_color || 'white'">
-     {{form?.event_address?.address || 'USA , NewYork'}}
+    <div class="address text-shadow-3" [style.color]="form?.event_style?.event_text_color || 'white'" *ngIf="form?.event_address?.address">
+     {{form?.event_address?.address}}
     </div>
   </div>
   <div class="submissions">

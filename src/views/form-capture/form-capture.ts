@@ -1,3 +1,4 @@
+import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
@@ -42,6 +43,8 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
+import { Geolocation } from '@ionic-native/geolocation';
+import { settingsKeys } from '../../constants/constants';
 
 
 
@@ -99,6 +102,8 @@ export class FormCapture implements AfterViewInit {
   private idle: Idle;
 
   private _modal: Modal;
+  
+  private location;
 
   onFormUpdate: Subscription;
   buttonBar : Subscription;
@@ -121,12 +126,19 @@ export class FormCapture implements AfterViewInit {
     private dbClient: DBClient,
     private utils: Util,
     private formViewService:formViewService,
+    private settingsService : SettingsService,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
+    this.getSavedLocation()
   }
 
+  getSavedLocation(){
+    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
+      if(data) this.location = JSON.parse(data);
+    })
+  }
 
 
   ngAfterViewInit() {
@@ -366,6 +378,8 @@ export class FormCapture implements AfterViewInit {
       submission.station_id = this.selectedStation.id;
     }
 
+    submission.location = this.location;
+
     return this.client.saveSubmission(submission, this.form, false);
   }
 
@@ -588,6 +602,8 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
+
+    
     this.submitAttempt = true;
 
     /*
@@ -603,12 +619,13 @@ export class FormCapture implements AfterViewInit {
         this.errorMessage = "Email or name is required";
         this.content.resize();
         return;
-      } else if (!this.valid) {
+      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
         return;
       }
     }
+
 
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
@@ -627,23 +644,73 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
-
-    this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
-      this.tryClearDocumentsSelection();
-
-      if (this.isEditing) {
-        if (this.form.is_mobile_kiosk_mode) {
-          this.navCtrl.pop();
-        } else {
-          this.navCtrl.popToRoot();
+    // A.S
+  this.submission.location = this.location;
+      this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+        this.tryClearDocumentsSelection();
+  
+        if (this.isEditing) {
+          if (this.form.is_mobile_kiosk_mode) {
+            this.navCtrl.pop();
+          } else {
+            this.navCtrl.popToRoot();
+          }
+          return;
         }
-        return;
-      }
+  
+        this.kioskModeCallback();
+      }, (err) => {
+        console.error(err);
+      });
+ 
+  }
 
-      this.kioskModeCallback();
-    }, (err) => {
-      console.error(err);
-    });
+  invalidControls() {
+    const invalid = [];
+    const controls = this.formView.theForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
+  }
+
+  /*
+   Per our discussion, from the device side we should ignore validation Required fields if they are hidden because
+   of visibility rules and send their IDs in the hidden_elements array to our backend.
+   */
+  shouldIgnoreFormInvalidStatus() {
+    let invalidControls = this.invalidControls();
+
+    let requiredElements = this.requiredElements(invalidControls);
+
+    if (requiredElements.length == 0) {
+      return false;
+    }
+
+    let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+
+    for (let requiredElement of requiredElements) {
+      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  requiredElements(controls) {
+    let requiredElements = [];
+    for (let control of controls) {
+      let id = control.split('_').pop();
+      let invalidElement = this.form.elements.filter(element => element.id == id)[0];
+      if (invalidElement.is_required === false) {
+        return [];
+      }
+      requiredElements.push(control);
+    }
+    return requiredElements;
   }
 
   kioskModeCallback() {
@@ -715,13 +782,12 @@ export class FormCapture implements AfterViewInit {
             let audioRecorderEl = this.getElementForType("audio");
 
             let isAudio = audioRecorderEl.identifier == id;
+            let value = 
+            isAudio && data.fields[field] && data.fields[field].startsWith('http') ? 
+            data.fields[field] : 
+            data.fields[field] || this.formView.getFormGroup().value[id] ;
 
-            //reset prospect audio field
-            if (isAudio) {
-              this.prospect.fields[field] = "";
-            }
-
-            this.submission.fields[id] = isAudio ? "" : data.fields[field];
+            this.submission.fields[id] = value;
 
             let identifier = id.replace("element_", "");
 
@@ -732,16 +798,13 @@ export class FormCapture implements AfterViewInit {
               parentId = identifier;
             }
 
-            console.log(`parentId - ${parentId}`);
 
             let element = this.getElementForId(parentId);
             element.is_filled_from_list = true;
 
-
-            vals.push({ id: id, value: isAudio ? "" : data.fields[field] });
+            vals.push({ id, value });
           }
         }
-
         Form.fillFormGroupData(vals, this.formView.getFormGroup());
       }
     });
@@ -967,7 +1030,7 @@ export class FormCapture implements AfterViewInit {
 
   // A.S
   getStationById(stationId) {
-    for (let station of this.form.event_stations) 
+    for (let station of this.form.event_stations)
       if (station.id == stationId) return station;
 
     return null;

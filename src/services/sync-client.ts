@@ -94,6 +94,7 @@ export class SyncClient {
   }
 
   public download(lastSyncDate: Date, shouldDownloadAllContacts?: boolean): Observable<DownloadData> {
+
     return new Observable<DownloadData>((obs: Observer<DownloadData>) => {
       let result = new DownloadData();
       var map: { [key: string]: SyncStatus } = {
@@ -101,6 +102,7 @@ export class SyncClient {
         contacts: new SyncStatus(false, false, 0, "Contacts", 0),
         submissions: new SyncStatus(false, false, 0, "Submissions", 0)
       };
+      
       this._isSyncing = true;
       this.lastSyncStatus = [
         map["forms"],
@@ -335,6 +337,7 @@ export class SyncClient {
           } else {
             this.actuallySubmitForm(data.form, submission, obs);
           }
+          this.entitySyncedSource.next("Submissions"); 
         }, (err) => {
           obs.error(err);
           this.errorSource.next("Could not save updated submission for form " + data.form.name);
@@ -342,8 +345,9 @@ export class SyncClient {
 
       }, (err) => {
         obs.error(err);
-        // let msg = "Could not process submission for form " + data.form.name;
-        // this.errorSource.next(msg);
+        console.log(err);
+        let msg = "Could not process submission for form " + data.form.name;
+        this.errorSource.next(msg);
       });
     });
   }
@@ -463,6 +467,7 @@ export class SyncClient {
           this.db.updateSubmissionId(submission).subscribe((ok) => {
             obs.error(msg);
             this.errorSource.next(msg);
+            this.entitySyncedSource.next("Submissions");
           }, err => {
             obs.error(err);
             let msg = "Could not process submission for form " + form.name;
@@ -490,6 +495,7 @@ export class SyncClient {
             if (d.id > 0) {
               submission.id = submission.activity_id;
             }
+            this.entitySyncedSource.next("Submissions");
             obs.next(submission);
             obs.complete();
           }, err => {
@@ -505,7 +511,7 @@ export class SyncClient {
         this.errorSource.next(msg);
 
       })
-      this.entitySyncedSource.next("Submissions"); // A.S push new submission updates to update number of submissions for each event
+       // A.S push new submission updates to update number of submissions for each event
 
     }, err => {
       obs.error(err);
@@ -549,10 +555,9 @@ export class SyncClient {
             obs.error(err);
           })
         } else {
-
-          let folder = urls[index].substr(0, urls[index].lastIndexOf("/"));
+         
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
-
+          let folder = this.file.dataDirectory + 'leadliaison/' + this.util.folderForFile(`.${file.split('.')[1]}`).replace('/','');
           this.file.resolveDirectoryUrl(folder)
             .then(dir => {
               return this.file.getFile(dir, file, { create: false })

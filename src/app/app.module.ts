@@ -61,7 +61,6 @@ import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 
-import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -160,8 +159,7 @@ import { SectionBlock } from '../components/section-block';
     BrowserModule,
     HttpModule,
     BrowserAnimationsModule,
-    IonicModule.forRoot(MyApp,{}),
-    IonicImageViewerModule,
+    IonicModule.forRoot(MyApp),
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,
@@ -276,7 +274,7 @@ import { SectionBlock } from '../components/section-block';
     Insomnia,
     formViewService,
     FilterService,
-    Keyboard
+    Keyboard,
   ]
 })
 export class AppModule { }
