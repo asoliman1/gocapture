@@ -25,6 +25,8 @@ export class CustomFabMenu {
 
   @Input("hasMargin") hasMargin: boolean;
 
+  @Input() disabled : boolean;
+
   public showMenuItem: boolean = false;
 
   labels: FabMenuItem[] = [];

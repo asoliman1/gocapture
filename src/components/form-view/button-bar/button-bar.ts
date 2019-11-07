@@ -4,7 +4,7 @@ import { Popup } from './../../../providers/popup/popup';
 import { FormSubmission, BarcodeStatus } from './../../../model/form-submission';
 import { formViewService } from './../form-view-service';
 import { Form } from './../../../model/form';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { FormReview } from '../../../views/form-review';
 import { DBClient } from '../../../services/db-client';
@@ -22,12 +22,14 @@ export class buttonBar implements OnInit {
     fabButtons: MenuButtons;
 
     @Input() form: Form;
+    @Input() show: boolean;
+    @Input() disabled: boolean;
 
     public fabMenuItems: Array<FabMenuItem> = [];
     public fabIcon = "add";
 
     scanningEls: FormElement[];
-    theme: string;
+
     constructor(
         private navCtrl: NavController,
         private formViewService: formViewService,
@@ -38,15 +40,15 @@ export class buttonBar implements OnInit {
     }
 
     isTabsVisible(): boolean {
-        if (this.form && this.form.event_style.buttons_menu) {
-            if (this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
+        if (this.show && this.form && this.form.event_style.buttons_menu) {
+            if (this.tabButtons && this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
         }
         return false;
     }
 
     isFabsVisible(): boolean {
-        if (this.form && this.form.event_style.floating_buttons) {
-            if (this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
+        if (this.show && this.form && this.form.event_style.floating_buttons) {
+            if (this.fabButtons && this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
         }
         return false;
     }
@@ -63,13 +65,13 @@ export class buttonBar implements OnInit {
         this.setTabs();
         this.setFabs();
         this.validateBtns()
+        this.addMenuFabs();
     }
 
     setFabs() {
         this.fabButtons = this.form.event_style.floating_buttons;
         this.fabButtons.buttons = [...this.filterButtonsWithShow(this.fabButtons.buttons)];
         this.fabButtons.buttons = [...this.sortButtons(this.fabButtons.buttons)];
-        this.addFabs();
     }
 
     setTabs() {
@@ -78,7 +80,7 @@ export class buttonBar implements OnInit {
         this.tabButtons.buttons = [...this.sortButtons(this.tabButtons.buttons)];
     }
 
-    addFabs() {
+    addMenuFabs() {
         this.fabButtons.buttons.forEach((e) => {
             this.fabMenuItems.push(new FabMenuItem(e.type, this.getIcon(e), e.label));
         })
@@ -102,9 +104,18 @@ export class buttonBar implements OnInit {
     validateBtns() {
         this.scanningEls = this.form.elements.filter((e) => e.type == 'barcode' || e.type == 'business_card')
         if (!this.scanningEls.length) {
-            this.fabButtons.buttons = this.fabButtons.buttons.filter((e) => e.type != 'scan')
-            this.tabButtons.buttons = this.tabButtons.buttons.filter((e) => e.type != 'scan')
+            this.filterBtns((e) => e.type != 'scan')
         }
+        let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
+        if (isKioskMode) {
+            this.filterBtns((e) => (e.type != 'recall') && (e.type != 'leads'))
+        }
+        console.log('is koisk mode ' + this.form.is_mobile_kiosk_mode)
+    }
+
+    filterBtns(condition) {
+        this.fabButtons.buttons = this.fabButtons.buttons.filter(condition)
+        this.tabButtons.buttons = this.tabButtons.buttons.filter(condition)
     }
 
     getIcon(btn) {
@@ -132,17 +143,16 @@ export class buttonBar implements OnInit {
 
     recall() {
         this.dbClient.getSubmissions(this.form.form_id, false).subscribe((data) => {
+             if(data.length)
             this.goToLastSubmission(data);
         })
     }
 
     goToLastSubmission(submissions: FormSubmission[]) {
-        for (let index = submissions.length - 1; index > 0; index--) {
-            const submission = submissions[index];
-            if (!this.isNoProcessedRapidScan(submission) || submission.id != -1) {
-                this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
-                return;
-            }
+        let submission = submissions.pop();
+        if (!this.isNoProcessedRapidScan(submission) || submission.id != -1) {
+            this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+            return;
         }
     }
 
@@ -169,7 +179,7 @@ export class buttonBar implements OnInit {
         }), {
             text: 'Cancel',
             role: 'cancel'
-        }], this.theme);
+        }]);
     }
 
 }
