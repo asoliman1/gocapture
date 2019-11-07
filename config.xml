@@ -93,13 +93,16 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>GoCapture! needs to access location</string>
+            <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
         </edit-config>
+      <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
+        <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
+      </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Photo library is used to save images of documents that are taken by the user for later reference. Also, when submitting a form images from the user’s device can be included with the form.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Photo library is used to save images of documents that are taken by the user for later reference. Also, when submitting a form images from the user’s device can be included with the form.</string>
         </edit-config>
     </platform>
     <platform name="windows">
