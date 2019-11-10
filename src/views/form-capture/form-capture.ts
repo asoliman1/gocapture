@@ -233,7 +233,7 @@ export class FormCapture implements AfterViewInit {
 
 // A.S
   private stopIdleMode() {
-    // this.idle.stop()
+    this.idle.stop()
     console.log('idle mode stopped');
   }
 

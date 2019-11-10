@@ -755,7 +755,7 @@ export class SyncClient {
     })
   }
 
-  private checkSubmissionFields(subDataFields,newSubData,oldSubData,form,sub){
+  private checkSubmissionFields(subDataFields,newSubData,oldSubData,form : Form ,sub : FormSubmission){
     subDataFields.forEach((field) => {
       let sub1 = newSubData[field];
       let sub0 = oldSubData ? oldSubData[field] : null;
@@ -778,22 +778,21 @@ export class SyncClient {
   }
 
 
-  private checkSubmissionFile(newUrl, oldUrl, id): string {
+  private checkSubmissionFile(newUrl : string, oldUrl : string, id : string): string {
     let i = id.split('_'), newFileCongif = this.util.getFilePath(newUrl, id), oldFileCongif = this.util.getFilePath(oldUrl || '');
     this.hasNewData = false;
     if (oldUrl && oldUrl.startsWith('https://')) {
-      console.log(oldUrl)
       console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
       this.hasNewData = true;
       return newUrl;
     }
     else if (oldFileCongif.name != newFileCongif.name) {
       console.log(`submission ${i[2]} of form ${i[0]} will download updated data`);
-      this.util.rmFile(oldFileCongif.folder, oldFileCongif.name)
+      if(oldUrl && oldUrl.startsWith('file://')) this.util.rmFile(oldFileCongif.folder, oldFileCongif.name)
       this.hasNewData = true
       return newUrl;
     } else {
-      console.log(`submission ${i[2]} of form ${i[0]} already downloaded data `);
+      // console.log(`submission ${i[2]} of form ${i[0]} already downloaded data `);
       return newFileCongif.path;
     }
   }
@@ -807,9 +806,10 @@ export class SyncClient {
         }))
         return sub;
       }) )
-      console.log(`finished downloading submissions data of form ${form.form_id}`)
+   
+
       this.db.saveSubmisisons(submissions).subscribe((data)=>{
-        // console.log(submissions)
+        console.log(`finished saving downloading submissions data of form ${form.form_id}`)
         this.formsProvider.updateFormSyncStatus(form.form_id, false)
       })
   }
@@ -817,27 +817,31 @@ export class SyncClient {
   private async downloadSubmissionFields(sub1,formId,subId){
     if (sub1) {
       if (typeof (sub1) == "object") {
-      return await Promise.all(Object.keys(sub1).map( async (key) => {
-          return await this.getDownloadedFilePath(sub1[key], `${formId}_submission_${subId}_`)
+       await Promise.all(Object.keys(sub1).map( async (key) => {
+        sub1[key] = await this.getDownloadedFilePath(sub1[key], `${formId}_submission_${subId}_`)
         }));
       }
       else if (Array.isArray(sub1)) {
-      return await Promise.all(sub1.map(async (e) => {
+      sub1 = await Promise.all(sub1.map(async (e) => {
           return await this.getDownloadedFilePath(e, `${formId}_submission_${subId}_`)
         }))
       }
       else {
-       return await this.getDownloadedFilePath(sub1, `${formId}_submission_${subId}_`)
+       sub1 = await this.getDownloadedFilePath(sub1, `${formId}_submission_${subId}_`)
       }
+      return sub1;
     }
   }
 
-  private async getDownloadedFilePath(fileToDownload,id){
+  private async getDownloadedFilePath(fileToDownload : string,id : string){
     let entry: Entry;
     try {
-      let file = this.util.getFilePath(fileToDownload, id);
-      entry = await this.downloadFile(file.pathToDownload, file.path);
-      return entry.nativeURL;
+      if(fileToDownload.startsWith('http')){
+        let file = this.util.getFilePath(fileToDownload, id);
+        entry = await this.downloadFile(file.pathToDownload, file.path);
+        return entry.nativeURL;
+      }
+      return fileToDownload;
     } catch (error) {
       console.log('Error downloading submission data', error)
       return fileToDownload;

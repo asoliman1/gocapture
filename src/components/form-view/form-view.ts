@@ -192,7 +192,6 @@ export class FormView {
       let control = this.createFormControl(element, identifier);
       element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
-
       // A.S GOC-319
       if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
         this.isSeparatable = true;
