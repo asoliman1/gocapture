@@ -1,7 +1,5 @@
 custom-fab-menu {
-  .fab-margin{
-    bottom: $toolbar-ios-height + $fab-size - 5px;
-  }
+
     .labelContainer {
         position: fixed;
         top: 0;
@@ -18,9 +16,7 @@ custom-fab-menu {
          
         }
 
-        .container.margin{
-          bottom: $fab-content-margin * 3.4 + $fab-size + $toolbar-ios-height + $fab-size - 10px;
-        }
+
   
         opacity: 0;
         visibility: hidden;
@@ -53,6 +49,27 @@ custom-fab-menu {
         transform: scale(1);
         transition: all ease-in-out 200ms;
         transition-property: transform, opacity;
+    }
+  }
+  
+  .ios{
+    .fab-margin{
+      bottom: $toolbar-ios-height + 40px;
+    }
+    .container.margin{
+      bottom: $fab-content-margin * 2.5 + $fab-size + $toolbar-ios-height + 40px;
+    }
+  } 
+  
+
+
+    
+  .md {
+    .fab-margin{
+      bottom: $toolbar-md-height + 5px;
+    }
+    .container.margin{
+      bottom: $fab-content-margin * 3 + $fab-size + $toolbar-md-height ;
     }
   }
   
