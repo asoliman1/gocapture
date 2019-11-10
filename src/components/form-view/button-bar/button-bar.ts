@@ -24,6 +24,7 @@ export class buttonBar implements OnInit {
     @Input() form: Form;
     @Input() show: boolean;
     @Input() disabled: boolean;
+    tabsHide : boolean = false;
 
     public fabMenuItems: Array<FabMenuItem> = [];
     public fabIcon = "add";
@@ -40,14 +41,14 @@ export class buttonBar implements OnInit {
     }
 
     isTabsVisible(): boolean {
-        if (this.show && this.form && this.form.event_style.buttons_menu) {
+        if (this.show && this.form && this.form.event_style.buttons_menu && !this.tabsHide) {
             if (this.tabButtons && this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
         }
         return false;
     }
 
     isFabsVisible(): boolean {
-        if (this.show && this.form && this.form.event_style.floating_buttons) {
+        if (this.show && this.form && this.form.event_style.floating_buttons && !this.tabsHide) {
             if (this.fabButtons && this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
         }
         return false;
@@ -55,6 +56,18 @@ export class buttonBar implements OnInit {
 
     ngOnInit() {
         this.setButtons()
+        this.handleKeyboard()
+    }
+
+    handleKeyboard(){
+
+      window.addEventListener('native.keyboardshow', (e) => {
+          this.tabsHide = true;
+      });
+    
+      window.addEventListener('native.keyboardhide', () => {
+        this.tabsHide = false;
+      });
     }
 
     public onItemSelected(item: FabMenuItem) {

@@ -132,7 +132,9 @@ export class FormCapture implements AfterViewInit {
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
+    
   }
+
 
   getSavedLocation(){
     this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
