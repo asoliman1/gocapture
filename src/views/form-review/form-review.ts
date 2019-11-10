@@ -182,9 +182,9 @@ export class FormReview {
 		} else if (hasFirstLastName) {
 			return submission.first_name + ' ' + submission.last_name;
 		} else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
-			return "Scanned";
+			return submission.fields[this.form.elements.find(e=>e.type == "barcode").identifier]
 		}
-		return submission.id > -1 ? submission.id : ''; // A.S GOC-336
+		return ''; // A.S GOC-336
 	}
 
 	isNoProcessedRapidScan(submission) {

@@ -5,8 +5,8 @@
   <img *ngIf="!imageLoading" [src]="image | convertFileSrc" class="image animated fadeIn" onerror="this.src = 'assets/images/image-placeholder.jpg'" />
   <div class="text">
     <div class="title text-shadow-3"   [style.color]="textColor || 'white'">{{name}}</div>
-    <div class="address text-shadow-3" [style.color]="textColor || 'white'">
-     {{address || 'USA , NewYork'}}
+    <div class="address text-shadow-3" [style.color]="textColor || 'white'" *ngIf="address">
+     {{address}}
     </div>
   </div>
   <div class="submissions">

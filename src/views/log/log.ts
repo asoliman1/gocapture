@@ -44,8 +44,8 @@ export class LogView extends BasePage {
 	}
 
 	ionViewDidLeave() {
-		this.sub.unsubscribe();
-		this.sub = null;
+		// this.sub.unsubscribe();
+		// this.sub = null;
 	}
 
 	showMore() {

@@ -161,7 +161,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
     BrowserModule,
     HttpModule,
     BrowserAnimationsModule,
-    IonicModule.forRoot(MyApp,{}),
+    IonicModule.forRoot(MyApp),
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,

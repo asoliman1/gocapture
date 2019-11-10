@@ -1,7 +1,13 @@
   <ion-footer *ngIf="isTabsVisible()">
     <ion-toolbar >
       <div class="tabs-ctn">
-        <button *ngFor="let btn of tabButtons.buttons" clear color="white" (click)="onClick(btn.type)" ion-button>
+        <button 
+        *ngFor="let btn of tabButtons?.buttons" 
+        clear 
+        color="white" 
+        [disabled]="disabled" 
+        (click)="onClick(btn.type)" 
+        ion-button>
           <div class="top-text">
             <ion-icon [name]="getIcon(btn)"></ion-icon>
             {{btn.label}}
@@ -12,7 +18,11 @@
     </ion-toolbar>
   </ion-footer>
 
-  <custom-fab-menu *ngIf="isFabsVisible()"
-    [hasMargin]="tabButtons.buttons.length && tabButtons.is_show" [fabIcon]="'more'" [items]="fabMenuItems"
+  <custom-fab-menu 
+    *ngIf="isFabsVisible()"
+    [hasMargin]="tabButtons?.buttons.length && tabButtons?.is_show" 
+    [disabled]="disabled" 
+    [fabIcon]="'more'" 
+    [items]="fabMenuItems"
     (onItemSelected)="onItemSelected($event)">
   </custom-fab-menu>

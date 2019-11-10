@@ -16,4 +16,6 @@ export class EventStyle {
     // A.S GOC-330
     buttons_menu : MenuButtons;
     floating_buttons : MenuButtons;
+    // A.S GOC-353
+    capture_background_color : string;
 }

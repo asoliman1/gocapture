@@ -1,3 +1,4 @@
+import { Geoposition } from '@ionic-native/geolocation';
 import { Form } from "./form";
 import { Station } from "./station";
 
@@ -24,14 +25,11 @@ export class FormSubmission {
 	is_filled_from_list: boolean = false;
 	is_rapid_scan: number = 0;
 	captured_by_user_name: string = "";
-
 	station_id: string;
-
 	barcode_processed: BarcodeStatus = 0;
-
 	submission_type: FormSubmissionType = FormSubmissionType.normal;
-
 	stations: Station[];
+	location : Geoposition;
 
 	public isSubmitted(): boolean {
 		return this.status == SubmissionStatus.Submitted;

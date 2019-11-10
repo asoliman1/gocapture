@@ -40,7 +40,6 @@ export class DuplicateLeadsService {
 
         const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
 
-        this.themeProvider.getActiveTheme().subscribe((theme) => {
           this.popup.showAlert('Duplicate Lead',
             `This lead has already been captured on ${date}. Do you want to edit it?`,
             [{
@@ -70,8 +69,7 @@ export class DuplicateLeadsService {
                 })
               }
             }
-            ], theme);
-        });
+            ]);
 
       });
   }

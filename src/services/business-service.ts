@@ -23,6 +23,9 @@ import { PushClient } from "./push-client";
 import { Network } from '@ionic-native/network';
 import { StatusResponse } from "../model/protocol/status-response";
 import { LocalNotificationsService } from "./local-notifications-service";
+import { settingsKeys } from '../constants/constants';
+import { SettingsService } from './settings-service';
+import { Geolocation } from '@ionic-native/geolocation';
 declare var cordova: any;
 
 @Injectable()
@@ -69,6 +72,8 @@ export class BussinessClient {
     private appPreferences: AppPreferences,
     private util: Util,
     private formsProvider: FormsProvider,
+    private settingsService : SettingsService,
+    private geolocation : Geolocation,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -190,6 +195,41 @@ export class BussinessClient {
     });
   }
 
+    // A.S
+   setLocation(timeout = 2000){
+     setTimeout(() => {
+      console.log('Getting location')
+      this.util.setPluginPrefs()
+      this.geolocation.getCurrentPosition({enableHighAccuracy:true,timeout:5000}).then(position=>{
+        let location = this.setLocationParams(position);
+        console.log('Current location data : ' + location);
+        this.settingsService.setSetting(settingsKeys.LOCATION,location).subscribe()
+       }).catch((err)=>{
+        console.log('Error getting location')
+        console.log(err);
+        this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
+       });
+     }, timeout);
+   
+ }
+ 
+
+ setLocationParams(position){
+  let location : any = {} ;
+  let coords : any = {} ;
+  coords.latitude = position.coords.latitude;
+  coords.longitude = position.coords.longitude;
+  coords.altitude = position.coords.altitude;
+  coords.accuracy = position.coords.accuracy;
+  coords.altitudeAccuracy = position.coords.altitudeAccuracy;
+  coords.heading = position.coords.heading;
+  coords.speed = position.coords.speed;
+  location.coords = coords;
+  location.timestamp = position.timestamp;
+  return JSON.stringify(location)
+ }
+
+
   public validateKioskPassword(password: string): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       this.db.getConfig("kioskModePassword").subscribe((pwd) => {
@@ -236,6 +276,7 @@ export class BussinessClient {
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
+             this.setLocation();
             obs.next({ user: reply, message: "Done" });
             obs.complete();
           }, err => {
@@ -259,6 +300,7 @@ export class BussinessClient {
           this.pushSubs.forEach(sub => {
             sub.unsubscribe();
           });
+
           await this.appPreferences.clearAll();
           this.formsProvider.resetForms()
           this.util.rmDir("leadliaison", "");
