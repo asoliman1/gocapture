@@ -82,16 +82,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     private screen: ScreenOrientation) {
 
     super();
-
-    this.currentVal = {
-      front: this.front,
-      back: this.back
-    };
-
-    this.theVal = {
-      front: this.front,
-      back: this.back
-    };
+    
+    this.initImages();
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
@@ -120,10 +112,22 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   ngOnInit() {
     this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-      if(data === 'scan_business_card') this.captureImage(this.FRONT);
+      if(data == 'scan_business_card') this.captureImage(this.FRONT);
+      else if(data == 'reset') this.initImages();
     })
   }
 
+  initImages(){
+    this.theVal = {
+      front: this.front,
+      back: this.back
+    };
+
+    this.currentVal = {
+      front: this.front,
+      back: this.back
+    };
+  }
 
   captureImage(type: number) {
     let buttons = [];

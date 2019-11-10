@@ -109,7 +109,9 @@
     "lodash": "^4.17.15",
     "mime-types": "^2.1.24",
     "moment": "^2.22.2",
+    "ng-imgcache": "^1.0.1",
     "ng2-validation": "^4.2.0",
+    "phonegap": "^9.0.0",
     "phonegap-nfc": "^1.0.3",
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",
     "phonegap-plugin-multidex": "^1.0.0",
@@ -151,9 +153,6 @@
       "com-sarriaroman-photoviewer": {},
       "cordova-plugin-local-notification": {},
       "cordova-wheel-selector-plugin": {},
-      "cordova-plugin-camera-preview": {
-        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
-      },
       "cordova-plugin-vibration": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-ionic-webview": {
@@ -186,7 +185,14 @@
         "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
         "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
       },
-      "cordova-plugin-geolocation": {}
+      "cordova-plugin-geolocation": {},
+      "phonegap-plugin-push": {
+        "ANDROID_SUPPORT_V13_VERSION": "27.+",
+        "FCM_VERSION": "17.0.+"
+      },
+      "cordova-plugin-camera-preview": {
+        "ANDROID_SUPPORT_LIBRARY_VERSION": "25+"
+      }
     },
     "platforms": [
       "browser",

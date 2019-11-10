@@ -132,7 +132,9 @@ export class FormCapture implements AfterViewInit {
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
+    
   }
+
 
   getSavedLocation(){
     this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
@@ -927,38 +929,6 @@ export class FormCapture implements AfterViewInit {
           this.initiateRapidScanMode();
         }
       })
-
-      /*
-      this.stationsAlert = this.alertCtrl.create({
-        title: 'Select Station:',
-        buttons: [
-          {
-            text: 'Cancel',
-            handler: () => {
-              this.navCtrl.pop();
-            }
-          },
-          {
-            text: 'Ok',
-            handler: (station) => {
-              if (!station) {
-                return false;
-              }
-              this.selectedStation = station;
-              this.stationsAlert.didLeave.subscribe(() => {
-                this.initiateRapidScanMode();
-              });
-            }
-          }
-        ],
-        cssClass: this.selectedTheme + ' gc-alert'
-      });
-
-      for (let station of this.form.event_stations) {
-        this.stationsAlert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
-      }
-      this.stationsAlert.present();
-       */
     } else {
       this.initiateRapidScanMode();
     }

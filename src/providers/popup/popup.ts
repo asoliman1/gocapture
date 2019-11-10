@@ -1,3 +1,4 @@
+import { ThemeProvider } from './../theme/theme';
 import { Injectable } from '@angular/core';
 import {
   LoadingController,
@@ -20,22 +21,27 @@ export class Popup {
   private loading: Loading;
   private toast: Toast;
   private actionSheet: ActionSheet;
+  private theme : string;
 
   constructor(
     public alertCtrl: AlertController,
     public toastCtrl: ToastController,
     public actionCtrl: ActionSheetController,
+    private themeProvider: ThemeProvider,
     public loadingCtrl: LoadingController) {
     //
+    this.themeProvider.getActiveTheme().subscribe((data)=>{
+      this.theme = data.toString();
+    })
   }
 
   // A.S
-  showLoading(message,theme?) {
+  showLoading(message,theme = this.theme) {
     this.loading = this.loadingCtrl.create({ content: message,cssClass:theme });
     return this.loading.present();
   }
 
-  showAlert(title, message, buttons: AlertButton[] | string[], theme?) {
+  showAlert(title, message, buttons: AlertButton[] | string[], theme = this.theme) {
     if (this.alert) {
       this.alert.dismiss();
     }
@@ -44,15 +50,15 @@ export class Popup {
       message: message,
       buttons: buttons,
       enableBackdropDismiss: false,
-      cssClass: theme ? theme.toString() : ""
+      cssClass: theme 
     });
     return this.alert.present();
   }
 
   // A.S
-  showActionSheet(title, buttons: ActionSheetButton[], theme?) {
+  showActionSheet(title, buttons: ActionSheetButton[], theme = this.theme) {
     this.actionSheet = this.actionCtrl.create({
-      title, buttons, cssClass: theme.toString()
+      title, buttons, cssClass: theme
     })
     return this.actionSheet.present();
   }
@@ -71,7 +77,7 @@ export class Popup {
     return this.toast.present();
   }
 
-  showPrompt(title, message, inputs, buttons, theme?) {
+  showPrompt(title, message, inputs, buttons, theme = this.theme) {
 
     if (this.alert) {
       this.alert.dismiss();

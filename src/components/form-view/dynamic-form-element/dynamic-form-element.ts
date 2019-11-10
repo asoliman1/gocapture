@@ -31,12 +31,18 @@ export class DynamicFormElementComponent {
   }
 
   ngOnInit(){
-    // A.S GOC-326
     this.setFormLabelColor()
+    this.setItemBackground()
   }
-
+  
+    // A.S GOC-326
   setFormLabelColor(){
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
+  }
+
+    // A.S GOC-353
+  setItemBackground(){
+    document.documentElement.style.setProperty(`--elements_background_color`, this.form.event_style.capture_background_color);
   }
 
   isControlInvalid() {

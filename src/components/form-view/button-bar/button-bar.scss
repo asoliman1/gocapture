@@ -1,0 +1,24 @@
+button-bar{
+
+    ion-toolbar{
+        margin: -5px;
+        width: unset !important;
+    }
+
+
+    .top-text{
+        ion-icon{
+            margin-bottom: 7px;
+        }
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+
+      .tabs-ctn{
+          display: flex;
+          flex-flow: row;
+          width:100%;
+          justify-content: space-around;
+      }
+}

@@ -1,4 +1,6 @@
 import { Image } from './image';
+import { MenuButtons } from './menuButton';
+
 export class EventStyle {
     // A.S
     event_record_background: Image;
@@ -11,4 +13,9 @@ export class EventStyle {
     transition_effect: string;
     switch_frequency: number;
     is_randomize : boolean;
+    // A.S GOC-330
+    buttons_menu : MenuButtons;
+    floating_buttons : MenuButtons;
+    // A.S GOC-353
+    capture_background_color : string;
 }
