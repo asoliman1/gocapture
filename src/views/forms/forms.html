@@ -1,5 +1,5 @@
 <ion-header>
-	<ion-navbar color="primary">
+	<ion-navbar hideBackButton="true" color="primary">
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
@@ -26,7 +26,7 @@
 		<!-- <div *virtualItem="let form"> -->
 			<event-item 
 			(click)="presentActionSheet(form)" 
-			*ngFor="let form of forms"
+			*ngFor="let form of forms | filter"
 			[image]="form.event_style.event_record_background.path"
 			[name]="form.name"
 			[address]="form.event_address.address"

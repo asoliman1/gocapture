@@ -1,4 +1,3 @@
-import { FormCapture } from './../views/form-capture/form-capture';
 import { Form } from './../model/form';
 import { FormsProvider } from './../providers/forms/forms';
 import { Image } from './../model/image';
@@ -63,6 +62,8 @@ export class SyncClient {
   // A.S
   private hasNewData: boolean;
 
+  private downloadingSubmissions : any[] = [];
+
   constructor(private rest: RESTClient,
     private db: DBClient,
     private file: File,
@@ -102,12 +103,15 @@ export class SyncClient {
       this._isSyncing = true;
 
       console.log('Getting latest forms...')
+      
       this.downloadForms(lastSyncDate, result).subscribe((forms) => {
+
         // A.S check if form has data to be downloaded
         if (this.hasNewData) {
           // A.S GOC-326
           this.downloadFormsData(forms);
         }
+
         obs.next(result);
         console.log('Getting latest submissions...')
         this.downloadSubmissions(forms, lastSyncDate, result).subscribe(() => { }, (err) => {
@@ -801,9 +805,11 @@ export class SyncClient {
     this.formsProvider.updateFormSyncStatus(form.form_id, true)
     let subDataFields: string[] = form.getUrlFields();
      submissions = await Promise.all(submissions.map( async (sub) => {
+        this.setSubmissionAsDownloading(sub.id);
         await Promise.all( subDataFields.map( async (field) => {
           sub.fields[field] = await this.downloadSubmissionFields(sub.fields[field],form.form_id,sub.id)
         }))
+        this.rmSubmissionDownloading(sub.id);
         return sub;
       }) )
    
@@ -812,6 +818,18 @@ export class SyncClient {
         console.log(`finished saving downloading submissions data of form ${form.form_id}`)
         this.formsProvider.updateFormSyncStatus(form.form_id, false)
       })
+  }
+
+  private setSubmissionAsDownloading(id){
+    this.downloadingSubmissions.push(id);
+  }
+
+  private rmSubmissionDownloading(id){
+    this.downloadingSubmissions = this.downloadingSubmissions.filter((e)=> e.id != id);
+  }
+
+  checkSubmissionDownloading(id){
+   return this.downloadingSubmissions.find((e)=> e.id == id) ? true : false
   }
 
   private async downloadSubmissionFields(sub1,formId,subId){

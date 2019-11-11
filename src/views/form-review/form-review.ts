@@ -24,7 +24,7 @@ export class FormReview {
 
 	form: Form = new Form();
 
-	statusFilter = {};
+	statusFilter : any = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -79,12 +79,10 @@ export class FormReview {
 		this.isDispatch = this.navParams.get("isDispatch");
 		this.loading = true;
 		this.doRefresh();
-		this.syncing = this.syncClient.isSyncing();
 
 		this.sub = this.syncClient.onSync.subscribe(stats => { },
 			(err) => { },
 			() => {
-				this.syncing = this.syncClient.isSyncing();
 				this.doRefresh();
 			});
 	}
@@ -118,6 +116,10 @@ export class FormReview {
 	isSubmissionRemovable(submission: FormSubmission) {
 		return (submission.status != SubmissionStatus.OnHold) &&
 			(submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
+	}
+
+	checkSubmissionDownload(submission){
+		return this.syncClient.checkSubmissionDownloading(submission.id) ? '0.5' : '1.0';
 	}
 
 	getColor(submission: FormSubmission) {

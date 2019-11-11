@@ -137,6 +137,7 @@ export class MyApp {
          this.client.setLocation(3000);
         this.popup.dismissAll();
         this.checkDeviceStatus();
+        let start = performance.now();
         this.client.getUpdates().subscribe(() => {
           // this.documentsSync.syncAll();
         });

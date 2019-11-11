@@ -28,7 +28,7 @@ export class FormsProvider {
           e.isSyncing = true; 
           return e;
         });
-        this.forms = this.sortForms(forms);
+        this.forms = forms;
         this.pushUpdates();
       })
     }
@@ -37,9 +37,6 @@ export class FormsProvider {
 
 
 
-  sortForms(forms) {
-      return this.filterPipe.transform(forms);
-  }
 
   resetForms(){
     this.forms = [];
@@ -52,7 +49,6 @@ export class FormsProvider {
   saveNewForm(form: Form) {
     this.forms.push(form);
     this.updateFormSubmissions(form.form_id);
-    this.forms = this.sortForms(this.forms);
     this.pushUpdates();
   }
 
@@ -64,7 +60,7 @@ export class FormsProvider {
     
     forms.forEach((e : Form)=> {
       let form = this.forms.find((f)=>f.form_id == e.form_id);
-      if(form) form = merge(form,e);
+      if(form) form = form;
       else {
         this.forms.push(e);
         form = e;

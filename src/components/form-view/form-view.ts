@@ -127,6 +127,7 @@ export class FormView {
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
+      console.log(changes['form'])
       if (this.form && this.submission) {
         setTimeout(() => {
           this.setupFormGroup();
