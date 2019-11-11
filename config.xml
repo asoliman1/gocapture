@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203840" id="com.leadliaison.mobilitease" ios-CFBundleVersion="384" version="3.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2203850" id="com.leadliaison.mobilitease" ios-CFBundleVersion="385" version="3.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -95,9 +95,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
             <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
         </edit-config>
-      <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
-        <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
-      </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
+            <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>Photo library is used to save images of documents that are taken by the user for later reference. Also, when submitting a form images from the user’s device can be included with the form.</string>
         </edit-config>
