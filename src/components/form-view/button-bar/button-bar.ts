@@ -1,3 +1,4 @@
+import { Keyboard } from '@ionic-native/keyboard';
 import { MenuButtons } from './../../../model/menuButton';
 import { FormElement } from './../../../model/form-element';
 import { Popup } from './../../../providers/popup/popup';
@@ -36,6 +37,7 @@ export class buttonBar implements OnInit {
         private formViewService: formViewService,
         private dbClient: DBClient,
         private popup: Popup,
+        private Keyboard : Keyboard
     ) {
 
     }
@@ -60,14 +62,13 @@ export class buttonBar implements OnInit {
     }
 
     handleKeyboard(){
+        this.Keyboard.onKeyboardWillShow().subscribe((data)=>{
+            this.tabsHide = true;
+        })
 
-      window.addEventListener('native.keyboardshow', (e) => {
-          this.tabsHide = true;
-      });
-    
-      window.addEventListener('native.keyboardhide', () => {
-        this.tabsHide = false;
-      });
+        this.Keyboard.onKeyboardWillHide().subscribe((data)=>{
+            this.tabsHide = false;
+        })
     }
 
     public onItemSelected(item: FabMenuItem) {

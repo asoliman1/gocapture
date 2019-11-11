@@ -1,3 +1,4 @@
+import { Keyboard } from '@ionic-native/keyboard';
 import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
@@ -43,7 +44,6 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
-import { Geolocation } from '@ionic-native/geolocation';
 import { settingsKeys } from '../../constants/constants';
 
 
@@ -132,7 +132,7 @@ export class FormCapture implements AfterViewInit {
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
-    
+ 
   }
 
 
