@@ -43,14 +43,14 @@ export class buttonBar implements OnInit {
     }
 
     isTabsVisible(): boolean {
-        if (this.show && this.form && this.form.event_style.buttons_menu && !this.tabsHide) {
+        if (this.show && this.form && this.form.event_style.buttons_menu ) {
             if (this.tabButtons && this.tabButtons.buttons.length && this.tabButtons.is_show) return true;
         }
         return false;
     }
 
     isFabsVisible(): boolean {
-        if (this.show && this.form && this.form.event_style.floating_buttons && !this.tabsHide) {
+        if (this.show && this.form && this.form.event_style.floating_buttons) {
             if (this.fabButtons && this.fabButtons.buttons.length && this.fabButtons.is_show) return true;
         }
         return false;
@@ -66,7 +66,7 @@ export class buttonBar implements OnInit {
             this.tabsHide = true;
         })
 
-        this.Keyboard.onKeyboardWillHide().subscribe((data)=>{
+        this.Keyboard.onKeyboardHide().subscribe((data)=>{
             this.tabsHide = false;
         })
     }
@@ -124,7 +124,6 @@ export class buttonBar implements OnInit {
         if (isKioskMode) {
             this.filterBtns((e) => (e.type != 'recall') && (e.type != 'leads'))
         }
-        console.log('is koisk mode ' + this.form.is_mobile_kiosk_mode)
     }
 
     filterBtns(condition) {
