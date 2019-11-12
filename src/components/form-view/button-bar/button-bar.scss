@@ -5,6 +5,9 @@ button-bar{
         width: unset !important;
     }
 
+    ion-footer{
+        will-change: transform;
+    }
 
     .top-text{
         ion-icon{
