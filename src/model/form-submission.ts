@@ -30,7 +30,9 @@ export class FormSubmission {
 	submission_type: FormSubmissionType = FormSubmissionType.normal;
 	stations: Station[];
 	location : Geoposition;
-
+	isDownloading : boolean;
+	isUploading : boolean;
+	
 	public isSubmitted(): boolean {
 		return this.status == SubmissionStatus.Submitted;
 	}

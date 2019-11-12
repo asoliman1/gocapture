@@ -28,6 +28,13 @@ form-review {
 
 .form-summary ion-item h2{
 	font-size: 2.1rem !important;
+
+}
+
+.form-summary ion-item h1{
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .form-summary img.business-card-thumbnail{

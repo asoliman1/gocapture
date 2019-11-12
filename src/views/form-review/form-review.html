@@ -46,7 +46,7 @@
 
 <ion-content class="form-summary">
   <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="100px" [virtualTrackBy]="itemTracker">
-    <ion-item-sliding [ngStyle]="{'opacity': checkSubmissionDownload(submission)}" *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
+    <ion-item-sliding [ngStyle]="{'opacity': submission.isDownloading ? '0.5' : '1.0'}" *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
       <ion-item (click)="goToEntry(submission)">
 
         <ng-container *ngIf="submission.id == -1">
@@ -72,7 +72,7 @@
           </div>
         </ng-container>
 
-        <button *ngIf="submission.id != -1" ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
+        <button *ngIf="submission.id != -1" ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="submission.isUploading">
           <ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
         </button>
       </ion-item>

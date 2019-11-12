@@ -217,7 +217,6 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
     DynamicFormElementComponent
   ],
   providers: [
-    FormsProvider,
     DBClient,
     RESTClient,
     PushClient,
@@ -265,6 +264,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
     BadgeRapidCapture,
     BCRapidCapture,
     DuplicateLeadsService,
+    FormsProvider,
     AppPreferences,
     DocumentViewer,
     FileOpener,
@@ -275,10 +275,10 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
     SubmissionMapper,
     ShareService,
     Insomnia,
+    SubmissionsProvider,
     formViewService,
     FilterService,
     Keyboard,
-    SubmissionsProvider
   ]
 })
 export class AppModule { }

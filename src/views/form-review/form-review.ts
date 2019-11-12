@@ -1,3 +1,4 @@
+import { SubmissionsProvider } from './../../providers/submissions/submissions';
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
@@ -61,7 +62,8 @@ export class FormReview {
 		private util: Util,
 		private modalCtrl: ModalController,
 		private filterService: FilterService,
-		private themeProvider: ThemeProvider
+		private themeProvider: ThemeProvider,
+		private submissionsProvider : SubmissionsProvider
 	) {
 
 		this.statusFilters = [
@@ -118,9 +120,6 @@ export class FormReview {
 			(submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
 	}
 
-	checkSubmissionDownload(submission){
-		return this.syncClient.checkSubmissionDownloading(submission.id) ? '0.5' : '1.0';
-	}
 
 	getColor(submission: FormSubmission) {
 		let result = "";
@@ -216,7 +215,7 @@ export class FormReview {
 	}
 
 	doRefresh() {
-		this.client.getSubmissions(this.form, this.isDispatch).subscribe(submissions => {
+		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.submissions = submissions;
 			this.loading = false;
 			this.onFilterChanged();

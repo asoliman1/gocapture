@@ -24,7 +24,6 @@ import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
 import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
-import { FormsProvider } from '../providers/forms/forms';
 
 @Injectable()
 export class RESTClient {
@@ -43,7 +42,7 @@ export class RESTClient {
 	constructor(private http: Http,
 		private submissionsRepository: SubmissionsRepository,
 		private submissionMapper: SubmissionMapper,
-		private formsProvider : FormsProvider) {
+		) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
@@ -257,7 +256,6 @@ export class RESTClient {
 			var index = 0;
 			let syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 			let handler = (data: FormSubmission[]) => {
-				this.formsProvider.updateFormSyncStatus(forms[index].form_id,false)
 				result.submissions = data;
 				result.form = forms[index];
 				obs.next(result)
@@ -265,12 +263,10 @@ export class RESTClient {
 				if (index < forms.length) {
 					syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
 					this.getSubmissions(forms[index], syncDate).subscribe(handler);
-			        this.formsProvider.updateFormSyncStatus(forms[index].form_id,true)
 				} else {
 					obs.complete();
 				}
 			};
-			this.formsProvider.updateFormSyncStatus(forms[index].form_id,true)
 			this.getSubmissions(forms[index], syncDate).subscribe(handler);
 		});
 	}
@@ -358,10 +354,8 @@ export class RESTClient {
 					item.form_id = form.form_id;
 				});
 				result.push.apply(result, data);
-				this.formsProvider.updateFormSyncStatus(forms[index].form_id,false);
 				index++;
 				if (index < forms.length) {
-				    this.formsProvider.updateFormSyncStatus(forms[index].form_id,true);
 					doTheCall();
 				} else {
 					obs.next(result);
@@ -377,7 +371,6 @@ export class RESTClient {
 				if (syncDate) {
 					params.last_sync_date = syncDate;
 				}
-				this.formsProvider.updateFormSyncStatus(form.form_id,true);
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			};
 			doTheCall();
