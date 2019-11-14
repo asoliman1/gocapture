@@ -51,7 +51,7 @@ export class LogClient {
 				this.logEntry(arguments, LogSeverity.INFO)
 			}, this),
 			warn: Util.proxy(function (message) {
-				this.logEntry(arguments, LogSeverity.WARN)
+				// this.logEntry(arguments, LogSeverity.WARN)
 			}, this)
 		}
 	}
