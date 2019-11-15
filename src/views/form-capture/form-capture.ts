@@ -1,3 +1,4 @@
+import { Keyboard } from '@ionic-native/keyboard';
 import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { Util } from './../../util/util';
@@ -43,7 +44,6 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
-import { Geolocation } from '@ionic-native/geolocation';
 import { settingsKeys } from '../../constants/constants';
 
 
@@ -132,7 +132,9 @@ export class FormCapture implements AfterViewInit {
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
+ 
   }
+
 
   getSavedLocation(){
     this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data)=>{
@@ -927,38 +929,6 @@ export class FormCapture implements AfterViewInit {
           this.initiateRapidScanMode();
         }
       })
-
-      /*
-      this.stationsAlert = this.alertCtrl.create({
-        title: 'Select Station:',
-        buttons: [
-          {
-            text: 'Cancel',
-            handler: () => {
-              this.navCtrl.pop();
-            }
-          },
-          {
-            text: 'Ok',
-            handler: (station) => {
-              if (!station) {
-                return false;
-              }
-              this.selectedStation = station;
-              this.stationsAlert.didLeave.subscribe(() => {
-                this.initiateRapidScanMode();
-              });
-            }
-          }
-        ],
-        cssClass: this.selectedTheme + ' gc-alert'
-      });
-
-      for (let station of this.form.event_stations) {
-        this.stationsAlert.addInput({label: station.name, value: station.id, type: 'radio', checked: station.id == this.selectedStation});
-      }
-      this.stationsAlert.present();
-       */
     } else {
       this.initiateRapidScanMode();
     }

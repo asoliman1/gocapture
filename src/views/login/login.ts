@@ -9,6 +9,7 @@ import { NavController } from 'ionic-angular/navigation/nav-controller';
 import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { App } from "ionic-angular";
 import { Popup } from '../../providers/popup/popup';
+import {ThemeProvider} from "../../providers/theme/theme";
 
 @Component({
 	selector: 'login',
@@ -28,7 +29,9 @@ export class Login {
 		private client: BussinessClient,
 		private popup: Popup,
 		private popoverCtrl: PopoverController,
-		public app: App) {
+		public app: App,
+    private themeProvider: ThemeProvider) {
+    this.themeProvider.setActiveTheme();
 	}
 
 	ngOnInit() {
@@ -69,7 +72,6 @@ export class Login {
 			this.client.authenticate(this.email, this.authCode)
 				.subscribe(data => {
 					this.popup.setLoadingContent(data.message);
-					// this.themeProvider.setActiveTheme()
 				}, err => {
 					this.popup.dismiss('loading');
 					this.popup.showToast(err);
@@ -83,7 +85,7 @@ export class Login {
 	}
 
 	presentPopover(event) {
-		let popover = this.popoverCtrl.create(UrlChoose, { isProd: this.useProd });
+		let popover = this.popoverCtrl.create(UrlChoose, { isProd: this.useProd }, {cssClass: 'default-theme'});
 		popover.onDidDismiss((data) => {
 			if (data) {
 				this.useProd = data.prod;

@@ -43,7 +43,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content  class="form-summary">
+<!-- A.S GOC-353 -->
+<ion-content [ngStyle]="{'background-color':form?.event_style?.capture_background_color}" class="form-summary">
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
@@ -68,3 +69,9 @@
 
 	</ion-grid>
 </ion-content>
+<button-bar 
+[show]="!isReadOnly(submission) || isEditing" 
+[disabled]="isProcessing" 
+[form]="form" >
+</button-bar>
+

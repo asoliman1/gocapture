@@ -9,7 +9,7 @@
 	</ion-navbar>
 </ion-header>
 
-<ion-content class="log">
+<ion-content class="log" >
 	<ion-list>
 		<ion-item *ngFor="let log of logs" (click)="log.style = !log.style">
 			<ion-icon [color]="getColor(log)" [name]="getIcon(log)"></ion-icon>

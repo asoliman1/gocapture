@@ -81,7 +81,8 @@ export class Badge extends BaseElement implements OnInit {
     this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
-
+    this.utils.setPluginPrefs()
+    
     this.scanner.scan(false).then((response) => {
 
       console.log("Badge scan finished: " + response.scannedId);
