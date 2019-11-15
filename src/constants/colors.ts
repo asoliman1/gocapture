@@ -1,6 +1,6 @@
 export const Colors =
   {
-    default: "#c26100",
+    default: "#930000",
     blue: "#0061b0",
     purple: "#47385d",
     black: "#000000",
