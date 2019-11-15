@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203830" id="com.leadliaison.mobilitease" ios-CFBundleVersion="383" version="3.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>GoCapture</name>
-    <description>LeadLiason GoCapture!</description>
+<widget android-versionCode="1" id="com.leadliaison.captello" ios-CFBundleVersion="1" version="1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Captello</name>
+    <description>LeadLiason Captello!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
     <content src="index.html" />
     <access origin="*" />
@@ -93,14 +93,30 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>GoCapture! needs to access location</string>
+            <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
+            <string>We are collecting the device’s location to identify where the user is collecting information in a form. This location is used to plot latitude and longitude on a map for reporting purposes.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Photo library is used to save images of documents that are taken by the user for later reference. Also, when submitting a form images from the user’s device can be included with the form.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Photo library is used to save images of documents that are taken by the user for later reference. Also, when submitting a form images from the user’s device can be included with the form.</string>
         </edit-config>
+        <icon height="20" src="resources/ios/icon/icon-20.png" width="20" />
+        <icon height="40" src="resources/ios/icon/icon-20@2x.png" width="40" />
+        <icon height="60" src="resources/ios/icon/icon-20@3x.png" width="60" />
+        <icon height="29" src="resources/ios/icon/icon-29.png" width="29" />
+        <icon height="58" src="resources/ios/icon/icon-29@2x.png" width="58" />
+        <icon height="87" src="resources/ios/icon/icon-29@3x.png" width="87" />
+        <icon height="48" src="resources/ios/icon/icon-24@2x.png" width="48" />
+        <icon height="55" src="resources/ios/icon/icon-27.5@2x.png" width="55" />
+        <icon height="88" src="resources/ios/icon/icon-44@2x.png" width="88" />
+        <icon height="172" src="resources/ios/icon/icon-86@2x.png" width="172" />
+        <icon height="196" src="resources/ios/icon/icon-98@2x.png" width="196" />
+        <splash height="2436" src="resources/ios/splash/Default-2436h.png" width="1125" />
+        <splash height="1125" src="resources/ios/splash/Default-Landscape-2436h.png" width="2436" />
     </platform>
     <platform name="windows">
         <icon src="resources/windows/storelogo.png" target="StoreLogo" />
@@ -134,13 +150,10 @@
     <plugin name="cordova-plugin-local-notification" spec="0.9.0-beta.2" />
     <plugin name="cordova-wheel-selector-plugin" spec="1.1.2" />
     <plugin name="cordova-plugin-gocapture-ocr" spec="file:3rdParty/cordova-plugin-gocapture-ocr" />
-    <plugin name="cordova-plugin-app-preferences" spec="file:3rdParty/me.apla.cordova.app-preferences-cordova-9.0.0" />
     <plugin name="cordova-plugin-camera" spec="file:3rdParty/cordova-plugin-camera" />
     <plugin name="cordova-plugin-camera-preview" spec="file:3rdParty/cordova-plugin-camera-preview">
         <variable name="ANDROID_SUPPORT_LIBRARY_VERSION" value="25+" />
     </plugin>
-    <engine name="ios" spec="^4.5.5" />
-    <engine name="android" spec="7.1.4" />
     <allow-navigation href="http://localhost:8100" sessionid="31050d9b" />
     <allow-navigation href="http://localhost:8080/*" />
     <plugin name="cordova-plugin-document-viewer" spec="0.9.13" />

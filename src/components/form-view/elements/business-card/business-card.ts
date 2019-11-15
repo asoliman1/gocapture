@@ -172,7 +172,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
           let imagePath = this.imagesFolder() + "/" + imageName;
 
           this.photoLibrary.requestAuthorization().then(() => {
-            this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
+            this.photoLibrary.saveImage(imagePath, 'Captello BC').then(result => {
               this.popup.showAlert('Info', 'Business card was saved to the Photo Library!', [{
                 text: 'Ok',
                 role: 'cancel'
@@ -329,7 +329,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     let imagePath = this.imagesFolder() + "/" + imageName;
 
     this.photoLibrary.requestAuthorization().then(() => {
-      this.photoLibrary.saveImage(imagePath, 'GoCapture BC');
+      this.photoLibrary.saveImage(imagePath, 'Captello BC');
     });
   }
 

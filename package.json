@@ -1,5 +1,5 @@
 {
-  "name": "Captello",
+  "name": "captello",
   "author": "LeadLiaison",
   "homepage": "http://leadliaison.com/",
   "private": true,
@@ -59,7 +59,7 @@
     "angular2-signaturepad": "^2.6.1",
     "angular2-text-mask": "^8.0.4",
     "com-sarriaroman-photoviewer": "1.1.18",
-    "cordova-android": "^7.1.0",
+    "cordova-android": "^7.1.4",
     "cordova-browser": "6.0.0",
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
@@ -87,7 +87,7 @@
     "cordova-plugin-local-notification": "0.9.0-beta.2",
     "cordova-plugin-media": "^5.0.2",
     "cordova-plugin-network-information": "^2.0.1",
-    "cordova-plugin-photo-library": "^2.2.1",
+    "cordova-plugin-photo-library": "git+https://github.com/RSMNYS/cordova-plugin-photo-library.git",
     "cordova-plugin-screen-orientation": "^3.0.1",
     "cordova-plugin-splashscreen": "^4.1.0",
     "cordova-plugin-statusbar": "^2.4.2",
@@ -181,12 +181,16 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-gocapture-ocr": {},
-      "cordova-plugin-app-preferences": {},
       "cordova-fabric-plugin": {
         "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
         "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
       },
-      "cordova-plugin-geolocation": {}
+      "cordova-plugin-geolocation": {},
+      "phonegap-plugin-push": {
+        "ANDROID_SUPPORT_V13_VERSION": "27.+",
+        "FCM_VERSION": "17.0.+"
+      },
+      "cordova-plugin-app-preferences": {}
     },
     "platforms": [
       "browser",
