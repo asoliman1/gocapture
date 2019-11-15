@@ -5,6 +5,7 @@ bottom
 right 
 (click)="showMenuItems()" 
 class="{{hasMargin ? 'fab-margin' : ''}}" 
+*ngIf="items.length > 1"
 #fab>
   <button ion-fab ><ion-icon *ngIf="fabIcon" name={{fabIcon}}></ion-icon></button>
   <ion-fab-list mode="md" side="top">
@@ -12,12 +13,28 @@ class="{{hasMargin ? 'fab-margin' : ''}}"
 	*ngFor="let item of items" 
 	ion-fab 
 	[disabled]="disabled" 
-	(click)="action(item)">
+	(click)="action(item)"
+	>
 	  <ion-icon color="light" name={{item.icon}}></ion-icon>
 	</button>
   </ion-fab-list>
 </ion-fab>
 
+<ion-fab 
+mode="md" 
+bottom 
+right 
+(click)="showMenuItems()" 
+class="{{hasMargin ? 'fab-margin' : ''}}" 
+*ngIf="items.length == 1"
+#fab>
+  <button 
+  ion-fab 
+  [disabled]="disabled" 
+  (click)="action(items[0])"
+  ><ion-icon *ngIf="fabIcon" name={{items[0].icon}}></ion-icon></button>
+
+</ion-fab>
 <!-- menu items -->
 <a 
 (click)="hideMenuFab()" 
