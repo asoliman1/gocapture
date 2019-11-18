@@ -147,6 +147,7 @@ export class MyApp {
 
 
   private handleApiErrors() {
+    /*
     this.rest.error.subscribe((resp) => {
       //token is invalid => unregister current user;
       if (resp && resp.status == 401) {
@@ -168,6 +169,7 @@ export class MyApp {
         })
       }
     });
+     */
   }
 
   private handleClientErrors() {
