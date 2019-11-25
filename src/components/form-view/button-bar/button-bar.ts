@@ -4,7 +4,7 @@ import { Popup } from './../../../providers/popup/popup';
 import { FormSubmission, BarcodeStatus } from './../../../model/form-submission';
 import { formViewService } from './../form-view-service';
 import { Form } from './../../../model/form';
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { FormReview } from '../../../views/form-review';
 import { DBClient } from '../../../services/db-client';
@@ -123,7 +123,6 @@ export class buttonBar implements OnInit {
         if (isKioskMode) {
             this.filterBtns((e) => (e.type != 'recall') && (e.type != 'leads'))
         }
-        console.log('is koisk mode ' + this.form.is_mobile_kiosk_mode)
     }
 
     filterBtns(condition) {

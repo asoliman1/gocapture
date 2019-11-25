@@ -24,13 +24,16 @@ export class Form extends BaseForm {
 	is_enforce_instructions_initially: boolean;
 	event_stations: Station[];
 	is_enable_rapid_scan_mode: boolean;
-	event_style : EventStyle; // A.S GOC-326
-	isSyncing : boolean;
+	event_style: EventStyle; // A.S GOC-326
+	isSyncing: boolean;
 	available_for_users: any[];
-
-	public static getIdByUniqueFieldName(name : string, form: any) : string{
-		let element : FormElement = null;
-		for(let i = 0; i < form.elements.length; i++){
+	lastSync: {
+		submissions ?: Date;
+		contacts ?: Date;
+	}
+	public static getIdByUniqueFieldName(name: string, form: any): string {
+		let element: FormElement = null;
+		for (let i = 0; i < form.elements.length; i++) {
 
 			element = form.elements[i];
 			if (!element.mapping || element.mapping.length == 0) {

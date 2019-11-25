@@ -18,6 +18,7 @@ export class DocumentsSyncClient {
   ) { }
 
   syncAll() {
+    console.log('Getting latest documents...');
     // don't call again if we are already syncing
     if (this._isSyncing) {
       return;

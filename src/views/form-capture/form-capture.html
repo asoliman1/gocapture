@@ -4,7 +4,7 @@
     <ion-title>
       <div #formTitle (click)="onOpenStations()">
         <!-- A.S GOC-321 -->
-        {{form ? form.name + ' (' + form.total_submissions + ')' : ''}}
+        {{form ? form.name + ' (' + getFormSubmissions() + ')' : ''}}
         <br *ngIf="form?.event_stations?.length" >
         <span *ngIf="selectedStation" >{{selectedStation.name}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
         <br>
@@ -69,7 +69,8 @@
 
 	</ion-grid>
 </ion-content>
-<button-bar 
+<button-bar
+*ngIf="form" 
 [show]="!isReadOnly(submission) || isEditing" 
 [disabled]="isProcessing" 
 [form]="form" >

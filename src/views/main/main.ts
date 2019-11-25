@@ -73,17 +73,7 @@ export class Main {
 			}, 2000);
 		});
 
-		this.client.getUpdates().subscribe(done => {
-			setTimeout(() => {
-				this.client.doAutoSync();
-			}, 350);
-		}, (err) => {
-			setTimeout(() => {
-				this.client.doAutoSync();
-			}, 350);
-		});
-
-
+		this.client.getUpdates().subscribe();
 	}
 
 

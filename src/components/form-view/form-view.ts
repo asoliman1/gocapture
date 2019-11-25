@@ -1,3 +1,4 @@
+import { Util } from './../../util/util';
 import { formViewService } from './form-view-service';
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
@@ -59,10 +60,13 @@ export class FormView {
   isSeparatable : boolean = false;
   separateAt: number;
   buttonBar : Subscription;
+  elements : FormElement[][];
+
   constructor(
     private fb: FormBuilder,
     private zone: NgZone,
     private modal: ModalController,
+    private util : Util,
     private platform : Platform,
     private formViewService:formViewService,
   ) {
@@ -127,11 +131,8 @@ export class FormView {
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
-      console.log(changes['form'])
       if (this.form && this.submission) {
-        setTimeout(() => {
-          this.setupFormGroup();
-        }, 1);
+       this.setupFormGroup()
       }
     } else if (changes['prospect'] && this.prospect) {
       let keys = Object.keys(this.prospect.fields);
@@ -194,16 +195,12 @@ export class FormView {
       element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
       // A.S GOC-319
-      if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
-        this.isSeparatable = true;
-        this.separateAt = index;
-      }
+      this.checkSeparator(element,index);
     });
-
+    this.splitEls()
     this.theForm = f;
     this.updateForm();
 
-    //console.log(this.form, f);
     this.sub = this.theForm.statusChanges.subscribe(() => {
       this.onValidationChange.emit(this.theForm.valid);
     });
@@ -219,6 +216,14 @@ export class FormView {
         this.buildSections();
       });
     }, 150);
+  }
+
+
+  private checkSeparator(element,index){
+    if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
+      this.isSeparatable = true;
+      this.separateAt = index;
+    }
   }
 
 
@@ -366,8 +371,14 @@ export class FormView {
     }
   }
 
-   splitEls(first) : FormElement[]{
-    return first ? this.form.elements.slice(0,this.separateAt) : this.form.elements.slice(this.separateAt+1)
+   splitEls() {
+     this.form.elements = this.util.sortBy(this.form.elements,1,'position');
+     console.log(this.elements)
+     if(this.isSeparatable) this.elements = [
+      this.form.elements.slice(0,this.separateAt),
+      this.form.elements.slice(this.separateAt+1)
+     ]
+    else this.elements = [this.form.elements]
   }
 
   private isValueMatched(ruleValue: [any], value) {
@@ -468,7 +479,6 @@ export class FormView {
   }
 
   onProcessing(event) {
-    console.log('Form view on processing : '+event);
     this.onProcessingEvent.emit(event);
   }
 
@@ -497,7 +507,7 @@ export class FormView {
   }
 
   show(el){
-    console.log(el);
+    // console.log(el);
   }
 
   // used by the *ngFor

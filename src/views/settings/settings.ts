@@ -63,6 +63,7 @@ export class Settings {
       } else {
         settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] = JSON.parse(settings['remindAboutUnsubmittedLeads']);
       }
+      settings[settingsKeys.AUTO_UPLOAD] = JSON.parse(settings[settingsKeys.AUTO_UPLOAD])
 
       this.settings = settings;
 
@@ -112,8 +113,8 @@ export class Settings {
 
   onChange() {
     this.shouldSave = true;
-    setTimeout(() => {
-      this.saveSettings();
+    setTimeout(async () => {
+     await this.saveSettings();
     }, 1)
   }
 

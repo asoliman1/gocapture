@@ -46,7 +46,7 @@ export class DynamicFormElementComponent {
   }
 
   isControlInvalid() {
-    return !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
+    return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
 
   setHour(event) {

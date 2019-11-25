@@ -1,3 +1,4 @@
+import { SubmissionsProvider } from './../providers/submissions/submissions';
 import { Injectable } from "@angular/core";
 import { FormCapture } from "../views/form-capture";
 import { BussinessClient } from "./business-service";
@@ -17,10 +18,9 @@ export class DuplicateLeadsService {
   private duplicateLeadSubscription: Subscription;
 
   constructor(private client: BussinessClient,
-    private syncClient: SyncClient,
+    private submissionsProvider: SubmissionsProvider,
     private popup: Popup,
     private app: App,
-    private themeProvider: ThemeProvider,
     private submissionMapper: SubmissionMapper,
     ) {
     //
@@ -32,7 +32,7 @@ export class DuplicateLeadsService {
       this.duplicateLeadSubscription.unsubscribe();
     }
 
-    this.duplicateLeadSubscription = this.syncClient.duplicateLead
+    this.duplicateLeadSubscription = this.submissionsProvider.duplicateLead
       .subscribe((data) => {
         if (!data) {
           return;

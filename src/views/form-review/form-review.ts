@@ -25,7 +25,7 @@ export class FormReview {
 
 	form: Form = new Form();
 
-	statusFilter : any = {};
+	statusFilter: any = {};
 
 	submissions: FormSubmission[] = [];
 
@@ -63,7 +63,7 @@ export class FormReview {
 		private modalCtrl: ModalController,
 		private filterService: FilterService,
 		private themeProvider: ThemeProvider,
-		private submissionsProvider : SubmissionsProvider
+		private submissionsProvider: SubmissionsProvider
 	) {
 
 		this.statusFilters = [
@@ -81,12 +81,6 @@ export class FormReview {
 		this.isDispatch = this.navParams.get("isDispatch");
 		this.loading = true;
 		this.doRefresh();
-
-		this.sub = this.syncClient.onSync.subscribe(stats => { },
-			(err) => { },
-			() => {
-				this.doRefresh();
-			});
 	}
 
 	ionViewDidEnter() {
@@ -183,7 +177,7 @@ export class FormReview {
 		} else if (hasFirstLastName) {
 			return submission.first_name + ' ' + submission.last_name;
 		} else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
-			return submission.fields[this.form.elements.find(e=>e.type == "barcode").identifier]
+			return submission.fields[this.form.elements.find(e => e.type == "barcode").identifier]
 		}
 		return ''; // A.S GOC-336
 	}
@@ -254,7 +248,6 @@ export class FormReview {
 				return this.isSubmissionNeedToBeSubmitted(sub);
 			}).length > 0;
 
-			console.log(this.hasSubmissionsToSend);
 
 			if (this.filteredSubmissions.length == 0) {
 				let fakeSubmission = new FormSubmission();

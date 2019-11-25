@@ -19,7 +19,6 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
-import { Conditional } from '@angular/compiler';
 
 @Component({
   templateUrl: 'app.html'
@@ -76,6 +75,7 @@ export class MyApp {
       this.checkUserAuth();
       this.checkDeviceStatus();
       this.onAppResumes();
+      this.onAppPause();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
     });
@@ -88,7 +88,6 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
-        this.client.setLocation();
       } else {
         this.nav.setRoot(Login);
       }
@@ -121,6 +120,7 @@ export class MyApp {
     if (this.platform.is('cordova')) {
       this.client.getRegistration(true).subscribe((user) => {
         if (user) {
+          this.client.setLocation(3000);
           this.client.getDeviceStatus(user).subscribe((status) => {
             this.handleAccessTokenValidationResult(status, user);
           });
@@ -130,19 +130,24 @@ export class MyApp {
   }
 
   private onAppResumes() {
-    this.platform.resume.subscribe(() => {
-      
+    this.platform.resume.subscribe( async () => {
       // A.S check device status when app resumes
       if (!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')) {
-         this.client.setLocation(3000);
         this.popup.dismissAll();
-        this.checkDeviceStatus();
-        let start = performance.now();
-        this.client.getUpdates().subscribe(() => {
-          // this.documentsSync.syncAll();
-        });
+        if(await this.client.getAppCloseTimeFrom() > 60){
+          this.checkDeviceStatus();
+          this.client.getUpdates().subscribe(() => {});
+        }
       }
       this.util.rmPluginPrefs()
+    });
+  
+  }
+
+  onAppPause(){
+    this.platform.pause.subscribe(() => {
+      console.log('App Paused');
+      this.client.setAppCloseTime();
     });
   }
 
@@ -206,10 +211,6 @@ export class MyApp {
   }
 
   handleAccessTokenValidationResult(status, user) {
-
-    // console.log('Device status - ' + JSON.stringify(status));
-
-    // this.popup.dismissAll();
 
     if (status.check_status != "ACTIVE_ACCESS_TOKEN") {
 

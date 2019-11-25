@@ -1,6 +1,6 @@
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import { Form } from "../../model";
@@ -30,25 +30,31 @@ export class Forms {
 
   forms: Form[] = [];
 
-  private selectedTheme : string;
+  private selectedTheme: string;
 
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
     private actionCtrl: ActionSheetController,
     private themeProvider: ThemeProvider,
     private duplicateLeadsService: DuplicateLeadsService,
-    private syncClient: SyncClient,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
-    public formsProvider : FormsProvider,
-    private Keyboard : Keyboard) {
+    public formsProvider: FormsProvider,
+    private zone: NgZone,
+    private Keyboard: Keyboard) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val.toString());
     this.getForms();
   }
 
-  getForms(){
-    this.formsProvider.formsObs.subscribe((val)=>{
-      if(val) this.forms = this.formsProvider.forms;
+  getForms() {
+    this.formsProvider.formsObs.subscribe((val) => {
+      if (val) this.updateForms()
+    })
+  }
+
+  updateForms() {
+    this.zone.run(() => {
+      this.forms = this.formsProvider.forms;
     })
   }
 
@@ -57,20 +63,15 @@ export class Forms {
     this.searchTrigger = this.searchMode ? "visible" : "hidden";
     if (this.searchMode) {
       setTimeout(() => {
-        this.searchbar.setFocus();
+        if (this.searchbar)
+          this.searchbar.setFocus();
       }, 100);
     }
   }
 
 
   sync() {
-    if(this.syncClient.isSyncing()){
-      console.log('Sync is in progress')
-      return;
-    } 
-      console.log('Sync started');
-    this.client.getUpdates().subscribe(() => {
-    });
+    this.client.getUpdates().subscribe();
   }
 
   getItems(event) {
@@ -90,7 +91,7 @@ export class Forms {
         handler: () => {
           //console.log('capture clicked');
           this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
-          this.navCtrl.push(FormCapture, { form: form });
+          this.navCtrl.push(FormCapture, { form : form });
         }
       }];
 
@@ -116,14 +117,14 @@ export class Forms {
 
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
-      buttons.push({ 
+      buttons.push({
         text: 'Documents',
         icon: 'bookmarks',
         handler: async () => {
           if (documentSets.length === 1) {
             const docs = await this.documentsService
               .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
-              .toPromise(); 
+              .toPromise();
 
             let documents;
             if (docs && docs.length) {
@@ -134,8 +135,8 @@ export class Forms {
 
             this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
           } else {
-            this.navCtrl.push("DocumentsListPage", { form }); 
-          } 
+            this.navCtrl.push("DocumentsListPage", { form });
+          }
         }
       })
       // }

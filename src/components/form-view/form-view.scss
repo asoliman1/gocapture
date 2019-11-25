@@ -107,11 +107,9 @@ form-view, .form-view {
   }
 
   .spacer{
-		width: 1.5px;
-		background-color: lightgray;
-		margin: 5px;
-	}
-	
+	  border-right: 1.5px solid lightgray;
+  }
+
 	.spacing {
 		display: block;
 		width: 100%;

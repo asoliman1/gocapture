@@ -111,6 +111,7 @@ import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
 import { FormsProvider } from '../providers/forms/forms';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
+import { ContactsProvider } from '../providers/contacts/contacts';
 
 @NgModule({
   declarations: [
@@ -160,8 +161,8 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
   imports: [
     BrowserModule,
     HttpModule,
-    BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
+    BrowserAnimationsModule,
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,
@@ -279,6 +280,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
     formViewService,
     FilterService,
     Keyboard,
+    ContactsProvider,
   ]
 })
 export class AppModule { }

@@ -26,6 +26,7 @@ import { LocalNotificationsService } from "./local-notifications-service";
 import { settingsKeys } from '../constants/constants';
 import { SettingsService } from './settings-service';
 import { Geolocation } from '@ionic-native/geolocation';
+import { SubmissionsProvider } from '../providers/submissions/submissions';
 declare var cordova: any;
 
 @Injectable()
@@ -63,7 +64,8 @@ export class BussinessClient {
 
 
 
-  constructor(private db: DBClient,
+  constructor(
+    private db: DBClient,
     private rest: RESTClient,
     private sync: SyncClient,
     private push: PushClient,
@@ -72,8 +74,9 @@ export class BussinessClient {
     private appPreferences: AppPreferences,
     private util: Util,
     private formsProvider: FormsProvider,
-    private settingsService : SettingsService,
-    private geolocation : Geolocation,
+    private submissionsProvider : SubmissionsProvider,
+    private settingsService: SettingsService,
+    private geolocation: Geolocation,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -82,8 +85,6 @@ export class BussinessClient {
     this.networkOff = this.net.onDisconnect().subscribe(() => {
       console.log("network was disconnected :-(");
       this.setOnline(false);
-      // A.S setting sync off when network is off
-      this.sync.setSync(false);
     });
 
     this.networkOn = this.net.onConnect().subscribe(() => {
@@ -93,7 +94,6 @@ export class BussinessClient {
 
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
-
 
   }
 
@@ -195,39 +195,39 @@ export class BussinessClient {
     });
   }
 
-    // A.S
-   setLocation(timeout = 2000){
-     setTimeout(() => {
+  // A.S
+  setLocation(timeout = 2000) {
+    setTimeout(() => {
       console.log('Getting location')
       this.util.setPluginPrefs()
-      this.geolocation.getCurrentPosition({enableHighAccuracy:true,timeout:5000}).then(position=>{
+      this.geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 }).then(position => {
         let location = this.setLocationParams(position);
         console.log('Current location data : ' + location);
-        this.settingsService.setSetting(settingsKeys.LOCATION,location).subscribe()
-       }).catch((err)=>{
+        this.settingsService.setSetting(settingsKeys.LOCATION, location).subscribe()
+      }).catch((err) => {
         console.log('Error getting location')
         console.log(err);
-        this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
-       });
-     }, timeout);
-   
- }
- 
+        this.settingsService.setSetting(settingsKeys.LOCATION, '').subscribe()
+      });
+    }, timeout);
 
- setLocationParams(position){
-  let location : any = {} ;
-  let coords : any = {} ;
-  coords.latitude = position.coords.latitude;
-  coords.longitude = position.coords.longitude;
-  coords.altitude = position.coords.altitude;
-  coords.accuracy = position.coords.accuracy;
-  coords.altitudeAccuracy = position.coords.altitudeAccuracy;
-  coords.heading = position.coords.heading;
-  coords.speed = position.coords.speed;
-  location.coords = coords;
-  location.timestamp = position.timestamp;
-  return JSON.stringify(location)
- }
+  }
+
+
+  setLocationParams(position) {
+    let location: any = {};
+    let coords: any = {};
+    coords.latitude = position.coords.latitude;
+    coords.longitude = position.coords.longitude;
+    coords.altitude = position.coords.altitude;
+    coords.accuracy = position.coords.accuracy;
+    coords.altitudeAccuracy = position.coords.altitudeAccuracy;
+    coords.heading = position.coords.heading;
+    coords.speed = position.coords.speed;
+    location.coords = coords;
+    location.timestamp = position.timestamp;
+    return JSON.stringify(location)
+  }
 
 
   public validateKioskPassword(password: string): Observable<boolean> {
@@ -276,7 +276,7 @@ export class BussinessClient {
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
-             this.setLocation();
+            this.setLocation(3000);
             obs.next({ user: reply, message: "Done" });
             obs.complete();
           }, err => {
@@ -329,33 +329,40 @@ export class BussinessClient {
 
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
+      if (!this.isOnline()) {
+        obs.error('No internet connection available');
+        return;
+      }
       this.db.getConfig("lastSyncDate").subscribe(time => {
-          let d = new Date();
-          if (time) {
-            d.setTime(parseInt(time));
-          }
-          let newD = new Date();
-          this.sync.download(time ? d : null).subscribe(downloadData => {
-            // 
-          },
-            (err) => {
-              obs.error(err);
-            },
-            () => {
-               console.log('Finished syncing')
-              this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
-                this.db.saveConfig("getAllContacts", "true").subscribe(() => {
-                  obs.next(true);
-                  obs.complete();
-                });
-              })
-        });
+        let d = new Date();
+        if (time) {
+          d.setTime(parseInt(time));
+        }
+        let newD = new Date();
+        this.sync.download(time ? d : null).subscribe(
+          (downloadData) => { },
+          (err) => { obs.error(err); },
+          () => {
+            console.log('Finished downloading updates at : ' + newD.getTime() + "")
+            this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
+              this.db.saveConfig("getAllContacts", "true").subscribe(() => {
+                obs.next(true);
+                obs.complete();
+              });
+            })
+          });
+        this.doAutoSync()
       });
     });
   }
 
   public getForms(): Observable<Form[]> {
     return this.db.getForms();
+  }
+
+  public async getFormById(formId): Promise<Form> {
+    let forms = await this.db.getFormsByIds([formId]).toPromise();
+    return forms[0]
   }
 
   /*
@@ -401,12 +408,6 @@ export class BussinessClient {
         return;
       }
 
-      if (this.sync.isSyncing()) {
-        console.log("Sync is in progress. Skip...");
-        obs.complete();
-        return;
-      }
-
       this.db.getSubmissionsToSend().subscribe((submissions) => {
 
         console.log("Submissions to submit - " + JSON.stringify(submissions));
@@ -448,14 +449,15 @@ export class BussinessClient {
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {
             sub.status = SubmissionStatus.Submitting;
+            this.submissionsProvider.updateSubmissionStatus(sub.id,sub.status)
             sub.last_sync_date = new Date().toISOString();
             let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);
           });
 
           Observable.zip(...dbUpdates).subscribe(() => {
-            this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
-              console.log("Sync process is completed");
+            this.submissionsProvider.sync(filteredSubmissions, forms).subscribe((submitted) => {
+              console.log("Syncing submissions is completed");
 
               obs.next(true);
               this.localNotificationsService.cancelAll();
@@ -514,4 +516,14 @@ export class BussinessClient {
       });
     }
   }
+
+  setAppCloseTime() {
+    this.db.saveConfig('appCloseTime', Date.now() + "");
+  }
+
+  async getAppCloseTimeFrom() {
+    let closeTime = await this.db.getConfig('appCloseTime').toPromise();
+    return (Date.now() - parseInt(closeTime)) / 1000;
+  }
+
 }

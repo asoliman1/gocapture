@@ -112,23 +112,25 @@ export class RESTClient {
 		});
 	}
 
-	public getAllForms(lastSyncDate: Date): Observable<Form[]> {
+	public getAllForms(lastSyncDate: Date): Observable<{forms:Form[],availableForms:number[]}> {
 		let opts: any = {
 			form_type: "device",
-			mode: "device_sync"
+			mode: "device_sync",
 		};
 		if (lastSyncDate) {
 			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
 		}
-		return this.getAll<Form>("/forms.json", opts).map(resp => {
-			let result: Form[] = [];
+		return this.getAll<{records:Form[],available_forms:number[]}>("/forms.json", opts).map(resp => {
+			let result: {forms:Form[],availableForms:number[]} = {forms:[],availableForms:resp[0].available_forms};
 			resp.forEach(record => {
-				let f = new Form();
-				Object.keys(record).forEach(key => {
-					f[key] = record[key];
-				});
-				result.push(f);
-				f.computeIdentifiers();
+				record.records.forEach(form=>{
+					let f = new Form();
+					Object.keys(form).forEach(key => {
+						f[key] = form[key];
+					});
+					result.forms.push(f);
+					f.computeIdentifiers();
+				})
 			});
 			return result;
 		});
@@ -220,30 +222,8 @@ export class RESTClient {
 		return data;
 	}
 
-	public getAvailableFormIds(): Observable<number[]> {
-		return this.getAll<number>("/device/available_forms.json", {})
-			.map(response => {
-				let d: number[] = [];
-				if (Array.isArray(response)) {
-					if (response.length > 0) {
-						if (Number.isInteger(response[0])) {
-							d = response;
-						} else {
-							Object.keys(response[0]).forEach(key => {
-								d.push(response[0][key]);
-							});
-						}
-					}
-				} else {
-					Object.keys(response).forEach(key => {
-						d.push(response[key]);
-					});
-				}
-				return d;
-			});
-	}
 
-	public getAllSubmissions(forms: Form[], lastSync?: Date, newFormIds?: number[]): Observable<{submissions :FormSubmission[],form: Form}> {
+	public getAllSubmissions(forms: Form[]): Observable<{submissions :FormSubmission[],form: Form}> {
 		return new Observable<{submissions :FormSubmission[],form: Form}>((obs: Observer<{submissions :FormSubmission[],form: Form}>) => {
 			var result: {submissions :FormSubmission[],form: Form} = {submissions:[],form:null};
 			if (!forms || forms.length == 0) {
@@ -254,14 +234,16 @@ export class RESTClient {
 				return;
 			}
 			var index = 0;
-			let syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
+			let syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
+			new Date(forms[index].lastSync.submissions) : null;
 			let handler = (data: FormSubmission[]) => {
 				result.submissions = data;
 				result.form = forms[index];
 				obs.next(result)
 				index++;
 				if (index < forms.length) {
-					syncDate = newFormIds && newFormIds.length > 0 && newFormIds.indexOf(forms[index].form_id) > -1 ? null : lastSync;
+					 syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
+								   new Date(forms[index].lastSync.submissions) : null;
 					this.getSubmissions(forms[index], syncDate).subscribe(handler);
 				} else {
 					obs.complete();
@@ -337,9 +319,9 @@ export class RESTClient {
 		});
 	}
 
-	public getAllDeviceFormMemberships(forms: Form[], newFormIds?: number[]): Observable<DeviceFormMembership[]> {
-		return new Observable<DeviceFormMembership[]>((obs: Observer<DeviceFormMembership[]>) => {
-			var result: DeviceFormMembership[] = [];
+	public getAllDeviceFormMemberships(forms: Form[]): Observable<{contacts:DeviceFormMembership[],form:Form}> {
+		return new Observable<{contacts:DeviceFormMembership[],form:Form}>((obs: Observer<{contacts:DeviceFormMembership[],form:Form}>) => {
+			var result: { contacts:DeviceFormMembership[] , form:Form } = {contacts:[],form:new Form()} ;
 			if (!forms || forms.length == 0) {
 				setTimeout(() => {
 					obs.next(result);
@@ -353,12 +335,13 @@ export class RESTClient {
 					let form = forms[index];
 					item.form_id = form.form_id;
 				});
-				result.push.apply(result, data);
+				result.contacts = data;
+				result.form = forms[index];
+				obs.next(result);
 				index++;
 				if (index < forms.length) {
 					doTheCall();
 				} else {
-					obs.next(result);
 					obs.complete();
 				}
 			};
@@ -367,9 +350,9 @@ export class RESTClient {
 					form_id: forms[index].form_id
 				};
 				let form = forms[index];
-				let syncDate = form.members_last_sync_date;
+				let syncDate = form.lastSync && form.lastSync.contacts ? new Date(form.lastSync.contacts) : null;
 				if (syncDate) {
-					params.last_sync_date = syncDate;
+					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
 				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
 			};
@@ -470,6 +453,9 @@ export class RESTClient {
 				if (!data.records) {
 
 				} else if (Array.isArray(data.records)) {
+					if(data.available_forms)
+					records = [{available_forms : data.available_forms,records : data.records}]
+					else
 					records = data.records;
 				} else {
 					records = [data.records];

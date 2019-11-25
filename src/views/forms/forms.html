@@ -16,7 +16,7 @@
 </ion-header>
 
 <ion-content class="forms">
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger">
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" >
 	</ion-searchbar>
 	<div text-center margin-top *ngIf="!forms.length" >
 		<ion-spinner ></ion-spinner>
@@ -26,7 +26,7 @@
 		<!-- <div *virtualItem="let form"> -->
 			<event-item 
 			(click)="presentActionSheet(form)" 
-			*ngFor="let form of forms | filter"
+			*ngFor="let form of forms"
 			[image]="form.event_style.event_record_background.path"
 			[name]="form.name"
 			[address]="form.event_address.address"

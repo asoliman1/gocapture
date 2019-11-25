@@ -360,4 +360,19 @@ export class Util {
       });
   }
 
+  sortBy(value,asc = 1,by = 'updated_at') {
+    let data = value.sort((a: any, b: any) => {
+      let date1 = new Date(a[by]);
+      let date2 = new Date(b[by]);
+      if (date1 > date2) {
+        return 1 * asc;
+      } else if (date1 < date2) {
+        return -1 * asc;
+      } else {
+        return 0;
+      }
+    });
+   return data;
+  }
+
 }

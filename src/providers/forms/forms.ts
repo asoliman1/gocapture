@@ -4,12 +4,10 @@ import { Form } from '../../model/form';
 import { Injectable } from '@angular/core';
 import { SubmissionStatus } from '../../model';
 import { Subject, Observable } from 'rxjs';
-import { merge } from 'lodash';
 import { Entry } from '@ionic-native/file';
 import { RESTClient } from './../../services/rest-client';
 import { DBClient } from './../../services/db-client';
 import { Util } from './../../util/util';
-import { DownloadData } from './../../services/sync-client';
 
 @Injectable()
 export class FormsProvider {
@@ -26,7 +24,6 @@ export class FormsProvider {
     private rest : RESTClient,
 
     ) {
-    console.log('Forms Provider started')
     this.setForms()
   }
 
@@ -34,53 +31,41 @@ export class FormsProvider {
     if (!this.loaded && this.dbClient.isWorkDbInited()){
       this.loaded = true;
       this.dbClient.getForms().subscribe((forms) => {
-        forms = forms.map((e)=>{
-          e.isSyncing = true; 
-          return e;
-        });
+        forms = this.util.sortBy(forms,-1);
         this.forms = forms;
+        this.forms.forEach((e)=> e.isSyncing = true);
         this.pushUpdates();
       })
     }
    
   }
 
-   downloadForms(lastSyncDate: Date, result: DownloadData): Observable<Form[]> {
+  setFormsSyncStatus(){
+    this.forms.forEach((e)=> e.isSyncing = true);
+  }
+
+   downloadForms(lastSyncDate: Date): Observable<Form[]> {
+    console.log('Getting latest forms...')
+    this.setFormsSyncStatus();
+    let chunk = 0;
     return new Observable<any>(obs => {
       this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
-
+        chunk++;
         let current = new Date();
-
-        remoteForms = remoteForms.filter(form => {
+        remoteForms.forms = remoteForms.forms.filter(form => {
           form.id = form.form_id + "";
           if (new Date(form.archive_date) > current) return true;
-          else console.log("Form " + form.name + "(" + form.id + ") is past it's expiration date. Filtering it out");
+          else {console.log(`Form ${form.name} (${form.id}) is past it's expiration date. Filtering it out`); return false};
         });
-
-        result.forms = remoteForms
-        let localForms = this.getForms();
-        remoteForms = this.checkFormData(remoteForms, localForms);
-        this.clearLocalForms(localForms).subscribe(reply => {
-          let localFormsIds = localForms.map((localForm) => parseInt(localForm.id));
-          if (localFormsIds && localFormsIds.length > 0) {
-            let remoteFormsIds = remoteForms.map((form) => form.form_id);
-            result.newFormIds = remoteFormsIds.filter(x => localFormsIds.indexOf(x) == -1);
-          }
-          this.saveNewForms(remoteForms);
-             // A.S check if form has data to be downloaded
-          if (this.hasNewData) {
-            // A.S GOC-326
-            this.downloadFormsData(remoteForms);
-          }
-          obs.next(remoteForms);
-          obs.complete();
+        remoteForms.forms = this.checkFormData(remoteForms.forms, this.forms);
+          this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
+             // A.S check if form has data to be downloaded - A.S GOC-326
+          if (this.hasNewData) this.downloadFormsData(remoteForms.forms);
+          obs.next(remoteForms.forms);
         }, (err) => {
           obs.error(err);
-        })
+        },()=> obs.complete())
 
-      }, err => {
-        obs.error(err);
-      });
     })
   }
 
@@ -184,18 +169,6 @@ export class FormsProvider {
   }
 
 
-  private clearLocalForms(localForms): Observable<boolean> {
-    return this.rest.getAvailableFormIds().flatMap(ids => {
-      let toDelete = [];
-      localForms.forEach(form => {
-        if (ids.indexOf(parseInt(form.id)) == -1) {
-          toDelete.push(form.id);
-        }
-      });
-      return this.dbClient.deleteFormsInList(toDelete);
-    });
-  }
-
   resetForms(){
     this.forms = [];
   }
@@ -211,52 +184,47 @@ export class FormsProvider {
   }
 
   saveFormDb(form: Form) {
-    this.dbClient.saveForm(form).subscribe(res => { }, err => { });
+    this.dbClient.saveForm(form).subscribe();
   }
 
-  saveNewForms(forms: Form[]) {
-    
+  saveNewForms(forms: Form[],availableForms:number[]) {
     forms.forEach((e : Form)=> {
       let form = this.forms.find((f)=>f.form_id == e.form_id);
-      if(form) form = form;
-      else {
-        this.forms.push(e);
-        form = e;
-      }
-      this.saveFormDb(form)
+      if(form) form = Object.assign(form,e);
+      else this.forms.push(e);
+      if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteForm(e);
     });
+    this.forms = this.util.sortBy(this.forms,-1);
+    this.dbClient.saveForms(forms);
     this.pushUpdates();
   }
-
 
   deleteForm(form: Form) {
     this.forms = this.forms.filter((e) => e.form_id !== form.form_id);
-    this.pushUpdates();
   }
-
 
   updateFormSyncStatus(form_id: any, isSyncing: boolean) {
     let form = this.forms.find((e) => e.form_id == (form_id * 1));
     form.isSyncing = isSyncing;
-    // this.saveFormDb(form)
-    // this.pushUpdates()
-    //  console.log(`form ${form_id} syncing status is ${isSyncing}`);
+  }
+
+  updateFormLastSync(form_id: any, field : string) {
+    let form = this.forms.find((e) => e.form_id == (form_id * 1));
+    if(!form.lastSync) form.lastSync = {}
+    form.lastSync[field] = new Date();
+    this.saveFormDb(form)
   }
 
   updateFormBackground(form_id: any, background: Image) {
     let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
     this.forms[index].event_style.event_record_background = background;
     this.saveFormDb(this.forms[index])
-    // this.pushUpdates()
-    // console.log(`form ${form_id} background is `,background);
   }
 
   updateFormScreenSaver(form_id: any, screenSaver: Image[]) {
     let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
     this.forms[index].event_style.screensaver_media_items = screenSaver;
     this.saveFormDb(this.forms[index])
-    // this.pushUpdates()
-    // console.log(`form ${form_id} screen saver items `,screenSaver);
   }
 
   updateFormSubmissions(form_id: any) {
@@ -267,7 +235,6 @@ export class FormsProvider {
       form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
       form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
       console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
-      // this.pushUpdates();
     })
   }
 

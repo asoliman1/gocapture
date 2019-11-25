@@ -204,7 +204,13 @@ export class FormCapture implements AfterViewInit {
 
   // A.S
   private async showScreenSaver() {
-    let active = this.navCtrl.last().instance instanceof FormCapture && this.form.event_style.is_enable_screensaver && !this.isRapidScanMode;
+    // get updated data of form
+    this.form.event_style = this.getFormStyle();
+    let active = 
+    this.navCtrl.last().instance instanceof FormCapture && 
+    this.form.event_style.is_enable_screensaver && 
+    !this.isRapidScanMode;
+
     if (this.imagesDownloaded()) {
       if (!this._modal && active) {
         this.handleScreenSaverRandomize()
@@ -213,6 +219,7 @@ export class FormCapture implements AfterViewInit {
         console.log('Screen saver started.')
         this._modal.onDidDismiss(() => {
           this._modal = null
+          this.idle.restart();
           console.log('Screen saver dismissed.')
         })
       }
@@ -239,8 +246,19 @@ export class FormCapture implements AfterViewInit {
     console.log('idle mode stopped');
   }
 
-  private setupForm() {
-    this.form = this.navParams.get("form");
+// return updated object data of form
+  getFormSubmissions(){
+    return this.navParams.get("form").total_submissions;
+  }
+
+  // return updated object data of form
+  getFormStyle(){
+    return this.navParams.get("form").event_style;
+  }
+
+  private async setupForm() {
+   // return new object data of form (not updated)
+    this.form = Object.assign(new Form(),this.navParams.get("form")); 
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
 
@@ -653,7 +671,7 @@ export class FormCapture implements AfterViewInit {
           }
           return;
         }
-  
+        this.formsProvider.updateFormSubmissions(this.form.form_id);
         this.kioskModeCallback();
       }, (err) => {
         console.error(err);

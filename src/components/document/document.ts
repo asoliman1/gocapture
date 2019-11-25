@@ -35,6 +35,8 @@ export class Document implements OnChanges {
   }
   
   ngOnInit() {
+    let chunks = this.document.name.split('.');
+    if(!this.document.file_extension) this.document.file_extension = chunks[chunks.length-1].toLowerCase();
     this.fallbackUrl = `assets/images/extentions/${this.document.file_extension}.svg`;
   }
 
