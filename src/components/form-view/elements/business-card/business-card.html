@@ -3,15 +3,15 @@
     <ion-col>
       <div class="card-label">Front</div>
       <div tappable class="card-container" (click)="captureImage(FRONT)">
-        <img class="card-image" #frontImage [src]="theVal.front | convertFileSrc" (load)="onImageLoaded($event, true)">
-        <ion-spinner name="ios-small" *ngIf="frontLoading"></ion-spinner>
+        <img class="card-image" #frontImage [src]="theVal.front | convertFileSrc" onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, true)">
+        <ion-spinner *ngIf="frontLoading"></ion-spinner>
       </div>
     </ion-col>
     <ion-col>
       <div class="card-label">Back</div>
       <div tappable class="card-container" (click)="captureImage(BACK)">
-        <img class="card-image" #backImage [src]="theVal.back | convertFileSrc" (load)="onImageLoaded($event, false)">
-        <ion-spinner name="ios-small" *ngIf="backLoading"></ion-spinner>
+        <img class="card-image" #backImage [src]="theVal.back | convertFileSrc" onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, false)">
+        <ion-spinner *ngIf="backLoading"></ion-spinner>
       </div>
     </ion-col>
   </ion-row>

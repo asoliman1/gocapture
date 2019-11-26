@@ -310,6 +310,7 @@ export class Util {
       console.log(`File ${result.fileRemoved.name} removed.`);
       return result;
     } catch (error) {
+      console.log(name);
       console.log(error);
       return error;
     }

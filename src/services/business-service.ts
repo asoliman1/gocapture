@@ -202,7 +202,7 @@ export class BussinessClient {
       this.util.setPluginPrefs()
       this.geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 }).then(position => {
         let location = this.setLocationParams(position);
-        console.log('Current location data : ' + location);
+        // console.log('Current location data : ' + location);
         this.settingsService.setSetting(settingsKeys.LOCATION, location).subscribe()
       }).catch((err) => {
         console.log('Error getting location')
@@ -410,7 +410,7 @@ export class BussinessClient {
 
       this.db.getSubmissionsToSend().subscribe((submissions) => {
 
-        console.log("Submissions to submit - " + JSON.stringify(submissions));
+        // console.log("Submissions to submit - " + JSON.stringify(submissions));
 
         if (submissions.length == 0) {
           obs.complete();
@@ -444,7 +444,7 @@ export class BussinessClient {
 
           console.log("Submissions date - " + new Date().getTime());
 
-          console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
+          // console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
 
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {

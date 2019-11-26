@@ -6,16 +6,15 @@ import { RESTClient } from './../../services/rest-client';
 import { FormsProvider } from './../forms/forms';
 import { FormMapEntry } from './../../services/sync-client';
 import { DBClient } from './../../services/db-client';
-import { Observable, Observer, BehaviorSubject } from 'rxjs';
+import { Observable, Observer, BehaviorSubject , Subject } from 'rxjs';
 import { FormSubmission, BarcodeStatus, SubmissionStatus } from './../../model/form-submission';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import { Entry, File } from '@ionic-native/file';
 import { Form } from '../../model/form';
 import { FormElementType, SyncStatus } from '../../model';
 import { settingsKeys } from '../../constants/constants';
 import { FileUploadRequest } from '../../model/protocol';
-import { FileTransfer } from '@ionic-native/file-transfer';
+import { mergeMap } from 'rxjs/operators';
 
 
 @Injectable()
@@ -42,7 +41,6 @@ export class SubmissionsProvider {
     private rest : RESTClient,
     private submissionsRepository : SubmissionsRepository,
     private settingsService : SettingsService,
-    private fileTransfer : FileTransfer,
     private file : File,
     private util : Util) {
       this.duplicateLeadSource = new BehaviorSubject<any>(null);
@@ -85,29 +83,31 @@ export class SubmissionsProvider {
 
    downloadSubmissions(): Observable<any> {
     console.log('Getting latest submissions...')
+    this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
-      this.rest.getAllSubmissions(this.formsProvider.forms).subscribe(data => { 
-        this.dbClient.getSubmissions(data.form.form_id, false).subscribe(async (oldSubs) => {
-          let submissions = [
-            ...this.checkSubmissionsData(oldSubs, data.submissions, data.form),
-            ...this.checkSubmissionsData(oldSubs, oldSubs, data.form)
-          ];
-          this.dbClient.saveSubmisisons(submissions).subscribe(reply => {
-            this.formsProvider.updateFormSyncStatus(data.form.form_id,false)
-          }, err => {
-            this.formsProvider.updateFormSyncStatus(data.form.form_id,false)
-            obs.error(err);
-          });
-          if(submissions.length) this.downloadSubmissionsData(data.form,submissions);
-        })
-        this.formsProvider.updateFormLastSync(data.form.form_id,'submissions')
-
+      this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
+        mergeMap(async (e) => await this.saveSubmissions(e))
+      ).subscribe(data => { 
       }, err => {
         obs.error(err);
       }, () => {
         obs.complete();
       });
     });
+  }
+
+ async saveSubmissions(data){
+   let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise();
+      let submissions = [
+        ...this.checkSubmissionsData(oldSubs, data.submissions, data.form),
+        // ...this.checkSubmissionsData(oldSubs, oldSubs, data.form)
+      ];
+      await this.dbClient.saveSubmisisons(submissions).toPromise();
+      if(submissions.length) await this.downloadSubmissionsData(data.form,submissions);
+      this.formsProvider.updateFormSyncStatus(data.form.form_id,false)
+      this.formsProvider.updateFormLastSync(data.form.form_id,'submissions')
+      this.formsProvider.updateFormSubmissions(data.form.form_id);
+      // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
   }
 
   updateFormsSyncStatus(forms : Form[]){
@@ -178,10 +178,8 @@ export class SubmissionsProvider {
         this.updateSubmission(sub);
         return sub;
       }) )
-      console.log(`finished saving downloaded submissions data of form ${form.form_id}`)
-      this.dbClient.saveSubmisisons(submissions).subscribe((data)=>{
-        this.formsProvider.updateFormSyncStatus(form.form_id, false)
-      })
+      await this.dbClient.saveSubmisisons(submissions).toPromise()
+
   }
 
 
@@ -211,12 +209,12 @@ export class SubmissionsProvider {
   }
 
   private async getDownloadedFilePath(fileToDownload : string,id : string){
-    const fileTransfer = this.fileTransfer.create()
+    this.http.removeCookies(fileToDownload,()=>{});
     let entry: Entry;
     try {
       if(fileToDownload.startsWith('http')){
         let file = this.util.getFilePath(fileToDownload, id);
-        entry = await fileTransfer.download(file.pathToDownload,file.path);
+        entry = await this.http.downloadFile(file.pathToDownload,{},{},file.path);
         return entry.nativeURL;
       }
       return fileToDownload;
@@ -282,7 +280,7 @@ export class SubmissionsProvider {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
-      console.log("Submit All");
+      // console.log("Submit All");
       let handler = () => {
 
         if (index == data.submissions.length) {
@@ -318,7 +316,7 @@ export class SubmissionsProvider {
       let urlMap: { [key: string]: string } = {};
       this.buildUrlMap(submission, data.urlFields, urlMap);
 
-      console.log("Do submit");
+      // console.log("Do submit");
 
       let uploadUrlMap = {};
       Object.keys(urlMap).forEach((key) => {
@@ -329,11 +327,11 @@ export class SubmissionsProvider {
 
       let hasUrls = Object.keys(uploadUrlMap).length > 0;
 
-      console.log("Submission has urls - " + JSON.stringify(hasUrls));
+      // console.log("Submission has urls - " + JSON.stringify(hasUrls));
 
       this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
 
-        console.log("Submission uploaded data");
+        // console.log("Submission uploaded data");
 
         this.updateUrlMapWithData(uploadUrlMap, uploadedData);
 
@@ -344,7 +342,7 @@ export class SubmissionsProvider {
         this.updateSubmissionFields(submission, data, urlMap);
 
         this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          console.log("Updated submission fields - " + JSON.stringify(submission));
+          // console.log("Updated submission fields - " + JSON.stringify(submission));
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
             this.processBarcode(data, submission, obs);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
@@ -412,7 +410,7 @@ export class SubmissionsProvider {
           return;
         }
 
-        console.log("Barcode data: " + JSON.stringify(barcodeData));
+        // console.log("Barcode data: " + JSON.stringify(barcodeData));
 
         submission.barcode_processed = BarcodeStatus.Processed;
 

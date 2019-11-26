@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { HTTP } from '@ionic-native/http';
 import { Image } from '../../model/image';
 import { Form } from '../../model/form';
@@ -33,40 +34,40 @@ export class FormsProvider {
       this.dbClient.getForms().subscribe((forms) => {
         forms = this.util.sortBy(forms,-1);
         this.forms = forms;
-        this.forms.forEach((e)=> e.isSyncing = true);
         this.pushUpdates();
       })
     }
    
   }
 
-  setFormsSyncStatus(){
-    this.forms.forEach((e)=> e.isSyncing = true);
+  setFormsSyncStatus(val : boolean){
+    this.forms.forEach((e)=> e.isSyncing = val);
   }
 
    downloadForms(lastSyncDate: Date): Observable<Form[]> {
     console.log('Getting latest forms...')
-    this.setFormsSyncStatus();
-    let chunk = 0;
+    this.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
-      this.rest.getAllForms(lastSyncDate).subscribe((remoteForms) => {
-        chunk++;
-        let current = new Date();
-        remoteForms.forms = remoteForms.forms.filter(form => {
-          form.id = form.form_id + "";
-          if (new Date(form.archive_date) > current) return true;
-          else {console.log(`Form ${form.name} (${form.id}) is past it's expiration date. Filtering it out`); return false};
-        });
+      this.rest.getAllForms(lastSyncDate)
+      .subscribe((remoteForms) => {
+        remoteForms.forms = this.filterArchivedForms(remoteForms.forms);
         remoteForms.forms = this.checkFormData(remoteForms.forms, this.forms);
-          this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
-             // A.S check if form has data to be downloaded - A.S GOC-326
-          if (this.hasNewData) this.downloadFormsData(remoteForms.forms);
+        this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
+        this.setFormsSyncStatus(false);
+        if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
-        }, (err) => {
-          obs.error(err);
-        },()=> obs.complete())
+        },()=>obs.error(),()=>obs.complete())
 
     })
+  }
+
+  filterArchivedForms(forms : Form[]){
+    let current = new Date();
+   return forms.filter(form => {
+      form.id = form.form_id + "";
+      if (new Date(form.archive_date) > current) return true;
+      else {console.log(`Form ${form.name} (${form.id}) is past it's expiration date. Filtering it out`); return false};
+    });
   }
 
   // A.S download all images for all forms
@@ -192,8 +193,10 @@ export class FormsProvider {
       let form = this.forms.find((f)=>f.form_id == e.form_id);
       if(form) form = Object.assign(form,e);
       else this.forms.push(e);
-      if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteForm(e);
     });
+    this.forms.forEach((e)=>{
+      if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteForm(e);
+    })
     this.forms = this.util.sortBy(this.forms,-1);
     this.dbClient.saveForms(forms);
     this.pushUpdates();
@@ -234,7 +237,7 @@ export class FormsProvider {
       form.total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
       form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
       form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
-      console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
+      // console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
     })
   }
 
