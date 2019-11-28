@@ -143,9 +143,7 @@ export class BussinessClient {
   public setupNotifications() {
     if (!this.setup) {
       this.setup = true;
-      this.pushSubs.push(this.push.error.subscribe((err) => {
-        // console.error("notification", err);
-        // console.error(JSON.stringify(err));
+      this.pushSubs.push(this.push.error.subscribe(() => {
       }));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
@@ -365,11 +363,6 @@ export class BussinessClient {
     return forms[0]
   }
 
-  /*
-    public getDispatches(): Observable<DispatchOrder[]> {
-        return this.db.getDispatches();
-    }
-     */
 
   public getContacts(form: Form): Observable<DeviceFormMembership[]> {
     return this.db.getMemberships(form.form_id);
@@ -410,7 +403,8 @@ export class BussinessClient {
 
       this.db.getSubmissionsToSend().subscribe((submissions) => {
 
-        // console.log("Submissions to submit - " + JSON.stringify(submissions));
+        console.log("Submissions to submit :");
+        console.log(submissions)
 
         if (submissions.length == 0) {
           obs.complete();
@@ -436,15 +430,13 @@ export class BussinessClient {
         }
         this.db.getFormsByIds(formIds).subscribe(forms => {
 
-          //sync submissions with status "ToSubmit"
-          //sync submissions with status "Submitting" in case the first attempt was 9 min ago
           let filteredSubmissions = submissions.filter((submission) => {
             return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
           console.log("Submissions date - " + new Date().getTime());
 
-          // console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
+          console.log("Filtered submissions - " + JSON.stringify(filteredSubmissions));
 
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {
@@ -454,11 +446,11 @@ export class BussinessClient {
             let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);
           });
-
+          let i = 0;
           Observable.zip(...dbUpdates).subscribe(() => {
+            console.log('observal '+ ++i);
             this.submissionsProvider.sync(filteredSubmissions, forms).subscribe((submitted) => {
               console.log("Syncing submissions is completed");
-
               obs.next(true);
               this.localNotificationsService.cancelAll();
               obs.complete();
@@ -489,9 +481,10 @@ export class BussinessClient {
       submissionTime = new Date(submission.last_sync_date).getTime();
     }
 
-    let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.05;
-    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
+    // let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
+    // let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
+
+    return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting);
   }
 
   public removeSubmission(submission) {

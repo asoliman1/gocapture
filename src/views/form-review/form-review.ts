@@ -197,9 +197,9 @@ export class FormReview {
 	getBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
 		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
-		if (front && front.length > 0) {
-			front = this.util.imageUrl(front);
-		}
+		// if (front && front.length > 0) {
+		// 	front = this.util.imageUrl(front);
+		// }
 		return front;
 	}
 
@@ -207,7 +207,6 @@ export class FormReview {
 		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.submissions = submissions;
 			this.loading = false;
-			console.log(this.submissions.length)
 			this.onFilterChanged();
 		});
 	}

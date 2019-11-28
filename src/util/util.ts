@@ -252,16 +252,22 @@ export class Util {
 
   // A.S
   getFilePath(url, id = '') {
-    let isSplashImage = url.includes('https://images.unsplash.com/');
-    url = isSplashImage ? url.split('?')[0] : url;
-    let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
-    let name = id + url.substr(url.lastIndexOf("/") + 1);
-    let pathToDownload = encodeURI(url);
-    let folder = this.folderForFile(ext);
-    let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
-    let path = folderPath + name;
+    if (url && url != '') {
 
-    return { path, pathToDownload, name, folder , folderPath }
+      let isSplashImage = url.includes('https://images.unsplash.com/');
+      url = isSplashImage ? url.split('?')[0] : url;
+      let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
+      let name = id + url.substr(url.lastIndexOf("/") + 1);
+      let pathToDownload = encodeURI(url);
+      let folder = this.folderForFile(ext);
+      let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
+      let path = folderPath + name;
+
+      return { path, pathToDownload, name, folder, folderPath }
+    }
+    else {
+      return { path: '', pathToDownload: '', name: '', folder: '', folderPath: '' }
+    }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
@@ -361,7 +367,7 @@ export class Util {
       });
   }
 
-  sortBy(value,asc = 1,by = 'updated_at') {
+  sortBy(value, asc = 1, by = 'updated_at') {
     let data = value.sort((a: any, b: any) => {
       let date1 = new Date(a[by]);
       let date2 = new Date(b[by]);
@@ -373,7 +379,7 @@ export class Util {
         return 0;
       }
     });
-   return data;
+    return data;
   }
 
 }

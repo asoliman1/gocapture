@@ -39,6 +39,7 @@ export class SubmissionsRepository {
   }
 
   public handleMergedSubmission(activityId, localSubmission, mergedSubmission, form) {
+    console.log('submission repo handle merge')
     return this.dbClient.getSubmissionById(activityId).flatMap((sub) => {
       if (sub) {
         //remove local submission with the same activityId
@@ -52,9 +53,11 @@ export class SubmissionsRepository {
       }
       return Observable.of({});
     }).flatMap(() => {
+      console.log('check merge')
       if (mergedSubmission) {
         return this.dbClient.saveSubmission(this.submMapper.map(form, mergedSubmission));
       }
+      console.log('not merged submission');
       return this.dbClient.updateSubmissionId(localSubmission);
     })
   }

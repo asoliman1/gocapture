@@ -15,6 +15,7 @@ import { FormElementType, SyncStatus } from '../../model';
 import { settingsKeys } from '../../constants/constants';
 import { FileUploadRequest } from '../../model/protocol';
 import { mergeMap } from 'rxjs/operators';
+import { FileTransfer } from '@ionic-native/file-transfer';
 
 
 @Injectable()
@@ -56,7 +57,7 @@ export class SubmissionsProvider {
           this.setSubmissionSyncStatus(e.id)
           return e;
         })
-        obs.next(this.submissions);
+        obs.next(data);
       })
     })
   }
@@ -88,6 +89,7 @@ export class SubmissionsProvider {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => await this.saveSubmissions(e))
       ).subscribe(data => { 
+        // console.log(data)
       }, err => {
         obs.error(err);
       }, () => {
@@ -97,16 +99,20 @@ export class SubmissionsProvider {
   }
 
  async saveSubmissions(data){
-   let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise();
-      let submissions = [
-        ...this.checkSubmissionsData(oldSubs, data.submissions, data.form),
-        // ...this.checkSubmissionsData(oldSubs, oldSubs, data.form)
-      ];
-      await this.dbClient.saveSubmisisons(submissions).toPromise();
-      if(submissions.length) await this.downloadSubmissionsData(data.form,submissions);
-      this.formsProvider.updateFormSyncStatus(data.form.form_id,false)
-      this.formsProvider.updateFormLastSync(data.form.form_id,'submissions')
-      this.formsProvider.updateFormSubmissions(data.form.form_id);
+   let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
+    submissionsToDownload : number[] = [],
+    submissions = this.checkSubmissionsData(oldSubs, data.submissions, data.form , submissionsToDownload);
+    this.dbClient.saveSubmisisons(submissions).subscribe(()=>{},()=>{},()=> this.formsProvider.updateFormSubmissions(data.form.form_id))
+    submissions = submissions.filter((s)=> submissionsToDownload.findIndex((e)=> e == s.id) != -1 )
+    if(submissionsToDownload.length){
+      try {
+       await this.downloadSubmissionsData(data.form,submissions);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    this.formsProvider.updateFormSyncStatus(data.form.form_id,false)
+    this.formsProvider.updateFormLastSync(data.form.form_id,'submissions')
       // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
   }
 
@@ -116,70 +122,69 @@ export class SubmissionsProvider {
     })
   }
 
-  private checkSubmissionsData(oldSubs: FormSubmission[], newSubs: FormSubmission[], form: Form): FormSubmission[] {
+  private checkSubmissionsData(oldSubs: FormSubmission[], newSubs: FormSubmission[], form: Form , submissionsToDownload): FormSubmission[] {
     let subDataFields: string[] = form.getUrlFields();
     return newSubs.map((sub) => {
       let oldSub = oldSubs.find((e) => e.id == sub.id);
-      this.checkSubmissionFields(subDataFields,sub.fields,oldSub ? oldSub.fields : null,form,sub);
+      this.checkSubmissionFields(subDataFields,sub.fields,oldSub ? oldSub.fields : null,form,sub,submissionsToDownload);
       return sub;
     })
   }
 
-  private checkSubmissionFields(subDataFields,newSubData,oldSubData,form : Form ,sub : FormSubmission){
+  private checkSubmissionFields(subDataFields,newSubData,oldSubData,form : Form ,sub : FormSubmission,submissionsToDownload){
     subDataFields.forEach((field) => {
       let sub1 = newSubData[field];
       let sub0 = oldSubData ? oldSubData[field] : null;
       if (sub1) {
         if (typeof (sub1) == "object") {
           Object.keys(sub1).map((key) => {
-            sub1[key] = this.checkSubmissionFile(sub1[key], sub0 ? sub0[key] : null, `${form.form_id}_submission_${sub.id}_`)
+            sub1[key] = this.checkSubmissionFile(sub1[key], sub0 ? sub0[key] : null, `${form.form_id}_submission_${sub.id}_`,submissionsToDownload)
           });
         }
         else if (Array.isArray(sub1)) {
           sub1 = sub1.map((e, i) => {
-            return this.checkSubmissionFile(e, sub0 ? sub0[i] : null, `${form.form_id}_submission_${sub.id}_`)
+            return this.checkSubmissionFile(e, sub0 ? sub0[i] : null, `${form.form_id}_submission_${sub.id}_`,submissionsToDownload)
           })
         }
         else {
-          sub1 = this.checkSubmissionFile(sub1, sub0, `${form.form_id}_submission_${sub.id}_`)
+          sub1 = this.checkSubmissionFile(sub1, sub0, `${form.form_id}_submission_${sub.id}_`,submissionsToDownload)
         }
       }
     })
   }
 
 
-  private checkSubmissionFile(newUrl : string, oldUrl : string, id : string): string {
+  private checkSubmissionFile(newUrl : string, oldUrl : string, id : string,submissionsToDownload : number[]): string {
     let i = id.split('_'), 
-    newFileCongif = this.util.getFilePath(newUrl || '', newUrl && newUrl.startsWith('https') ? id : ''), 
-    oldFileCongif = this.util.getFilePath(oldUrl || '');
-
-    if (oldUrl && oldUrl.startsWith('https://')) {
-      console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
+    newFileCongif = this.util.getFilePath(newUrl, newUrl && newUrl.startsWith('https') ? id : ''), 
+    oldFileCongif = this.util.getFilePath(oldUrl);
+    if(oldFileCongif.name === newFileCongif.name){
+      return oldUrl;
+    }else{
+      if(oldUrl && oldUrl.startsWith('file://')){ 
+        console.log(`submission ${i[2]} of form ${i[0]} will download updated data...`);
+        this.util.rmFile(oldFileCongif.folder, oldFileCongif.name);
+      }else{
+        console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
+      }
+      submissionsToDownload.push(parseInt(i[2]));
       return newUrl;
-    }
-    else if (oldFileCongif.name != newFileCongif.name) {
-      console.log(`submission ${i[2]} of form ${i[0]} will download updated data...`);
-      if(oldUrl && oldUrl.startsWith('file://')) this.util.rmFile(oldFileCongif.folder, oldFileCongif.name)
-      return newUrl;
-    } else {
-      return newFileCongif.path;
     }
   }
 
   private async downloadSubmissionsData(form: Form, submissions: FormSubmission[]) {
     this.formsProvider.updateFormSyncStatus(form.form_id, true)
     let subDataFields: string[] = form.getUrlFields();
-     submissions = await Promise.all(submissions.map( async (sub) => {
+     submissions = await Promise.all(submissions.map(async (sub) => {
         this.setSubmissionAs(sub.id,'downloading');
-        await Promise.all( subDataFields.map( async (field) => {
+        await Promise.all(subDataFields.map( async (field) => {
           sub.fields[field] = await this.downloadSubmissionFields(sub.fields[field],form.form_id,sub.id)
         }))
         this.rmSubmissionFrom(sub.id,'downloading');
         this.updateSubmission(sub);
         return sub;
-      }) )
-      await this.dbClient.saveSubmisisons(submissions).toPromise()
-
+      }))
+      this.dbClient.saveSubmisisons(submissions).subscribe()
   }
 
 
@@ -192,7 +197,7 @@ export class SubmissionsProvider {
   private async downloadSubmissionFields(sub1,formId,subId){
     if (sub1) {
       if (typeof (sub1) == "object") {
-       await Promise.all(Object.keys(sub1).map( async (key) => {
+       await Promise.all(Object.keys(sub1).map(async (key) => {
         sub1[key] = await this.getDownloadedFilePath(sub1[key], `${formId}_submission_${subId}_`)
         }));
       }
@@ -209,19 +214,19 @@ export class SubmissionsProvider {
   }
 
   private async getDownloadedFilePath(fileToDownload : string,id : string){
-    this.http.removeCookies(fileToDownload,()=>{});
     let entry: Entry;
+    const fileTransfer = new FileTransfer().create();
     try {
-      if(fileToDownload.startsWith('http')){
         let file = this.util.getFilePath(fileToDownload, id);
-        entry = await this.http.downloadFile(file.pathToDownload,{},{},file.path);
+        entry = await fileTransfer.download(file.pathToDownload,file.path);
+        console.log(entry)
         return entry.nativeURL;
-      }
-      return fileToDownload;
     } catch (error) {
       console.log('Error downloading submission data', error)
-      return fileToDownload;
     }
+  // }
+
+    return fileToDownload;
   }
 
   public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {
@@ -342,7 +347,8 @@ export class SubmissionsProvider {
         this.updateSubmissionFields(submission, data, urlMap);
 
         this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          // console.log("Updated submission fields - " + JSON.stringify(submission));
+          console.log("Updated submission fields :");
+          console.log(submission)
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
             this.processBarcode(data, submission, obs);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
@@ -449,7 +455,7 @@ export class SubmissionsProvider {
 
   private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
 
-    console.log("Submit form: " + JSON.stringify(submission));
+    console.log("Submit form to api: " + JSON.stringify(submission));
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
@@ -467,17 +473,18 @@ export class SubmissionsProvider {
           this.duplicateLeadSource.next(null);
           return;
         }
-
+        console.log('new submission from api :');
+        console.log(d);
         if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
-          let msg = "Could not process submission for form \"" + form.name + "\": " + d.message;
           submission.invalid_fields = 1;
           submission.hold_request_id = 0;
           submission.status = SubmissionStatus.InvalidFields;
           this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
-            obs.error(msg);
+            console.log('invalid submission')
+            console.log(submission);
           }, err => {
             console.log(err);
-            obs.error("Could not process submission for form " + form.name);
+            obs.error("Could not process submission for form \"" + form.name + "\": " + d.message);
           });
           return;
         }
@@ -500,6 +507,7 @@ export class SubmissionsProvider {
 
         this.submissionsRepository.handleMergedSubmission(d.id, submission, d.submission, form)
           .subscribe((ok) => {
+            console.log('submission repo '+ok)
             if (d.id > 0) {
               submission.id = submission.activity_id;
             }
@@ -621,5 +629,12 @@ export class SubmissionsProvider {
     let sub = this.submissions.find((e)=>e.id == submissionId)
     if(sub) sub.status = status;
   }
+
+  removeSubmission(submission) {
+     this.dbClient.deleteSubmission(submission).subscribe(()=>{
+       this.submissions = this.submissions.filter((e)=> e.id == submission.id);
+     })
+  }
+
 
 }

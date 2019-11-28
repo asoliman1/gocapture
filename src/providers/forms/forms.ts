@@ -237,7 +237,7 @@ export class FormsProvider {
       form.total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
       form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
       form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
-      // console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
+      console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
     })
   }
 

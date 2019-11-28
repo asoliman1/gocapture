@@ -79,22 +79,20 @@ export class Documents implements AfterViewInit {
     // open the PDF viewer
     let filename = document.file_path.split('/').pop();
     let documentFilePath = this.documentsFolder() + filename;
-    if (document.file_type === 'application/pdf' && this.platform.is('ios')) {
-      console.log('OPENING PDF PREVIEWER FOR DOCUMENT', JSON.stringify(document));
-
-      return this.documentViewer.viewDocument(
-        documentFilePath,
-        'application/pdf',
-        { title: document.name },
-        null,
-        null,
-        null,
-        (err) => {
-          console.log('Error opening PDF file => ', JSON.stringify(err));
-          this.showDocumentOpeningErrorToast();
-        }
-      );
-    }
+    // if (document.file_type === 'application/pdf' && this.platform.is('ios')) {
+    //   return this.documentViewer.viewDocument(
+    //     documentFilePath,
+    //     'application/pdf',
+    //     { title: document.name },
+    //     null,
+    //     null,
+    //     null,
+    //     (err) => {
+    //       console.log('Error opening PDF file => ', JSON.stringify(err));
+    //       this.showDocumentOpeningErrorToast();
+    //     }
+    //   );
+    // }
 
     this.fileOpener.open(decodeURIComponent(documentFilePath), document.file_type)
       .then((_) => {
