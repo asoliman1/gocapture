@@ -1,6 +1,5 @@
 import { SubmissionsProvider } from './../../providers/submissions/submissions';
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import { BarcodeStatus, Form, FormElementType, FormSubmission, SubmissionStatus } from "../../model";
 import { FormCapture } from "../form-capture";
@@ -10,7 +9,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { Util } from "../../util/util";
 import { Content, ModalController } from "ionic-angular";
 import { FilterType, GCFilter } from "../../components/filters-view/gc-filter";
-import { FilterService, Modifier, Modifiers } from "../../services/filter-service";
+import { FilterService, Modifier } from "../../services/filter-service";
 import { ThemeProvider } from "../../providers/theme/theme";
 import { DateTimeUtil } from "../../util/date-time-util";
 import { Popup } from "../../providers/popup/popup";
@@ -57,7 +56,6 @@ export class FormReview {
 		private navParams: NavParams,
 		private client: BussinessClient,
 		private zone: NgZone,
-		private syncClient: SyncClient,
 		private popup: Popup,
 		private util: Util,
 		private modalCtrl: ModalController,
@@ -80,11 +78,10 @@ export class FormReview {
 		this.form = this.navParams.get("form");
 		this.isDispatch = this.navParams.get("isDispatch");
 		this.loading = true;
-		this.doRefresh();
 	}
 
-	ionViewDidEnter() {
-		//
+	ionViewWillEnter(){
+		this.doRefresh();
 	}
 
 	ionViewWillLeave() {
@@ -139,9 +136,7 @@ export class FormReview {
 	}
 
 	deleteSubmission(submission) {
-		this.client.removeSubmission(submission).subscribe(result => {
-			this.doRefresh();
-		});
+		this.submissionsProvider.removeSubmission(submission);
 	}
 
 
@@ -212,6 +207,7 @@ export class FormReview {
 		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.submissions = submissions;
 			this.loading = false;
+			console.log(this.submissions.length)
 			this.onFilterChanged();
 		});
 	}

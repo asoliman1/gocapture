@@ -373,7 +373,6 @@ export class FormView {
 
    splitEls() {
      this.form.elements = this.util.sortBy(this.form.elements,1,'position');
-     console.log(this.elements)
      if(this.isSeparatable) this.elements = [
       this.form.elements.slice(0,this.separateAt),
       this.form.elements.slice(this.separateAt+1)

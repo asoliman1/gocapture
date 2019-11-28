@@ -86,9 +86,6 @@ export class Settings {
     });
   }
 
-  getLocation(){
-   this.client.setLocation();
-  }
 
   getName(user: User) {
     let name = "";
