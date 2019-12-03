@@ -156,6 +156,7 @@ export class SubmissionsProvider {
 
   private checkSubmissionFile(newUrl : string, oldUrl : string, id : string,submissionsToDownload : number[]): string {
     let i = id.split('_'), 
+    pathTodownload = newUrl,
     newFileCongif = this.util.getFilePath(newUrl, newUrl && newUrl.startsWith('https') ? id : ''), 
     oldFileCongif = this.util.getFilePath(oldUrl);
     if(oldFileCongif.name === newFileCongif.name){
@@ -168,7 +169,7 @@ export class SubmissionsProvider {
         console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
       }
       submissionsToDownload.push(parseInt(i[2]));
-      return newUrl;
+      return pathTodownload;
     }
   }
 
@@ -218,11 +219,12 @@ export class SubmissionsProvider {
     const fileTransfer = new FileTransfer().create();
     try {
         let file = this.util.getFilePath(fileToDownload, id);
-        entry = await fileTransfer.download(file.pathToDownload,file.path);
+        entry = await fileTransfer.download(file.pathToDownload,file.path,true);
         console.log(entry)
         return entry.nativeURL;
     } catch (error) {
-      console.log('Error downloading submission data', error)
+      console.log('Error downloading submission data : ' + id)
+      console.log(error);
     }
   // }
 

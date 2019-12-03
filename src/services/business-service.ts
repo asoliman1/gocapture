@@ -341,7 +341,7 @@ export class BussinessClient {
           (downloadData) => { },
           (err) => { obs.error(err); },
           () => {
-            console.log('Finished downloading updates at : ' + newD.getTime() + "")
+            console.log('Finished syncing at : ' + newD + "")
             this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
               this.db.saveConfig("getAllContacts", "true").subscribe(() => {
                 obs.next(true);
@@ -481,10 +481,10 @@ export class BussinessClient {
       submissionTime = new Date(submission.last_sync_date).getTime();
     }
 
-    // let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-    // let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
+    let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
+    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
 
-    return (submission.status == SubmissionStatus.ToSubmit) || (submission.status == SubmissionStatus.Submitting);
+    return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 
   public removeSubmission(submission) {

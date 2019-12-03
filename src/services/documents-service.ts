@@ -141,11 +141,12 @@ export class DocumentsService {
     return new Observable<IDocument[]>((obs) => {
       this.dbClient.getDocumentsBySetId(setId).subscribe((docs) => {
         obs.next(docs);
-        obs.complete();
       }, (error) => {
         obs.error(false);
         console.log(`Couldn't get the documents, an error occurred`);
         console.log(JSON.stringify(error));
+      },()=>{
+        obs.complete();
       })
     });
   }

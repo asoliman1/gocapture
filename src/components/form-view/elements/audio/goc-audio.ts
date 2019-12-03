@@ -177,24 +177,35 @@ export class GOCAudio extends BaseElement {
 			this.popup.dismiss('loading');
 		}
 
-		this.audioCaptureService.playRecord(filePath).subscribe(status => {
-			this.isPlaying = (status == MEDIA_STATUS.RUNNING);
-
-			let duration = this.audioCaptureService.trackDuration();
-
-			if (duration > 0) {
-
-				this.step = duration / 100;
-				this.trackDuration = duration;
-
-				this.updateAudioDuration(status == MEDIA_STATUS.STOPPED);
-
-				if (this.isSeeked && this.isPlaying) {
-					this.audioCaptureService.seek(this.currentPosition * this.trackDuration / 100);
-					this.isSeeked = false;
+		this.audioCaptureService.init(filePath)
+		this.audioCaptureService.getAudioStatus().subscribe(status => {
+			this.zone.run(() => {
+				this.isPlaying = (status == MEDIA_STATUS.RUNNING);
+			})
+			let counter = 0;
+			let timerDur = setInterval(() => {
+				counter = counter + 100;
+				if (counter > 2000) {
+					clearInterval(timerDur);
 				}
-			}
+				let duration = this.audioCaptureService.trackDuration();
+				if (duration > 0) {
+					clearInterval(timerDur);
+
+					this.step = duration / 100;
+					this.trackDuration = duration;
+
+					this.updateAudioDuration(status == MEDIA_STATUS.STOPPED);
+
+					if (this.isSeeked && this.isPlaying) {
+						this.audioCaptureService.seek(this.currentPosition * this.trackDuration / 100);
+						this.isSeeked = false;
+					}
+				}
+			}, 100);
+
 		});
+		this.audioCaptureService.playRecord();
 	}
 
 

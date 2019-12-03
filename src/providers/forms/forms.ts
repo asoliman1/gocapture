@@ -1,4 +1,3 @@
-import { map } from 'rxjs/operators';
 import { HTTP } from '@ionic-native/http';
 import { Image } from '../../model/image';
 import { Form } from '../../model/form';
@@ -204,6 +203,7 @@ export class FormsProvider {
 
   deleteForm(form: Form) {
     this.forms = this.forms.filter((e) => e.form_id !== form.form_id);
+    this.dbClient.deleteFormsInList([form.form_id]).subscribe();
   }
 
   updateFormSyncStatus(form_id: any, isSyncing: boolean) {
@@ -235,9 +235,9 @@ export class FormsProvider {
     if(form)
     this.dbClient.getSubmissions(form.form_id,false).subscribe((submissions)=>{
       form.total_submissions = submissions.filter((e) => e.status == SubmissionStatus.Submitted).length;
-      form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit).length;
+      form.total_unsent = submissions.filter((e) => e.status == SubmissionStatus.ToSubmit || e.status == SubmissionStatus.Submitting).length;
       form.total_hold = submissions.filter((e) => e.status == SubmissionStatus.OnHold).length;
-      console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_unsent}, ${form.total_hold}`);
+      // console.log(`form ${form_id} submissions ${form.total_submissions}, ${form.total_hold}, ${form.total_unsent}`);
     })
   }
 

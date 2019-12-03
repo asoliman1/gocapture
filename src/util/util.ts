@@ -227,7 +227,6 @@ export class Util {
 
   public adjustFilePath(filePath) {
     if (this.platform.is("ios")) {
-
       return filePath.replace(/^file:\/\//, '');
     }
     return filePath;
@@ -253,7 +252,6 @@ export class Util {
   // A.S
   getFilePath(url, id = '') {
     if (url && url != '') {
-
       let isSplashImage = url.includes('https://images.unsplash.com/');
       url = isSplashImage ? url.split('?')[0] : url;
       let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
@@ -262,7 +260,7 @@ export class Util {
       let folder = this.folderForFile(ext);
       let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
       let path = folderPath + name;
-
+      path = path.replace('.mp3','.m4a')
       return { path, pathToDownload, name, folder, folderPath }
     }
     else {

@@ -50,7 +50,6 @@ export class DocumentsSyncClient {
         console.log(`Error while syncing form ${formId}'s documents`);
         console.log(JSON.stringify(error));
         this._isSyncing = false;
-
       });
   }
 
@@ -58,15 +57,13 @@ export class DocumentsSyncClient {
     this.formsProvider.updateFormSyncStatus(formId, true)
     this.documentsService.removeDocuments(docs.map((doc) => doc.id))
       .subscribe(() => {
-        this.formsProvider.updateFormSyncStatus(formId, false)
-
-        console.log(`Form ${formId}'s documents deleted (${docs.length})`);
       }, (error) => {
         this.formsProvider.updateFormSyncStatus(formId, false)
-
         console.log(`Form ${formId}'s documents deletion error`);
-        console.log(JSON.stringify(error)
-        )
+        console.log(error)
+      },()=>{
+        this.formsProvider.updateFormSyncStatus(formId, false)
+        console.log(`Form ${formId}'s documents deleted (${docs.length})`);
       });
   }
 
@@ -83,13 +80,14 @@ export class DocumentsSyncClient {
 
     forkJoin(documentObservables)
       .subscribe(() => {
-        console.log(`Form ${formId}'s documents inserted (${docs.length})`);
-        this.formsProvider.updateFormSyncStatus(formId, false)
-        this._isSyncing = false;
       }, (error) => {
         this.formsProvider.updateFormSyncStatus(formId, false)
         console.log(`Form ${formId}'s documents insertion error`)
         console.log(error);
+        this._isSyncing = false;
+      },()=>{
+        console.log(`Form ${formId}'s documents inserted (${docs.length})`);
+        this.formsProvider.updateFormSyncStatus(formId, false)
         this._isSyncing = false;
       })
   }

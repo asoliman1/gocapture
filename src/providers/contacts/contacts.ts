@@ -28,8 +28,7 @@ export class ContactsProvider {
     return new Observable<any>(obs => {
       this.rest.getAllDeviceFormMemberships(forms).subscribe((data) => {
         this.db.saveMemberships(data.contacts).subscribe(()=>obs.next(data.contacts),obs.error);
-        this.formsProvider.updateFormLastSync(data.form.form_id,'contacts');
-        // console.log(data);
+       if(data.form.form_id) this.formsProvider.updateFormLastSync(data.form.form_id,'contacts');
       },obs.error,obs.complete)
     });
   }

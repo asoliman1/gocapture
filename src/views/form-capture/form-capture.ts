@@ -243,7 +243,7 @@ export class FormCapture implements AfterViewInit {
 // A.S
   private stopIdleMode() {
     this.idle.stop()
-    console.log('idle mode stopped');
+    // console.log('idle mode stopped');
   }
 
 // return updated object data of form
