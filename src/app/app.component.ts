@@ -20,6 +20,7 @@ import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Conditional } from '@angular/compiler';
+import { TranslateConfigService } from "../services/translate/translateConfigService";
 
 @Component({
   templateUrl: 'app.html'
@@ -44,6 +45,7 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
+    private translateConfigService: TranslateConfigService
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -78,6 +80,10 @@ export class MyApp {
       this.onAppResumes();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+
+      this.translateConfigService.initTranslate();
+      // TODO: for testing only
+      this.translateConfigService.setLanguage('en');
     });
   }
 
@@ -194,9 +200,6 @@ export class MyApp {
     // this.imageLoaderConfig.setFallbackUrl('assets/images/image-placeholder.jpg');
 
   }
-
-
-
 
   hideSplashScreen() {
     if (navigator && navigator["splashscreen"]) {

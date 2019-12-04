@@ -6,8 +6,8 @@
           <img [src]="" *ngIf="!user.user_profile_picture"/>
           <img [src]="user.user_profile_picture | avatarPathUpdaterPipe" *ngIf="user.user_profile_picture"/>
         </ion-avatar>
-        <h1>Hi, {{user.first_name}}</h1>
-        <h3>Welcome back</h3>
+        <h1>{{'sideMenu.hi' | translate}}, {{user.first_name}}</h1>
+        <h3>{{'sideMenu.welcome-back' | translate}}</h3>
       </ion-item>
     </div>
     <ion-list color="dark">
@@ -28,7 +28,7 @@
 
   <ion-toolbar #toolbar  class="sync-header animated fadeIn">
     <ion-spinner></ion-spinner>
-    <div class="action">Syncing...</div>
+    <div class="action">{{'general.syncing' | translate}}</div>
     <div class="element">{{currentSyncForm}}</div>
   </ion-toolbar>
 

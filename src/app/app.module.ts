@@ -109,6 +109,14 @@ import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateConfigService } from "../services/translate/translateConfigService";
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -170,6 +178,13 @@ import { SectionBlock } from '../components/section-block';
     ComponentsModule,
     NgSelectModule,
     FormsModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -275,6 +290,7 @@ import { SectionBlock } from '../components/section-block';
     formViewService,
     FilterService,
     Keyboard,
+    TranslateConfigService
   ]
 })
 export class AppModule { }

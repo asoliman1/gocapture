@@ -11,6 +11,7 @@ import { ThemeProvider } from "../../providers/theme/theme";
 import { App } from "ionic-angular";
 import { FormCapture } from "../form-capture";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
 	selector: 'main',
@@ -46,12 +47,13 @@ export class Main {
 		private themeProvider: ThemeProvider,
 		private app: App,
 		private rapidCaptureService: RapidCaptureService,
+    private translate: TranslateService
 		) {
 		this.pages = [
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
-			{ title: 'Events', component: Forms, icon: "document" },
+			{ title: this.translate.instant('sideMenu.events'), component: Forms, icon: "document" },
 			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
-			{ title: 'Settings', component: Settings, icon: "cog" }
+			{ title: this.translate.instant('sideMenu.settings'), component: Settings, icon: "cog" }
 		];
 	}
 
@@ -131,7 +133,7 @@ export class Main {
 			this.currentSyncForm = this.getCurrentUploadingForm();
 
 			// A.S there was a function here to call sync for documents which make performance very slow as it executed many times
-				
+
 			if (this.pullup.state == IonPullUpFooterState.Minimized && !hidePullup) {
 				this.pullup.collapse();
 			}

@@ -3,7 +3,7 @@
 		<button ion-button menuToggle>
       		<ion-icon name="menu"></ion-icon>
     	</button>
-		<ion-title>Settings</ion-title>
+		<ion-title>{{'settings.title' | translate}}</ion-title>
 		<ion-buttons end class="hide">
 			<button ion-button [disabled]="!shouldSave" (click)="saveSettings()">
 				<ion-icon name="checkmark"></ion-icon>
@@ -15,72 +15,72 @@
 <ion-content class="settings">
 	<ion-list>
 		<ion-list-header>
-			Organization
+      {{'settings.organization.header' | translate}}
 		</ion-list-header>
 		<ion-item>
-			<ion-label>Name</ion-label>
+			<ion-label>{{'settings.organization.name' | translate}}</ion-label>
 			<ion-label class="align-right">{{user.customer_name}}</ion-label>
 		</ion-item>
 		<ion-item>
-			<ion-label>Key</ion-label>
+			<ion-label>{{'settings.organization.key' | translate}}</ion-label>
 			<ion-label class="align-right"></ion-label>
 		</ion-item>
 		<ion-item [ngClass]="{'last': !user.device_id}">
-			<ion-label>Operator</ion-label>
+			<ion-label>{{'settings.organization.operator' | translate}}</ion-label>
 			<ion-label class="align-right">{{getName(user)}}</ion-label>
 		</ion-item>
     <ion-item class="last" *ngIf="user.device_id">
-      <ion-label>Device ID</ion-label>
+      <ion-label>{{'settings.organization.deviceId' | translate}}</ion-label>
       <ion-label class="align-right">{{user.device_id}}</ion-label>
     </ion-item>
 		<ion-list-header>
-			Operations
+      {{'settings.operations.header' | translate}}
 		</ion-list-header>
 		<ion-item class="last">
-			<ion-label>Automatic Upload</ion-label>
+			<ion-label>{{'settings.operations.automatic-upload' | translate}}</ion-label>
 			<ion-toggle  [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
     <ion-item class="last">
-      <ion-label>Save business cards on device</ion-label>
+      <ion-label>{{'settings.operations.save-business-cards' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()" checked="settings.autosaveBCCaptures"></ion-toggle>
     </ion-item>
     <ion-item class="last">
-      <ion-label>Reminder for unsubmitted leads<br>
+      <ion-label>{{'settings.operations.reminder-for-unsubmitted-leads' | translate}}<br>
         <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
     </ion-item>
     <ion-item class="last">
-      <ion-label>Auto-Crop</ion-label>
+      <ion-label>{{'settings.operations.auto-crop' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.autoCrop" (ionChange)="onChange()" checked="settings.autoCrop"></ion-toggle>
     </ion-item>
     <ion-list-header>
-      Dropdown
+      {{'settings.dropdown.header' | translate}}
     </ion-list-header>
     <ion-item class="last">
-      <ion-label>Single tap selection</ion-label>
+      <ion-label> {{'settings.dropdown.label' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.singleTapSelection" (ionChange)="onChange()" checked="settings.singleTapSelection"></ion-toggle>
     </ion-item>
 		<ion-list-header>
-			Kiosk Mode
+      {{'settings.kiosk-mode.header' | translate}}
 		</ion-list-header>
 		<ion-item class="last">
-			<ion-label>Pass code</ion-label>
+			<ion-label>{{'settings.kiosk-mode.label' | translate}}</ion-label>
 			<ion-input type="password" class="align-right" [(ngModel)]="settings.kioskModePassword" (ionChange)="onChange()"></ion-input>
 		</ion-item>
 		<ion-list-header>
-			Diagnostics
+      {{'settings.diagnostics.header' | translate}}
 		</ion-list-header>
 		<ion-item>
-			<ion-label>App version</ion-label>
+			<ion-label>{{'settings.diagnostics.app-version' | translate}}</ion-label>
 			<ion-label class="align-right">{{version}}</ion-label>
 		</ion-item>
 		<ion-item class="last">
-			<ion-label>Enable logging</ion-label>
+			<ion-label>{{'settings.diagnostics.enable-logging' | translate}}</ion-label>
 			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChangeEnableLogging()" checked="settings.enableLogging"></ion-toggle>
 		</ion-item>
 		<ion-item>
-			<button ion-button full large color="light" (click)="showLogs()">View log</button>
+			<button ion-button full large color="light" (click)="showLogs()">{{'settings.diagnostics.view-log-button' | translate}}</button>
 		</ion-item>
 
 		<!-- <ion-item>
@@ -88,10 +88,10 @@
 		</ion-item> -->
 		<!-- A.S GOC-317 -->
 		<ion-item>
-			<button ion-button full large color="light" (click)="testBadgeScanner()">Test Badge Scan</button>
+			<button ion-button full large color="light" (click)="testBadgeScanner()">{{'settings.diagnostics.test-badge-scan' | translate}}</button>
 		</ion-item>
 		<ion-item>
-			<button ion-button full large color="danger" (click)="unauthenticate()">Unauthenticate Device</button>
+			<button ion-button full large color="danger" (click)="unauthenticate()">{{'settings.unauth-device-btn' | translate}}</button>
 		</ion-item>
 
 	</ion-list>

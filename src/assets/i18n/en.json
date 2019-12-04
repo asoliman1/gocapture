@@ -1,0 +1,59 @@
+{
+  "login": {
+    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
+    "email-placeholder": "Enter Email Address",
+    "auth-placeholder": "Enter Auth Code",
+    "auth-button": "Authenticate",
+    "continue-button": "Continue",
+    "connection-mode": {
+      "title": "Connection mode",
+      "normal": "Normal",
+      "demo": "Demo"
+    }
+  },
+
+  "sideMenu": {
+    "events":   "Events",
+    "settings": "Settings",
+    "hi": "Hi",
+    "welcome-back": "Welcome back"
+  },
+
+  "general": {
+    "syncing": "Syncing..."
+  },
+
+  "settings": {
+    "title": "Settings",
+    "organization": {
+      "header": "Organization",
+      "name": "Name",
+      "key": "Key",
+      "operator": "Operator",
+      "deviceId": "Device ID"
+    },
+    "operations": {
+      "header": "Operations",
+      "automatic-upload": "Automatic Upload",
+      "save-business-cards": "Save business cards on device",
+      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
+      "auto-crop": "Auto-Crop"
+    },
+    "dropdown": {
+      "header": "Dropdown",
+      "label": "Single tap selection"
+    },
+    "kiosk-mode": {
+      "header": "Kiosk mode",
+      "label": "Pass code"
+    },
+    "diagnostics": {
+      "header": "Diagnostics",
+      "app-version": "App version",
+      "enable-logging": "Enable logging",
+      "view-log-button": "View log",
+      "test-badge-scan": "Test Badge Scan"
+    }
+  },
+  "unauth-device-btn": "Unauthenticate Device"
+}
