@@ -260,7 +260,8 @@ export class Util {
       let folder = this.folderForFile(ext);
       let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
       let path = folderPath + name;
-      path = path.replace('.mp3','.m4a')
+      path =  path.replace('.mp3','.m4a')
+
       return { path, pathToDownload, name, folder, folderPath }
     }
     else {

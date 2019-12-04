@@ -74,7 +74,6 @@ export class FormsProvider {
     console.log('Downloading forms data...');
     await Promise.all(forms.map(async (form: Form) => {
       await this.downloadFormData(form);
-      return form;
     }))
     this.hasNewData = false;
     console.log('Downloading forms data finished');
@@ -82,6 +81,7 @@ export class FormsProvider {
 
   private async downloadFormData(form: Form) {
     await this.downloadFormBackground(form);
+    await this.downloadFormCaptureBackground(form);
     await this.downloadFormScreenSaver(form);
   }
 
@@ -122,7 +122,22 @@ export class FormsProvider {
     }
   }
 
-
+  private async downloadFormCaptureBackground(form: Form) {
+    if (form.event_style.capture_background_image.url != '' && form.event_style.capture_background_image.path.startsWith('https://')) {
+      let entry: Entry;
+      this.updateFormSyncStatus(form.form_id, true)
+      try {
+        let file = this.util.getFilePath(form.event_style.capture_background_image.url, `capture_background_${form.form_id}_`);
+        entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
+        form.event_style.capture_background_image = { path: entry.nativeURL, url: form.event_style.capture_background_image.url };
+        console.log(form.event_style.capture_background_image)
+      } catch (error) {
+        console.log('Error downloading a form capture background image', error)
+      }
+      this.updateFormCaptureBackground(form.form_id, form.event_style.capture_background_image);
+      this.updateFormSyncStatus(form.form_id, false)
+    }
+  }
 
   // A.S GOC-326 check file if downloaded
   checkFile(newUrl: string, oldUrl: Image, id: string) {
@@ -153,12 +168,17 @@ export class FormsProvider {
   private checkFormData(newForms: any[], oldForms: Form[]) {
     return newForms.map((form) => {
       let oldForm = oldForms.find(f => f.form_id == form.form_id);
-      let img = form.event_style.event_record_background;
-      form.event_style.event_record_background = { path: this.checkFile(img, oldForm && oldForm.event_style ? oldForm.event_style.event_record_background : null, `background_${form.form_id}_`), url: img };
+      // check event background image
+      let eventBg = form.event_style.event_record_background;
+      form.event_style.event_record_background = { path: this.checkFile(eventBg, oldForm && oldForm.event_style ? oldForm.event_style.event_record_background : null, `background_${form.form_id}_`), url: eventBg };
+      // check event capture background image
+      let captureBg = form.event_style.capture_background_image;
+      form.event_style.capture_background_image = { path: this.checkFile(captureBg, oldForm && oldForm.event_style ? oldForm.event_style.capture_background_image : null, `capture_background_${form.form_id}_`), url: captureBg };
+      // check event screen saver images
       if (form.event_style.screensaver_media_items.length) {
         let oldImgs = oldForm && oldForm.event_style ? oldForm.event_style.screensaver_media_items : [];
         form.event_style.screensaver_media_items = form.event_style.screensaver_media_items.map((item) => {
-          img = item;
+          let img = item;
           let oldImg = oldImgs.find((e) => e.url == img);
           item = { path: this.checkFile(img, oldImg, `screen_saver_${form.form_id}_`), url: img };
           return item;
@@ -221,6 +241,12 @@ export class FormsProvider {
   updateFormBackground(form_id: any, background: Image) {
     let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
     this.forms[index].event_style.event_record_background = background;
+    this.saveFormDb(this.forms[index])
+  }
+
+  updateFormCaptureBackground(form_id: any, background: Image) {
+    let index = this.forms.findIndex((e) => e.form_id === (form_id * 1));
+    this.forms[index].event_style.capture_background_image = background;
     this.saveFormDb(this.forms[index])
   }
 

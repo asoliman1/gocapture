@@ -3,11 +3,10 @@ dynamic-form-element, .dynamic-form-element {
   // A.S GOC-326
   :root {
     --elements_label_color : black;
-    --elements_background_color : white;
     }
 
     ion-item{
-      background: var(--elements_background_color) !important;
+      background: transparent !important;
     }
 
   .selection{

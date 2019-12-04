@@ -159,6 +159,7 @@ export class SubmissionsProvider {
     pathTodownload = newUrl,
     newFileCongif = this.util.getFilePath(newUrl, newUrl && newUrl.startsWith('https') ? id : ''), 
     oldFileCongif = this.util.getFilePath(oldUrl);
+    console.log(oldFileCongif,newFileCongif)
     if(oldFileCongif.name === newFileCongif.name){
       return oldUrl;
     }else{
@@ -220,7 +221,6 @@ export class SubmissionsProvider {
     try {
         let file = this.util.getFilePath(fileToDownload, id);
         entry = await fileTransfer.download(file.pathToDownload,file.path,true);
-        console.log(entry)
         return entry.nativeURL;
     } catch (error) {
       console.log('Error downloading submission data : ' + id)
