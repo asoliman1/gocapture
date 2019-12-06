@@ -21,6 +21,7 @@ import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Conditional } from '@angular/compiler';
 import { TranslateConfigService } from "../services/translate/translateConfigService";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   templateUrl: 'app.html'
@@ -45,7 +46,8 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
-    private translateConfigService: TranslateConfigService
+    private translateConfigService: TranslateConfigService,
+    private translate: TranslateService
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -82,8 +84,6 @@ export class MyApp {
       this.util.checkFilesDirectories();
 
       this.translateConfigService.initTranslate();
-      // TODO: for testing only
-      this.translateConfigService.setLanguage('en');
     });
   }
 
@@ -234,7 +234,7 @@ export class MyApp {
       ];
 
 
-      this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
+      this.popup.showAlert(this.translate.instant('alerts.warning'), status.message, buttons, this.selectedTheme);
     }
   }
 }

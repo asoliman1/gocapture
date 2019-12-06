@@ -7,6 +7,7 @@ import { ThemeProvider } from "../../../../providers/theme/theme";
 import { Content } from "ionic-angular";
 import { Popup } from "../../../../providers/popup/popup";
 import { MEDIA_STATUS } from "@ionic-native/media";
+import { TranslateService } from "@ngx-translate/core";
 
 
 @Component({
@@ -48,7 +49,8 @@ export class GOCAudio extends BaseElement {
 		private themeProvider: ThemeProvider,
 		private popup: Popup,
 		private zone: NgZone,
-		private content: Content) {
+		private content: Content,
+    private translate: TranslateService) {
 		super();
 
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -69,7 +71,7 @@ export class GOCAudio extends BaseElement {
 		}, (error) => {
 			this.onProcessingEvent.emit('false');
 
-			this.popup.showAlert('Error', "Can't start recording", [{
+			this.popup.showAlert(this.translate.instant('alerts.error'), "Can't start recording", [{
 				text: 'Cancel',
 				role: 'cancel'
 			}], this.selectedTheme);
@@ -220,7 +222,7 @@ export class GOCAudio extends BaseElement {
 				}
 			}];
 
-		this.popup.showAlert('Warning', "Do you want to delete the recording?", buttons, this.selectedTheme);
+		this.popup.showAlert(this.translate.instant('alerts.warning'), "Do you want to delete the recording?", buttons, this.selectedTheme);
 	}
 
 	removeRecordingHandler() {

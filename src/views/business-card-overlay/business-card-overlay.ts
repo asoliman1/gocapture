@@ -5,6 +5,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Popup } from "../../providers/popup/popup";
 import { Platform } from 'ionic-angular/platform/platform';
 import { ImageProcessor } from "../../services/image-processor";
+import { TranslateService } from "@ngx-translate/core";
 
 /**
  * Generated class for the BusinessCardOverlayPage page.
@@ -27,7 +28,8 @@ export class BusinessCardOverlayPage {
 		private screenOrientation: ScreenOrientation,
 		private popup: Popup,
 		private platform: Platform,
-		private imageProcessor: ImageProcessor) {
+		private imageProcessor: ImageProcessor,
+    private translate: TranslateService) {
 	}
 
 	ionViewDidLoad() {
@@ -76,7 +78,7 @@ export class BusinessCardOverlayPage {
 			},
 			(err) => {
 				console.log(err);
-				this.popup.showAlert('Error', err, ['Ok']);
+				this.popup.showAlert(this.translate.instant('alerts.error'), err, ['Ok']);
 			});
 	}
 
@@ -125,7 +127,7 @@ export class BusinessCardOverlayPage {
 
 		}, (err) => {
 			console.log(err);
-			this.popup.showAlert('Error', err, ['Ok']);
+			this.popup.showAlert(this.translate.instant('alerts.error'), err, ['Ok']);
 		});
 	}
 }

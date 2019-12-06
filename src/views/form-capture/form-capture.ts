@@ -45,6 +45,7 @@ import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
+import {TranslateService} from "@ngx-translate/core";
 
 
 
@@ -102,7 +103,7 @@ export class FormCapture implements AfterViewInit {
   private idle: Idle;
 
   private _modal: Modal;
-  
+
   private location;
 
   onFormUpdate: Subscription;
@@ -127,12 +128,13 @@ export class FormCapture implements AfterViewInit {
     private utils: Util,
     private formViewService:formViewService,
     private settingsService : SettingsService,
-    private insomnia: Insomnia) {
+    private insomnia: Insomnia,
+    private translate: TranslateService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
- 
+
   }
 
 
@@ -553,7 +555,7 @@ export class FormCapture implements AfterViewInit {
               }
             }];
 
-          this.popup.showAlert('Info', "No kiosk password set!", buttons, this.selectedTheme);
+          this.popup.showAlert(this.translate.instant('alerts.info'), "No kiosk password set!", buttons, this.selectedTheme);
         }
       });
     } else {
@@ -605,7 +607,7 @@ export class FormCapture implements AfterViewInit {
 
   public doSave(shouldSyncData = true) {
 
-    
+
     this.submitAttempt = true;
 
     /*
@@ -650,7 +652,7 @@ export class FormCapture implements AfterViewInit {
   this.submission.location = this.location;
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-  
+
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();
@@ -659,12 +661,12 @@ export class FormCapture implements AfterViewInit {
           }
           return;
         }
-  
+
         this.kioskModeCallback();
       }, (err) => {
         console.error(err);
       });
- 
+
   }
 
   invalidControls() {
@@ -784,9 +786,9 @@ export class FormCapture implements AfterViewInit {
             let audioRecorderEl = this.getElementForType("audio");
 
             let isAudio = audioRecorderEl.identifier == id;
-            let value = 
-            isAudio && data.fields[field] && data.fields[field].startsWith('http') ? 
-            data.fields[field] : 
+            let value =
+            isAudio && data.fields[field] && data.fields[field].startsWith('http') ?
+            data.fields[field] :
             data.fields[field] || this.formView.getFormGroup().value[id] ;
 
             this.submission.fields[id] = value;

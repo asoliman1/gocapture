@@ -53,7 +53,47 @@
       "enable-logging": "Enable logging",
       "view-log-button": "View log",
       "test-badge-scan": "Test Badge Scan"
+    },
+    "unauth-device-btn": "Unauthenticate Device"
+  },
+  "form-capture": {
+    "submit-btn": "Submit",
+    "edit-btn": "Edit",
+    "update-btn": "Update",
+    "date-info": "Captured on",
+    "search-list": "Search List"
+  },
+  "logs": {
+    "title": "Logs",
+    "show-more": "Show more"
+  },
+  "alerts": {
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info",
+    "Ok": "Ok",
+    "cancel": "Cancel",
+    "business-card": {
+      "message": "Business card was saved to the Photo Library"
+    },
+    "duplicate-lead": {
+      "message": "Duplicate Lead"
+    },
+    "kiosk-mode": {
+      "message": "No kiosk password set!"
+    },
+    "audio-recording": {
+      "cant-start": "Can't start recording",
+      "delete-recording": "Do you want to delete recording?"
+    },
+    "settings": {
+      "unauthinticate": {
+        "title": "Unauthenticate ?",
+        "message": "Are you sure you want to unauthenticate this device?"
+      }
     }
   },
-  "unauth-device-btn": "Unauthenticate Device"
+  "toast": {
+
+  }
 }

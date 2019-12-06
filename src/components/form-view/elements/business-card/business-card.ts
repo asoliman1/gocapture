@@ -23,6 +23,7 @@ import { ImageViewer } from "./image-viewer";
 import { SettingsService } from "../../../../services/settings-service";
 import { settingsKeys } from "../../../../constants/constants";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
+import { TranslateService } from "@ngx-translate/core";
 
 declare var CameraPreview;
 declare var screen;
@@ -81,7 +82,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     private photoLibrary: PhotoLibrary,
     private settingsService: SettingsService,
     private formViewService : formViewService,
-    private screen: ScreenOrientation) {
+    private screen: ScreenOrientation,
+    private translate: TranslateService) {
 
     super();
 
@@ -185,7 +187,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
           this.photoLibrary.requestAuthorization().then(() => {
             this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
-              this.popup.showAlert('Info', 'Business card was saved to the Photo Library!', [{
+              this.popup.showAlert(this.translate.instant('alerts.info'), 'Business card was saved to the Photo Library!', [{
                 text: 'Ok',
                 role: 'cancel'
               }],
@@ -285,7 +287,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     }, (error) => {
       this.onProcessingEvent.emit('false');
       this.screen.unlock();
-      this.popup.showAlert("Error", error, [{ text: 'Ok', role: 'cancel' }], this.selectedTheme);
+      this.popup.showAlert(this.translate.instant('alerts.error'), error, [{ text: 'Ok', role: 'cancel' }], this.selectedTheme);
       console.error(error);
       this.zone.run(() => {
         this.frontLoading = false;
@@ -555,7 +557,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       self.onProcessingEvent.emit('false');
       self.screen.unlock();
       console.log(error);
-      self.popup.showAlert('Error', error, ['Ok']);
+      self.popup.showAlert(self.translate.instant('alerts.error'), error, ['Ok']);
       self.frontLoading = false;
       self.backLoading = false;
     });

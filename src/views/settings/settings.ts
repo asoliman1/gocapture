@@ -16,6 +16,7 @@ import { NumberPicker } from "../../services/number-picker";
 import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
 import { Geolocation } from '@ionic-native/geolocation';
+import {TranslateService} from "@ngx-translate/core";
 declare var screen;
 
 @Component({
@@ -43,7 +44,8 @@ export class Settings {
     private numberPicker: NumberPicker,
     private badgeScanner: BadgeRapidCapture,
     public geolocation : Geolocation,
-    private businessService : BussinessClient) {
+    private businessService : BussinessClient,
+    private translate: TranslateService) {
 
     this.appVersion.getVersionNumber().then((version) => {
       this.version = version;
@@ -213,7 +215,7 @@ export class Settings {
         handler: () => {
           if(this.businessService.isOnline() ){
             // A.S
-            this.popup.showLoading('Unauthenticating...')
+            this.popup.showLoading('Unauthenticating...');
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
               this.themeProvider.setActiveTheme();
@@ -229,7 +231,8 @@ export class Settings {
         }
       }
     ];
-    this.popup.showAlert("Unauthenticate ?", "Are you sure you want to unauthenticate this device?", buttons, this.selectedTheme);
+    this.popup.showAlert(this.translate.instant('settings.unauthinticate.title'),
+      this.translate.instant('settings.unauthinticate.message'), buttons, this.selectedTheme);
   }
 
 }

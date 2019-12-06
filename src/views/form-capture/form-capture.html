@@ -13,15 +13,15 @@
 
     <ion-buttons end>
 			<button ion-button  (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
-				Submit
+				{{'form-capture.submit-btn' | translate}}
 			</button>
 
       <button ion-button *ngIf="isAllowedToEdit(submission) && !isEditing" (click)="doEdit()">
-        Edit
+        {{'form-capture.edit-btn' | translate}}
       </button>
 
       <button ion-button *ngIf="isAllowedToEdit(submission) && isEditing" (click)="doSave()">
-        Update
+        {{'form-capture.update-btn' | translate}}
       </button>
 
 		</ion-buttons>
@@ -33,7 +33,7 @@
         {{submission | submissionStatusPipe}}
       </div>
       <div class="date-info">
-        Captured on {{submissionDate()}}
+        {{'form-capture.date-info' | translate}} {{submissionDate()}}
       </div>
     </div>
   </ion-toolbar>
@@ -48,7 +48,7 @@
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
-				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Search List</button>
+				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
 			</ion-col>
 		</ion-row>
 
@@ -69,9 +69,9 @@
 
 	</ion-grid>
 </ion-content>
-<button-bar 
-[show]="!isReadOnly(submission) || isEditing" 
-[disabled]="isProcessing" 
+<button-bar
+[show]="!isReadOnly(submission) || isEditing"
+[disabled]="isProcessing"
 [form]="form" >
 </button-bar>
 
