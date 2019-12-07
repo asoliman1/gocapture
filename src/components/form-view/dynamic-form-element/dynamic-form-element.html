@@ -91,7 +91,7 @@
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
-                    [attr.name]="element.id" [formControlName]="element.identifier" min="1950" max="2050">
+                    [attr.name]="element.id" [formControlName]="element.identifier" min="2009" max="2028">
       </ion-datetime>
     </ion-item>
 
