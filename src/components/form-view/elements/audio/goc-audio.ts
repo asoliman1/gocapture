@@ -170,7 +170,6 @@ export class GOCAudio extends BaseElement {
 		} catch (e) {
 			fileExist = false;
 		}
-
 		if (!fileExist) {
 			this.popup.showLoading("Record downloading...");
 			await this.audioCaptureService.downloadRecord(filePath);
@@ -212,6 +211,10 @@ export class GOCAudio extends BaseElement {
 	private pausePlayback() {
 		this.audioCaptureService.pausePlayback();
 		this.isPlaying = false;
+	}
+
+	ngOnDestroy() {
+		this.audioCaptureService.stopPlayback();
 	}
 
 	private removeAudio() {

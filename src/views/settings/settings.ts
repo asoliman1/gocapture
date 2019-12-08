@@ -63,7 +63,7 @@ export class Settings {
       } else {
         settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] = JSON.parse(settings['remindAboutUnsubmittedLeads']);
       }
-      settings[settingsKeys.AUTO_UPLOAD] = JSON.parse(settings[settingsKeys.AUTO_UPLOAD])
+      settings[settingsKeys.AUTO_UPLOAD] = settings[settingsKeys.AUTO_UPLOAD] ? JSON.parse(settings[settingsKeys.AUTO_UPLOAD]) : true;
 
       this.settings = settings;
 

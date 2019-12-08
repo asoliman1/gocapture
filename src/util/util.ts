@@ -256,11 +256,11 @@ export class Util {
       url = isSplashImage ? url.split('?')[0] : url;
       let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
       let name = id + url.substr(url.lastIndexOf("/") + 1);
+      name =  name.replace('.mp3','.m4a')
       let pathToDownload = encodeURI(url);
       let folder = this.folderForFile(ext);
       let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
       let path = folderPath + name;
-      path =  path.replace('.mp3','.m4a')
 
       return { path, pathToDownload, name, folder, folderPath }
     }

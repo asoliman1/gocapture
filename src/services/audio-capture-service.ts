@@ -98,8 +98,10 @@ export class AudioCaptureService {
   }
 
   stopPlayback() {
-    this.audioFile.stop();
-    this.audioFile.release();
+    if(this.audioFile){
+      this.audioFile.stop();
+      this.audioFile.release();
+    }
   }
 
   pausePlayback() {

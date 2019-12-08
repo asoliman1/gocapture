@@ -1258,7 +1258,7 @@ export class DBClient {
 				setTimeout(() => {
 					responseObserver.next(true);
 					responseObserver.complete();
-				});
+				},10);
 				return;
 			}
 			this.doUpdate(type, "update", table, parameters).subscribe((value) => {

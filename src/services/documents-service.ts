@@ -12,7 +12,7 @@ import { Popup } from "../providers/popup/popup";
 
 @Injectable()
 export class DocumentsService {
-  currentDownloadingDocs : number[] = [];
+  currentDownloadingDocs: number[] = [];
 
   constructor(
     private fileService: File,
@@ -44,7 +44,7 @@ export class DocumentsService {
         }
 
         return this.restClient.getDocumentInfo(document.id).subscribe((data) => {
-         this.addToDownloadingDocs(document.id);
+          this.addToDownloadingDocs(document.id);
           if (data.status != "200") {
             return this.removeDocuments([document.id])
               .subscribe((_) => obs.complete(), (error) => obs.complete());
@@ -63,26 +63,28 @@ export class DocumentsService {
 
           const filePath = this.getDocumentsDirectory() + documentFromTheAPI.name + extension;
           const adjustedPath = this.util.adjustFilePath(filePath);
-          return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
-            .then((entry: Entry) => {
-              documentFromTheAPI.file_path = entry.nativeURL
-              return this.dbClient.saveDocument(documentFromTheAPI)
-                .subscribe((ok) => {
-                  this.rmFromDownloadingDocs(document.id);
-                  obs.next(documentFromTheAPI);
-                  obs.complete();
-                  // console.log(`Document ${entry.name} saved successfully`);
-                }, (error) => {
-                  obs.error(error);
-                  console.log(`Couldn't save document on the db`);
-                  console.log(JSON.stringify(error));
-                });
+          setTimeout(() => {
+            return fileTransferObject.download(documentFromTheAPI.download_url, adjustedPath)
+              .then((entry: Entry) => {
+                documentFromTheAPI.file_path = entry.nativeURL
+                return this.dbClient.saveDocument(documentFromTheAPI)
+                  .subscribe((ok) => {
+                    this.rmFromDownloadingDocs(document.id);
+                    obs.next(documentFromTheAPI);
+                    obs.complete();
+                    // console.log(`Document ${entry.name} saved successfully`);
+                  }, (error) => {
+                    obs.error(error);
+                    console.log(`Couldn't save document on the db`);
+                    console.log(JSON.stringify(error));
+                  });
 
-            }, (error) => {
-              obs.error(error);
-              console.log(`Couldn't save the document to the device`);
-              console.log(JSON.stringify(error));
-            });
+              }, (error) => {
+                obs.error(error);
+                console.log(`Couldn't save the document to the device`);
+                console.log(JSON.stringify(error));
+              });
+          }, 100);
 
         }, (error) => {
           obs.error(error);
@@ -93,12 +95,12 @@ export class DocumentsService {
     });
   }
 
-  addToDownloadingDocs(id){
+  addToDownloadingDocs(id) {
     this.currentDownloadingDocs.push(id)
   }
 
-  rmFromDownloadingDocs(id){
-    this.currentDownloadingDocs = this.currentDownloadingDocs.filter((e)=> e != id )
+  rmFromDownloadingDocs(id) {
+    this.currentDownloadingDocs = this.currentDownloadingDocs.filter((e) => e != id)
   }
 
   /**
@@ -145,7 +147,7 @@ export class DocumentsService {
         obs.error(false);
         console.log(`Couldn't get the documents, an error occurred`);
         console.log(JSON.stringify(error));
-      },()=>{
+      }, () => {
         obs.complete();
       })
     });

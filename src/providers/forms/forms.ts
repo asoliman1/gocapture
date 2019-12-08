@@ -130,7 +130,6 @@ export class FormsProvider {
         let file = this.util.getFilePath(form.event_style.capture_background_image.url, `capture_background_${form.form_id}_`);
         entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
         form.event_style.capture_background_image = { path: entry.nativeURL, url: form.event_style.capture_background_image.url };
-        console.log(form.event_style.capture_background_image)
       } catch (error) {
         console.log('Error downloading a form capture background image', error)
       }

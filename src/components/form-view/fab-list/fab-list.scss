@@ -11,7 +11,7 @@ custom-fab-menu {
   
         .container{
           position: absolute;
-          bottom: $fab-content-margin * 2.2 + $fab-size;
+          bottom: calc(4px + #{$fab-content-margin} * 3 + #{$fab-size} );
           right: calc(10px + env(safe-area-inset-right) + #{$fab-content-margin} + #{$fab-size});
         }
 
