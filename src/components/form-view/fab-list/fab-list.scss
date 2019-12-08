@@ -11,9 +11,8 @@ custom-fab-menu {
   
         .container{
           position: absolute;
-          bottom: $fab-content-margin * 3.4 + $fab-size;
-          right: $fab-content-margin + $fab-size;
-         
+          bottom: $fab-content-margin * 2.2 + $fab-size;
+          right: calc(10px + env(safe-area-inset-right) + #{$fab-content-margin} + #{$fab-size});
         }
 
 
@@ -28,7 +27,7 @@ custom-fab-menu {
     }
   
     .label{
-        text-align: left;
+        text-align: center;
         background: $fab-list-button-background-color;
         color: black;
         -webkit-border-radius: 8px;
@@ -54,10 +53,10 @@ custom-fab-menu {
   
   .ios{
     .fab-margin{
-      bottom: $toolbar-ios-height + 40px;
+      bottom:  calc(env(safe-area-inset-bottom) + 14px + #{$toolbar-ios-height});
     }
     .container.margin{
-      bottom: $fab-content-margin * 2.5 + $fab-size + $toolbar-ios-height + 40px;
+      bottom: calc(env(safe-area-inset-bottom) + 14px + #{$toolbar-ios-height} + #{$fab-content-margin * 2.25} + #{$fab-size} );
     }
   } 
   

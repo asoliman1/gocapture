@@ -53,7 +53,7 @@
     <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      
+
       <!-- A.S GOC-316 -->
       <ion-textarea autocorrect="on" [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
     </ion-item>
@@ -91,7 +91,7 @@
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
-                    [attr.name]="element.id" [formControlName]="element.identifier">
+                    [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
       </ion-datetime>
     </ion-item>
 

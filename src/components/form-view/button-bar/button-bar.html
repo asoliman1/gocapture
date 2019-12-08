@@ -1,4 +1,4 @@
-  <ion-footer *ngIf="isTabsVisible()">
+  <ion-footer *ngIf="isTabsVisible()" [style.display]="tabsHide?'none':'block'" >
     <ion-toolbar >
       <div class="tabs-ctn">
         <button 
@@ -20,7 +20,7 @@
 
   <custom-fab-menu 
     *ngIf="isFabsVisible()"
-    [hasMargin]="tabButtons?.buttons.length && tabButtons?.is_show" 
+    [hasMargin]="tabButtons?.buttons.length && tabButtons?.is_show && !tabsHide" 
     [disabled]="disabled" 
     [fabIcon]="'more'" 
     [items]="fabMenuItems"

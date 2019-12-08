@@ -7,16 +7,16 @@ import { Observer } from "rxjs/Observer";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { DeviceFormMembership, Form, FormSubmission, User } from "../model";
 import {
-	AuthenticationRequest,
-	BaseResponse,
-	DataResponse,
-	FileResponse,
-	FileUploadRequest,
-	FileUploadResponse,
-	FormSubmitResponse,
-	RecordsResponse,
-	SubmissionResponse,
-	FileDownloadResponse
+  AuthenticationRequest,
+  BaseResponse,
+  DataResponse,
+  FileResponse,
+  FileUploadRequest,
+  FileUploadResponse,
+  FormSubmitResponse,
+  RecordsResponse,
+  SubmissionResponse,
+  FileDownloadResponse
 } from "../model/protocol";
 import { Device } from "@ionic-native/device";
 import { StatusResponse } from "../model/protocol/status-response";

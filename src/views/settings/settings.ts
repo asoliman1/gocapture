@@ -162,8 +162,15 @@ export class Settings {
       let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
       let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, JSON.stringify(this.settings.remindAboutUnsubmittedLeads));
       let singleTapSelection = this.db.saveConfig(settingsKeys.SINGLE_TAP_SELECTION, this.settings.singleTapSelection);
+      let autoCrop = this.db.saveConfig(settingsKeys.AUTO_CROP, this.settings.autoCrop);
 
-      Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads, singleTapSelection).subscribe(() => {
+      Observable.zip(autoUpload,
+        enableLogging,
+        kioskModePassword,
+        autosaveBCCaptures,
+        remindAboutUnsubmittedLeads,
+        singleTapSelection,
+        autoCrop).subscribe(() => {
         this.shouldSave = false;
         resolve(true);
       }, error => {
@@ -173,7 +180,7 @@ export class Settings {
   }
 
   // A.S GOC-300
-  testBadgeScanner() { 
+  testBadgeScanner() {
     this.popup.showActionSheet("Select Barcode Type", [
       {
         text: 'Barcode', handler: () => {
@@ -210,7 +217,7 @@ export class Settings {
               console.log(error);
               this.popup.dismiss('loading');
             })
-          } 
+          }
           else this.popup.showToast('No internet connection available.',"top","warning") // A.S GOC-324
         }
       }

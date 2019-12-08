@@ -50,6 +50,10 @@
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
     </ion-item>
+    <ion-item class="last">
+      <ion-label>Auto-Crop</ion-label>
+      <ion-toggle  [(ngModel)]="settings.autoCrop" (ionChange)="onChange()" checked="settings.autoCrop"></ion-toggle>
+    </ion-item>
     <ion-list-header>
       Dropdown
     </ion-list-header>

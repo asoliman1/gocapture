@@ -44,7 +44,6 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
-import { Geolocation } from '@ionic-native/geolocation';
 import { settingsKeys } from '../../constants/constants';
 
 

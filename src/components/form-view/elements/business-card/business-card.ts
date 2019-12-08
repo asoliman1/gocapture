@@ -63,6 +63,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   private selectedTheme;
 
+  //only for IOS
+  private needCrop = false;
 
   constructor(private actionCtrl: ActionSheetController,
     private camera: Camera,
@@ -82,10 +84,16 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     private screen: ScreenOrientation) {
 
     super();
-    
+
     this.initImages();
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
+    this.settingsService.getSetting(settingsKeys.AUTO_CROP).subscribe((data) => {
+      if (data) {
+        this.needCrop = JSON.parse(data)
+      }
+    })
   }
 
   // picture options
@@ -253,7 +261,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       previewWidth: width - 24,
       previewHeight: (width - 24) / 1.75,
       quality: 100,
-      needCrop: true
+      needCrop: this.platform.is("ios") ? this.needCrop : true
     };
 
     this.frontLoading = type == this.FRONT;
