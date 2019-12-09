@@ -1,0 +1,99 @@
+{
+  "login": {
+    "header": "Пожалуйста, свяжитесь с администратором вашей компании, чтобы получить код авторизации. Введите код авторизации ниже.",
+    "email-placeholder": "Введите адрес электронной почты",
+    "auth-placeholder": "Введите код авторизации",
+    "auth-button": "Аутентифицировать",
+    "continue-button": "Продолжыть",
+    "connection-mode": {
+      "title": "Режим подключения",
+      "normal": "Обычный",
+      "demo": "Демо"
+    }
+  },
+
+  "sideMenu": {
+    "events":   "Мероприятия",
+    "settings": "Настройки",
+    "hi": "Здравствуй",
+    "welcome-back": "Добро пожаловать"
+  },
+
+  "general": {
+    "syncing": "Синхронизация..."
+  },
+
+  "settings": {
+    "title": "Настройки",
+    "organization": {
+      "header": "Организация",
+      "name": "Название",
+      "key": "Ключ",
+      "operator": "Оператор",
+      "deviceId": "Идентификатор устройства"
+    },
+    "operations": {
+      "header": "Операции",
+      "automatic-upload": "Автоматическая загрузка",
+      "save-business-cards": "Сохранить визитки на устройстве",
+      "reminder-for-unsubmitted-leads": "Напоминание о неподтвержденных лидах",
+      "auto-crop": "Auto-Crop"
+    },
+    "dropdown": {
+      "header": "Випадающий список",
+      "label": "Вибор кликом"
+    },
+    "kiosk-mode": {
+      "header": "Режим киоска",
+      "label": "Код доступа"
+    },
+    "diagnostics": {
+      "header": "Диагностика",
+      "app-version": "Версия приложения",
+      "enable-logging": "Включить логи",
+      "view-log-button": "Посмотреть лог",
+      "test-badge-scan": "Тестовое сканирование бейджей"
+    },
+    "unauth-device-btn": "Отменить регистрацию"
+  },
+  "form-capture": {
+    "submit-btn": "Отправить",
+    "edit-btn": "Редактировать",
+    "update-btn": "Обновить",
+    "date-info": "Captured on",
+    "search-list": "Поиск"
+  },
+  "logs": {
+    "title": "Логи",
+    "show-more": "Больше"
+  },
+  "alerts": {
+    "warning": "Предупреждение",
+    "error": "Ошибка",
+    "info": "Информация",
+    "Ok": "Ok",
+    "cancel": "Отмена",
+    "business-card": {
+      "message": "Визитка была сохранена в библиотеке"
+    },
+    "duplicate-lead": {
+      "message": "Duplicate Lead"
+    },
+    "kiosk-mode": {
+      "message": "Пароль для режима \"Киоск\" не установлен!"
+    },
+    "audio-recording": {
+      "cant-start": "Не могу начать запись",
+      "delete-recording": "Вы хотите удалить запись?"
+    },
+    "settings": {
+      "unauthinticate": {
+        "title": "Оменить регистрацию ?",
+        "message": "Вы уверены, что хотите отменить регистрацию устройства?"
+      }
+    }
+  },
+  "toast": {
+
+  }
+}
