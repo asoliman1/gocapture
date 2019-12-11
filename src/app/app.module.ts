@@ -112,6 +112,8 @@ import { SectionBlock } from '../components/section-block';
 import { FormsProvider } from '../providers/forms/forms';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { ContactsProvider } from '../providers/contacts/contacts';
+import { SupportPage } from '../pages/support/support';
+import { Intercom } from '@ionic-native/intercom';
 
 @NgModule({
   declarations: [
@@ -156,7 +158,8 @@ import { ContactsProvider } from '../providers/contacts/contacts';
     ScreenSaverPage,
     SectionBlock,
     buttonBar,
-    CustomFabMenu
+    CustomFabMenu,
+    SupportPage
   ],
   imports: [
     BrowserModule,
@@ -212,7 +215,8 @@ import { ContactsProvider } from '../providers/contacts/contacts';
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    CustomFabMenu
+    CustomFabMenu,
+    SupportPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -281,6 +285,7 @@ import { ContactsProvider } from '../providers/contacts/contacts';
     FilterService,
     Keyboard,
     ContactsProvider,
+    Intercom
   ]
 })
 export class AppModule { }

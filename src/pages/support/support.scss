@@ -1,0 +1,47 @@
+page-support {
+    .s-header{
+        padding-top: 10px;
+        display: flex;
+        align-items: center;
+
+        button{
+            order:0 !important;
+        }
+
+        .title::after {
+            display: block;
+            content: '';
+            width: 220px;
+            height: 3.5px;
+            background: lightgray;
+            position: absolute;
+            bottom: -20px;
+            border-radius: 100%;
+            left: 20px;
+           }
+           
+           .title {
+           position: relative; 
+           font-size: 3.5em;
+           font-weight: bold;
+           padding-left: 20px; 
+           }
+       
+    }
+
+    h3{
+        margin-left: 78px;
+        margin-top: 50px;
+        margin-bottom: 30px;
+        font-weight: 400;
+    }
+
+    .s-padding{
+        padding: 30px 78px  30px;
+    }
+
+    button[ion-button]{
+        margin-bottom: 10px;
+        text-transform: unset;
+    }
+}

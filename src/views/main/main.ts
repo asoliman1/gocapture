@@ -1,3 +1,4 @@
+import { SupportPage } from './../../pages/support/support';
 import { Component, ViewChild } from '@angular/core';
 import { Forms } from "../forms";
 import { Settings } from "../settings";
@@ -27,7 +28,8 @@ export class Main {
 	) {
 		this.pages = [
 			{ title: 'Events', component: Forms, icon: "document" },
-			{ title: 'Settings', component: Settings, icon: "cog" }
+			{ title: 'Settings', component: Settings, icon: "cog" },
+			{ title: 'Support', component: SupportPage, icon: "help" },
 		];
 	}
 

@@ -27,7 +27,7 @@ import { settingsKeys } from '../constants/constants';
 import { SettingsService } from './settings-service';
 import { Geolocation } from '@ionic-native/geolocation';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
-declare var cordova: any;
+import { Intercom } from '@ionic-native/intercom';
 
 @Injectable()
 /**
@@ -77,6 +77,7 @@ export class BussinessClient {
     private submissionsProvider : SubmissionsProvider,
     private settingsService: SettingsService,
     private geolocation: Geolocation,
+    private intercom : Intercom,
     private popup: Popup) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
@@ -196,7 +197,7 @@ export class BussinessClient {
   // A.S
   setLocation(timeout = 2000) {
     setTimeout(() => {
-      console.log('Getting location')
+      // console.log('Getting location')
       this.util.setPluginPrefs()
       this.geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 }).then(position => {
         let location = this.setLocationParams(position);
@@ -271,6 +272,7 @@ export class BussinessClient {
         this.registration = reply;
         reply.pushRegistered = 1;
         reply.is_production = Config.isProd ? 1 : 0;
+        this.initIntercom(reply);
         this.db.makeAllAccountsInactive().subscribe((done) => {
           this.db.saveRegistration(reply).subscribe((done) => {
             this.db.setupWorkDb(reply.db);
@@ -287,6 +289,10 @@ export class BussinessClient {
         obs.error("Invalid authentication code");
       });
     });
+  }
+
+  private initIntercom(user : any){
+    this.intercom.registerIdentifiedUser({user_id:user.id});
   }
 
   public unregister(user: User): Observable<User> {
@@ -448,9 +454,7 @@ export class BussinessClient {
           });
           let i = 0;
           Observable.zip(...dbUpdates).subscribe(() => {
-            console.log('observal '+ ++i);
             this.submissionsProvider.sync(filteredSubmissions, forms).subscribe((submitted) => {
-              console.log("Syncing submissions is completed");
               obs.next(true);
               this.localNotificationsService.cancelAll();
               obs.complete();

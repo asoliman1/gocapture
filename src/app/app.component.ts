@@ -43,6 +43,7 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
+
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -80,6 +81,7 @@ export class MyApp {
       this.util.checkFilesDirectories();
     });
   }
+
 
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
