@@ -49,8 +49,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   @Input() form: Form;
   @Input() submission: FormSubmission;
 
-  front: string = "assets/images/business-card-front.svg";
-  back: string = "assets/images/business-card-back.svg";
+  front: string = "";
+  back: string = "";
   ButtonBar : Subscription;
 
   backLoading: boolean = false;
