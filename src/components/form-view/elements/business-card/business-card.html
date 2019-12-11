@@ -2,15 +2,17 @@
   <ion-row>
     <ion-col>
       <div class="card-label">Front</div>
-      <div tappable class="card-container" (click)="captureImage(FRONT)">
-        <img class="card-image" #frontImage [src]="theVal.front | convertFileSrc" onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, true)">
+      <div tappable class="card-container" id="{{!theVal.front?'frontImage':''}}" (click)="captureImage(FRONT)">
+        <img class="card-image" #frontImage *ngIf="theVal.front" [src]="theVal.front | convertFileSrc"
+          onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, true)">
         <ion-spinner *ngIf="frontLoading"></ion-spinner>
       </div>
     </ion-col>
     <ion-col>
       <div class="card-label">Back</div>
-      <div tappable class="card-container" (click)="captureImage(BACK)">
-        <img class="card-image" #backImage [src]="theVal.back | convertFileSrc" onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, false)">
+      <div tappable class="card-container" id="{{!theVal.back?'backImage':''}}" (click)="captureImage(BACK)">
+        <img class="card-image" #backImage *ngIf="theVal.back" [src]="theVal.back | convertFileSrc"
+          onerror="this.src='assets/images/image-placeholder.jpg'" (load)="onImageLoaded($event, false)">
         <ion-spinner *ngIf="backLoading"></ion-spinner>
       </div>
     </ion-col>
