@@ -1,0 +1,29 @@
+<ion-header [class]="selectedTheme">
+  <ion-navbar color="primary">
+    <ion-buttons start>
+      <button ion-button (click)="cancel()">
+        Cancel
+      </button>
+    </ion-buttons>
+    <ion-title>Select localization</ion-title>
+    <ion-buttons end>
+      <button ion-button [disabled]="!selectedItem" (click)="done()">
+        OK
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-toolbar *ngIf="isSearchAvailable()">
+    <ion-searchbar [(ngModel)]="searchFilter" (ionInput)="onInput($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list [class]="selectedTheme">
+    <ion-item  *ngFor="let item of filteredItems" class="option-item"
+               [class.selected]="item == selectedItem || (!selectedItem && item.isSelected)" (click)="selectedItem = item">
+      <h1 class="title">{{item.title}}</h1>
+      <h2 class="subtitle" *ngIf="item.subtitle">{{item.subtitle}}</h2>
+    </ion-item>
+  </ion-list>
+</ion-content>
+

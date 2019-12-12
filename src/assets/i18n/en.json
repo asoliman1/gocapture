@@ -20,7 +20,10 @@
   },
 
   "general": {
-    "syncing": "Syncing..."
+    "syncing": "Syncing...",
+    "cancel": "Cancel",
+    "select-badge-type": "Select Badge Type",
+    "remind-about-leads": "Remind me about leads"
   },
 
   "settings": {
@@ -31,6 +34,10 @@
       "key": "Key",
       "operator": "Operator",
       "deviceId": "Device ID"
+    },
+    "application": {
+      "header": "Application",
+      "localization": "Localization"
     },
     "operations": {
       "header": "Operations",
@@ -56,6 +63,7 @@
     },
     "unauth-device-btn": "Unauthenticate Device"
   },
+
   "form-capture": {
     "submit-btn": "Submit",
     "edit-btn": "Edit",
@@ -63,10 +71,12 @@
     "date-info": "Captured on",
     "search-list": "Search List"
   },
+
   "logs": {
     "title": "Logs",
     "show-more": "Show more"
   },
+
   "alerts": {
     "warning": "Warning",
     "error": "Error",
@@ -87,13 +97,13 @@
       "delete-recording": "Do you want to delete recording?"
     },
     "settings": {
-      "unauthinticate": {
+      "unauthenticate": {
         "title": "Unauthenticate ?",
         "message": "Are you sure you want to unauthenticate this device?"
       }
     }
   },
   "toast": {
-
+    "no-internet-connection": "No internet connection available."
   }
 }

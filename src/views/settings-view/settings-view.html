@@ -33,6 +33,13 @@
       <ion-label>{{'settings.organization.deviceId' | translate}}</ion-label>
       <ion-label class="align-right">{{user.device_id}}</ion-label>
     </ion-item>
+    <ion-list-header>
+      {{'settings.application.header' | translate}}
+    </ion-list-header>
+    <ion-item (click)="onLocalization()" detail-push>
+      <ion-label>{{'settings.application.localization' | translate}}</ion-label>
+      <ion-label class="align-right">{{localization?.name}}</ion-label>
+    </ion-item>
 		<ion-list-header>
       {{'settings.operations.header' | translate}}
 		</ion-list-header>

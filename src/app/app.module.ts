@@ -1,5 +1,5 @@
-import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
-import { buttonBar } from './../components/form-view/button-bar/button-bar';
+import { CustomFabMenu } from '../components/form-view/fab-list/fab-list';
+import { buttonBar } from '../components/form-view/button-bar/button-bar';
 import { Keyboard } from '@ionic-native/keyboard';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -9,7 +9,7 @@ import { Login, UrlChoose } from "../views/login";
 import { Main } from "../views/main";
 import { Dashboard } from "../views/dashboard";
 import { Forms } from "../views/forms";
-import { Settings } from "../views/settings";
+import { SettingsView } from "../views/settings-view";
 import { LogView } from "../views/log";
 import { FormSummary } from "../views/form-summary";
 import { FormReview } from "../views/form-review";
@@ -113,6 +113,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateConfigService } from "../services/translate/translateConfigService";
+import { LocalizationsPage } from "../views/localizations";
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -125,7 +126,7 @@ export function createTranslateLoader(http: HttpClient) {
     Main,
     Dashboard,
     Forms,
-    Settings,
+    SettingsView,
     Dispatches,
     IonPullUpComponent,
     FormSummary,
@@ -161,7 +162,8 @@ export function createTranslateLoader(http: HttpClient) {
     ScreenSaverPage,
     SectionBlock,
     buttonBar,
-    CustomFabMenu
+    CustomFabMenu,
+    LocalizationsPage
   ],
   imports: [
     BrowserModule,
@@ -194,7 +196,7 @@ export function createTranslateLoader(http: HttpClient) {
     Dashboard,
     Forms,
     Dispatches,
-    Settings,
+    SettingsView,
     IonPullUpComponent,
     FormSummary,
     FormReview,
@@ -224,7 +226,8 @@ export function createTranslateLoader(http: HttpClient) {
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    CustomFabMenu
+    CustomFabMenu,
+    LocalizationsPage
   ],
   exports: [
     DynamicFormElementComponent

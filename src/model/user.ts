@@ -1,3 +1,5 @@
+import { Localization } from "./localization";
+
 export class User {
 	id : number;
 	customerID : number;
@@ -18,5 +20,6 @@ export class User {
 	is_production: 0 | 1 = 1;
 	theme: string;
 	device_id: number;
-
+	localization: string;
+	localizations: [ Localization ]
 }

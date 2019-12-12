@@ -1,8 +1,8 @@
 import { Geolocation, Geoposition, Coordinates } from '@ionic-native/geolocation';
 import { SettingsService } from './settings-service';
-import { Util } from './../util/util';
+import { Util } from '../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
-import { Popup } from './../providers/popup/popup';
+import { Popup } from '../providers/popup/popup';
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Observer } from "rxjs/Observer";
@@ -25,6 +25,8 @@ import { Network } from '@ionic-native/network';
 import { StatusResponse } from "../model/protocol/status-response";
 import { LocalNotificationsService } from "./local-notifications-service";
 import { settingsKeys } from '../constants/constants';
+import { TranslateConfigService } from "./translate/translateConfigService";
+
 declare var cordova: any;
 
 @Injectable()
@@ -72,7 +74,8 @@ export class BussinessClient {
     private util: Util,
     private settingsService : SettingsService,
     private geolocation : Geolocation,
-    private popup: Popup) {
+    private popup: Popup,
+    private translateConfigService: TranslateConfigService) {
 
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -91,8 +94,6 @@ export class BussinessClient {
 
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
-
-
   }
 
   public isOnline(): boolean {
@@ -195,21 +196,20 @@ export class BussinessClient {
     // A.S
    setLocation(timeout = 2000){
      setTimeout(() => {
-      console.log('Getting location')
-      this.util.setPluginPrefs()
+      console.log('Getting location');
+      this.util.setPluginPrefs();
       this.geolocation.getCurrentPosition({enableHighAccuracy:true,timeout:5000}).then(position=>{
         let location = this.setLocationParams(position);
         console.log('Current location data : ' + location);
         this.settingsService.setSetting(settingsKeys.LOCATION,location).subscribe()
        }).catch((err)=>{
-        console.log('Error getting location')
+        console.log('Error getting location');
         console.log(err);
         this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
        });
      }, timeout);
-   
- }
- 
+  }
+
 
  setLocationParams(position){
   let location : any = {} ;
@@ -265,6 +265,7 @@ export class BussinessClient {
       let req = new AuthenticationRequest();
       req.invitation_code = authCode;
       req.device_name = email;
+      req.localization = this.translateConfigService.defaultLanguage();
       this.rest.authenticate(req).subscribe(reply => {
         this.util.checkFilesDirectories();
         this.registration = reply;
@@ -333,7 +334,7 @@ export class BussinessClient {
           }
           let newD = new Date();
           this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-            // 
+            //
           },
             (err) => {
               obs.error(err);
@@ -511,4 +512,12 @@ export class BussinessClient {
       });
     }
   }
+
+  getAccountSettings(): Observable<User> {
+    return this.rest.getAccountSettings();
+  }
+
+  updateAccountSettings(settings): Observable<User> {
+    return this.rest.updateAccountSettings(settings);
+}
 }

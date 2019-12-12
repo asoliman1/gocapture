@@ -12,6 +12,13 @@ export class TranslateConfigService {
         this.translate.use(lang);
     }
 
+    defaultLanguage() {
+      if (this.translate.getBrowserLang() !== undefined) {
+        return this.translate.getBrowserLang();
+      }
+      return "en";
+    }
+
     initTranslate() {
         console.log('reaching init translate');
 

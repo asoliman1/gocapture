@@ -1,0 +1,19 @@
+localizations {
+  .option-item {
+    .title, .subtitle {
+      font-size: 20px;
+    }
+  }
+
+  .selected {
+    background: transparent;
+  }
+
+  .item-ios.activated, .item-md.activated {
+    background-color: transparent;
+  }
+
+  .list-ios > .item-block:first-child,  .list-md > .item-block:first-child {
+    border: none;
+  }
+}

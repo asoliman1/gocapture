@@ -24,8 +24,8 @@ import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
 import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
-import {AppVersion} from "@ionic-native/app-version";
-import {Platform} from "ionic-angular";
+import { AppVersion } from "@ionic-native/app-version";
+import { Platform } from "ionic-angular";
 
 @Injectable()
 export class RESTClient {
@@ -90,6 +90,26 @@ export class RESTClient {
         return resp.data;
       });
   }
+
+  public updateAccountSettings(settings: {}): Observable<User> {
+    return this.call<DataResponse<User>>("POST", "/device/settings.json", settings)
+      .map(resp => {
+        if (resp.status != "200") {
+          this.errorSource.next(resp);
+        }
+        return resp.data;
+      });
+  }
+
+  public getAccountSettings(): Observable<User> {
+    return this.call<DataResponse<User>>("GET", "/device/settings.json", {}).map(resp => {
+      if (resp.status != "200") {
+        this.errorSource.next(resp);
+      }
+      return resp.data;
+    });
+  }
+
   /**
    *
    * @returns Observable

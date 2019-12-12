@@ -20,7 +20,10 @@
   },
 
   "general": {
-    "syncing": "Синхронизация..."
+    "syncing": "Синхронизация",
+    "cancel": "Отмена",
+    "select-barcode-type": "Выберите тип бейджа",
+    "remind-about-leads": "Напоминание о контактах"
   },
 
   "settings": {
@@ -36,7 +39,7 @@
       "header": "Операции",
       "automatic-upload": "Автоматическая загрузка",
       "save-business-cards": "Сохранить визитки на устройстве",
-      "reminder-for-unsubmitted-leads": "Напоминание о неподтвержденных лидах",
+      "reminder-for-unsubmitted-leads": "Напоминание о неотосланных контактах",
       "auto-crop": "Auto-Crop"
     },
     "dropdown": {
@@ -56,6 +59,7 @@
     },
     "unauth-device-btn": "Отменить регистрацию"
   },
+
   "form-capture": {
     "submit-btn": "Отправить",
     "edit-btn": "Редактировать",
@@ -63,10 +67,12 @@
     "date-info": "Captured on",
     "search-list": "Поиск"
   },
+
   "logs": {
     "title": "Логи",
     "show-more": "Больше"
   },
+
   "alerts": {
     "warning": "Предупреждение",
     "error": "Ошибка",
@@ -87,13 +93,14 @@
       "delete-recording": "Вы хотите удалить запись?"
     },
     "settings": {
-      "unauthinticate": {
+      "unauthenticate": {
         "title": "Оменить регистрацию ?",
         "message": "Вы уверены, что хотите отменить регистрацию устройства?"
       }
     }
   },
-  "toast": {
 
+  "toast": {
+    "no-internet-connection": "Интернет соединение отсутствует."
   }
 }

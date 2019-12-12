@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Forms } from "../forms";
-import { Settings } from "../settings";
+import { SettingsView } from "../settings-view";
 import { BussinessClient } from "../../services/business-service";
 import { User, SyncStatus } from "../../model";
 import { Subscription } from "rxjs/Subscription";
@@ -53,7 +53,7 @@ export class Main {
 			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
 			{ title: this.translate.instant('sideMenu.events'), component: Forms, icon: "document" },
 			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
-			{ title: this.translate.instant('sideMenu.settings'), component: Settings, icon: "cog" }
+			{ title: this.translate.instant('sideMenu.settings'), component: SettingsView, icon: "cog" }
 		];
 	}
 

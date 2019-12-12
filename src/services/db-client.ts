@@ -189,7 +189,7 @@ export class DBClient {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"makeAllInactive": "UPDATE org_master set active = 0",
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId, localizations, localization) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?',
 				"deleteAll": "delete from org_master"
@@ -266,6 +266,12 @@ export class DBClient {
 					"ALTER TABLE org_master add column deviceId integer"
 				]
 			},
+      8: {
+        queries: [
+          "ALTER TABLE org_master add column localizations text",
+          "ALTER TABLE org_master add column localization text",
+        ]
+      }
 		},
 		work: {
 			1: {
@@ -668,6 +674,8 @@ export class DBClient {
 					user.is_production = data.isProduction;
 					user.device_id = data.deviceId;
 					this.registration = user;
+          user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
+          user.localization = data.localization;
 					return user;
 				}
 				return null;
@@ -1117,7 +1125,9 @@ export class DBClient {
 			user.pushRegistered,
 			user.is_production,
 			user.theme,
-			user.device_id
+			user.device_id,
+      JSON.stringify(user.localizations),
+      user.localization
 		]).map(data => {
 			this.saveConfig(settingsKeys.AUTO_UPLOAD, "true").subscribe();
 			this.registration = user;

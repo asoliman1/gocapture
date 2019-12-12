@@ -16,21 +16,27 @@ import { NumberPicker } from "../../services/number-picker";
 import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
 import { Geolocation } from '@ionic-native/geolocation';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
+import { LocalizationsPage } from "../localizations";
+import { OptionItem } from "../../model/option-item";
+import { Localization } from "../../model/localization";
+import { TranslateConfigService } from "../../services/translate/translateConfigService";
+
 declare var screen;
 
 @Component({
-  selector: 'settings',
-  templateUrl: 'settings.html'
+  selector: 'settings-view',
+  templateUrl: 'settings-view.html'
 })
 
-export class Settings {
+export class SettingsView {
 
   settings: any = {};
   user: User = <any>{};
   shouldSave: boolean = false;
   version: string;
   private selectedTheme;
+  localization: Localization;
 
   constructor(
     private db: DBClient,
@@ -45,11 +51,14 @@ export class Settings {
     private badgeScanner: BadgeRapidCapture,
     public geolocation : Geolocation,
     private businessService : BussinessClient,
-    private translate: TranslateService) {
+    private translate: TranslateService,
+    private translateConfigService: TranslateConfigService,
+    private progressHud: Popup) {
 
     this.appVersion.getVersionNumber().then((version) => {
       this.version = version;
     });
+
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     this.settings.remindAboutUnsubmittedLeads = {};
   }
@@ -86,10 +95,22 @@ export class Settings {
         this.shouldSave = false;
       });
     });
+
+    this.setLocalization();
+
+    this.fetchAccountSettings();
   }
 
   getLocation(){
-   this.client.setLocation();
+    this.client.setLocation();
+  }
+
+  fetchAccountSettings() {
+    this.client.getAccountSettings().subscribe((user) => {
+      this.user = user;
+      this.db.saveRegistration(user);
+      this.setLocalization();
+    })
   }
 
   getName(user: User) {
@@ -130,7 +151,7 @@ export class Settings {
 
       let selectedIndex = 1;
 
-      this.numberPicker.show('Remind me about leads', hours, [{ index: 0, value: hours[selectedIndex]["label"] }], 'label').then(result => {
+      this.numberPicker.show(this.translate.instant('general.remind-about-leads'), hours, [{ index: 0, value: hours[selectedIndex]["label"] }], 'label').then(result => {
         let selectedOption = result[0];
         let selectedIndex = parseInt(selectedOption.index);
         this.settings.remindAboutUnsubmittedLeads.interval = hours[selectedIndex].value;
@@ -190,7 +211,7 @@ export class Settings {
 
   // A.S GOC-300
   testBadgeScanner() {
-    this.popup.showActionSheet("Select Barcode Type", [
+    this.popup.showActionSheet(this.translate.instant('general.select-badge-type'), [
       {
         text: 'Barcode', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Barcode);
@@ -199,14 +220,14 @@ export class Settings {
         text: 'NFC', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Nfc);
         }
-      }, { text: 'Cancel', role: 'cancel' }
+      }, { text: this.translate.instant('general.cancel'), role: 'cancel' }
     ], this.selectedTheme)
   }
 
   unauthenticate() {
     const buttons = [
       {
-        text: 'Cancel',
+        text: this.translate.instant('general.cancel'),
         handler: () => {
         }
       },
@@ -227,12 +248,69 @@ export class Settings {
               this.popup.dismiss('loading');
             })
           }
-          else this.popup.showToast('No internet connection available.',"top","warning") // A.S GOC-324
+          else this.popup.showToast(this.translate.instant('toast.no-internet-connection'),"top","warning") // A.S GOC-324
         }
       }
     ];
-    this.popup.showAlert(this.translate.instant('settings.unauthinticate.title'),
-      this.translate.instant('settings.unauthinticate.message'), buttons, this.selectedTheme);
+    this.popup.showAlert(this.translate.instant('settings.unauthenticate.title'),
+      this.translate.instant('settings.unauthenticate.message'), buttons, this.selectedTheme);
   }
 
+  onLocalization() {
+    let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations() });
+    localizationPage.onDidDismiss((localization: Localization) => {
+      if (localization) {
+        this.popup.showLoading('Processing...');
+        this.client.updateAccountSettings({'localization': localization.id})
+          .subscribe((result) => {
+            this.translateConfigService.setLanguage(localization.id);
+            this.localization = localization;
+            this.popup.dismissAll();
+          }, (error) => {
+            this.popup.dismissAll();
+          })
+      }
+    });
+    localizationPage.present();
+  }
+
+  setLocalization() {
+    if (this.user.localization && this.user.localizations) {
+      this.localization = this.user.localizations.filter((localization) => {
+        return localization.id == this.user.localization
+      })[0];
+    } else {
+      this.localization = new Localization();
+      this.localization.id = 'en';
+      this.localization.name = 'English';
+    }
+  }
+
+  localizations() {
+    let items = [];
+    if (this.user.localizations) {
+      this.user.localizations.forEach((localization, index) => {
+        let optionItem = this.localizationToOptionItem(localization, index);
+        items.push(optionItem);
+        if (this.user.localization && (this.user.localization == localization.id)) {
+          optionItem.isSelected = true;
+        }
+      });
+    } else {
+      let optionItem = this.localizationToOptionItem(this.localization, 0);
+      optionItem.isSelected = false;
+      items.push(optionItem);
+    }
+    return items;
+  }
+
+  localizationToOptionItem(localization: Localization, index: number): OptionItem {
+    return new OptionItem({
+      id: index.toString(),
+      title: localization.name,
+      subtitle: null,
+      search:localization.name,
+      value: localization
+    });
+  }
 }
