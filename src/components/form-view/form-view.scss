@@ -106,8 +106,8 @@ form-view, .form-view {
     display: none;
   }
 
-  .spacer{
-	  border-right: 1.5px solid lightgray;
+  ion-col.spacer:nth-child(2){
+	border-left: 1.5px solid lightgray;
   }
 
 	.spacing {
@@ -116,11 +116,4 @@ form-view, .form-view {
 		height: 150px;
 	}
 
-	.BLUR{
-		position: absolute;
-		z-index: -1;
-		filter: blur(4px);
-		width: inherit;
-		height: inherit;
-	}
 }

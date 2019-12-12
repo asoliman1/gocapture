@@ -41,10 +41,9 @@ import { StationsPage } from "../stations/stations";
 import { Idle } from 'idlejs/dist';
 import { ScreenSaverPage } from '../../pages/screen-saver/screen-saver';
 import { Insomnia } from '@ionic-native/insomnia';
-import { SyncClient } from '../../services/sync-client';
-import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
+import { Intercom } from '@ionic-native/intercom';
 
 
 
@@ -126,6 +125,7 @@ export class FormCapture implements AfterViewInit {
     private formViewService:formViewService,
     private formsProvider : FormsProvider,
     private settingsService : SettingsService,
+    private intercom : Intercom,
     private insomnia: Insomnia) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -448,6 +448,9 @@ export class FormCapture implements AfterViewInit {
   }
 
   ionViewDidEnter() {
+    this.intercom.setInAppMessageVisibility('GONE');
+    this.intercom.setLauncherVisibility('GONE');
+    
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -497,6 +500,8 @@ export class FormCapture implements AfterViewInit {
 
 
   ionViewWillLeave() {
+    this.intercom.setInAppMessageVisibility('VISIBLE');
+
     if (this.backUnregister) {
       this.backUnregister();
     }

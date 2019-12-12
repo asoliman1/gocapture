@@ -268,31 +268,41 @@ export class BussinessClient {
       req.invitation_code = authCode;
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
-        this.util.checkFilesDirectories();
-        this.registration = reply;
-        reply.pushRegistered = 1;
-        reply.is_production = Config.isProd ? 1 : 0;
-        this.initIntercom(reply);
-        this.db.makeAllAccountsInactive().subscribe((done) => {
-          this.db.saveRegistration(reply).subscribe((done) => {
-            this.db.setupWorkDb(reply.db);
-            this.setLocation(3000);
-            obs.next({ user: reply, message: "Done" });
-            obs.complete();
-          }, err => {
-            console.log(err);
-          });
-        }, err => {
-          console.log(err);
-        });
+        this.onAuthSuccess(reply,obs);
       }, err => {
         obs.error("Invalid authentication code");
       });
     });
   }
 
-  private initIntercom(user : any){
-    this.intercom.registerIdentifiedUser({user_id:user.id});
+ private onAuthSuccess(reply : any , obs : Observer <any>){
+    this.util.checkFilesDirectories();
+    reply.pushRegistered = 1;
+    reply.is_production = Config.isProd ? 1 : 0;
+    this.registration = reply;
+    this.initIntercom();
+    this.db.makeAllAccountsInactive().subscribe((done) => {
+      this.db.saveRegistration(reply).subscribe((done) => {
+        this.db.setupWorkDb(reply.db);
+        this.setLocation(3000);
+        obs.next({ user: reply, message: "Done" });
+        obs.complete();
+      }, err => {
+        console.log(err);
+      });
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  initIntercom(){
+    this.intercom.registerIdentifiedUser(
+      { user_id:this.registration.id,
+        email:this.registration.email,name:`${this.registration.first_name} ${this.registration.last_name}`
+      }
+      ).then((data)=>{
+        this.intercom.registerForPush().then();
+      });
   }
 
   public unregister(user: User): Observable<User> {
@@ -304,8 +314,12 @@ export class BussinessClient {
           this.pushSubs.forEach(sub => {
             sub.unsubscribe();
           });
-
-          await this.appPreferences.clearAll();
+          try {
+            await this.appPreferences.clearAll();
+            await this.intercom.reset();
+          } catch (error) {
+            console.log(error);
+          }
           this.formsProvider.resetForms()
           this.util.rmDir("leadliaison", "");
           this.pushSubs = [];

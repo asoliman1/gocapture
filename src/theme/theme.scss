@@ -12,7 +12,7 @@
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
   .fab-md-in-list , .fab-md-in-list , .fab ,
-  .fab.activated {
+  .fab.activated , .s-header .title::after{
     background-color: $theme-color;
   }
 

@@ -19,6 +19,7 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
+import { Intercom } from '@ionic-native/intercom';
 
 @Component({
   templateUrl: 'app.html'
@@ -33,7 +34,6 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
     public statusBar: StatusBar,
@@ -43,7 +43,7 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
-
+    private intercom : Intercom
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -79,6 +79,7 @@ export class MyApp {
       this.onAppPause();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+      this.intercom.setLauncherVisibility('GONE');
     });
   }
 
@@ -90,6 +91,7 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
+        this.client.initIntercom();
       } else {
         this.nav.setRoot(Login);
       }

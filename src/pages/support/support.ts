@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the SupportPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { Intercom } from '@ionic-native/intercom';
 
 @Component({
   selector: 'page-support',
@@ -14,11 +8,22 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class SupportPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    private intercom : Intercom) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SupportPage');
+  ionViewDidEnter(){
+    this.intercom.setLauncherVisibility('VISIBLE');
+  }
+
+  startConversation(){
+    this.intercom.displayConversationsList().then()
+    
+  }
+  ionViewDidLeave(){
+   this.intercom.setLauncherVisibility('GONE');
   }
 
 }
