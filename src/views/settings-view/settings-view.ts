@@ -257,12 +257,13 @@ export class SettingsView {
   }
 
   onLocalization() {
-    let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations() });
+    let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations(), shouldShowSearch: false });
     localizationPage.onDidDismiss((localization: Localization) => {
       if (localization) {
         this.popup.showLoading('Processing...');
         this.client.updateAccountSettings({'localization': localization.id})
           .subscribe((result) => {
+            this.updateUser(result);
             this.translateConfigService.setLanguage(localization.id);
             this.localization = localization;
             this.popup.dismissAll();
@@ -272,6 +273,12 @@ export class SettingsView {
       }
     });
     localizationPage.present();
+  }
+
+  updateUser(result) {
+    this.user.localizations = result.localizations;
+    this.user.localization = result.localization;
+    this.db.saveRegistration(this.user).subscribe();
   }
 
   setLocalization() {

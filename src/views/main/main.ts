@@ -49,12 +49,7 @@ export class Main {
 		private rapidCaptureService: RapidCaptureService,
     private translate: TranslateService
 		) {
-		this.pages = [
-			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
-			{ title: this.translate.instant('sideMenu.events'), component: Forms, icon: "document" },
-			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
-			{ title: this.translate.instant('sideMenu.settings'), component: SettingsView, icon: "cog" }
-		];
+
 	}
 
 	openPage(page) {
@@ -75,8 +70,14 @@ export class Main {
 			let isFormCaptureView = viewCtrl.instance instanceof FormCapture;
 
 			this.shouldShowSyncBar = !isFormCaptureView;
+		});
 
-		})
+    this.pages = [
+      /*{ title: 'Home', component: Dashboard, icon: "home" },*/
+      { title: 'sideMenu.events', component: Forms, icon: "document" },
+      //{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
+      { title: 'sideMenu.settings', component: SettingsView, icon: "cog" }
+    ];
 	}
 
 	footerExpanded() {

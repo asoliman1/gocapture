@@ -27,6 +27,8 @@ export class SearchPage {
 
   @Input() items: OptionItem[];
 
+  shouldShowSearch = true;
+
   @ViewChild(Content) content: Content;
 
   selectedItem: OptionItem;
@@ -52,6 +54,10 @@ export class SearchPage {
     this.settingsService.getSetting(settingsKeys.SINGLE_TAP_SELECTION).subscribe(result => {
       this.isSingleTap = !result || JSON.parse(result);
     });
+
+    if (typeof this.navParams.get("shouldShowSearch") !== 'undefined') {
+      this.shouldShowSearch =  this.navParams.get("shouldShowSearch");
+    }
   }
 
   ionViewDidEnter() {
@@ -103,6 +109,6 @@ export class SearchPage {
   }
 
   isSearchAvailable() {
-    return this.items && this.items.length > 5
+    return this.shouldShowSearch && this.items && this.items.length > 5
   }
 }

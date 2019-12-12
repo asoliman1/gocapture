@@ -82,8 +82,9 @@ export class MyApp {
       this.onAppResumes();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+      this.setAppLocalization();
 
-      this.translateConfigService.initTranslate();
+
     });
   }
 
@@ -97,6 +98,16 @@ export class MyApp {
         this.client.setLocation();
       } else {
         this.nav.setRoot(Login);
+      }
+    });
+  }
+
+  private setAppLocalization() {
+    this.client.getRegistration(true).subscribe((user) => {
+      if (user && user.localization) {
+        this.translateConfigService.setLanguage(user.localization);
+      } else {
+        this.translateConfigService.initTranslate();
       }
     });
   }

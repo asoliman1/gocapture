@@ -673,9 +673,9 @@ export class DBClient {
 					user.device_token = data.registrationId;
 					user.is_production = data.isProduction;
 					user.device_id = data.deviceId;
-					this.registration = user;
           user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
           user.localization = data.localization;
+          this.registration = user;
 					return user;
 				}
 				return null;

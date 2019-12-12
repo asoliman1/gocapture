@@ -17,72 +17,72 @@
 		<ion-list-header>
       {{'settings.organization.header' | translate}}
 		</ion-list-header>
-		<ion-item>
+		<ion-item text-wrap>
 			<ion-label>{{'settings.organization.name' | translate}}</ion-label>
 			<ion-label class="align-right">{{user.customer_name}}</ion-label>
 		</ion-item>
-		<ion-item>
+		<ion-item text-wrap>
 			<ion-label>{{'settings.organization.key' | translate}}</ion-label>
 			<ion-label class="align-right"></ion-label>
 		</ion-item>
-		<ion-item [ngClass]="{'last': !user.device_id}">
+		<ion-item [ngClass]="{'last': !user.device_id}" text-wrap>
 			<ion-label>{{'settings.organization.operator' | translate}}</ion-label>
 			<ion-label class="align-right">{{getName(user)}}</ion-label>
 		</ion-item>
-    <ion-item class="last" *ngIf="user.device_id">
+    <ion-item class="last" *ngIf="user.device_id" text-wrap>
       <ion-label>{{'settings.organization.deviceId' | translate}}</ion-label>
       <ion-label class="align-right">{{user.device_id}}</ion-label>
     </ion-item>
     <ion-list-header>
       {{'settings.application.header' | translate}}
     </ion-list-header>
-    <ion-item (click)="onLocalization()" detail-push>
+    <ion-item (click)="onLocalization()" detail-push text-wrap>
       <ion-label>{{'settings.application.localization' | translate}}</ion-label>
       <ion-label class="align-right">{{localization?.name}}</ion-label>
     </ion-item>
 		<ion-list-header>
       {{'settings.operations.header' | translate}}
 		</ion-list-header>
-		<ion-item class="last">
+		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.operations.automatic-upload' | translate}}</ion-label>
 			<ion-toggle  [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
-    <ion-item class="last">
+    <ion-item class="last" text-wrap>
       <ion-label>{{'settings.operations.save-business-cards' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()" checked="settings.autosaveBCCaptures"></ion-toggle>
     </ion-item>
-    <ion-item class="last">
+    <ion-item class="last" text-wrap>
       <ion-label>{{'settings.operations.reminder-for-unsubmitted-leads' | translate}}<br>
         <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
       </ion-label>
       <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
     </ion-item>
-    <ion-item class="last">
+    <ion-item class="last" text-wrap>
       <ion-label>{{'settings.operations.auto-crop' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.autoCrop" (ionChange)="onChange()" checked="settings.autoCrop"></ion-toggle>
     </ion-item>
     <ion-list-header>
       {{'settings.dropdown.header' | translate}}
     </ion-list-header>
-    <ion-item class="last">
+    <ion-item class="last" text-wrap>
       <ion-label> {{'settings.dropdown.label' | translate}}</ion-label>
       <ion-toggle  [(ngModel)]="settings.singleTapSelection" (ionChange)="onChange()" checked="settings.singleTapSelection"></ion-toggle>
     </ion-item>
 		<ion-list-header>
       {{'settings.kiosk-mode.header' | translate}}
 		</ion-list-header>
-		<ion-item class="last">
+		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.kiosk-mode.label' | translate}}</ion-label>
 			<ion-input type="password" class="align-right" [(ngModel)]="settings.kioskModePassword" (ionChange)="onChange()"></ion-input>
 		</ion-item>
 		<ion-list-header>
       {{'settings.diagnostics.header' | translate}}
 		</ion-list-header>
-		<ion-item>
+		<ion-item text-wrap>
 			<ion-label>{{'settings.diagnostics.app-version' | translate}}</ion-label>
 			<ion-label class="align-right">{{version}}</ion-label>
 		</ion-item>
-		<ion-item class="last">
+		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.diagnostics.enable-logging' | translate}}</ion-label>
 			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChangeEnableLogging()" checked="settings.enableLogging"></ion-toggle>
 		</ion-item>

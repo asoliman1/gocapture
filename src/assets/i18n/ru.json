@@ -27,13 +27,17 @@
   },
 
   "settings": {
-    "title": "Настройки",
+      "title": "Настройки",
     "organization": {
       "header": "Организация",
       "name": "Название",
       "key": "Ключ",
       "operator": "Оператор",
       "deviceId": "Идентификатор устройства"
+    },
+    "application": {
+      "header": "Приложение",
+      "localization": "Язык"
     },
     "operations": {
       "header": "Операции",
@@ -48,7 +52,7 @@
     },
     "kiosk-mode": {
       "header": "Режим киоска",
-      "label": "Код доступа"
+      "label": "Пароль"
     },
     "diagnostics": {
       "header": "Диагностика",
@@ -102,5 +106,16 @@
 
   "toast": {
     "no-internet-connection": "Интернет соединение отсутствует."
+  },
+
+  "forms": {
+    "submitted": "Отправленно",
+    "pending": "В ожидании",
+    "unsubmitted": "Не отправленно",
+    "capture": "Новый",
+    "review-submissions": "Просмотр",
+    "rapid-scan": "Быстрое сканирование",
+    "documents": "Документы",
+    "instructions": "Инструкции"
   }
 }

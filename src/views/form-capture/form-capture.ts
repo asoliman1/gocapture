@@ -45,7 +45,7 @@ import { SyncClient } from '../../services/sync-client';
 import { DBClient } from '../../services/db-client';
 import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
 
 
 

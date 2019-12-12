@@ -29,6 +29,7 @@ import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
 import { ModalController } from "ionic-angular";
 import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'forms',
@@ -81,9 +82,10 @@ export class Forms {
     private syncClient: SyncClient,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
-    private Keyboard : Keyboard) {
+    private Keyboard : Keyboard,
+    private translate: TranslateService) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
- 
+
   }
 
   doRefresh(refresher?) {
@@ -115,9 +117,9 @@ export class Forms {
 
   sync() {
     if(this.syncClient.isSyncing()){
-      console.log('Sync is in progress')
+      console.log('Sync is in progress');
       return;
-    } 
+    }
       console.log('Sync started');
     this.client.getUpdates().subscribe(() => {
     });
@@ -135,7 +137,7 @@ export class Forms {
 
     let buttons: [any] = [
       {
-        text: 'Capture',
+        text: this.translate.instant('forms.capture'),
         icon: "magnet",
         handler: () => {
           //console.log('capture clicked');
@@ -146,7 +148,7 @@ export class Forms {
 
     if (form.is_enable_rapid_scan_mode) {
       buttons.push({
-        text: 'Rapid Scan',
+        text: this.translate.instant('forms.rapid-scan'),
         icon: "qr-scanner",
         handler: () => {
           //console.log('review clicked');
@@ -156,7 +158,7 @@ export class Forms {
     }
 
     buttons.push({
-      text: 'Review Submissions',
+      text: this.translate.instant('forms.review-submissions'),
       icon: "eye",
       handler: () => {
         //console.log('review clicked');
@@ -166,14 +168,14 @@ export class Forms {
 
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
-      buttons.push({ 
-        text: 'Documents',
+      buttons.push({
+        text: this.translate.instant('forms.documents'),
         icon: 'bookmarks',
         handler: async () => {
           if (documentSets.length === 1) {
             const docs = await this.documentsService
               .getDocumentsByIds(documentSets[0].documents.map((doc) => doc.id))
-              .toPromise(); 
+              .toPromise();
 
             let documents;
             if (docs && docs.length) {
@@ -184,8 +186,8 @@ export class Forms {
 
             this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
           } else {
-            this.navCtrl.push("DocumentsListPage", { form }); 
-          } 
+            this.navCtrl.push("DocumentsListPage", { form });
+          }
         }
       })
       // }
@@ -193,7 +195,7 @@ export class Forms {
 
     if (form.instructions_content && form.instructions_content.length > 0) {
       buttons.push({
-        text: 'Instructions',
+        text: this.translate.instant('forms.instructions'),
         icon: "paper",
         handler: () => {
           //console.log('review clicked');
@@ -203,7 +205,7 @@ export class Forms {
     }
 
     buttons.push({
-      text: 'Cancel',
+      text: this.translate.instant('general.cancel'),
       role: 'cancel',
       handler: () => {
         //console.log('Cancel clicked');

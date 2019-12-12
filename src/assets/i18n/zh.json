@@ -13,7 +13,7 @@
   },
 
   "sideMenu": {
-    "events": "Events",
+    "events":   "Events",
     "settings": "Settings",
     "hi": "Hi",
     "welcome-back": "Welcome back"
@@ -103,19 +103,7 @@
       }
     }
   },
-
   "toast": {
     "no-internet-connection": "No internet connection available."
-  },
-
-  "forms": {
-    "submitted": "Submitted",
-    "pending": "Pending",
-    "unsubmitted": "Unsubmitted",
-    "capture": "Capture",
-    "review-submissions": "Review Submissions",
-    "rapid-scan": "Rapid Scan",
-    "documents": "Documents",
-    "instructions": "Instructions"
   }
 }
