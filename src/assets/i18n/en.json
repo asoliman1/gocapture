@@ -117,5 +117,57 @@
     "rapid-scan": "Rapid Scan",
     "documents": "Documents",
     "instructions": "Instructions"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "All",
+        "description": "Tap an entry to edit/review."
+      },
+      "complete": {
+        "title": "Complete",
+        "description": "Entries uploaded. Tap to review."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "Entries pending transcription/validation. Tap to review."
+      },
+      "ready": {
+        "title": "Ready",
+        "description": "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."
+      },
+      "blocked": {
+        "title": "Blocked",
+        "description": "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "Select Search Criteria",
+
+    "titles": {
+      "name": "Name",
+      "email": "Email",
+      "capture-method": "Capture Method",
+      "capture-date": "Capture Date",
+      "captured-by": "Captured By"
+    },
+
+    "modifiers": {
+      "equals": "Equals",
+      "doesnt-equal": "Does not equal",
+      "contains": "Contains",
+      "does-not-contain": "Does not contain"
+    },
+
+    "capture-type": {
+      "normal": "Normal",
+      "badge-scan": "Badge Scan",
+      "list": "List",
+      "transcription": "Transcription"
+    }
   }
 }

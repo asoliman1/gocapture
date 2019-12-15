@@ -65,7 +65,7 @@
   },
 
   "form-capture": {
-    "submit-btn": "Отправить",
+    "submit-btn": "Сохранить",
     "edit-btn": "Редактировать",
     "update-btn": "Обновить",
     "date-info": "Captured on",
@@ -117,5 +117,57 @@
     "rapid-scan": "Быстрое сканирование",
     "documents": "Документы",
     "instructions": "Инструкции"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "Все",
+        "description": "Нажмите на запись для редактирования / просмотра."
+      },
+      "complete": {
+        "title": "Сохраненны",
+        "description": "Записи сохранены. Нажмите, чтобы просмотреть."
+      },
+      "pending": {
+        "title": "В ожидании",
+        "description": "Записи в ожидании транскрипции / проверке. Нажмите, чтобы просмотреть."
+      },
+      "ready": {
+        "title": "Готовые",
+        "description": "Записи готовы к загрузке. Нажмите, чтобы редактировать, нажмите синий кружок, чтобы заблокировать, или свайп влево, чтобы удалить."
+      },
+      "blocked": {
+        "title": "Заблокированные",
+        "description": "Записи заблокированы. Нажмите, чтобы редактировать, нажмите красный кружок, чтобы разблокировать, или свайп влево, чтобы удалить."
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "Выберите критерии поиска",
+
+    "titles": {
+      "name": "Имя",
+      "email": "Эл. адрес",
+      "capture-method": "Метод захвата",
+      "capture-date": "Capture Date",
+      "captured-by": "Captured By"
+    },
+
+    "modifiers": {
+      "equals": "Equals",
+      "doesnt-equal": "Does not equal",
+      "contains": "Contains",
+      "does-not-contain": "Does not contain"
+    },
+
+    "capture-type": {
+      "normal": "Normal",
+      "badge-scan": "Badge Scan",
+      "list": "List",
+      "transcription": "Transcription"
+    }
   }
 }

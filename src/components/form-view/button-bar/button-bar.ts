@@ -134,15 +134,15 @@ export class buttonBar implements OnInit {
     getIcon(btn) {
         switch (btn.type) {
             case 'submit':
-                return 'send'
+                return 'send';
             case 'reset':
-                return 'refresh'
+                return 'refresh';
             case 'scan':
-                return 'qr-scanner'
+                return 'qr-scanner';
             case 'recall':
-                return 'return-left'
+                return 'return-left';
             case 'leads':
-                return 'list'
+                return 'list';
         }
     }
 

@@ -11,9 +11,9 @@
   </div>
   <div class="submissions">
 
-    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="secondary" ></ion-icon>  <ion-label class="text-shadow-1" >{{form?.total_sent || 0}} Submitted</ion-label></ion-chip>
-    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="orange"></ion-icon> <ion-label class="text-shadow-1">{{form?.total_hold || 0}} Pending</ion-label></ion-chip>
-    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="danger"></ion-icon> <ion-label class="text-shadow-1">{{form?.total_unsent || 0}} Unsubmitted</ion-label></ion-chip>
+    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="secondary" ></ion-icon>  <ion-label class="text-shadow-1" >{{form?.total_sent || 0}} {{'forms.submitted' | translate}}</ion-label></ion-chip>
+    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="orange"></ion-icon> <ion-label class="text-shadow-1">{{form?.total_hold || 0}} {{'forms.pending' | translate}}</ion-label></ion-chip>
+    <ion-chip [style.color]="form?.event_style?.event_text_color || 'white'" > <ion-icon color="danger"></ion-icon> <ion-label class="text-shadow-1">{{form?.total_unsent || 0}} {{'forms.unsubmitted' | translate}}</ion-label></ion-chip>
 
   </div>
   <div *ngIf="form.isSyncing" class="sync-icon" >

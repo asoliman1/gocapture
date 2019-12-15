@@ -1,109 +1,109 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
-    "auth-button": "Authenticate",
-    "continue-button": "Continue",
+    "header": "برجاء الاتصال بمسؤول شركتك للحصول على رمز الدخول. أدخل رمز الدخول الخاص بك أدناه.",
+    "email-placeholder": "ادخل عنوان البريد الالكتروني",
+    "auth-placeholder": "ادخل رمز الدخول",
+    "auth-button": "تسجيل الدخول",
+    "continue-button": "استمرار",
     "connection-mode": {
-      "title": "Connection mode",
-      "normal": "Normal",
-      "demo": "Demo"
+      "title": "وضع الاتصال",
+      "normal": "افتراضي",
+      "demo": "تجريبي"
     }
   },
 
   "sideMenu": {
-    "events":   "Events",
-    "settings": "Settings",
-    "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "events":   "فعاليات",
+    "settings": "اعدادات",
+    "hi": "مرحبا",
+    "welcome-back": "مرحبا بعودتك"
   },
 
   "general": {
-    "syncing": "Syncing...",
-    "cancel": "Cancel",
-    "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+    "syncing": "جاري المزامنة...",
+    "cancel": "الغاء",
+    "select-badge-type": "اختار نوع شارة التعريف",
+    "remind-about-leads": "ذكرني عن البيانات الغير مرسلة"
   },
 
   "settings": {
-    "title": "Settings",
+    "title": "اعدادات",
     "organization": {
-      "header": "Organization",
-      "name": "Name",
-      "key": "Key",
-      "operator": "Operator",
-      "deviceId": "Device ID"
+      "header": "المنظمة",
+      "name": "الاسم",
+      "key": "رمز",
+      "operator": "المشغل",
+      "deviceId": "معرف الجهاز"
     },
     "application": {
-      "header": "Application",
-      "localization": "Localization"
+      "header": "تطبيق",
+      "localization": "الموقع"
     },
     "operations": {
-      "header": "Operations",
-      "automatic-upload": "Automatic Upload",
-      "save-business-cards": "Save business cards on device",
-      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
-      "auto-crop": "Auto-Crop"
+      "header": "الموقع/التعريب",
+      "automatic-upload": "التحميل التلقائي",
+      "save-business-cards": "حفظ بطاقات التعريف على الجهاز",
+      "reminder-for-unsubmitted-leads": "تذكير بوجود معلومات لم يتم ارسالها",
+      "auto-crop": "الضبط التلقائي"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "اختيار من متعدد",
+      "label": "اختيار من لمسة واحدة"
     },
     "kiosk-mode": {
-      "header": "Kiosk mode",
-      "label": "Pass code"
+      "header": "وضع التجميع المحدود",
+      "label": "رمز المرور"
     },
     "diagnostics": {
-      "header": "Diagnostics",
-      "app-version": "App version",
-      "enable-logging": "Enable logging",
-      "view-log-button": "View log",
-      "test-badge-scan": "Test Badge Scan"
+      "header": "التشخيص",
+      "app-version": "نسخة التطبيق",
+      "enable-logging": "تفعيل تجميع البيانات",
+      "view-log-button": "عرض البيانات المسجلة",
+      "test-badge-scan": "اختبار مسح شارة تعريف"
     },
-    "unauth-device-btn": "Unauthenticate Device"
+    "unauth-device-btn": "الغاء تسجيل الدخول"
   },
 
   "form-capture": {
-    "submit-btn": "Submit",
-    "edit-btn": "Edit",
-    "update-btn": "Update",
-    "date-info": "Captured on",
-    "search-list": "Search List"
+    "submit-btn": "ارسال",
+    "edit-btn": "تعديل",
+    "update-btn": "تحديث",
+    "date-info": "تاريخ الالتقاط",
+    "search-list": "قاْئمة البحث"
   },
 
   "logs": {
-    "title": "Logs",
-    "show-more": "Show more"
+    "title": "البيانات المسجلة",
+    "show-more": "عرض المزيد"
   },
 
   "alerts": {
-    "warning": "Warning",
-    "error": "Error",
-    "info": "Info",
-    "Ok": "Ok",
-    "cancel": "Cancel",
+    "warning": "تحذير",
+    "error": "خطأ",
+    "info": "معلومات",
+    "Ok": "حسنا",
+    "cancel": "الغاء",
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "تم حفظ بطاقة التعريف في مكتبة الصور"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "message": "بيان متكرر"
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "لا يوجد رمز مرور!"
     },
     "audio-recording": {
-      "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "cant-start": "لا يمكن بدء التسجيل",
+      "delete-recording": "هل تريد حذف التسجيل؟"
     },
     "settings": {
       "unauthenticate": {
-        "title": "Unauthenticate ?",
-        "message": "Are you sure you want to unauthenticate this device?"
+        "title": "الغاء تسجيل الدخول",
+        "message": "هل أنت متأكد؟"
       }
     }
   },
   "toast": {
-    "no-internet-connection": "No internet connection available."
+    "no-internet-connection": "لا يوجد اتصال بالإنترنت"
   }
 }

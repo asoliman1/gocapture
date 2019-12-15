@@ -1,109 +1,99 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
-    "auth-button": "Authenticate",
-    "continue-button": "Continue",
+    "header": "Póngase en contacto con el administrador de su empresa para obtener un código de autenticación. Ingrese su código de autenticación a continuación.",
+    "email-placeholder": "Introdusca la direccion de correo electronico",
+    "auth-placeholder": "Introduzca el codigo de autenticación",
+    "auth-button": "Autenticar",
+    "continue-button": "Continuar",
     "connection-mode": {
-      "title": "Connection mode",
+      "title": "Modo de conección",
       "normal": "Normal",
-      "demo": "Demo"
+      "demo": "Demostración"
     }
   },
 
   "sideMenu": {
-    "events":   "Events",
-    "settings": "Settings",
-    "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "events":   "Eventos",
+    "settings": "Configuración",
+    "hi": "Hola",
+    "welcome-back": "Bienvenido nuevamente"
   },
 
   "general": {
-    "syncing": "Syncing...",
-    "cancel": "Cancel",
-    "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+    "syncing": "Sincronizando......"
   },
 
   "settings": {
-    "title": "Settings",
+    "title": "Configuración",
     "organization": {
-      "header": "Organization",
-      "name": "Name",
-      "key": "Key",
-      "operator": "Operator",
-      "deviceId": "Device ID"
-    },
-    "application": {
-      "header": "Application",
-      "localization": "Localization"
+      "header": "Organización",
+      "name": "Nombre",
+      "key": "Llave",
+      "operator": "Operador",
+      "deviceId": "ID del dispositivo"
     },
     "operations": {
-      "header": "Operations",
-      "automatic-upload": "Automatic Upload",
-      "save-business-cards": "Save business cards on device",
-      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
-      "auto-crop": "Auto-Crop"
+      "header": "Operaciones",
+      "automatic-upload": "Carga Automática",
+      "save-business-cards": "Guardar tarjetas de visitas en el dispositivo",
+      "reminder-for-unsubmitted-leads": "Recordatorio para enlaces no enviados",
+      "auto-crop": "Recorte automático"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "Desplegable",
+      "label": "Seleccion de un solo toque"
     },
     "kiosk-mode": {
-      "header": "Kiosk mode",
-      "label": "Pass code"
+      "header": "Modo estación",
+      "label": "Código de acceso"
     },
     "diagnostics": {
-      "header": "Diagnostics",
-      "app-version": "App version",
-      "enable-logging": "Enable logging",
-      "view-log-button": "View log",
-      "test-badge-scan": "Test Badge Scan"
+      "header": "Diagnóstico",
+      "app-version": "Versión de Aplicación",
+      "enable-logging": "Habilitar el registro",
+      "view-log-button": "Ver registro",
+      "test-badge-scan": "Prueba de escaneo de insignia"
     },
-    "unauth-device-btn": "Unauthenticate Device"
+    "unauth-device-btn": "Dispositivo no Autenticado"
   },
-
   "form-capture": {
-    "submit-btn": "Submit",
-    "edit-btn": "Edit",
-    "update-btn": "Update",
-    "date-info": "Captured on",
-    "search-list": "Search List"
+    "submit-btn": "Enviar",
+    "edit-btn": "Editar",
+    "update-btn": "Actualizar",
+    "date-info": "Capturar en",
+    "search-list": "Lista de busqueda"
   },
-
   "logs": {
-    "title": "Logs",
-    "show-more": "Show more"
+    "title": "Registros",
+    "show-more": "Mostar más"
   },
-
   "alerts": {
-    "warning": "Warning",
+    "warning": "Advertencia",
     "error": "Error",
-    "info": "Info",
-    "Ok": "Ok",
-    "cancel": "Cancel",
+    "info": "Información",
+    "Ok": "Entendido",
+    "cancel": "Cancelar",
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "La tarjeta de visita se guardó en la Biblioteca de fotos"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "message": "Enlaces Duplicados"
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "No se ha establecido una contraseña de estación!"
     },
     "audio-recording": {
-      "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "cant-start": "No se puede comenzar a grabar",
+      "delete-recording": "¿Desea eliminar la grabación?"
     },
     "settings": {
-      "unauthenticate": {
-        "title": "Unauthenticate ?",
-        "message": "Are you sure you want to unauthenticate this device?"
+      "unauthinticate": {
+        "title": "¿No autenticado?",
+        "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
       }
     }
   },
   "toast": {
-    "no-internet-connection": "No internet connection available."
+
   }
 }

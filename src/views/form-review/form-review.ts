@@ -13,6 +13,7 @@ import { FilterService, Modifier, Modifiers } from "../../services/filter-servic
 import { ThemeProvider } from "../../providers/theme/theme";
 import { DateTimeUtil } from "../../util/date-time-util";
 import { Popup } from "../../providers/popup/popup";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
 	selector: 'form-review',
@@ -61,15 +62,16 @@ export class FormReview {
 		private util: Util,
 		private modalCtrl: ModalController,
 		private filterService: FilterService,
-		private themeProvider: ThemeProvider
+		private themeProvider: ThemeProvider,
+    private translate: TranslateService
 	) {
 
 		this.statusFilters = [
-			{ id: 'all', title: "All", status: 0, description: "Tap an entry to edit/review." },
-			{ id: 'sent', title: "Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review." },
-			{ id: 'hold', title: "Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review." },
-			{ id: 'ready', title: "Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete." },
-			{ id: 'blocked', title: "Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete." },
+			{ id: 'all', title: this.translate.instant("form-review.filter.all.title"), status: 0, description: this.translate.instant("form-review.filter.all.description") },
+			{ id: 'sent', title: this.translate.instant("form-review.filter.complete.title"), status: SubmissionStatus.Submitted, description: this.translate.instant("form-review.filter.complete.description") },
+			{ id: 'hold', title: this.translate.instant("form-review.filter.pending.title"), status: SubmissionStatus.OnHold, description: this.translate.instant("form-review.filter.pending.description") },
+			{ id: 'ready', title: this.translate.instant("form-review.filter.ready.title"), status: SubmissionStatus.ToSubmit, description: this.translate.instant("form-review.filter.ready.description") },
+			{ id: 'blocked', title: this.translate.instant("form-review.filter.blocked.title"), status: SubmissionStatus.Blocked, description: this.translate.instant("form-review.filter.blocked.description") },
 		];
 		this.statusFilter = this.statusFilters[0];
 
