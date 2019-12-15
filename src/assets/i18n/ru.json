@@ -68,7 +68,7 @@
     "submit-btn": "Сохранить",
     "edit-btn": "Редактировать",
     "update-btn": "Обновить",
-    "date-info": "Captured on",
+    "date-info": "Cоздан",
     "search-list": "Поиск"
   },
 
@@ -87,7 +87,7 @@
       "message": "Визитка была сохранена в библиотеке"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "message": "Дупликат"
     },
     "kiosk-mode": {
       "message": "Пароль для режима \"Киоск\" не установлен!"
@@ -151,23 +151,23 @@
     "titles": {
       "name": "Имя",
       "email": "Эл. адрес",
-      "capture-method": "Метод захвата",
-      "capture-date": "Capture Date",
-      "captured-by": "Captured By"
+      "capture-method": "Метод создания",
+      "capture-date": "Дата создания",
+      "captured-by": "Создан"
     },
 
     "modifiers": {
-      "equals": "Equals",
-      "doesnt-equal": "Does not equal",
-      "contains": "Contains",
-      "does-not-contain": "Does not contain"
+      "equals": "Равно",
+      "doesnt-equal": "Не равно",
+      "contains": "Содержит",
+      "does-not-contain": "Не содержит"
     },
 
     "capture-type": {
-      "normal": "Normal",
-      "badge-scan": "Badge Scan",
-      "list": "List",
-      "transcription": "Transcription"
+      "normal": "Обычный",
+      "badge-scan": "Сканирование",
+      "list": "Список",
+      "transcription": "Транскрипция"
     }
   }
 }
