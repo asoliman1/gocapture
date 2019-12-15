@@ -22,8 +22,12 @@ export class DynamicFormElementComponent {
   @Output() onProcessingEvent = new EventEmitter();
   @ViewChild('dynamicForm') el:ElementRef;
 
+  minYear = "0";
+  maxYear = "0";
+
 
   constructor() {
+    this.setYearsRange();
   }
 
   onProcessing(event) {
@@ -31,10 +35,10 @@ export class DynamicFormElementComponent {
   }
 
   ngOnInit(){
-    this.setFormLabelColor()
+    this.setFormLabelColor();
     this.setItemBackground()
   }
-  
+
     // A.S GOC-326
   setFormLabelColor(){
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
@@ -57,4 +61,10 @@ export class DynamicFormElementComponent {
     //console.log(event);
   }
 
+  setYearsRange() {
+    var d = new Date();
+    var year = d.getFullYear();
+    this.minYear = (year - 10) + '';
+    this.maxYear = (year + 10) + '';
+  }
 }
