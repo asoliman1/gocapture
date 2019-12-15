@@ -107,6 +107,8 @@ export class FormCapture implements AfterViewInit {
 
   buttonBar : Subscription;
 
+  captureBg : string;
+
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
     private client: BussinessClient,
@@ -132,7 +134,7 @@ export class FormCapture implements AfterViewInit {
     this.idle = new Idle();
     this.getSavedLocation()
     this.setupForm();
-    
+    this.convertCaptureImageSrc();
   }
 
 
@@ -260,7 +262,6 @@ export class FormCapture implements AfterViewInit {
     this.form = Object.assign(new Form(),this.navParams.get("form")); 
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
-    this.convertCaptureImageSrc();
     this.setStation(this.submission);
 
     this.dispatch = this.navParams.get("dispatch");
@@ -284,7 +285,7 @@ export class FormCapture implements AfterViewInit {
 
   private convertCaptureImageSrc(){
     let win : any = window;
-    this.form.event_style.capture_background_image.path = win.Ionic.WebView.convertFileSrc(this.form.event_style.capture_background_image.path);
+    this.captureBg = win.Ionic.WebView.convertFileSrc(this.form.event_style.capture_background_image.path);
   }
 
   private setStation(submission) {

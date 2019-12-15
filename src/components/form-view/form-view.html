@@ -4,7 +4,7 @@
     <!-- A.S GOC-319 -->
     <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
       <ion-row >
-        <ion-col class="{{elements.length > 1 ? 'spacer' : ''}}" *ngFor="let els of elements" >
+        <ion-col class="spacer" *ngFor="let els of elements" >
           <ion-row *ngFor="let element of els" >
             <section-block 
               *ngIf="element.type == 'section_block' && !element.is_hidden && shouldElementBeDisplayed(element)" 

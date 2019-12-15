@@ -1255,11 +1255,9 @@ export class DBClient {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			if (this.saveAllEnabled) {
 				this.saveAllData.push({ query: this.getQuery(table, "update"), type: type, parameters: parameters });
-				setTimeout(() => {
 					responseObserver.next(true);
 					responseObserver.complete();
-				},10);
-				return;
+				    return;
 			}
 			this.doUpdate(type, "update", table, parameters).subscribe((value) => {
 				responseObserver.next(value);
@@ -1367,6 +1365,7 @@ export class DBClient {
 							responseObserver.complete();
 						}
 					}, (err) => {
+						console.log(err);
 						responseObserver.error("An error occurred: " + JSON.stringify(err));
 					});
 			}, (error) => {

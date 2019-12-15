@@ -30,8 +30,7 @@ export class AudioCaptureService {
 
     return new Observable<MEDIA_STATUS>((obs: Observer<MEDIA_STATUS>) => {
       let audioFolder = this.audioFolder();
-
-      let extension = this.platform.is("ios") ? ".m4a" : ".mp3";
+      let extension = ".m4a" ;
       this.fileName = new Date().getTime() + extension;
 
       let filePath = audioFolder + "/" + this.fileName;

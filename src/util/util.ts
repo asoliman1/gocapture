@@ -222,7 +222,7 @@ export class Util {
 
   public fileExist(url) {
     let file = this.getFilePath(url, '');
-    return this.file.checkFile(file.folderPath + '/', file.name);
+    return this.file.checkFile(file.folderPath , file.name);
   }
 
   public adjustFilePath(filePath) {
