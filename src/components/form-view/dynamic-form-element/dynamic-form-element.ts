@@ -25,7 +25,6 @@ export class DynamicFormElementComponent {
   minYear = "0";
   maxYear = "0";
 
-
   constructor() {
     this.setYearsRange();
   }
@@ -35,12 +34,14 @@ export class DynamicFormElementComponent {
   }
 
   ngOnInit(){
-    this.setFormLabelColor()
+    this.setElementsStyle()
   }
 
     // A.S GOC-326
-  setFormLabelColor(){
+  setElementsStyle(){
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
+    document.documentElement.style.setProperty(`--elements_bg_color`,this.hexToRgb(this.form.event_style.element_background_color));
+    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity.toString());
   }
 
   isControlInvalid() {
@@ -50,6 +51,15 @@ export class DynamicFormElementComponent {
   setHour(event) {
 
   }
+
+  hexToRgb(hex) {
+    var bigint = parseInt(hex, 16);
+    var r = (bigint >> 16) & 255;
+    var g = (bigint >> 8) & 255;
+    var b = bigint & 255;
+
+    return r + "," + g + "," + b;
+}
 
   setDate(event) {
     //console.log(event);

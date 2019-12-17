@@ -83,7 +83,7 @@ export class GOCAudio extends BaseElement {
 			this.isRecording = false;
 			this.onChange(filePath);
 			this.updateRecordDuration(true);
-
+			this.currentVal = filePath;
 			this.updateTimeLabels(0, this.trackDuration);
 		});
 	}
@@ -164,10 +164,10 @@ export class GOCAudio extends BaseElement {
 		let filePath = this.currentVal;
 
 		let fileExist = false;
-
 		try {
 			fileExist = await this.audioCaptureService.isRecordExist(filePath);
 		} catch (e) {
+			console.log(e)
 			fileExist = false;
 		}
 		if (!fileExist) {

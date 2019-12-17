@@ -118,6 +118,7 @@
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",
     "phonegap-plugin-multidex": "^1.0.0",
     "phonegap-plugin-push": "file:3rdParty/phonegap-plugin-push",
+    "properties-parser": "^0.3.1",
     "rxjs": "^5.5.11",
     "signature_pad": "^2.3.2",
     "sw-toolbox": "3.6.0",

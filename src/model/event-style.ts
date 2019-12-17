@@ -20,4 +20,7 @@ export class EventStyle {
     capture_background_color : string;
     // A.S GOC-374
     capture_background_image : Image;
+    element_background_color : string;
+    element_background_opacity : number;
+    element_background_mode : string;
 }

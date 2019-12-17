@@ -1,6 +1,6 @@
 <div [formGroup]="theForm" class="dynamic-form-element" #dynamicForm >
 
-  <div [ngSwitch]="element.type">
+  <div [ngSwitch]="element.type" class="{{form?.event_style?.element_background_mode || ''}}">
 
     <!--EMAIL-->
     <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode"
