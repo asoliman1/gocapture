@@ -33,7 +33,7 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    private rest: RESTClient,
+    // private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
     public statusBar: StatusBar,
@@ -121,8 +121,8 @@ export class MyApp {
       this.client.getRegistration(true).subscribe((user) => {
         if (user) {
           this.client.setLocation(3000);
-          this.client.getDeviceStatus(user).subscribe((status) => {
-            this.handleAccessTokenValidationResult(status, user);
+          this.client.getDeviceStatus(user).subscribe((status)=>{
+            this.handleAccessTokenValidationResult(status,user);
           });
         }
       });
@@ -234,6 +234,8 @@ export class MyApp {
 
 
       this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
+    } else {
+
     }
   }
 }
