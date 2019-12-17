@@ -53,12 +53,15 @@ export class DynamicFormElementComponent {
   }
 
   hexToRgb(hex) {
-    var bigint = parseInt(hex, 16);
-    var r = (bigint >> 16) & 255;
-    var g = (bigint >> 8) & 255;
-    var b = bigint & 255;
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
-    return r + "," + g + "," + b;
+    let rgb = result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    } : null;
+
+    return rgb ? `${rgb.r},${rgb.g},${rgb.b}` : '0,0,0';
 }
 
   setDate(event) {

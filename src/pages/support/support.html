@@ -11,8 +11,8 @@
   <h3>Your success is our mission. How can we help you?</h3>
 
   <ion-list no-lines class="s-padding">
-    <button ion-button large class="shadow-lg" clear block color="dark"  ><a href="mailto:support@leadliaison.com">Open a Ticket</a></button>
-    <button ion-button large class="shadow-lg" clear block color="dark"><a href="https://leadliaison.atlassian.net/wiki/spaces/LL/pages/18932085/GoCapture" >Documentation</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark"  ><a [href]="email">Open a Ticket</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="documentation" >Documentation</a></button>
     <button ion-button large class="shadow-lg" clear block color="dark" (click)="startConversation()">Start a Conversation</button>
   </ion-list>
 

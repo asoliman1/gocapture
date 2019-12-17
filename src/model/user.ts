@@ -18,5 +18,7 @@ export class User {
 	is_production: 0 | 1 = 1;
 	theme: string;
 	device_id: number;
-
+	in_app_support : 0 | 1;
+	documentation_url : string;
+	support_email : string;
 }

@@ -268,6 +268,7 @@ export class BussinessClient {
       req.invitation_code = authCode;
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
+        this.util.checkFilesDirectories();
         this.onAuthSuccess(reply,obs);
       }, err => {
         obs.error("Invalid authentication code");
@@ -275,16 +276,15 @@ export class BussinessClient {
     });
   }
 
- private onAuthSuccess(reply : any , obs : Observer <any>){
-    this.util.checkFilesDirectories();
+ private onAuthSuccess(reply : User , obs : Observer <any>){
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
-    this.initIntercom();
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
+        if(reply.in_app_support) this.initIntercom();
         obs.next({ user: reply, message: "Done" });
         obs.complete();
       }, err => {
@@ -339,10 +339,15 @@ export class BussinessClient {
   public getDeviceStatus(user: User) {
     return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
       this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+        this.onAuthSuccess(status.data,obs)
         obs.next(status);
         obs.complete();
       })
     });
+  }
+
+  updateUser(user : User){
+
   }
 
   public getUpdates(): Observable<boolean> {

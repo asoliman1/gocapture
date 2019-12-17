@@ -18,7 +18,7 @@ export class Main {
 	@ViewChild(Nav) nav: Nav;
 	rootPage: any = Forms;
 	user: User = new User();
-	pages: Array<{ title: string, component: any, icon: string }>;
+	pages: Array<{ title: string, component: any, icon: string , data ?: any }>;
 
 	constructor(
 		public  client: BussinessClient,
@@ -29,21 +29,31 @@ export class Main {
 		this.pages = [
 			{ title: 'Events', component: Forms, icon: "document" },
 			{ title: 'Settings', component: Settings, icon: "cog" },
-			{ title: 'Support', component: SupportPage, icon: "help" },
 		];
 	}
 
 	openPage(page) {
-		this.nav.setRoot(page.component);
+		this.nav.setRoot(page.component,page.data);
 	}
 
 	ngOnInit() {
 		this.client.getRegistration().subscribe(user => {
 			this.user = user;
+			this.checkUserSupport();
 			this.client.setupNotifications();
 			let theme = this.user.theme ? this.user.theme : 'default';
 			this.themeProvider.setActiveTheme(theme + '-theme'); // A.S a bug in some themes
 		});
+	}
+
+	checkUserSupport(){
+		if(this.user.in_app_support) 
+		this.pages.push({ 
+			title: 'Support', 
+			component: SupportPage, 
+			icon: "help" , 
+			data : { documentation : this.user.documentation_url , email: this.user.support_email} 
+		})
 	}
 
 	ionViewDidEnter() {

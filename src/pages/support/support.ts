@@ -7,7 +7,8 @@ import { Intercom } from '@ionic-native/intercom';
   templateUrl: 'support.html',
 })
 export class SupportPage {
-
+  documentation : string = this.navParams.data.documentation;
+  email : string = 'mailto:' + this.navParams.data.email;
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
