@@ -299,6 +299,7 @@ export class SubmissionsProvider {
 
         this.setSubmissionsUploading(data.submissions);
         this.doSubmit(data, index).subscribe((submission) => {
+          this.downloadSubmissionsData(data.form,[submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')
           this.formsProvider.updateFormSubmissions(data.form.form_id);
@@ -476,8 +477,6 @@ export class SubmissionsProvider {
           this.duplicateLeadSource.next(null);
           return;
         }
-        console.log('new submission from api :');
-        console.log(d);
         if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
           submission.invalid_fields = 1;
           submission.hold_request_id = 0;
@@ -510,7 +509,6 @@ export class SubmissionsProvider {
 
         this.submissionsRepository.handleMergedSubmission(d.id, submission, d.submission, form)
           .subscribe((ok) => {
-            console.log('submission repo ' + ok)
             if (d.id > 0) {
               submission.id = submission.activity_id;
             }
@@ -539,9 +537,7 @@ export class SubmissionsProvider {
     return new Observable<any>((obs: Observer<any>) => {
 
       //handle only those urls that were not uploaded before
-      let urls = Object.keys(urlMap).filter(url => {
-        return !url.startsWith("https://")
-      });
+      let urls = Object.keys(urlMap).filter(url => !url.startsWith("https://"));
 
       if (!hasUrls || urls.length == 0) {
         obs.next(null);
@@ -571,9 +567,7 @@ export class SubmissionsProvider {
               return this.file.getFile(dir, file, { create: false })
             })
             .then(fileEntry => {
-
               fileEntry.getMetadata((metadata) => {
-
                 this.file.readAsDataURL(folder, file)
                   .then((data: string) => {
                     let entry = this.util.createFile(data, file, metadata.size);

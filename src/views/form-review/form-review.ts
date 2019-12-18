@@ -196,11 +196,13 @@ export class FormReview {
 
 	getBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
-		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
-		// if (front && front.length > 0) {
-		// 	front = this.util.imageUrl(front);
-		// }
-		return front;
+		let bc : any = submission.fields[id];
+		if (bc && bc.length > 0) {
+			bc.front = this.util.imageUrl(bc.front);
+			bc.back = this.util.imageUrl(bc.back);
+			submission.fields[id] = bc;
+		}
+		return bc.front;
 	}
 
 	doRefresh() {

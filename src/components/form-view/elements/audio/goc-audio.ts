@@ -84,6 +84,7 @@ export class GOCAudio extends BaseElement {
 			this.onChange(filePath);
 			this.updateRecordDuration(true);
 			this.currentVal = filePath;
+			console.log(filePath)
 			this.updateTimeLabels(0, this.trackDuration);
 		});
 	}
@@ -162,15 +163,8 @@ export class GOCAudio extends BaseElement {
 	async startPlayback() {
 
 		let filePath = this.currentVal;
-
-		let fileExist = false;
-		try {
-			fileExist = await this.audioCaptureService.isRecordExist(filePath);
-		} catch (e) {
-			console.log(e)
-			fileExist = false;
-		}
-		if (!fileExist) {
+	
+		if (filePath.startsWith('https://')) {
 			this.popup.showLoading("Record downloading...");
 			await this.audioCaptureService.downloadRecord(filePath);
 			this.popup.dismiss('loading');

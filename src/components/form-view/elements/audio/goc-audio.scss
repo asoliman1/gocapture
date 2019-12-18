@@ -1,6 +1,8 @@
 .goc-audio {
 
   .recorder {
+    padding-top: 5px;
+
     .recording-btn {
       position: relative;
       border-color: #FA2200;
@@ -63,6 +65,8 @@
   .counter {
     display: inline-block;
     margin-bottom: 10px;
+    padding: 2px;
+    margin-left: 5px;
   }
 
   .blink {
