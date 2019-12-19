@@ -28,6 +28,7 @@ import { SettingsService } from './settings-service';
 import { Geolocation } from '@ionic-native/geolocation';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
+import { Subject } from 'rxjs';
 
 @Injectable()
 /**
@@ -50,7 +51,7 @@ export class BussinessClient {
 
   private online: boolean = true;
 
-  private registration: User;
+  registration: User;
 
   private setup: boolean = false;
 
@@ -62,7 +63,7 @@ export class BussinessClient {
    */
   error: Observable<any>;
 
-
+  public userUpdates : Subject<User> = new Subject();
 
   constructor(
     private db: DBClient,
@@ -79,23 +80,11 @@ export class BussinessClient {
     private geolocation: Geolocation,
     private intercom : Intercom,
     private popup: Popup) {
-
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
-
-    this.networkOff = this.net.onDisconnect().subscribe(() => {
-      console.log("network was disconnected :-(");
-      this.setOnline(false);
-    });
-
-    this.networkOn = this.net.onConnect().subscribe(() => {
-      console.log("network was connected");
-      this.setOnline(true);
-    });
-
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
-
+    this.initNetwork();
   }
 
   public isOnline(): boolean {
@@ -107,6 +96,18 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
+  }
+
+  private initNetwork(){
+    this.networkOff = this.net.onDisconnect().subscribe(() => {
+      console.log("network was disconnected :-(");
+      this.setOnline(false);
+    });
+
+    this.networkOn = this.net.onConnect().subscribe(() => {
+      console.log("network was connected");
+      this.setOnline(true);
+    });
   }
 
   public doAutoSync() {
@@ -181,15 +182,13 @@ export class BussinessClient {
       this.db.getRegistration().subscribe((user) => {
         if (user) {
           this.registration = user;
+          this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
           this.formsProvider.setForms();
           this.rest.token = user.access_token;
+        } 
           obs.next(user);
           obs.complete();
-        } else {
-          obs.next(user);
-          obs.complete();
-        }
       })
     });
   }
@@ -280,6 +279,7 @@ export class BussinessClient {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
+    this.userUpdates.next(reply);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
         this.db.setupWorkDb(reply.db);
@@ -309,24 +309,7 @@ export class BussinessClient {
     return new Observable<User>((obs: Observer<User>) => {
       this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
         if (done) {
-          this.db.deleteRegistration();
-          this.push.shutdown();
-          this.pushSubs.forEach(sub => {
-            sub.unsubscribe();
-          });
-          try {
-            await this.appPreferences.clearAll();
-            await this.intercom.reset();
-          } catch (error) {
-            console.log(error);
-          }
-          this.formsProvider.resetForms()
-          this.util.rmDir("leadliaison", "");
-          this.pushSubs = [];
-          this.setup = false;
-          obs.next(user);
-          obs.complete();
-
+          this.onUnAuthSuccess(obs)
         } else {
           obs.error("Could not unauthenticate");
         }
@@ -334,6 +317,26 @@ export class BussinessClient {
         obs.error(err);
       });
     });
+  }
+
+  private async onUnAuthSuccess(obs){
+    this.db.deleteRegistration();
+    this.push.shutdown();
+    this.pushSubs.forEach(sub => {
+      sub.unsubscribe();
+    });
+    try {
+      await this.appPreferences.clearAll();
+      await this.intercom.reset();
+    } catch (error) {
+      console.log(error);
+    }
+    this.formsProvider.resetForms();
+    this.util.rmDir("leadliaison", "");
+    this.pushSubs = [];
+    this.setup = false;
+    obs.next(null);
+    obs.complete();
   }
 
   public getDeviceStatus(user: User) {
@@ -346,9 +349,6 @@ export class BussinessClient {
     });
   }
 
-  updateUser(user : User){
-
-  }
 
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
@@ -403,14 +403,11 @@ export class BussinessClient {
 
   public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
     sub.updateFields(form);
-
     return new Observable<boolean>((obs: Observer<boolean>) => {
       this.db.saveSubmission(sub).subscribe((done) => {
-
         if (syncData) {
           this.doAutoSync();
         }
-
         obs.next(done);
         obs.complete();
       }, (err) => {
@@ -534,7 +531,7 @@ export class BussinessClient {
   }
 
   setAppCloseTime() {
-    this.db.saveConfig('appCloseTime', Date.now() + "");
+    this.db.saveConfig('appCloseTime', Date.now() + "").subscribe();
   }
 
   async getAppCloseTimeFrom() {

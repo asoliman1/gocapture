@@ -114,7 +114,7 @@
     "ng-imgcache": "^1.0.1",
     "ng2-validation": "^4.2.0",
     "phonegap": "^9.0.0",
-    "phonegap-nfc": "^1.0.3",
+    "phonegap-nfc": "^1.0.4",
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",
     "phonegap-plugin-multidex": "^1.0.0",
     "phonegap-plugin-push": "file:3rdParty/phonegap-plugin-push",
@@ -164,9 +164,6 @@
       },
       "cordova-plugin-insomnia": {},
       "cordova-plugin-document-viewer": {},
-      "phonegap-nfc": {
-        "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
-      },
       "cordova-sqlite-storage": {},
       "cordova-plugin-add-swift-support": {},
       "cordova-plugin-photo-library": {
@@ -196,7 +193,10 @@
       },
       "cordova-plugin-intercom": {},
       "cordova-plugin-app-preferences": {},
-      "cordova-plugin-gocapture-ocr": {}
+      "cordova-plugin-gocapture-ocr": {},
+      "phonegap-nfc": {
+        "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
+      }
     },
     "platforms": [
       "browser",

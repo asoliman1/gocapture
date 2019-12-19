@@ -18,52 +18,65 @@ export class Main {
 	@ViewChild(Nav) nav: Nav;
 	rootPage: any = Forms;
 	user: User = new User();
-	pages: Array<{ title: string, component: any, icon: string , data ?: any }>;
+	pages: Array<{ title: string, component: any, icon: string, data?: any }>;
 
 	constructor(
-		public  client: BussinessClient,
+		public client: BussinessClient,
 		private themeProvider: ThemeProvider,
 		private rapidCaptureService: RapidCaptureService,
 		private formsProvider: FormsProvider
 	) {
+
+	}
+
+	openPage(page) {
+		this.nav.setRoot(page.component, page.data);
+	}
+
+	ngOnInit() {
+		this.client.setupNotifications();
+		this.client.userUpdates.subscribe((user: User)=>{
+			this.setUser(user);
+		})
+	}
+
+	setPages() {
 		this.pages = [
 			{ title: 'Events', component: Forms, icon: "document" },
 			{ title: 'Settings', component: Settings, icon: "cog" },
 		];
-	}
-
-	openPage(page) {
-		this.nav.setRoot(page.component,page.data);
-	}
-
-	ngOnInit() {
-		this.client.getRegistration().subscribe(user => {
-			this.user = user;
-			this.checkUserSupport();
-			this.client.setupNotifications();
-			let theme = this.user.theme ? this.user.theme : 'default';
-			this.themeProvider.setActiveTheme(theme + '-theme'); // A.S a bug in some themes
-		});
-	}
-
-	checkUserSupport(){
-		if(this.user.in_app_support) 
-		this.pages.push({ 
-			title: 'Support', 
-			component: SupportPage, 
-			icon: "help" , 
-			data : { documentation : this.user.documentation_url , email: this.user.support_email} 
-		})
+		if (this.user.in_app_support)
+			this.pages.push({
+				title: 'Support',
+				component: SupportPage,
+				icon: "help",
+				data: { documentation: this.user.documentation_url, email: this.user.support_email }
+			})
+		else {
+			this.pages = this.pages.filter((e) => e.title != 'Support');
+		}
 	}
 
 	ionViewDidEnter() {
-
-		setTimeout(() => {
-			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');
-		}, 2000);
-
+		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe();
 	}
 
+	checkUnsentBadges(){
+		setTimeout(() => {
+			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');
+		}, 2000);
+	}
+
+	setUser(user : User){
+		this.user = user;
+		this.setPages();
+		this.setTheme();
+	}
+
+	setTheme(){
+		let theme = this.user.theme ? this.user.theme : 'default';
+		this.themeProvider.setActiveTheme(theme + '-theme'); // 
+	}
 
 }

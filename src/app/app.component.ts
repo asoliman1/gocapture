@@ -70,11 +70,11 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.checkUserAuth();
       this.handleApiErrors();
       this.handleClientErrors();
       this.handleSyncErrors();
       this.configImageLoader();
-      this.checkUserAuth();
       this.checkDeviceStatus();
       this.onAppResumes();
       this.onAppPause();
@@ -136,17 +136,15 @@ export class MyApp {
 
   private onAppResumes() {
     this.platform.resume.subscribe( async () => {
-      // A.S check device status when app resumes
       if (!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')) {
         this.popup.dismissAll();
         if(await this.client.getAppCloseTimeFrom() > 60){
           this.checkDeviceStatus();
-          this.client.getUpdates().subscribe(() => {});
+          this.client.getUpdates().subscribe();
         }
       }
       this.util.rmPluginPrefs()
     });
-  
   }
 
   onAppPause(){
