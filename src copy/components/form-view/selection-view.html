@@ -1,0 +1,38 @@
+<div class="form-view selection">
+	<form [formGroup]="theForm" style="width:100%;" novalidate>
+		<div class="" *ngFor="let element of displayForm.elements" [ngSwitch]="element.type">
+			<ion-item *ngSwitchCase="'email'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
+			</ion-item>
+			<ion-item *ngSwitchCase="'url'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
+			</ion-item>
+			<ion-item *ngSwitchCase="'text'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
+			</ion-item>
+			<simple-name *ngSwitchCase="'simple_name'" [selection]="true" [element]="element" [rootGroup]="theForm" (idSelected)="selectEntry($event)"></simple-name>
+			<ion-item *ngSwitchCase="'textarea'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<ion-textarea [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
+				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
+			</ion-item>
+			<address *ngSwitchCase="'address'"  [selection]="true" [element]="element" [rootGroup]="theForm" (idSelected)="selectEntry($event)"></address>
+			<ion-item *ngSwitchCase="'number'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+			</ion-item>
+			<ion-item *ngSwitchCase="'phone'">
+				<ion-label stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+				<!-- readOnly param is not declared so there is a syntax error so i declared it till you see this comment and remove it or give its function properly -->
+				<ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"></ion-input>
+				<button ion-button clear item-right icon-only (click)="selectEntry(element.identifier)"><ion-icon name="ios-open-outline"></ion-icon></button>
+			</ion-item>
+		</div>
+	</form>
+</div>

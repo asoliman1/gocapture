@@ -1,0 +1,41 @@
+<ion-header>
+	<ion-navbar>
+		<ion-buttons start>
+			<button ion-button (click)="cancel()">
+				<ion-icon name="close" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+		<ion-title>{{title}}</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="flip()" [disabled]="loading">
+				<ion-icon name="repeat" class="capture"></ion-icon>
+			</button>
+			<button ion-button (click)="done()" [disabled]="loading">
+				<ion-icon name="checkmark" class="capture"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+<ion-content class="text-center">
+	<div class="ocr-layout">
+		<div class="holder">
+			<img #card [src]="normalizeURL(image)">
+			<div class="words-wrapper" [class.overlay]="multiselect">
+				<div class="words" (press)="onPressStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onPressEnd($event)">
+					<div class="word" [class.assigned]="word.assigned" [class.selected]="word.selected" *ngFor="let word of wordElements; let i = index" [id]="i" (click)="wordClicked(word)" [style.width]="word.width"
+					 [style.height]="word.height" [style.top]="word.top" [style.left]="word.left">
+						{{word.word}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="loading" [@isVisibleChanged]="isLoading">
+			<ion-spinner></ion-spinner>
+		</div>
+	</div>
+	<selection-view [form]="form"
+					[submission]="submission"
+					(select)="onSelect($event)"
+					[outsideChanged]="valuesToPropagate"
+					(inputChange)="propagateDirectChanges($event)"></selection-view>
+</ion-content>

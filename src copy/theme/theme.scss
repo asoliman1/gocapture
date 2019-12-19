@@ -1,0 +1,112 @@
+@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
+  $alert-ios-button-text-color: $theme-color;
+
+  $action-sheet-ios-button-text-color: $theme-color;
+  $button-ios-background-color: $theme-color;
+  $button-md-background-color: $theme-color;
+  $toggle-ios-background-color-on: $theme-color;
+
+  .header .toolbar-background,
+  .footer .toolbar-background,
+  .toolbar .toolbar-background,
+  .toggle-ios.toggle-checked .toggle-icon,
+  .toggle-md.toggle-checked .toggle-icon,
+  .fab-md-in-list , .fab-md-in-list , .fab ,
+  .fab.activated , .s-header .title::after{
+    background-color: $theme-color;
+  }
+
+  .alert-button,
+  .action-sheet-button,
+  [aria-checked=true] .alert-radio-label {
+    color: $theme-color !important;
+  }
+
+  .action-sheet-destructive {
+    color: #f53d3d !important;
+  }
+
+  .option-item {
+    &.selected {
+      color: $theme-color !important;
+    }
+  }
+
+  ion-select.ng-dirty{
+    color: $theme-color;
+  }
+
+  ion-datetime.ng-dirty{
+    color: $theme-color;
+  }
+
+  ion-input.ng-dirty,
+  .item-radio-checked.item-ios ion-label,
+  .item-radio-checked.item-md ion-label {
+    color: $theme-color;
+  }
+
+  ion-textarea.ng-dirty {
+    color: $theme-color;
+  }
+
+  .item-md.item-input.input-has-focus .item-inner,
+  .item-ios.item-input.input-has-focus .item-inner {
+    border-bottom-color: $theme-color !important;
+    box-shadow: inset 0 -1px 0 0 $theme-color !important;
+  }
+
+  .list-md .item-input.input-has-focus:last-child,
+  .list-ios .item-input.input-has-focus:last-child {
+    border-bottom-color: $theme-color !important;
+    box-shadow: inset 0 -1px 0 0 $theme-color !important;
+  }
+
+  radios.ng-dirty .item-radio-checked .item-inner {
+    border-bottom: 1px solid $theme-color !important;
+  }
+
+  .select-disabled {
+    color: $theme-color;
+  }
+
+  .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+    background-color: $theme-color !important;
+  }
+
+  .ng-select-container:after {
+    border-color: $theme-color !important;
+  }
+
+  .ng-arrow,
+  .ng-option.ng-option-selected {
+    color: $theme-color !important;
+  }
+
+  .checkbox-checked,
+  .radio-md .radio-inner,
+  .alert-radio-inner {
+    border-color: $theme-color !important;
+    background-color: $theme-color !important;
+  }
+
+  .radio-checked .radio-inner,
+  [aria-checked=true] .alert-radio-inner,
+  [aria-checked=true] .alert-radio-icon,
+  .radio-md .radio-checked {
+    border-color: $theme-color !important;
+  }
+
+  .bar-button {
+    color: $theme-color;
+  }
+
+  .fi-extentions{
+    font-size: 125px;
+    color: $theme-color;
+  }
+
+  .info-box,ion-text{
+    color: $theme-text-color // A.S to set a text color for each theme
+  }
+}

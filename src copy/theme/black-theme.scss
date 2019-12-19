@@ -1,0 +1,6 @@
+$theme-color: color($colors, black);
+$theme-text-color : color($colors, white);
+
+.black-theme {
+  @include theme($theme-color,$theme-text-color);
+}

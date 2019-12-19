@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Select Station:</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
+
+  <ion-list radio-group [(ngModel)]="selectedStation" [disabled]="disableStationSelection" >
+    <ion-item-divider *ngIf="visitedStations && visitedStations.length > 0">
+      Stations Visited
+    </ion-item-divider>
+    <ion-item no-lines *ngFor="let station of visitedStations">
+      <ion-label>{{station.name}}</ion-label>
+    </ion-item>
+    <ion-item-divider *ngIf="stations && stations.length > 0">
+      Stations
+    </ion-item-divider>
+    <ion-item no-lines *ngFor="let station of filteredStations">
+      <ion-label>{{station.name}}</ion-label>
+      <ion-radio [value]="station"
+                 [checked]="station.id == selectedStation?.id"></ion-radio>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
+
+<ion-footer>
+
+  <ion-toolbar>
+    <ion-buttons class="text-center">
+      <button ion-button (click)="onCancel()">
+        Cancel
+      </button>
+      <button ion-button (click)="onStationChoose()">
+        Ok
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-footer>

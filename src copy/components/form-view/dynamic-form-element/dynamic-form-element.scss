@@ -1,0 +1,139 @@
+
+dynamic-form-element, .dynamic-form-element {
+  // A.S GOC-326
+  :root {
+    --elements_label_color : black;
+    --elements_bg_color : 255,255,255;
+    --elements_bg_opacity : 0;
+    }
+
+  ion-item{
+      background: transparent !important;
+    }
+
+  .input_only{
+    ion-input,ion-textarea,ion-datetime,ion-select,checkboxes ion-item , .counter , .playback ion-range{
+      background: rgba(var(--elements_bg_color),var(--elements_bg_opacity)) !important;
+    }
+  }
+
+  .full_element{
+    ion-item , .goc-audio{
+      background: rgba(var(--elements_bg_color),var(--elements_bg_opacity)) !important;
+    }
+  }
+
+  .selection{
+    ion-item{
+      display: flex;
+      align-items: center !important;
+    }
+    [icon-only]{
+      padding: 0 12px !important;
+    }
+  }
+  width: 100%;
+
+  ion-label {
+    font-size: 1em !important;
+    color:var(--elements_label_color) !important;
+  }
+
+  .card-label{
+    color:var(--elements_label_color) !important;
+  }
+
+  .image-picker{
+    padding: 20px 0 !important;
+  }
+
+  .element-name {
+    font-weight: 600;
+    white-space: normal !important;
+  }
+
+  .item-ios.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+  .item-md.item-input.ng-invalid.ng-touched:not(.input-has-focus) .item-inner,
+  .item-ios.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner,
+  .item-md.item-input.ng-invalid.ng-dirty:not(.input-has-focus) .item-inner {
+    border-bottom-color: #f53d3d;
+    box-shadow: inset 0 -1px 0 0 #f53d3d;
+  }
+
+  .item-ios.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+  .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner {
+    border-bottom-color: #32db64;
+    box-shadow: inset 0 -1px 0 0 #32db64;
+  }
+
+  ion-label.required:after{
+    content: "*";
+    font-weight: bold;
+    padding-left: 5px;
+    color: red;
+  }
+
+
+
+  .invalid {
+    ion-label.element-name {
+      color: red !important;
+    }
+  }
+
+  .text-input[disabled] {
+    opacity: .8;
+  }
+
+  .checkbox-disabled, .item-checkbox-disabled ion-label {
+    opacity: 0.8 !important;
+    pointer-events: none;
+  }
+
+  .item-select-disabled ion-label {
+    opacity: 1;
+  }
+
+  .select-disabled, .item-select-disabled ion-label {
+    opacity: .8;
+  }
+
+  .item-datetime-disabled ion-label {
+    opacity: 1;
+  }
+
+  .datetime-disabled, .item-datetime-disabled ion-label {
+    opacity: .8;
+  }
+
+  .item-radio-disabled ion-label {
+    opacity: 1 !important;
+  }
+
+  .radio-disabled, .item-radio-disabled ion-label {
+    opacity: .8 !important;
+  }
+
+  &.queued .from-barcode,
+  &.queued simple-name.from-barcode ion-row{
+    background-color: #f0f0f0;
+
+    & * {
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    &  .input {
+      color: grey;
+      font-style: italic;
+    }
+  }
+
+  &.queued simple-name.from-barcode ion-row ion-item{
+    background-color: #f0f0f0;
+  }
+
+  .hidden {
+    display: none;
+  }
+}
