@@ -3,7 +3,7 @@
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://localhost:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -119,6 +119,7 @@
     <preference name="intercom-app-id" value="keqy70dv" />
     <preference name="intercom-ios-api-key" value="ios_sdk-f8f56f772d39e2aec33c9dc85ebf054f760666f2" />
     <preference name="intercom-android-api-key" value="android_sdk-b36497cd7728492edc20b493602a315f0e6d1343" />
+    <preference name="intercom-android-push-type" value="FCM" />
     <plugin name="cordova-plugin-device" spec="^1.1.7" />
     <plugin name="cordova-plugin-filepath" spec="^1.4.2" />
     <plugin name="cordova-plugin-globalization" spec="^1.11.0" />
