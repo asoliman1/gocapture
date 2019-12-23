@@ -39,3 +39,6 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
+captello.keystore
+releaseCaptello.bat
+src/assets/any.html
