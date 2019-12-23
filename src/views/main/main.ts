@@ -1,5 +1,5 @@
 import { SupportPage } from './../../pages/support/support';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { Forms } from "../forms";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
@@ -8,6 +8,7 @@ import { Nav } from 'ionic-angular/components/nav/nav';
 import { ThemeProvider } from "../../providers/theme/theme";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { FormsProvider } from '../../providers/forms/forms';
+import { DBClient } from '../../services/db-client';
 
 @Component({
 	selector: 'main',
@@ -24,8 +25,11 @@ export class Main {
 		public client: BussinessClient,
 		private themeProvider: ThemeProvider,
 		private rapidCaptureService: RapidCaptureService,
-		private formsProvider: FormsProvider
+		private formsProvider: FormsProvider,
+		private ngZone : NgZone,
+		private dbClient : DBClient
 	) {
+		this.client.setupNotifications();
 
 	}
 
@@ -33,12 +37,6 @@ export class Main {
 		this.nav.setRoot(page.component, page.data);
 	}
 
-	ngOnInit() {
-		this.client.setupNotifications();
-		this.client.userUpdates.subscribe((user: User)=>{
-			this.setUser(user);
-		})
-	}
 
 	setPages() {
 		this.pages = [
@@ -60,6 +58,12 @@ export class Main {
 	ionViewDidEnter() {
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe();
+		this.client.userUpdates.subscribe((user: User)=>{
+			this.setUser(user);
+		})
+		this.dbClient.getRegistration().subscribe((user)=>{
+			this.setUser(user)
+		})
 	}
 
 	checkUnsentBadges(){
@@ -69,9 +73,11 @@ export class Main {
 	}
 
 	setUser(user : User){
-		this.user = user;
-		this.setPages();
-		this.setTheme();
+		this.ngZone.run(()=>{
+			this.user = user;
+			this.setPages();
+			this.setTheme();
+		})
 	}
 
 	setTheme(){

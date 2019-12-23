@@ -661,34 +661,37 @@ export class DBClient {
 	public getRegistration(): Observable<User> {
 		return this.getSingleWithCleanup<any>(MASTER, "org_master", null)
 			.map((data) => {
-				if (data) {
-					let user = new User();
-					user.access_token = data.token;
-					user.customer_account_name = data.custAccName;
-					user.user_profile_picture = data.avatar;
-					user.customer_logo = data.logo;
-					user.user_name = data.username;
-					user.customer_name = data.name;
-					user.theme = data.theme;
-					user.db = data.db;
-					user.email = data.email;
-					user.first_name = data.operatorFirstName;
-					user.id = data.id;
-					user.is_active = data.active;
-					user.last_name = data.operatorLastName;
-					user.title = data.title;
-					user.pushRegistered = data.pushRegistered;
-					user.device_token = data.registrationId;
-					user.is_production = data.isProduction;
-					user.device_id = data.deviceId;
-					user.in_app_support = data.support;
-					user.support_email = data.supportEmail;
-					user.documentation_url = data.documentationURL;
-					this.registration = user;
-					return user;
-				}
-				return null;
+				return this.mapUser(data);
 			});
+	}
+
+	private mapUser(data : any) : User {
+		if (data) {
+			let user = new User();
+			user.access_token = data.token;
+			user.customer_account_name = data.custAccName;
+			user.user_profile_picture = data.avatar;
+			user.customer_logo = data.logo;
+			user.user_name = data.username;
+			user.customer_name = data.name;
+			user.theme = data.theme;
+			user.db = data.db;
+			user.email = data.email;
+			user.first_name = data.operatorFirstName;
+			user.id = data.id;
+			user.is_active = data.active;
+			user.last_name = data.operatorLastName;
+			user.title = data.title;
+			user.pushRegistered = data.pushRegistered;
+			user.device_token = data.registrationId;
+			user.is_production = data.isProduction;
+			user.device_id = data.deviceId;
+			user.in_app_support = data.support;
+			user.support_email = data.supportEmail;
+			user.documentation_url = data.documentationURL;
+			this.registration = user;
+			return user;
+		}else return null;
 	}
 
 	/*
@@ -902,7 +905,6 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									console.log(data);
 									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
 										.then((data) => {
 											// console.log(data);

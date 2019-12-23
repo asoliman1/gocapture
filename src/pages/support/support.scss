@@ -29,14 +29,13 @@ page-support {
     }
 
     h3{
-        margin-left: 78px;
-        margin-top: 50px;
-        margin-bottom: 30px;
+        margin : 50px;
         font-weight: 400;
+        line-break: auto;
     }
 
     .s-padding{
-        padding: 30px 38px ;
+        padding:0 30px;
         button[ion-button]{
             margin-bottom: 10px;
             text-transform: unset;

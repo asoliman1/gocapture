@@ -7,6 +7,7 @@ import { ArrayFilterPipe } from './filter-pipe';
 import { TimeIntervalPipe } from './time-interval-pipe';
 import { ConvertFileSrcPipe } from "./convert-file-src-pipe";
 import { SortByPipe } from './sort-by/sort-by';
+import { FirstLetterPipe } from './first-letter/first-letter';
 @NgModule({
 	declarations: [
 		SafeHtmlPipe,
@@ -16,7 +17,8 @@ import { SortByPipe } from './sort-by/sort-by';
 		ArrayFilterPipe,
 		TimeIntervalPipe,
 		ConvertFileSrcPipe,
-		SortByPipe
+		SortByPipe,
+    FirstLetterPipe
 	],
 	imports: [],
 	exports: [
@@ -27,7 +29,8 @@ import { SortByPipe } from './sort-by/sort-by';
 		ArrayFilterPipe,
 		TimeIntervalPipe,
 		ConvertFileSrcPipe,
-		SortByPipe
+		SortByPipe,
+    FirstLetterPipe
 	]
 })
 export class PipesModule { }

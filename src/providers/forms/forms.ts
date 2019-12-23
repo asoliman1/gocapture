@@ -216,7 +216,7 @@ export class FormsProvider {
       if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteForm(e);
     })
     this.forms = this.util.sortBy(this.forms,-1);
-    this.dbClient.saveForms(forms);
+    this.dbClient.saveForms(forms).subscribe();
     this.pushUpdates();
   }
 

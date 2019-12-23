@@ -125,7 +125,6 @@ export class MyApp {
     if (this.platform.is('cordova')) {
       this.client.getRegistration(true).subscribe((user) => {
         if (user) {
-          this.client.setLocation(3000);
           this.client.getDeviceStatus(user).subscribe((status)=>{
             this.handleAccessTokenValidationResult(status,user);
           });

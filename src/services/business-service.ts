@@ -268,23 +268,23 @@ export class BussinessClient {
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
         this.util.checkFilesDirectories();
-        this.onAuthSuccess(reply,obs);
+        this.onAuthSuccess(reply,false,obs);
       }, err => {
         obs.error("Invalid authentication code");
       });
     });
   }
 
- private onAuthSuccess(reply : User , obs : Observer <any>){
+ private onAuthSuccess(reply : User , update : boolean , obs : Observer <any>){
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
-    this.userUpdates.next(reply);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
-        if(reply.in_app_support) this.initIntercom();
+        if(reply.in_app_support) this.initIntercom(update);
+        this.userUpdates.next(reply);
         obs.next({ user: reply, message: "Done" });
         obs.complete();
       }, err => {
@@ -295,10 +295,20 @@ export class BussinessClient {
     });
   }
 
-  initIntercom(){
-    this.intercom.registerIdentifiedUser(
+  initIntercom(update = false){
+    this.intercom[update ?'updateUser':'registerIdentifiedUser'](
       { user_id:this.registration.id,
-        email:this.registration.email,name:`${this.registration.first_name} ${this.registration.last_name}`
+        email:this.registration.email,
+        name:`${this.registration.first_name} ${this.registration.last_name}`,
+        customer_id : this.registration.customerID,
+        custom_attributes: {
+          mobileapp_name : this.registration.app_name,
+        },
+        instance : this.registration.customer_name,
+        avatar : {
+          type: "avatar", 
+          image_url : this.registration.user_profile_picture
+        }
       }
       ).then((data)=>{
         this.intercom.registerForPush().then();
@@ -342,7 +352,7 @@ export class BussinessClient {
   public getDeviceStatus(user: User) {
     return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
       this.rest.validateAccessToken(user.access_token).subscribe((status) => {
-        this.onAuthSuccess(status.data,obs)
+        this.onAuthSuccess(status.data,true,obs)
         obs.next(status);
         obs.complete();
       })
