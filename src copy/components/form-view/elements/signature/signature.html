@@ -1,0 +1,5 @@
+<div class="signature">
+	<img [src]="imageUrl() | convertFileSrc" *ngIf="currentVal" [ngClass]="{invert: (currentVal && isEditing) || readonly}">
+	<button type="button" ion-button full large clear (click)="show()">&nbsp;</button>
+</div>
+

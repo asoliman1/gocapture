@@ -49,8 +49,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   @Input() form: Form;
   @Input() submission: FormSubmission;
 
-  front: string = "assets/images/business-card-front.svg";
-  back: string = "assets/images/business-card-back.svg";
+  front: string = "";
+  back: string = "";
   ButtonBar : Subscription;
 
   backLoading: boolean = false;
@@ -105,8 +105,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   ngAfterContentInit() {
     this.theVal = {
-      front: this.util.imageUrl(this.currentVal.front),
-      back: this.util.imageUrl(this.currentVal.back)
+      front: this.currentVal.front,
+      back: this.currentVal.back
     };
   }
 

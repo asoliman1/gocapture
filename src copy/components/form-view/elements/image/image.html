@@ -1,0 +1,19 @@
+<div class="image">
+	<ion-row>
+		<ion-col col-3>
+			<button type="button" ion-button icon-only large full color="light" style="padding: 20px 0 !important;" (click)="chooseType()">
+				<ion-icon [name]="images[selectionEnabled]" [color]="colors[selectionEnabled]"></ion-icon>
+			</button>
+		</ion-col>
+		<ion-col col-9>
+			<ion-scroll scrollX="true">
+				<div class="img" (click)="toggleSelection(i)" *ngFor="let image of currentVal; let i = index" tappable>
+					<img [src]="imageUrl(image)"/>
+					<div class="overlay" *ngIf="selection[i]">
+						<ion-icon name="checkmark"></ion-icon>
+					</div>
+				</div>
+			</ion-scroll>
+		</ion-col>
+	</ion-row>
+</div>

@@ -1,0 +1,95 @@
+.sidemenu{
+  background-color: color($colors, dark, base);
+
+  .profile{
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+    ion-item{
+      background-color: color($colors, dark, base);
+      color: color($colors, light, base);
+      .item-inner{
+        border: none !important;
+      }
+      ion-avatar{
+        padding: 1rem;
+        border: 1px solid #888;
+        border-radius: 6rem;
+        img {
+          max-width: 10rem;
+          max-height: 10rem;
+          border-radius: 5rem;
+        }
+      }
+
+    }
+  }
+  ion-list{
+    button{
+      background-color: color($colors, dark, base);
+      color: color($colors, light, base);
+      border-color: #555 !important;
+      .item-inner{
+        border-color: #555 !important;
+      }
+      ion-icon{
+        background: #555;
+        border-radius: 100%;
+        width: 4rem;
+        height: 4rem;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 4rem;
+      }
+    }
+  }
+}
+
+.sync-header{
+  color: white;
+  ion-spinner circle{
+    stroke: #fff !important;
+  }
+}
+
+.sync-content {
+  background-color: rgba(251, 143, 4, 0.1);
+  ion-item{
+    background: transparent;
+    ion-icon{
+      font-size: 27px;
+      line-height: 27px;
+      vertical-align: auto;
+    }
+    ion-icon:before {
+      line-height: 14px;
+    }
+    h3{
+      vertical-align: super;
+    }
+  }
+}
+
+ion-toast .toast-container{
+  text-align: center;
+  .toast-message{
+    font-size: 1.1em;
+  }
+}
+
+ion-toast.error .toast-container{
+  background-color: red;
+}
+
+ion-toast.success .toast-container{
+  background-color: darkgreen;
+}
+
+ion-toast.warning .toast-container{
+  background-color: orange;
+}
+
+.success-toast {
+  .toast-message {
+    background-color: green;
+  }
+}

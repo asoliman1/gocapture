@@ -4,7 +4,7 @@ import { Login } from '../views/login';
 import { Main } from '../views/main';
 
 import { LogClient } from "../services/log-client";
-import { RESTClient } from "../services/rest-client";
+// import { RESTClient } from "../services/rest-client";
 import { SyncClient } from "../services/sync-client";
 import { BussinessClient } from "../services/business-service";
 import { Config } from "../config";
@@ -19,7 +19,7 @@ import { SettingsService } from "../services/settings-service";
 import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
-import { Conditional } from '@angular/compiler';
+import { Intercom } from '@ionic-native/intercom';
 
 @Component({
   templateUrl: 'app.html'
@@ -34,7 +34,7 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    private rest: RESTClient,
+    // private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
     public statusBar: StatusBar,
@@ -44,6 +44,7 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
+    private intercom : Intercom
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -69,17 +70,20 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.checkUserAuth();
       this.handleApiErrors();
       this.handleClientErrors();
       this.handleSyncErrors();
       this.configImageLoader();
-      this.checkUserAuth();
       this.checkDeviceStatus();
       this.onAppResumes();
+      this.onAppPause();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+      this.intercom.setLauncherVisibility('GONE');
     });
   }
+
 
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
@@ -88,7 +92,7 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
-        this.client.setLocation();
+        this.client.initIntercom();
       } else {
         this.nav.setRoot(Login);
       }
@@ -121,8 +125,8 @@ export class MyApp {
     if (this.platform.is('cordova')) {
       this.client.getRegistration(true).subscribe((user) => {
         if (user) {
-          this.client.getDeviceStatus(user).subscribe((status) => {
-            this.handleAccessTokenValidationResult(status, user);
+          this.client.getDeviceStatus(user).subscribe((status)=>{
+            this.handleAccessTokenValidationResult(status,user);
           });
         }
       });
@@ -130,18 +134,22 @@ export class MyApp {
   }
 
   private onAppResumes() {
-    this.platform.resume.subscribe(() => {
-
-      // A.S check device status when app resumes
+    this.platform.resume.subscribe( async () => {
       if (!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')) {
-         this.client.setLocation(3000);
         this.popup.dismissAll();
-        this.checkDeviceStatus();
-        this.client.getUpdates().subscribe(() => {
-          // this.documentsSync.syncAll();
-        });
+        if(await this.client.getAppCloseTimeFrom() > 60){
+          this.checkDeviceStatus();
+          this.client.getUpdates().subscribe();
+        }
       }
       this.util.rmPluginPrefs()
+    });
+  }
+
+  onAppPause(){
+    this.platform.pause.subscribe(() => {
+      console.log('App Paused');
+      this.client.setAppCloseTime();
     });
   }
 
@@ -208,10 +216,6 @@ export class MyApp {
 
   handleAccessTokenValidationResult(status, user) {
 
-    // console.log('Device status - ' + JSON.stringify(status));
-
-    // this.popup.dismissAll();
-
     if (status.check_status != "ACTIVE_ACCESS_TOKEN") {
 
       const buttons = [
@@ -232,6 +236,8 @@ export class MyApp {
 
 
       this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
+    } else {
+
     }
   }
 }

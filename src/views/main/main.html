@@ -3,10 +3,10 @@
     <div class="profile">
       <ion-item>
         <ion-avatar item-left>
-          <img [src]="" *ngIf="!user.user_profile_picture"/>
-          <img [src]="user.user_profile_picture | avatarPathUpdaterPipe" *ngIf="user.user_profile_picture"/>
+          <img-loader [src]="user?.user_profile_picture | avatarPathUpdaterPipe" *ngIf="user?.user_profile_picture" useImg></img-loader>
+          <div *ngIf="!user?.user_profile_picture"> {{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
         </ion-avatar>
-        <h1>Hi, {{user.first_name}}</h1>
+        <h1>Hi, {{user?.first_name}}</h1>
         <h3>Welcome back</h3>
       </ion-item>
     </div>
@@ -23,21 +23,3 @@
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
 
-
-<ion-pullup class="animated fadeIn" #pullup maxHeight="300" (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [hidden]="!shouldShowSyncBar">
-
-  <ion-toolbar #toolbar  class="sync-header animated fadeIn">
-    <ion-spinner></ion-spinner>
-    <div class="action">Syncing...</div>
-    <div class="element">{{currentSyncForm}}</div>
-  </ion-toolbar>
-
-  <ion-content class="sync-content">
-    <ion-list class="sync-list">
-      <ion-item *ngFor="let status of statuses">
-        <ion-icon [name]="getIcon(status.loading, status.complete)" [color]="getColor(status.loading, status.complete)"></ion-icon>
-        <h3>{{getStateLabel(status.loading, status.complete, status.formName)}}</h3>
-      </ion-item>
-    </ion-list>
-  </ion-content>
-</ion-pullup>

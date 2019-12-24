@@ -1,0 +1,10 @@
+<div class="html-block" [formGroup]="group">
+
+  <div class="block-content" [ngClass]="{'collapsed': isContentCollapsed()}" [innerHtml]="element.html_content | safeHtml"></div>
+
+  <button  id="expand-button" ion-button icon-only [outline]="true" [small]="true" [clear]="true" [color]="btnColor" (click)="onExpandCollapse()">
+    <ion-icon name="arrow-down" *ngIf="element.collapse_content && isCollapsed"></ion-icon>
+    <ion-icon name="arrow-up" *ngIf="element.collapse_content && !isCollapsed"></ion-icon>
+  </button>
+
+</div>

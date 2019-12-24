@@ -1,0 +1,7 @@
+$theme-color: color($colors, silver);
+$theme-text-color : color($colors, black);
+
+.silver-theme {
+  @include theme($theme-color,$theme-text-color);
+}
+
