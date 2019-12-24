@@ -105,5 +105,68 @@
   },
   "toast": {
     "no-internet-connection": "لا يوجد اتصال بالإنترنت"
+  },
+
+ "forms": {
+    "submitted": "تم الارسال",
+    "pending": "قيد الانتظار",
+    "unsubmitted": "لم يتم الارسال",
+    "capture": "الالتقاط",
+    "review-submissions": "مراجعة الملفات",
+    "rapid-scan": "المسح السريع",
+    "documents": "مستندات",
+    "instructions": "تعليمات"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "الكل",
+        "description": "اضغط علي ادخال للتعديل / المراجعه ."
+      },
+      "complete": {
+        "title": "مكتمل",
+        "description": "تم تحميل المدخلات. اضغط للمراجعة."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "الادخالات في انتظار النسخ / التحقق. اضغط للمراجعه."
+      },
+      "ready": {
+        "title": "استعد",
+        "description": "الادخالات جاهزه للتحميل. انقر الدائره الزرقاء للحظر, أو اسحب لليسار للحذف."
+      },
+      "blocked": {
+        "title": "حظر",
+        "description": "ادخالات محظوره من التحميل. انقر للتعديل, انقر الدائره الحمراء لالغاء الحظر, او اسحب لليسار للحذف."
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "حدد معايير البحث",
+
+    "titles": {
+      "name": "الاسم",
+      "email": "البريد الالكتروني",
+      "capture-method": "اسلوب الالتقاط",
+      "capture-date": "تاريخ الالتقاط",
+      "captured-by": "التقطت بواسطة"
+    },
+
+    "modifiers": {
+      "equals": "متساويين",
+      "doesnt-equal": "لا يساوي",
+      "contains": "يحتوي علي",
+      "does-not-contain": "لا يحتوي علي"
+    },
+
+    "capture-type": {
+      "normal": "افتراضي",
+      "badge-scan": "شارة المسح الضوئي",
+      "list": "قائمه",
+      "transcription": "نسخ"
+    }
   }
 }
