@@ -29,7 +29,6 @@ export class Main {
 		private ngZone : NgZone,
 		private dbClient : DBClient
 	) {
-		this.client.setupNotifications();
 
 	}
 
@@ -56,6 +55,7 @@ export class Main {
 	}
 
 	ionViewDidEnter() {
+		this.client.setupNotifications();
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe();
 		this.client.userUpdates.subscribe((user: User)=>{

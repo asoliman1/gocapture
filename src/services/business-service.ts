@@ -311,6 +311,7 @@ export class BussinessClient {
         }
       }
       ).then((data)=>{
+        console.log('intercom' , data)
         this.intercom.registerForPush().then();
       });
   }

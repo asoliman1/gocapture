@@ -54,8 +54,8 @@ export class PushClient {
 			android: {
 				senderID: Config.androidGcmId,
 				icon: "icon_notif",
-				iconColor: "orange",
-				sound: true
+				iconColor: "red",
+				sound: true,
 			},
 			ios: {
 				alert: true,

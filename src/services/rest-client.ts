@@ -24,6 +24,8 @@ import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
 import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
+import { AppVersion } from '@ionic-native/app-version';
+import { Platform } from 'ionic-angular/platform/platform';
 
 @Injectable()
 export class RESTClient {
@@ -38,19 +40,35 @@ export class RESTClient {
 
 	private online = true;
 	private device: Device;
+	private bundleId: string;
 
 	constructor(private http: Http,
 		private submissionsRepository: SubmissionsRepository,
 		private submissionMapper: SubmissionMapper,
+		private appVersion: AppVersion,
+		private platform: Platform
 		) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
+		this.setPackageName();
 	}
 
 	public setOnline(val: boolean) {
 		this.online = val;
 	}
+
+
+	private setPackageName() {
+		this.platform.ready().then((readySource)=>{
+		  this.appVersion.getPackageName().then((packageName) => {
+			this.bundleId = packageName;
+			console.log('bundleId - ' + this.bundleId);
+		  }, (error) => {
+			console.error(error);
+		  })
+		})
+	  }
 
 	/**
 	 *
@@ -62,6 +80,7 @@ export class RESTClient {
 		req.device_manufacture = this.device.manufacturer;
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
+		req.bundle_id = this.bundleId;
 		
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
