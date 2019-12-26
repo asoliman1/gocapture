@@ -55,7 +55,8 @@ export class Main {
 		}
 	}
 
-	ionViewDidEnter() {
+
+	ngOnInit() {
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe();
 		this.client.userUpdates.subscribe((user: User)=>{
@@ -65,7 +66,7 @@ export class Main {
 			this.setUser(user)
 		})
 	}
-
+	
 	checkUnsentBadges(){
 		setTimeout(() => {
 			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');

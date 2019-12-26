@@ -3,7 +3,7 @@
     <div class="profile">
       <ion-item>
         <ion-avatar item-left>
-          <img-loader [src]="user?.user_profile_picture | avatarPathUpdaterPipe" *ngIf="user?.user_profile_picture" useImg></img-loader>
+          <img-loader [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture" useImg></img-loader>
           <div *ngIf="!user?.user_profile_picture"> {{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
         </ion-avatar>
         <h1>Hi, {{user?.first_name}}</h1>

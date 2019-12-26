@@ -39,7 +39,7 @@ export class RESTClient {
 	token: string;
 
 	private online = true;
-	private device: Device;
+	public device: Device;
 	private bundleId: string;
 
 	constructor(private http: Http,

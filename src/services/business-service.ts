@@ -303,6 +303,7 @@ export class BussinessClient {
         customer_id : this.registration.customerID,
         custom_attributes: {
           mobileapp_name : this.registration.app_name,
+          mobileapp_version : this.rest.device.version
         },
         instance : this.registration.customer_name,
         avatar : {
@@ -312,6 +313,8 @@ export class BussinessClient {
       }
       ).then((data)=>{
         this.intercom.registerForPush().then();
+      }).catch(err=>{
+        console.log(err);
       });
   }
 
