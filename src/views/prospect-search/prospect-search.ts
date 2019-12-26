@@ -31,7 +31,7 @@ export class ProspectSearch extends SearchPage {
     //
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.form = this.navParams.get("form");
     this.loading = true;
     this.client.getContacts(this.form)
@@ -42,7 +42,7 @@ export class ProspectSearch extends SearchPage {
           contacts.forEach((contact, index) => {
             let optionItem = new OptionItem({
               id: index.toString(),
-              title: contact.fields.FirstName + " " + contact.fields.LastName,
+              title: this.getTitle(contact.fields.FirstName,contact.fields.LastName),
               subtitle: contact.fields.Email,
               search: contact['search'],
               value: contact
@@ -62,6 +62,10 @@ export class ProspectSearch extends SearchPage {
           this.onInput({target: {value: ""}})
         });
       });
+  }
+
+  getTitle(firstName : string,LastName : string){
+    return LastName ? `${firstName} ${LastName}` : firstName;
   }
 
 }

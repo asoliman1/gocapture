@@ -48,13 +48,13 @@ export class SearchPage {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
-  ionViewDidLoad() {
+  ionViewWillLoad() {
     this.settingsService.getSetting(settingsKeys.SINGLE_TAP_SELECTION).subscribe(result => {
       this.isSingleTap = !result || JSON.parse(result);
     });
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.getItems();
     this.onInput({target: {value: ""}});
   }

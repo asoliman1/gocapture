@@ -18,12 +18,19 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <div text-center padding>
+  <ion-spinner *ngIf="!filteredItems.length" ></ion-spinner>
+  </div>
   <ion-list [class]="selectedTheme">
     <ion-item  *ngFor="let item of filteredItems" class="option-item"
                [class.selected]="item == selectedItem || (!selectedItem && item.isSelected)" (click)="selectedItem = item">
+     <div *ngIf="item.title || item.subtitle" >
       <h1 class="title">{{item.title}}</h1>
       <h2 class="subtitle" *ngIf="item.subtitle">{{item.subtitle}}</h2>
+      </div>
+      <i *ngIf="!item.title && !item.subtitle" >N/A</i>
     </ion-item>
+
   </ion-list>
 </ion-content>
 

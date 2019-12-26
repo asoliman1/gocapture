@@ -114,6 +114,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
+import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
 
 @NgModule({
   declarations: [
@@ -159,7 +160,8 @@ import { Intercom } from '@ionic-native/intercom';
     SectionBlock,
     buttonBar,
     CustomFabMenu,
-    SupportPage
+    SupportPage,
+    SkeletonLoadingComponent
   ],
   imports: [
     BrowserModule,
@@ -216,7 +218,9 @@ import { Intercom } from '@ionic-native/intercom';
     EventItemComponent,
     ScreenSaverPage,
     CustomFabMenu,
-    SupportPage
+    SupportPage,
+    SkeletonLoadingComponent
+
   ],
   exports: [
     DynamicFormElementComponent
