@@ -13,7 +13,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.leadliaison.mobilitease.R;
+import com.leadliaison.captello.R;
 
 public class CameraBackgroundView extends View {
 

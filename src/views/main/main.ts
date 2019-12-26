@@ -36,6 +36,19 @@ export class Main {
 		this.nav.setRoot(page.component, page.data);
 	}
 
+	ngOnInit() {
+		this.client.setupNotifications();
+		this.checkUnsentBadges();
+		this.client.getUpdates().subscribe(()=>{},()=>{});
+		this.client.userUpdates.subscribe((user: User)=>{
+			console.log(user)
+			this.setUser(user);
+		})
+		this.dbClient.getRegistration().subscribe((user)=>{
+			console.log(user);
+			this.setUser(user)
+		})
+	}
 
 	setPages() {
 		this.pages = [
@@ -52,18 +65,6 @@ export class Main {
 		else {
 			this.pages = this.pages.filter((e) => e.title != 'Support');
 		}
-	}
-
-	ionViewDidEnter() {
-		this.client.setupNotifications();
-		this.checkUnsentBadges();
-		this.client.getUpdates().subscribe();
-		this.client.userUpdates.subscribe((user: User)=>{
-			this.setUser(user);
-		})
-		this.dbClient.getRegistration().subscribe((user)=>{
-			this.setUser(user)
-		})
 	}
 
 	checkUnsentBadges(){

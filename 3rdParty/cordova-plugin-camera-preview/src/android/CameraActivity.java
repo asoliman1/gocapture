@@ -36,7 +36,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.support.media.ExifInterface;
 
-import com.leadliaison.mobilitease.R;
+import com.leadliaison.captello.R;
 
 import org.apache.cordova.LOG;
 

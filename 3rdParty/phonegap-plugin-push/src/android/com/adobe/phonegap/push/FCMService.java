@@ -13,19 +13,19 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Paint;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationCompat.WearableExtender;
-import androidx.core.app.RemoteInput;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.WearableExtender;
+import android.support.v4.app.RemoteInput;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -41,18 +41,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.security.SecureRandom;
+
+import io.intercom.android.sdk.push.IntercomPushClient;
 
 @SuppressLint("NewApi")
 public class FCMService extends FirebaseMessagingService implements PushConstants {
 
   private static final String LOG_TAG = "Push_FCMService";
   private static HashMap<Integer, ArrayList<String>> messageMap = new HashMap<Integer, ArrayList<String>>();
+  private final IntercomPushClient intercomPushClient = new IntercomPushClient();
 
   public void setNotification(int notId, String message) {
     ArrayList<String> messageList = messageMap.get(notId);
@@ -68,9 +71,20 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     }
   }
 
+  @Override public void onNewToken(String refreshedToken) {
+    Log.d("intercom notifications", "onNewToken: "+refreshedToken);
+    intercomPushClient.sendTokenToIntercom(getApplication(), refreshedToken);
+    //DO HOST LOGIC HERE
+  }
+
   @Override
   public void onMessageReceived(RemoteMessage message) {
-
+    Map msg = message.getData();
+    Log.d("intercom notifications", "onMessageReceived: "+msg.toString());
+    if (intercomPushClient.isIntercomPush(msg)) {
+      intercomPushClient.handlePush(getApplication(), msg);
+    } else {
+      //DO HOST LOGIC HERE
     String from = message.getFrom();
     Log.d(LOG_TAG, "onMessage - from: " + from);
 
@@ -127,6 +141,8 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         showNotificationIfPossible(applicationContext, extras);
       }
     }
+    }
+
   }
 
   /*
