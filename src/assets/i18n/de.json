@@ -1,3 +1,173 @@
 {
+  "login": {
+    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
+    "email-placeholder": "Enter Email Address",
+    "auth-placeholder": "Enter Auth Code",
+    "auth-button": "Authenticate",
+    "continue-button": "Continue",
+    "connection-mode": {
+      "title": "Connection mode",
+      "normal": "Normal",
+      "demo": "Demo"
+    }
+  },
 
+  "sideMenu": {
+    "events": "Events",
+    "settings": "Settings",
+    "hi": "Hi",
+    "welcome-back": "Welcome back"
+  },
+
+  "general": {
+    "syncing": "Syncing...",
+    "cancel": "Cancel",
+    "select-badge-type": "Select Badge Type",
+    "remind-about-leads": "Remind me about leads"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "organization": {
+      "header": "Organization",
+      "name": "Name",
+      "key": "Key",
+      "operator": "Operator",
+      "deviceId": "Device ID"
+    },
+    "application": {
+      "header": "Application",
+      "localization": "Localization"
+    },
+    "operations": {
+      "header": "Operations",
+      "automatic-upload": "Automatic Upload",
+      "save-business-cards": "Save business cards on device",
+      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
+      "auto-crop": "Auto-Crop"
+    },
+    "dropdown": {
+      "header": "Dropdown",
+      "label": "Single tap selection"
+    },
+    "kiosk-mode": {
+      "header": "Kiosk mode",
+      "label": "Pass code"
+    },
+    "diagnostics": {
+      "header": "Diagnostics",
+      "app-version": "App version",
+      "enable-logging": "Enable logging",
+      "view-log-button": "View log",
+      "test-badge-scan": "Test Badge Scan"
+    },
+    "unauth-device-btn": "Unauthenticate Device"
+  },
+
+  "form-capture": {
+    "submit-btn": "Submit",
+    "edit-btn": "Edit",
+    "update-btn": "Update",
+    "date-info": "Captured on",
+    "search-list": "Search List"
+  },
+
+  "logs": {
+    "title": "Logs",
+    "show-more": "Show more"
+  },
+
+  "alerts": {
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info",
+    "Ok": "Ok",
+    "cancel": "Cancel",
+    "business-card": {
+      "message": "Business card was saved to the Photo Library"
+    },
+    "duplicate-lead": {
+      "message": "Duplicate Lead"
+    },
+    "kiosk-mode": {
+      "message": "No kiosk password set!"
+    },
+    "audio-recording": {
+      "cant-start": "Can't start recording",
+      "delete-recording": "Do you want to delete recording?"
+    },
+    "settings": {
+      "unauthenticate": {
+        "title": "Unauthenticate ?",
+        "message": "Are you sure you want to unauthenticate this device?"
+      }
+    }
+  },
+
+  "toast": {
+    "no-internet-connection": "No internet connection available."
+  },
+
+  "forms": {
+    "submitted": "Submitted",
+    "pending": "Pending",
+    "unsubmitted": "Unsubmitted",
+    "capture": "Capture",
+    "review-submissions": "Review Submissions",
+    "rapid-scan": "Rapid Scan",
+    "documents": "Documents",
+    "instructions": "Instructions"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "All",
+        "description": "Tap an entry to edit/review."
+      },
+      "complete": {
+        "title": "Complete",
+        "description": "Entries uploaded. Tap to review."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "Entries pending transcription/validation. Tap to review."
+      },
+      "ready": {
+        "title": "Ready",
+        "description": "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."
+      },
+      "blocked": {
+        "title": "Blocked",
+        "description": "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "Select Search Criteria",
+
+    "titles": {
+      "name": "Name",
+      "email": "Email",
+      "capture-method": "Capture Method",
+      "capture-date": "Capture Date",
+      "captured-by": "Captured By"
+    },
+
+    "modifiers": {
+      "equals": "Equals",
+      "doesnt-equal": "Does not equal",
+      "contains": "Contains",
+      "does-not-contain": "Does not contain"
+    },
+
+    "capture-type": {
+      "normal": "Normal",
+      "badge-scan": "Badge Scan",
+      "list": "List",
+      "transcription": "Transcription"
+    }
+  }
 }

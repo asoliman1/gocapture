@@ -1,109 +1,109 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
-    "auth-button": "Authenticate",
-    "continue-button": "Continue",
+    "header": "管理者に連絡し、認証コードを取得して下さい。下記に認証コードを入力して下さい。",
+    "email-placeholder": "メールを入力",
+    "auth-placeholder": "認証コードを入力",
+    "auth-button": "認証する",
+    "continue-button": "続く",
     "connection-mode": {
-      "title": "Connection mode",
-      "normal": "Normal",
-      "demo": "Demo"
+      "title": "接続モード",
+      "normal": "ノーマル",
+      "demo": "デモ"
     }
   },
 
   "sideMenu": {
-    "events":   "Events",
-    "settings": "Settings",
-    "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "events":   "イベント",
+    "settings": "設定",
+    "hi": "こんにちは",
+    "welcome-back": "おかえりなさい"
   },
 
   "general": {
-    "syncing": "Syncing...",
-    "cancel": "Cancel",
-    "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+    "syncing": "同期中",
+    "cancel": "キャンセル",
+    "select-badge-type": "バッジの種類を選択",
+    "remind-about-leads": "リードについて通知する"
   },
 
   "settings": {
-    "title": "Settings",
+    "title": "設定",
     "organization": {
-      "header": "Organization",
-      "name": "Name",
-      "key": "Key",
-      "operator": "Operator",
-      "deviceId": "Device ID"
+      "header": "組織",
+      "name": "名前",
+      "key": "キー",
+      "operator": "オペレーター",
+      "deviceId": "デバイス名"
     },
     "application": {
-      "header": "Application",
-      "localization": "Localization"
+      "header": "アプリ",
+      "localization": "ローカリゼーション"
     },
     "operations": {
-      "header": "Operations",
-      "automatic-upload": "Automatic Upload",
-      "save-business-cards": "Save business cards on device",
-      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
-      "auto-crop": "Auto-Crop"
+      "header": "操作",
+      "automatic-upload": "自動アップロード",
+      "save-business-cards": "デバイスに名刺を保存",
+      "reminder-for-unsubmitted-leads": "未提出のリードについて通知する",
+      "auto-crop": "自動クロップ"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "ドロップダウン",
+      "label": "シングルタップ選択"
     },
     "kiosk-mode": {
-      "header": "Kiosk mode",
-      "label": "Pass code"
+      "header": "キヲスクモード",
+      "label": "パスコード"
     },
     "diagnostics": {
-      "header": "Diagnostics",
-      "app-version": "App version",
-      "enable-logging": "Enable logging",
-      "view-log-button": "View log",
-      "test-badge-scan": "Test Badge Scan"
+      "header": "診断",
+      "app-version": "アプリバージョン",
+      "enable-logging": "ログを",
+      "view-log-button": "ログ見る",
+      "test-badge-scan": "テストバッジスキャン"
     },
-    "unauth-device-btn": "Unauthenticate Device"
+    "unauth-device-btn": "デバイス不妊症"
   },
 
   "form-capture": {
-    "submit-btn": "Submit",
-    "edit-btn": "Edit",
-    "update-btn": "Update",
-    "date-info": "Captured on",
-    "search-list": "Search List"
+    "submit-btn": "提出",
+    "edit-btn": "編集",
+    "update-btn": "更新",
+    "date-info": "取得日",
+    "search-list": "検索リスト"
   },
 
   "logs": {
-    "title": "Logs",
-    "show-more": "Show more"
+    "title": "ログ",
+    "show-more": "もっと見る"
   },
 
   "alerts": {
-    "warning": "Warning",
-    "error": "Error",
-    "info": "Info",
+    "warning": "警告",
+    "error": "エラー",
+    "info": "情報",
     "Ok": "Ok",
-    "cancel": "Cancel",
+    "cancel": "キャンセル",
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "フォトライブラリーに名刺保存"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "message": "重複リード"
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "キオスクのパスワードが設定されていません"
     },
     "audio-recording": {
-      "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "cant-start": "録音できません",
+      "delete-recording": "録音削除しますか"
     },
     "settings": {
       "unauthenticate": {
-        "title": "Unauthenticate ?",
-        "message": "Are you sure you want to unauthenticate this device?"
+        "title": "不認証？",
+        "message": "デバイスの認証を解除しますか"
       }
     }
   },
   "toast": {
-    "no-internet-connection": "No internet connection available."
+    "no-internet-connection": "インターネットに接続できません"
   }
 }

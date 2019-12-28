@@ -1,109 +1,109 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
-    "auth-button": "Authenticate",
-    "continue-button": "Continue",
+    "header": "请与您的公司管理员联系以获取身份验证代码。请在下面输入您的身份验证代码。",
+    "email-placeholder": "输入电子邮件地址",
+    "auth-placeholder": "输入登录密码",
+    "auth-button": "认证",
+    "continue-button": "继续",
     "connection-mode": {
-      "title": "Connection mode",
-      "normal": "Normal",
-      "demo": "Demo"
+      "title": "连接方式",
+      "normal": "正常",
+      "demo": "演示"
     }
   },
 
   "sideMenu": {
-    "events":   "Events",
-    "settings": "Settings",
-    "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "events":   "事件",
+    "settings": "设置",
+    "hi": "你好",
+    "welcome-back": "欢迎回来"
   },
 
   "general": {
-    "syncing": "Syncing...",
-    "cancel": "Cancel",
-    "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+    "syncing": "同步",
+    "cancel": "取消",
+    "select-badge-type": "选择徽章类型",
+    "remind-about-leads": "提醒我线索"
   },
 
   "settings": {
-    "title": "Settings",
+    "title": "设置",
     "organization": {
-      "header": "Organization",
-      "name": "Name",
-      "key": "Key",
-      "operator": "Operator",
-      "deviceId": "Device ID"
+      "header": "组织",
+      "name": "姓名",
+      "key": "钥匙",
+      "operator": "操作员",
+      "deviceId": "设备ID"
     },
     "application": {
-      "header": "Application",
-      "localization": "Localization"
+      "header": "应用程序",
+      "localization": "本地化"
     },
     "operations": {
-      "header": "Operations",
-      "automatic-upload": "Automatic Upload",
-      "save-business-cards": "Save business cards on device",
-      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
-      "auto-crop": "Auto-Crop"
+      "header": "操作",
+      "automatic-upload": "自动上传",
+      "save-business-cards": "在设备上保存名片",
+      "reminder-for-unsubmitted-leads": "未提交线索的提醒",
+      "auto-crop": "自动裁剪"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "下拉列表",
+      "label": "单选"
     },
     "kiosk-mode": {
-      "header": "Kiosk mode",
-      "label": "Pass code"
+      "header": "全屏浏览模式",
+      "label": "密码"
     },
     "diagnostics": {
-      "header": "Diagnostics",
-      "app-version": "App version",
-      "enable-logging": "Enable logging",
-      "view-log-button": "View log",
-      "test-badge-scan": "Test Badge Scan"
+      "header": "诊断",
+      "app-version": "应用程序版本",
+      "enable-logging": "启用日志记录",
+      "view-log-button": "查看日志",
+      "test-badge-scan": "测试徽章扫描"
     },
-    "unauth-device-btn": "Unauthenticate Device"
+    "unauth-device-btn": "未经验证的设备"
   },
 
   "form-capture": {
-    "submit-btn": "Submit",
-    "edit-btn": "Edit",
-    "update-btn": "Update",
-    "date-info": "Captured on",
-    "search-list": "Search List"
+    "submit-btn": "提交",
+    "edit-btn": "编辑",
+    "update-btn": "更新",
+    "date-info": "录制",
+    "search-list": "搜索列表"
   },
 
   "logs": {
-    "title": "Logs",
-    "show-more": "Show more"
+    "title": "载入",
+    "show-more": "显示更多"
   },
 
   "alerts": {
-    "warning": "Warning",
-    "error": "Error",
-    "info": "Info",
-    "Ok": "Ok",
-    "cancel": "Cancel",
+    "warning": "警告",
+    "error": "错误",
+    "info": "信息",
+    "Ok": "好",
+    "cancel": "取消",
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "名片被保存到照片库"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "message": "重复线索"
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "没有设置信息亭模式密码！"
     },
     "audio-recording": {
-      "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "cant-start": "无法开始录制",
+      "delete-recording": "是否要删除记录"
     },
     "settings": {
       "unauthenticate": {
-        "title": "Unauthenticate ?",
-        "message": "Are you sure you want to unauthenticate this device?"
+        "title": "未经认证？",
+        "message": "您确定要取消此设备的身份验证吗？"
       }
     }
   },
   "toast": {
-    "no-internet-connection": "No internet connection available."
+    "no-internet-connection": "没有可用的网络连接"
   }
 }
