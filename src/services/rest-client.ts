@@ -39,7 +39,7 @@ export class RESTClient {
 	token: string;
 
 	private online = true;
-	private device: Device;
+	public device: Device;
 	private bundleId: string;
 
 	constructor(private http: Http,
@@ -69,7 +69,6 @@ export class RESTClient {
 		  })
 		})
 	  }
-
 	/**
 	 *
 	 * @returns Observable
@@ -81,7 +80,6 @@ export class RESTClient {
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
 		req.bundle_id = this.bundleId;
-		
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
 				if (resp.status != "200") {
@@ -350,6 +348,7 @@ export class RESTClient {
 			}
 			var index = 0;
 			let handler = (data: DeviceFormMembership[]) => {
+				console.log(forms,index);
 				data.forEach(item => {
 					let form = forms[index];
 					item.form_id = form.form_id;
@@ -481,11 +480,11 @@ export class RESTClient {
 				}
 
 				result.push.apply(result, records);
+				obs.next(records);
 				if (data.count + offset < data.total_count) {
 					offset += data.count;
 					doTheCall();
 				} else {
-					obs.next(result);
 					obs.complete();
 				}
 			};

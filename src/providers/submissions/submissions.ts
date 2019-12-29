@@ -99,6 +99,7 @@ export class SubmissionsProvider {
   }
 
   async saveSubmissions(data) {
+    this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
     let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
       submissionsToDownload: number[] = [],
       submissions = this.checkSubmissionsData(oldSubs, data.submissions, data.form, submissionsToDownload);
@@ -110,15 +111,11 @@ export class SubmissionsProvider {
       } catch (error) {
         console.log(error);
       }
-    }
-    this.formsProvider.updateFormSyncStatus(data.form.form_id, false)
+    }else{
+      this.formsProvider.updateFormLastSync(data.form.form_id, 'submissions')
+      this.formsProvider.updateFormSyncStatus(data.form.form_id, false)
+      }
     // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
-  }
-
-  updateFormsSyncStatus(forms: Form[]) {
-    forms.forEach((e) => {
-      this.formsProvider.updateFormSyncStatus(e.form_id, true)
-    })
   }
 
   private checkSubmissionsData(oldSubs: FormSubmission[], newSubs: FormSubmission[], form: Form, submissionsToDownload): FormSubmission[] {
@@ -184,10 +181,12 @@ export class SubmissionsProvider {
       this.updateSubmission(sub);
       return sub;
     }))
-    this.dbClient.saveSubmisisons(submissions).subscribe(() => {
-      this.formsProvider.updateFormLastSync(form.form_id, 'submissions')
-      this.formsProvider.updateFormSyncStatus(form.form_id, false)
-    })
+    this.dbClient.saveSubmisisons(submissions).subscribe(
+      () => {},
+      (err)=>{},
+      ()=>this.formsProvider.updateFormLastSync(form.form_id, 'submissions'))
+    this.formsProvider.updateFormSyncStatus(form.form_id, false)
+
   }
 
 

@@ -55,7 +55,10 @@ export class FormsProvider {
         this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
-        },()=>obs.error(),()=>obs.complete())
+        },(err)=>{
+          this.setFormsSyncStatus(false);
+          obs.error(err);
+        },()=>obs.complete())
 
     })
   }

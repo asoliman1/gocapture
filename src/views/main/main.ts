@@ -36,20 +36,6 @@ export class Main {
 		this.nav.setRoot(page.component, page.data);
 	}
 
-	ngOnInit() {
-		this.client.setupNotifications();
-		this.checkUnsentBadges();
-		this.client.getUpdates().subscribe(()=>{},()=>{});
-		this.client.userUpdates.subscribe((user: User)=>{
-			console.log(user)
-			this.setUser(user);
-		})
-		this.dbClient.getRegistration().subscribe((user)=>{
-			console.log(user);
-			this.setUser(user)
-		})
-	}
-
 	setPages() {
 		this.pages = [
 			{ title: 'Events', component: Forms, icon: "document" },
@@ -67,6 +53,18 @@ export class Main {
 		}
 	}
 
+
+	ngOnInit() {
+		this.checkUnsentBadges();
+		this.client.getUpdates().subscribe();
+		this.client.userUpdates.subscribe((user: User)=>{
+			this.setUser(user);
+		})
+		this.dbClient.getRegistration().subscribe((user)=>{
+			this.setUser(user)
+		})
+	}
+	
 	checkUnsentBadges(){
 		setTimeout(() => {
 			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');

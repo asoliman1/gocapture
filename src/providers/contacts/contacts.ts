@@ -16,21 +16,38 @@ import { Form } from '../../model';
 export class ContactsProvider {
 
   constructor(
-    private rest : RESTClient,
-    private db : DBClient,
-    private formsProvider : FormsProvider
-    ) {
+    private rest: RESTClient,
+    private db: DBClient,
+    private formsProvider: FormsProvider
+  ) {
   }
 
   public downloadContacts(): Observable<any> {
     console.log('Getting latest contacts...')
     let forms = this.formsProvider.forms.filter((form) => form.list_id > 0);
     return new Observable<any>(obs => {
-      this.rest.getAllDeviceFormMemberships(forms).subscribe((data) => {
-        this.db.saveMemberships(data.contacts).subscribe(()=>obs.next(data.contacts),obs.error);
-       if(data.form.form_id) this.formsProvider.updateFormLastSync(data.form.form_id,'contacts');
-      },obs.error,obs.complete)
+      this.rest
+      .getAllDeviceFormMemberships(forms)
+      .mergeMap(
+        (data)=>this.db
+        .saveMemberships(data.contacts)
+        .map((saved)=>{return {saved , form : data.form}})
+        )
+      .subscribe((data) => {
+          if (data && data.form.form_id && data.saved){
+            this.formsProvider.updateFormLastSync(data.form.form_id, 'contacts');
+          } 
+          this.formsProvider.updateFormSyncStatus(data.form.form_id, false);
+
+      }, (err) => {
+        obs.error(err)
+      }, () => {
+        obs.complete();
+      }) 
     });
-  }
+
   
+  }
+
+
 }
