@@ -56,7 +56,7 @@ export class Main {
 
 	ngOnInit() {
 		this.checkUnsentBadges();
-		this.client.getUpdates().subscribe();
+		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{
 			this.setUser(user);
 		})

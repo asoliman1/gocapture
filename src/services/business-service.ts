@@ -96,7 +96,7 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
-    this.getUpdates().subscribe();
+    this.getUpdates().subscribe(() => { }, (err) => { }, () => { });
     this.formsProvider.setFormsSyncStatus(val);
   }
 
@@ -370,6 +370,7 @@ export class BussinessClient {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
         obs.error('No internet connection available');
+        this.formsProvider.setFormsSyncStatus(false);
         return;
       }
       this.db.getConfig("lastSyncDate").subscribe(time => {
@@ -533,7 +534,7 @@ export class BussinessClient {
     console.log('Push received - ' + JSON.stringify(note));
 
     if (note.action == 'sync') {
-      this.getUpdates().subscribe();
+      this.getUpdates().subscribe(() => { }, (err) => { }, () => { });
     } else if (note.action == 'resync') {
       this.sync.download(null).subscribe(data => {
         //

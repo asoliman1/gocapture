@@ -71,7 +71,7 @@ export class Forms {
 
 
   sync() {
-    this.client.getUpdates().subscribe();
+    this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
   }
 
   getItems(event) {
