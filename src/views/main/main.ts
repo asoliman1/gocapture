@@ -29,7 +29,7 @@ export class Main {
 		private ngZone : NgZone,
 		private dbClient : DBClient
 	) {
-
+		this.client.setupNotifications();
 	}
 
 	openPage(page) {
