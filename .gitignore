@@ -41,4 +41,5 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 captello.keystore
 releaseCaptello.bat
-src/assets/any.html
+google-services.json
+config.xml
