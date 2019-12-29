@@ -96,6 +96,8 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
+    this.getUpdates().subscribe();
+    this.formsProvider.setFormsSyncStatus(val);
   }
 
   private initNetwork(){

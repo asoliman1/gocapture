@@ -348,6 +348,7 @@ export class RESTClient {
 			}
 			var index = 0;
 			let handler = (data: DeviceFormMembership[]) => {
+				console.log(forms,index);
 				data.forEach(item => {
 					let form = forms[index];
 					item.form_id = form.form_id;
@@ -479,11 +480,11 @@ export class RESTClient {
 				}
 
 				result.push.apply(result, records);
+				obs.next(records);
 				if (data.count + offset < data.total_count) {
 					offset += data.count;
 					doTheCall();
 				} else {
-					obs.next(result);
 					obs.complete();
 				}
 			};

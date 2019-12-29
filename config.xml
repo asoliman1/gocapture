@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="2203951" id="com.leadliaison.mobilitease" ios-CFBundleVersion="396" version="3.3.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="2203952" id="com.leadliaison.mobilitease" ios-CFBundleVersion="397" version="3.3.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content original-src="index.html" src="http://192.168.1.7:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -162,4 +162,5 @@
     <plugin name="cordova-plugin-camera-preview" spec="/Users/leadliaison/Projects/Ionic/gocapture/node_modules/cordova-plugin-camera-preview" />
     <plugin name="cordova-plugin-geolocation" spec="~4.0.3-dev" />
     <plugin name="cordova-plugin-media" spec="~5.0.3" />
+    <allow-navigation href="http://192.168.1.7:8100" sessionid="8ca7b855" />
 </widget>

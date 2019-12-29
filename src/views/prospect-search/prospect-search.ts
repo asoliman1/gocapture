@@ -27,11 +27,9 @@ export class ProspectSearch extends SearchPage {
     public themeProvider: ThemeProvider,
     public settingsService: SettingsService) {
     super(navParams, viewCtrl, themeProvider, settingsService);
-
-    //
   }
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     this.form = this.navParams.get("form");
     this.loading = true;
     this.client.getContacts(this.form)

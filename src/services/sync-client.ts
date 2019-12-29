@@ -56,7 +56,9 @@ export class SyncClient {
           this.documentsSync.syncAll();
         });
         this.contactsProvider.downloadContacts().subscribe(
-        () => {}, 
+        (data) => {
+           console.log(data)
+        }, 
         (err) => this.pushError(obs,err) , 
         ()=> console.log('Contacts Synced'));
       }, 
@@ -66,6 +68,7 @@ export class SyncClient {
   }
 
   pushError(obs:Observer<DownloadData>,err){
+    console.log(err)
     obs.error(err);
     this.errorSource.next(err);
   }

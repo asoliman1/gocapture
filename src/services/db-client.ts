@@ -29,7 +29,7 @@ export class DBClient {
 	private registration: User;
 
 	private saveAllEnabled = false;
-	private saveAllPageSize = 50;
+	private saveAllPageSize = 500;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
 
 	private tables: Table[] = [
@@ -1243,19 +1243,16 @@ export class DBClient {
 					console.log(error)
 				})
 			};
-
 			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
-				if (index + 1 % page == 0) {  // bug here
-					// console.log("save " + type + " " + index);
+				if (index + 1 % page == 0) {  
 					exec(index == items.length);
 					if (index == items.length) {
 						return;
 					}
 				} else if (index == items.length) {
 					this.saveAllEnabled = false;
-					// console.log("save " + type + " " + index);
 					exec(true);
 					return;
 				} else if (index < items.length) {
