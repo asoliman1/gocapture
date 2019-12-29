@@ -14,7 +14,7 @@
      {{address}}
     </div>
   </div>
-  <div class="submissions">
+  <div class="submissions" *ngIf="submissionsCounter">
 
     <ion-chip [style.color]="textColor || 'white'" > 
       <ion-icon color="secondary" ></ion-icon>  <ion-label >{{sent || 0}} Submitted</ion-label>

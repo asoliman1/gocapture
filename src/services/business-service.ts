@@ -369,6 +369,7 @@ export class BussinessClient {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
         obs.error('No internet connection available');
+        this.formsProvider.setFormsSyncStatus(false);
         return;
       }
       this.db.getConfig("lastSyncDate").subscribe(time => {

@@ -1,3 +1,4 @@
+import { ActivationsPage } from './../../views/activations/activations';
 import { SupportPage } from './../../pages/support/support';
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { Forms } from "../forms";
@@ -42,6 +43,7 @@ export class Main {
 		this.pages = [
 			{ title: 'Events', component: Forms, icon: "document" },
 			{ title: 'Settings', component: Settings, icon: "cog" },
+			{ title: 'Activations', component: ActivationsPage, icon: "game-controller-b" }
 		];
 		if (this.user.in_app_support)
 			this.pages.push({
@@ -58,7 +60,7 @@ export class Main {
 
 	ngOnInit() {
 		this.checkUnsentBadges();
-		this.client.getUpdates().subscribe();
+		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{
 			this.setUser(user);
 		})

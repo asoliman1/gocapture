@@ -1,0 +1,32 @@
+<ion-header>
+	<ion-navbar hideBackButton="true" color="primary">
+		<button ion-button menuToggle>
+			<ion-icon name="menu"></ion-icon>
+		</button>
+		<ion-title>Activations</ion-title>
+		<ion-buttons end>
+			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
+				<ion-icon name="search"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content > 
+  <ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" >
+  </ion-searchbar>
+  
+  <div text-center margin-top *ngIf="!activations.length" >
+		<ion-spinner ></ion-spinner>
+	</div>
+	<ion-list approxItemHeight="300px" >
+			<event-item 
+			(click)="navigate(act)" 
+			*ngFor="let act of activations"
+			[image]="act.activation_identifier.background_image.path"
+      [name]="act.name"
+      [isSyncing]="false"
+			>
+			</event-item>
+	</ion-list>
+</ion-content>

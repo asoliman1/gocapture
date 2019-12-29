@@ -18,6 +18,7 @@ export class EventItemComponent {
   @Input() isSyncing : boolean;
 
   imageLoading : boolean = true;
+  submissionsCounter : boolean;
 
   constructor() {
   }
@@ -27,6 +28,18 @@ export class EventItemComponent {
   }
 
   ngOnInit(){
+    this.checkSubmissionsCounter() 
+  }
+
+  checkSubmissionsCounter(){
+    if( this.isUnidentified(this.unsent) && this.isUnidentified(this.sent) && this.isUnidentified(this.onHold) )
+    this.submissionsCounter = false;
+    else
+    this.submissionsCounter = true; 
+  }
+
+  isUnidentified(val){
+    return typeof val == 'undefined';
   }
 
   checkImageDownload(){

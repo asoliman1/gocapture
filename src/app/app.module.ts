@@ -115,6 +115,9 @@ import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
 import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
+import { ActivationsPage } from '../views/activations/activations';
+import { ActivationsProvider } from '../providers/activations/activations';
+import { ActivationCapturePage } from '../pages/activation-capture/activation-capture';
 
 @NgModule({
   declarations: [
@@ -161,7 +164,9 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     buttonBar,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent
+    SkeletonLoadingComponent,
+    ActivationsPage,
+    ActivationCapturePage,
   ],
   imports: [
     BrowserModule,
@@ -219,8 +224,9 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     ScreenSaverPage,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent
-
+    SkeletonLoadingComponent,
+    ActivationsPage,
+    ActivationCapturePage,
   ],
   exports: [
     DynamicFormElementComponent
@@ -289,7 +295,8 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     FilterService,
     Keyboard,
     ContactsProvider,
-    Intercom
+    Intercom,
+    ActivationsProvider
   ]
 })
 export class AppModule { }
