@@ -36,8 +36,9 @@ $secondary : map-get($map: $colors, $key:"secondary" );
 
  .image-loading{
      position: absolute;
-     top: calc(50% - 30px) ;
-     left: calc(50% - 20px);
+     top: 0;
+     left: 0;
+     width: 100%;
  }
 
  .address{

@@ -26,6 +26,7 @@ import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
 import { AppVersion } from '@ionic-native/app-version';
 import { Platform } from 'ionic-angular/platform/platform';
+import { Activation } from '../model/activation';
 
 @Injectable()
 export class RESTClient {
@@ -129,6 +130,62 @@ export class RESTClient {
 		});
 	}
 
+	public getAllActivations(forms : Form[]){
+		return new Observable<{activations :Activation[],form: Form}>((obs: Observer<{activations :Activation[],form: Form}>) => {
+			var result: {activations :Activation[],form: Form} = {activations:[],form:null};
+			if (!forms || forms.length == 0) {
+				setTimeout(() => {
+					obs.next(result);
+					obs.complete();
+				});
+				return;
+			}
+			var index = 0;
+			let syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
+			new Date(forms[index].lastSync.submissions) : null;
+			let handler = (data: Activation[]) => {
+				result.activations = data;
+				result.form = forms[index];
+				obs.next(result)
+				index++;
+				if (index < forms.length) {
+					 syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
+								   new Date(forms[index].lastSync.activations) : null;
+					this.getFormActivations(forms[index].form_id, syncDate).subscribe(handler);
+				} else {
+					obs.complete();
+				}
+			};
+			this.getFormActivations(forms[index].form_id, syncDate).subscribe(handler);
+		});
+	}
+
+	public getFormActivations(formId : number,lastSyncDate ? : Date ): Observable<Activation[]> {
+		let opts: any = {
+			form_id: formId,
+			sort_by: "",
+			sort_order : "",
+			include_inactive : ""
+		};
+
+		if (lastSyncDate) 
+			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
+		
+		return this.getAll<{records:Activation[]}>("/activations.json", opts).map(resp => {
+			let result: Activation[] = [];
+			resp.forEach(record => {
+				record.records.forEach(act=>{
+					let a = new Activation();
+					Object.keys(act).forEach(key => {
+						a[key] = act[key];
+					});
+					result.push(a);
+				})
+			});
+			return result;
+		});
+	}
+
 	public getAllForms(lastSyncDate: Date): Observable<{forms:Form[],availableForms:number[]}> {
 		let opts: any = {
 			form_type: "device",
@@ -152,49 +209,6 @@ export class RESTClient {
 			return result;
 		});
 	}
-
-	/*
-	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
-		var opts: any = {
-		};
-
-		if (lastSync) {
-			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
-		}
-		if(offset > 0){
-			opts.offset = offset;
-		}
-		return this.call<RecordsResponse<Dispatch>>("GET", "/dispatches.json", opts)
-			.map(resp => {
-				if (resp.status != "200") {
-					this.errorSource.next(resp);
-				}
-				return resp;
-			});
-	}
-
-	public getAllDispatches(lastSyncDate: Date) : Observable<Dispatch[]>{
-		let opts: any = {};
-		if(lastSyncDate){
-			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
-		}
-		return this.getAll<Dispatch>("/dispatches.json", opts)
-				.map(resp => {
-					resp.forEach((dispatch) => {
-						dispatch.orders.forEach((order)=>{
-							let form: Form = null;
-							dispatch.forms.forEach((f)=>{
-								if(f.form_id == order.form_id){
-									order.form = f;
-								}
-							});
-							order.form = form;
-						});
-					});
-					return resp;
-				});
-	}
-	 */
 
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
@@ -361,6 +375,7 @@ export class RESTClient {
 					doTheCall();
 				} else {
 					obs.complete();
+					return;
 				}
 			};
 			let doTheCall = () => {

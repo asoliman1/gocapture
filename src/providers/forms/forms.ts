@@ -49,8 +49,7 @@ export class FormsProvider {
     return new Observable<any>(obs => {
       this.rest.getAllForms(lastSyncDate)
       .subscribe((remoteForms) => {
-        remoteForms.forms = this.filterArchivedForms(remoteForms.forms);
-        remoteForms.forms = this.checkFormData(remoteForms.forms, this.forms);
+        remoteForms.forms = this.checkFormData(this.filterArchivedForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
         this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326

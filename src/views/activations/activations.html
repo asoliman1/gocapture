@@ -12,21 +12,16 @@
 	</ion-navbar>
 </ion-header>
 
-<ion-content > 
-  <ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" >
-  </ion-searchbar>
-  
-  <div text-center margin-top *ngIf="!activations.length" >
-		<ion-spinner ></ion-spinner>
+<ion-content>
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode">
+	</ion-searchbar>
+
+	<div *ngIf="!activations.length">
+		<event-item *ngFor="let form of [0,1,2]"></event-item>
 	</div>
-	<ion-list approxItemHeight="300px" >
-			<event-item 
-			(click)="navigate(act)" 
-			*ngFor="let act of activations"
-			[image]="act.activation_identifier.background_image.path"
-      [name]="act.name"
-      [isSyncing]="false"
-			>
-			</event-item>
+	<ion-list approxItemHeight="300px">
+		<event-item (click)="navigate(act)" *ngFor="let act of activations"
+			[image]="act.activation_identifier.background_image.path" [name]="act.name" [isSyncing]="false">
+		</event-item>
 	</ion-list>
 </ion-content>

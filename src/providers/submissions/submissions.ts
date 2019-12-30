@@ -226,6 +226,7 @@ export class SubmissionsProvider {
       } catch (error) {
         console.log('Error downloading submission data : ' + id)
         console.log(error);
+        return fileToDownload;
       }
     }
     return fileToDownload;

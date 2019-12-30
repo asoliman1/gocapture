@@ -30,6 +30,7 @@ export class Form extends BaseForm {
 	lastSync: {
 		submissions ?: Date;
 		contacts ?: Date;
+		activations ? : Date;
 	}
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;

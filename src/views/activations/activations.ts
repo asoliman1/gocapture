@@ -23,7 +23,6 @@ export class ActivationsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ActivationsPage');
   }
 
   toggleSearch() {
