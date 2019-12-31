@@ -436,12 +436,11 @@ export class DBClient {
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 
 		if (form.hold_request_id > 0) {
-			//UPDATE submissions set id=?, status =?, activityId=?, data=?, sub_date=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?
 			return new Observable<boolean>((obs: Observer<boolean>) => {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -452,9 +451,8 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
 										.then((data) => {
-											// console.log(data);
 											obs.next(true);
 											obs.complete();
 										}, (err) => {

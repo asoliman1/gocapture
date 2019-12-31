@@ -91,13 +91,16 @@ export class BussinessClient {
     return this.online;
   }
 
-  private setOnline(val: boolean) {
+  private async setOnline(val: boolean) {
     this.online = val;
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
-    this.doAutoSync();
-    this.getUpdates().subscribe();
-    this.formsProvider.setFormsSyncStatus(val);
+    // to prevent on resume fire
+    if(await this.getAppCloseTimeFrom() > 60 && !this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')){
+      this.doAutoSync();
+      this.getUpdates().subscribe();
+      this.formsProvider.setFormsSyncStatus(val);
+    }
   }
 
   private initNetwork(){
