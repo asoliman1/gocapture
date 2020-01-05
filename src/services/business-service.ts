@@ -1,3 +1,4 @@
+import { AppVersion } from '@ionic-native/app-version';
 import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
@@ -63,7 +64,7 @@ export class BussinessClient {
    */
   error: Observable<any>;
 
-  public userUpdates : Subject<User> = new Subject();
+  public userUpdates: Subject<User> = new Subject();
 
   constructor(
     private db: DBClient,
@@ -75,10 +76,11 @@ export class BussinessClient {
     private appPreferences: AppPreferences,
     private util: Util,
     private formsProvider: FormsProvider,
-    private submissionsProvider : SubmissionsProvider,
+    private submissionsProvider: SubmissionsProvider,
     private settingsService: SettingsService,
     private geolocation: Geolocation,
-    private intercom : Intercom,
+    private intercom: Intercom,
+    private appVersion: AppVersion,
     private popup: Popup) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -100,7 +102,7 @@ export class BussinessClient {
     this.formsProvider.setFormsSyncStatus(val);
   }
 
-  private initNetwork(){
+  private initNetwork() {
     this.networkOff = this.net.onDisconnect().subscribe(() => {
       console.log("network was disconnected :-(");
       this.setOnline(false);
@@ -188,9 +190,9 @@ export class BussinessClient {
           this.db.setupWorkDb(user.db);
           this.formsProvider.setForms();
           this.rest.token = user.access_token;
-        } 
-          obs.next(user);
-          obs.complete();
+        }
+        obs.next(user);
+        obs.complete();
       })
     });
   }
@@ -270,14 +272,14 @@ export class BussinessClient {
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
         this.util.checkFilesDirectories();
-        this.onAuthSuccess(reply,false,obs);
+        this.onAuthSuccess(reply, false, obs);
       }, err => {
         obs.error("Invalid authentication code");
       });
     });
   }
 
- private onAuthSuccess(reply : User , update : boolean , obs : Observer <any>){
+  private onAuthSuccess(reply: User, update: boolean, obs: Observer<any>) {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
@@ -285,7 +287,10 @@ export class BussinessClient {
       this.db.saveRegistration(reply).subscribe((done) => {
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
-        if(reply.in_app_support) this.initIntercom(update);
+        if (reply.in_app_support) {
+          if(update) this.updateIntercom();
+          else this.registerIntercom();
+        };
         this.userUpdates.next(reply);
         obs.next({ user: reply, message: "Done" });
         obs.complete();
@@ -297,28 +302,36 @@ export class BussinessClient {
     });
   }
 
-  initIntercom(update = false){
-    this.intercom[update ?'updateUser':'registerIdentifiedUser'](
-      { user_id:this.registration.id,
-        email:this.registration.email,
-        name:`${this.registration.first_name} ${this.registration.last_name}`,
-        customer_id : this.registration.customerID,
-        custom_attributes: {
-          mobileapp_name : this.registration.app_name,
-          mobileapp_version : this.rest.device.version
-        },
-        instance : this.registration.customer_name,
-        avatar : {
-          type: "avatar", 
-          image_url : this.registration.user_profile_picture
-        }
+
+ async registerIntercom(){
+    this.intercom.registerIdentifiedUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+    }).then((data)=>{
+      console.log('Intercome register : ' + JSON.stringify(data));
+      this.intercom.registerForPush().then(console.log).catch(console.log);
+      this.updateIntercom();
+    })
+  }
+
+ async updateIntercom(){
+    this.intercom.updateUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+      name: `${this.registration.first_name} ${this.registration.last_name}`,
+      customer_id: this.registration.customerID,
+      custom_attributes: {
+        mobile_app_name: this.registration.app_name,
+        mobile_app_version: await this.appVersion.getVersionNumber(),
+      },
+      instance: this.registration.customer_name,
+      avatar: {
+        type: "avatar",
+        image_url: this.registration.user_profile_picture
       }
-      ).then((data)=>{
-        console.log('intercom' , data)
-        this.intercom.registerForPush().then();
-      }).catch(err=>{
-        console.log(err);
-      });
+    }).then((data)=>{
+      console.log('Intercome update : ' + JSON.stringify(data));
+    })
   }
 
   public unregister(user: User): Observable<User> {
@@ -335,7 +348,7 @@ export class BussinessClient {
     });
   }
 
-  private async onUnAuthSuccess(obs){
+  private async onUnAuthSuccess(obs) {
     this.db.deleteRegistration();
     this.push.shutdown();
     this.pushSubs.forEach(sub => {
@@ -358,7 +371,7 @@ export class BussinessClient {
   public getDeviceStatus(user: User) {
     return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
       this.rest.validateAccessToken(user.access_token).subscribe((status) => {
-        this.onAuthSuccess(status.data,true,obs)
+        this.onAuthSuccess(status.data, true, obs)
         obs.next(status);
         obs.complete();
       })
@@ -480,7 +493,7 @@ export class BussinessClient {
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {
             sub.status = SubmissionStatus.Submitting;
-            this.submissionsProvider.updateSubmissionStatus(sub.id,sub.status)
+            this.submissionsProvider.updateSubmissionStatus(sub.id, sub.status)
             sub.last_sync_date = new Date().toISOString();
             let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);

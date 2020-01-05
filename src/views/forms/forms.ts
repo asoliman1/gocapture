@@ -1,7 +1,6 @@
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import { Form } from "../../model";
 import { FormCapture } from "../form-capture";
@@ -31,6 +30,7 @@ export class Forms {
   forms: Form[] = [];
 
   private selectedTheme: string;
+  loading: boolean;
 
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
@@ -47,9 +47,19 @@ export class Forms {
   }
 
   getForms() {
+    if(!this.forms.length) this.loading = true;
     this.formsProvider.formsObs.subscribe((val) => {
+      this.loading = false;
       if (val) this.updateForms()
+    }, (err) => {
+      this.loading = false;
+    }, () => {
+      this.loading = false;
     })
+
+    setTimeout(() => {
+      this.loading = false;
+    }, 3000);
   }
 
   updateForms() {
@@ -71,7 +81,14 @@ export class Forms {
 
 
   sync() {
-    this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
+    if (!this.forms.length) this.loading = true;
+    this.client.getUpdates().subscribe(() => {
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+    }, () => {
+      this.loading = false;
+    });
   }
 
   getItems(event) {
@@ -91,7 +108,7 @@ export class Forms {
         handler: () => {
           //console.log('capture clicked');
           this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
-          this.navCtrl.push(FormCapture, { form : form });
+          this.navCtrl.push(FormCapture, { form: form });
         }
       }];
 

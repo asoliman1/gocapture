@@ -233,10 +233,10 @@ export class FormsProvider {
     form.isSyncing = isSyncing;
   }
 
-  updateFormLastSync(form_id: any, field : string) {
+  updateFormLastSync(form_id: any, field : string , empty = false) {
     let form = this.forms.find((e) => e.form_id == (form_id * 1));
     if(!form.lastSync) form.lastSync = {}
-    form.lastSync[field] = new Date();
+    form.lastSync[field] = empty ? '' : new Date();
     this.saveFormDb(form)
   }
 

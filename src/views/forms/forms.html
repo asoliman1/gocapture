@@ -15,35 +15,22 @@
 	</ion-navbar>
 </ion-header>
 
-<ion-content class="forms">
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" >
+<ion-content >
+	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode">
 	</ion-searchbar>
-	<div text-center margin-top *ngIf="!forms.length" >
-		<ion-spinner ></ion-spinner>
+	<div text-center margin-top *ngIf="loading">
+		<ion-spinner></ion-spinner>
 	</div>
-	<ion-list approxItemHeight="300px" >
+
+	<div class="no-data" *ngIf="!loading && !forms.length"> <i> No Events </i> </div>
+	<ion-list approxItemHeight="300px">
 		<!-- A.S GOC-326 -->
-		<!-- <div *virtualItem="let form"> -->
-			<event-item 
-			(click)="presentActionSheet(form)" 
-			*ngFor="let form of forms"
-			[image]="form.event_style.event_record_background.path"
-			[name]="form.name"
-			[address]="form.event_address.address"
-			[isSyncing]="form.isSyncing"
-			[textColor]="form.event_style.event_text_color"
-			[sent]="form.total_submissions"
-			[unsent]="form.total_unsent"
-			[onHold]="form.total_hold"
-			>
-			</event-item>
-	
-		<!-- </div> -->
+		<event-item (click)="presentActionSheet(form)" *ngFor="let form of forms"
+			[image]="form.event_style.event_record_background.path" [name]="form.name"
+			[address]="form.event_address.address" [isSyncing]="form.isSyncing"
+			[textColor]="form.event_style.event_text_color" [sent]="form.total_submissions" [unsent]="form.total_unsent"
+			[onHold]="form.total_hold">
+		</event-item>
 	</ion-list>
-	<!--ion-refresher (ionRefresh)="doRefresh($event)">
-		<ion-refresher-content pull-max="200"></ion-refresher-content>
-	</ion-refresher>
-	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-		<ion-infinite-scroll-content></ion-infinite-scroll-content>
-	</ion-infinite-scroll-->
+
 </ion-content>

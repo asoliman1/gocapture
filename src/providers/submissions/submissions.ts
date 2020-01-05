@@ -87,7 +87,8 @@ export class SubmissionsProvider {
     this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
-        mergeMap(async (e) => await this.saveSubmissions({ ...e }))
+        mergeMap(async (e) => 
+          await this.saveSubmissions({ ...e }))
       ).subscribe(data => {
         // console.log(data)
       }, err => {
@@ -99,6 +100,7 @@ export class SubmissionsProvider {
   }
 
   async saveSubmissions(data) {
+    if(data.form) { 
     this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
     let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
       submissionsToDownload: number[] = [],
@@ -115,6 +117,7 @@ export class SubmissionsProvider {
       this.formsProvider.updateFormLastSync(data.form.form_id, 'submissions')
       this.formsProvider.updateFormSyncStatus(data.form.form_id, false)
       }
+    }
     // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
   }
 
@@ -159,10 +162,10 @@ export class SubmissionsProvider {
       return oldUrl;
     } else {
       if (oldUrl && oldUrl.startsWith('file://')) {
-        console.log(`submission ${i[2]} of form ${i[0]} will download updated data...`);
+        // console.log(`submission ${i[2]} of form ${i[0]} will download updated data...`);
         this.util.rmFile(oldFileCongif.folder, oldFileCongif.name);
       } else {
-        console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
+        // console.log(`submission ${i[2]} of form ${i[0]} will download data...`);
       }
       submissionsToDownload.push(parseInt(i[2]));
       return pathTodownload;
@@ -224,8 +227,9 @@ export class SubmissionsProvider {
         entry = await fileTransfer.download(file.pathToDownload, file.path, true);
         return entry.nativeURL;
       } catch (error) {
-        console.log('Error downloading submission data : ' + id)
+        console.log('Error downloading submission data : ' + id);
         console.log(error);
+        this.getDownloadedFilePath(fileToDownload,id);
       }
     }
     return fileToDownload;
