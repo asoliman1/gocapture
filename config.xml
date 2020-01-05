@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="6" id="com.leadliaison.captello" ios-CFBundleVersion="6" version="2.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="7" id="com.leadliaison.captello" ios-CFBundleVersion="8" version="2.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Captello</name>
     <description>LeadLiason Captello!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
@@ -93,13 +93,13 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>GoCapture! needs to access location</string>
+            <string>Captello! use the location to pass the latitude and longitude of the device where a form submission takes place. Location is used by application administrators on our backend to do geographic reporting.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Captello! needs to access photo library</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
-            <string>GoCapture! needs to access photo library</string>
+            <string>Captello! needs to access photo library</string>
         </edit-config>
         <icon height="20" src="resources/ios/icon/icon-20.png" width="20" />
         <icon height="40" src="resources/ios/icon/icon-20@2x.png" width="40" />

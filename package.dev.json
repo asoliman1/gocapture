@@ -116,7 +116,7 @@
       "cordova-plugin-device": {},
       "cordova-plugin-filepath": {},
       "cordova-plugin-geolocation": {
-        "LOCATION_USAGE_DESCRIPTION": "GoCapture! will need to access yor location"
+        "LOCATION_USAGE_DESCRIPTION": "Captello! use the location to pass the latitude and longitude of the device where a form submission takes place. Location is used by application administrators on our backend to do geographic reporting."
       },
       "cordova-plugin-globalization": {},
       "cordova-plugin-network-information": {},
