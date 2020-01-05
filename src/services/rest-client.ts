@@ -153,48 +153,6 @@ export class RESTClient {
 		});
 	}
 
-	/*
-	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
-		var opts: any = {
-		};
-
-		if (lastSync) {
-			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
-		}
-		if(offset > 0){
-			opts.offset = offset;
-		}
-		return this.call<RecordsResponse<Dispatch>>("GET", "/dispatches.json", opts)
-			.map(resp => {
-				if (resp.status != "200") {
-					this.errorSource.next(resp);
-				}
-				return resp;
-			});
-	}
-
-	public getAllDispatches(lastSyncDate: Date) : Observable<Dispatch[]>{
-		let opts: any = {};
-		if(lastSyncDate){
-			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
-		}
-		return this.getAll<Dispatch>("/dispatches.json", opts)
-				.map(resp => {
-					resp.forEach((dispatch) => {
-						dispatch.orders.forEach((order)=>{
-							let form: Form = null;
-							dispatch.forms.forEach((f)=>{
-								if(f.form_id == order.form_id){
-									order.form = f;
-								}
-							});
-							order.form = form;
-						});
-					});
-					return resp;
-				});
-	}
-	 */
 
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
@@ -336,9 +294,9 @@ export class RESTClient {
 		});
 	}
 
-	public getAllDeviceFormMemberships(forms: Form[]): Observable<{contacts:DeviceFormMembership[],form:Form}> {
-		return new Observable<{contacts:DeviceFormMembership[],form:Form}>((obs: Observer<{contacts:DeviceFormMembership[],form:Form}>) => {
-			var result: { contacts:DeviceFormMembership[] , form:Form } = {contacts:[],form:new Form()} ;
+	public getAllDeviceFormMemberships(forms: Form[]): Observable<{contacts:DeviceFormMembership[],form:Form,all:boolean}> {
+		return new Observable<{contacts:DeviceFormMembership[],form:Form,all:boolean}>((obs: Observer<{contacts:DeviceFormMembership[],form:Form,all:boolean}>) => {
+			var result: { contacts:DeviceFormMembership[] , form:Form ,all:boolean} = {contacts:[],form:new Form(),all:false} ;
 			if (!forms || forms.length == 0) {
 				setTimeout(() => {
 					obs.next(result);
@@ -348,31 +306,36 @@ export class RESTClient {
 			}
 			var index = 0;
 			let handler = (data: DeviceFormMembership[]) => {
-				console.log(forms,index);
 				data.forEach(item => {
 					let form = forms[index];
 					item.form_id = form.form_id;
 				});
 				result.contacts = data;
 				result.form = forms[index];
+				result.all = false;
+				obs.next(result);
+			};
+			let handlerCmp = () =>{
+				result.contacts = [];
+				result.form = forms[index];
+				result.all = true;
 				obs.next(result);
 				index++;
-				if (index < forms.length) {
-					doTheCall();
-				} else {
-					obs.complete();
-				}
-			};
+			   if (index < forms.length) {
+				   doTheCall();
+			   }else {
+				   obs.complete();
+			   }
+			}
 			let doTheCall = () => {
 				let params = <any>{
 					form_id: forms[index].form_id
 				};
-				let form = forms[index];
-				let syncDate = form.lastSync && form.lastSync.contacts ? new Date(form.lastSync.contacts) : null;
+				let syncDate =  null;
 				if (syncDate) {
 					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
-				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
+				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler,(err)=>obs.error(err),handlerCmp);
 			};
 			doTheCall();
 		});
@@ -493,7 +456,7 @@ export class RESTClient {
 				if (offset > 0) {
 					params.offset = offset;
 				}
-				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
+				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler,(err)=>obs.error(err));
 			};
 			doTheCall();
 

@@ -92,7 +92,6 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
-        this.client.initIntercom();
       } else {
         this.nav.setRoot(Login);
       }

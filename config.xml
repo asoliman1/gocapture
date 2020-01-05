@@ -3,7 +3,7 @@
     <name>GoCapture</name>
     <description>LeadLiason GoCapture!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.7:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -162,4 +162,5 @@
     <plugin name="cordova-plugin-camera-preview" spec="/Users/leadliaison/Projects/Ionic/gocapture/node_modules/cordova-plugin-camera-preview" />
     <plugin name="cordova-plugin-geolocation" spec="~4.0.3-dev" />
     <plugin name="cordova-plugin-media" spec="~5.0.3" />
+    <allow-navigation href="http://192.168.1.7:8100" sessionid="31706b73" />
 </widget>

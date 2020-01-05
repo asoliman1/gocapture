@@ -208,6 +208,7 @@ export class FormReview {
 	doRefresh() {
 		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.submissions = submissions;
+			console.log(submissions.length);
 			this.loading = false;
 			this.onFilterChanged();
 		});

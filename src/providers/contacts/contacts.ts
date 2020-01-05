@@ -31,14 +31,14 @@ export class ContactsProvider {
       .mergeMap(
         (data)=>this.db
         .saveMemberships(data.contacts)
-        .map((saved)=>{return {saved , form : data.form}})
+        .map((saved)=>{return {saved , form : data.form , all : data.all}})
         )
       .subscribe((data) => {
-          if (data && data.form.form_id && data.saved){
+        this.formsProvider.updateFormSyncStatus(data.form.form_id, true);
+          if (data && data.form.form_id && data.saved && data.all) {
             this.formsProvider.updateFormLastSync(data.form.form_id, 'contacts');
+            this.formsProvider.updateFormSyncStatus(data.form.form_id, false);
           } 
-          this.formsProvider.updateFormSyncStatus(data.form.form_id, false);
-
       }, (err) => {
         obs.error(err)
       }, () => {
