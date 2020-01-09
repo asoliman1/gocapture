@@ -29,7 +29,6 @@ export class Main {
 		private ngZone : NgZone,
 		private dbClient : DBClient
 	) {
-		this.client.setupNotifications();
 
 	}
 
@@ -57,6 +56,7 @@ export class Main {
 
 
 	ngOnInit() {
+		this.client.setupNotifications();
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{

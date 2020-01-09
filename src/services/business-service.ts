@@ -98,13 +98,13 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
-    this.getUpdates().subscribe(() => { }, (err) => { }, () => { });
-    this.formsProvider.setFormsSyncStatus(val);
+    // this.getUpdates().subscribe(() => { }, (err) => { }, () => {});
   }
 
   private initNetwork() {
     this.networkOff = this.net.onDisconnect().subscribe(() => {
       console.log("network was disconnected :-(");
+      this.formsProvider.setFormsSyncStatus(false);
       this.setOnline(false);
     });
 
@@ -147,25 +147,18 @@ export class BussinessClient {
   }
 
   public setupNotifications() {
+    
     if (!this.setup) {
       this.setup = true;
-      this.pushSubs.push(this.push.error.subscribe(() => {
-      }));
+      this.pushSubs.push(this.push.error.subscribe(() => {}));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
-
-        if (!note) {
-          return;
-        }
-
+        if (!note) return;
         this.handlePush(note);
-
       }));
 
       this.pushSubs.push(this.push.registration.subscribe((regId) => {
-        if (!regId) {
-          return;
-        }
+        if (!regId) return;
         this.db.updateRegistration(regId).subscribe((ok) => {
           this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
             if (done) {

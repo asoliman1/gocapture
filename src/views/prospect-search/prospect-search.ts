@@ -35,7 +35,6 @@ export class ProspectSearch extends SearchPage {
     this.client.getContacts(this.form)
       .subscribe(contacts => {
         this.zone.run(()=>{
-          this.loading = false;
           let sortedItems = [];
           contacts.forEach((contact, index) => {
             let optionItem = new OptionItem({
@@ -58,6 +57,7 @@ export class ProspectSearch extends SearchPage {
           this.content.resize();
           ProspectSearch.formId = this.form.form_id+"";
           this.onInput({target: {value: ""}})
+          this.loading = false;
         });
       });
   }

@@ -77,10 +77,9 @@ export class FormReview {
 
 		this.form = this.navParams.get("form");
 		this.isDispatch = this.navParams.get("isDispatch");
-		this.loading = true;
 	}
 
-	ionViewWillEnter(){
+	ionViewWillEnter() {
 		this.doRefresh();
 	}
 
@@ -196,20 +195,20 @@ export class FormReview {
 
 	getBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
-		let bc : any = submission ? submission.fields[id] : null;
-		if (bc && bc.front) 
-		bc.front = this.util.imageUrl(bc.front);
-		if(bc && bc.back)
-		bc.back = this.util.imageUrl(bc.back);
+		let bc: any = submission ? submission.fields[id] : null;
+		if (bc && bc.front)
+			bc.front = this.util.imageUrl(bc.front);
+		if (bc && bc.back)
+			bc.back = this.util.imageUrl(bc.back);
 		submission.fields[id] = bc;
 		return bc && bc.front ? bc.front : null;
 	}
 
 	doRefresh() {
+		this.loading = true;
 		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
-			this.submissions = submissions;
-			console.log(submissions.length);
 			this.loading = false;
+			this.submissions = submissions;
 			this.onFilterChanged();
 		});
 	}

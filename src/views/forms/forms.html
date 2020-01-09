@@ -18,11 +18,14 @@
 <ion-content >
 	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode">
 	</ion-searchbar>
-	<div text-center margin-top *ngIf="loading">
+	<div text-center margin-top *ngIf="!formsProvider.loaded">
 		<ion-spinner></ion-spinner>
 	</div>
 
-	<div class="no-data" *ngIf="!loading && !forms.length"> <i> No Events </i> </div>
+	<div class="no-data" *ngIf="formsProvider.loaded && !forms.length"> 
+		<img src="assets/images/no-Events.png" />
+	</div>
+
 	<ion-list approxItemHeight="300px">
 		<!-- A.S GOC-326 -->
 		<event-item (click)="presentActionSheet(form)" *ngFor="let form of forms"
