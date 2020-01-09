@@ -228,7 +228,7 @@ export class SubmissionsProvider {
         return entry.nativeURL;
       } catch (error) {
         console.log('Error downloading submission data : ' + id);
-        console.log(error);
+        // console.log(error);
         this.getDownloadedFilePath(fileToDownload,id);
       }
     }

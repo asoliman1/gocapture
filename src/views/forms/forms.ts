@@ -30,7 +30,6 @@ export class Forms {
   forms: Form[] = [];
 
   private selectedTheme: string;
-  loading: boolean;
 
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
@@ -47,19 +46,13 @@ export class Forms {
   }
 
   getForms() {
-    if(!this.forms.length) this.loading = true;
+    
     this.formsProvider.formsObs.subscribe((val) => {
-      this.loading = false;
       if (val) this.updateForms()
     }, (err) => {
-      this.loading = false;
     }, () => {
-      this.loading = false;
     })
 
-    setTimeout(() => {
-      this.loading = false;
-    }, 3000);
   }
 
   updateForms() {
@@ -81,13 +74,9 @@ export class Forms {
 
 
   sync() {
-    if (!this.forms.length) this.loading = true;
     this.client.getUpdates().subscribe(() => {
-      this.loading = false;
     }, (err) => {
-      this.loading = false;
     }, () => {
-      this.loading = false;
     });
   }
 
