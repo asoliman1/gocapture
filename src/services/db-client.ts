@@ -145,6 +145,7 @@ export class DBClient {
 		form.total_submissions = dbForm.totalSub;
 		form.total_hold = dbForm.totalHold;
 		form.total_sent = dbForm.totalSent;
+		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
 		form.computeIdentifiers();
 		return form;
 	}
@@ -160,12 +161,12 @@ export class DBClient {
 			});
 	}
 
-	public getActivations(): Observable<Activation[]> {
-		return this.getAll<any[]>(WORK, "activations", [])
-			.map((data) => {
-				return  Activation.parseActivations(data);
-			});
-	}
+	// public getActivations(): Observable<Activation[]> {
+	// 	return this.getAll<any[]>(WORK, "activations", [])
+	// 		.map((data) => {
+	// 			return  Activation.parseActivations(data);
+	// 		});
+	// }
 
 	public getFormsByIds(ids: number[]): Observable<Form[]> {
 		return new Observable<Form[]>((responseObserver: Observer<Form[]>) => {
@@ -193,7 +194,7 @@ export class DBClient {
 		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync)]);
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations)]);
 	}
 
 	public saveActivation(activation: Activation): Observable<boolean> {

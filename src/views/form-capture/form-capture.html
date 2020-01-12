@@ -50,31 +50,36 @@
   'background-size':'cover',
   'background-position':'center'}" class="form-summary">
 	<ion-grid>
-		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
+		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
 			<ion-col>
 				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Search List</button>
 			</ion-col>
 		</ion-row>
 
 		<ion-row>
-      <form-view
-        *ngIf="form"
-        [form]="form"
-        [prospect]="prospect"
-        [submission]="submission"
-        (onValidationChange)="onValidationChange($event)"
-        [readOnly]="isReadOnly(submission) && !isEditing"
-        [isEditing]="isEditing"
-        [submitAttempt]="submitAttempt"
-        (onProcessingEvent)="onProcessing($event)"
-        >
-      </form-view>
+      <ion-col style="order:1" >
+        <form-view
+          *ngIf="form"
+          [form]="form"
+          [prospect]="prospect"
+          [submission]="submission"
+          (onValidationChange)="onValidationChange($event)"
+          [readOnly]="isReadOnly(submission) && !isEditing"
+          [isEditing]="isEditing"
+          [submitAttempt]="submitAttempt"
+          (onProcessingEvent)="onProcessing($event)"
+          >
+        </form-view>
+      </ion-col>
+      <ion-col *ngIf="activation && activation.display_capture_form != 1" [style.order]="getCaptureScreenUrlOrder(activation.display_capture_form)" >
+        <iframe [src]="activation.capture_screen_url | safeUrl" width="100%" height="100%" frameborder="0" ></iframe>
+      </ion-col>
     </ion-row>
 
 	</ion-grid>
 </ion-content>
 <button-bar
-*ngIf="form" 
+*ngIf="form && !activation" 
 [show]="!isReadOnly(submission) || isEditing" 
 [disabled]="isProcessing" 
 [form]="form" >

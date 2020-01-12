@@ -1,3 +1,6 @@
+import { ActivationViewPage } from './../../pages/activation-view/activation-view';
+import { ACTIVATIONS_DISPLAY_FORM } from './../../constants/activations-display';
+import { Activation } from './../../model/activation';
 import { FormsProvider } from './../../providers/forms/forms';
 import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
@@ -108,6 +111,8 @@ export class FormCapture implements AfterViewInit {
 
   captureBg : string;
 
+  private activation : Activation = this.navParams.get("activation");
+
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
     private client: BussinessClient,
@@ -180,7 +185,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private setupIdleMode() {
-    if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode) {
+    if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode && !this.activation) {
       this.insomnia.keepAwake()
         .then(() => this.handleIdleMode()
         ).catch((err) => {
@@ -257,9 +262,18 @@ export class FormCapture implements AfterViewInit {
     return this.navParams.get("form").event_style;
   }
 
+  getCaptureScreenUrlOrder(captureOrder){
+    switch (captureOrder) {
+      case ACTIVATIONS_DISPLAY_FORM.SPLIT_LEFT:
+       return -1;
+       case ACTIVATIONS_DISPLAY_FORM.SPLIT_RIGHT:
+       return 2;
+    }
+  }
+
   private async setupForm() {
    // return new object data of form (not updated)
-    this.form = Object.assign(new Form(),this.navParams.get("form")); 
+    this.form = Object.assign(new Form(), this.navParams.get("form")); 
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
     this.setStation(this.submission);
@@ -681,6 +695,8 @@ export class FormCapture implements AfterViewInit {
           }
           return;
         }
+
+        if(this.activation) this.navCtrl.push(ActivationViewPage,{activation:this.activation})
         this.formsProvider.updateFormSubmissions(this.form.form_id);
         this.kioskModeCallback();
       }, (err) => {

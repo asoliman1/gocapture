@@ -16,6 +16,7 @@ export class EventItemComponent {
   @Input() name : string;
   @Input() textColor : string;
   @Input() isSyncing : boolean;
+  @Input() activation : boolean = false;
 
   imageLoading : boolean = true;
   submissionsCounter : boolean;
@@ -28,14 +29,6 @@ export class EventItemComponent {
   }
 
   ngOnInit(){
-    this.checkSubmissionsCounter() 
-  }
-
-  checkSubmissionsCounter(){
-    if( this.isUnidentified(this.unsent) && this.isUnidentified(this.sent) && this.isUnidentified(this.onHold) )
-    this.submissionsCounter = false;
-    else
-    this.submissionsCounter = true; 
   }
 
   isUnidentified(val){
@@ -43,7 +36,8 @@ export class EventItemComponent {
   }
 
   checkImageDownload(){
-    this.imageLoading = this.image.startsWith('https://');
+    if(this.image) this.imageLoading = this.image.startsWith('https://');
+    else this.imageLoading = false;
   }
 
 }

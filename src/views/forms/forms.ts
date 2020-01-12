@@ -14,6 +14,7 @@ import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
 import { ModalController } from "ionic-angular";
 import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
+import { ActivationsPage } from '../activations/activations';
 
 @Component({
   selector: 'forms',
@@ -155,6 +156,15 @@ export class Forms {
         }
       })
     }
+
+    if(form.activations.length)
+    buttons.push({
+      'text': 'Activations',
+      'icon': 'game-controller-b',
+      handler : () => {
+        this.navCtrl.push(ActivationsPage, { form: form });
+      }
+    })
 
     buttons.push({
       text: 'Cancel',

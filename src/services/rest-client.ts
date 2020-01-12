@@ -130,7 +130,7 @@ export class RESTClient {
 		});
 	}
 
-	public getAllActivations(forms : Form[]){
+	public getAllActivations(forms : Form[],params : any){
 		return new Observable<{activations :Activation[],form: Form}>((obs: Observer<{activations :Activation[],form: Form}>) => {
 			var result: {activations :Activation[],form: Form} = {activations:[],form:null};
 			if (!forms || forms.length == 0) {
@@ -151,38 +151,23 @@ export class RESTClient {
 				if (index < forms.length) {
 					 syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
 								   new Date(forms[index].lastSync.activations) : null;
-					this.getFormActivations(forms[index].form_id, syncDate).subscribe(handler);
+					this.getFormActivations(forms[index] , params , syncDate).subscribe(handler);
 				} else {
 					obs.complete();
 				}
 			};
-			this.getFormActivations(forms[index].form_id, syncDate).subscribe(handler);
+			this.getFormActivations(forms[index],params, syncDate).subscribe(handler,(err)=>obs.error(err));
 		});
 	}
 
-	public getFormActivations(formId : number,lastSyncDate ? : Date ): Observable<Activation[]> {
+	public getFormActivations(form : Form,params : any,lastSyncDate ? : Date ): Observable<Activation[]> {
 		let opts: any = {
-			form_id: formId,
-			sort_by: "",
-			sort_order : "",
-			include_inactive : ""
+			form_id: form.form_id,
+			include_inactive : 0,
+			...params
 		};
-
-		if (lastSyncDate) 
-			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
-		
 		return this.getAll<{records:Activation[]}>("/activations.json", opts).map(resp => {
-			let result: Activation[] = [];
-			resp.forEach(record => {
-				record.records.forEach(act=>{
-					let a = new Activation();
-					Object.keys(act).forEach(key => {
-						a[key] = act[key];
-					});
-					result.push(a);
-				})
-			});
-			return result;
+			return Activation.parseActivations(resp,form);
 		});
 	}
 
@@ -387,7 +372,7 @@ export class RESTClient {
 				let params = <any>{
 					form_id: forms[index].form_id
 				};
-				let syncDate =  null;
+				let syncDate = forms[index].lastSync.contacts ? new Date( forms[index].lastSync.contacts ) : null;
 				if (syncDate) {
 					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}

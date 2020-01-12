@@ -4,6 +4,7 @@ import { BaseForm } from "./base-form";
 import { AbstractControl } from "@angular/forms";
 import { Station } from "./station";
 import { EventStyle } from "./event-style";
+import { Activation } from "./activation";
 
 export class Form extends BaseForm {
 	created_at: string;
@@ -27,6 +28,7 @@ export class Form extends BaseForm {
 	event_style: EventStyle; // A.S GOC-326
 	isSyncing: boolean;
 	available_for_users: any[];
+	activations : Activation[];
 	lastSync: {
 		submissions ?: Date;
 		contacts ?: Date;

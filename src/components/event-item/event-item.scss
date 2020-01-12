@@ -6,6 +6,11 @@ $secondary : map-get($map: $colors, $key:"secondary" );
     height: 30vh;
     width: 100%;
     position: relative;
+    background-color: #f4f4f4 !important;
+ }
+
+ .margin{
+    margin-bottom: 2px;
  }
 
  .text{

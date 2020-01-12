@@ -235,30 +235,9 @@ export const VERSIONS = {
             ]
         },
         29 :  {
-            tables: [
-                {
-                    name: 'activations',
-                    columns: [
-                        { name: 'id', type: 'integer not null' },
-                        { name: 'name', type: 'text not null' },
-                        { name: 'create_date', type: 'text' },
-                        { name: 'modified_date', type: 'text' },
-                        { name: 'activation_identifier', type: 'text' },
-                        { name: 'event', type: 'text not null' },
-                        { name: 'is_active', type: 'integer' },
-                    ],
-                    queries : {
-                        "select": "SELECT * FROM activations",
-                        "selectByIds": "SELECT * FROM activations where id in (?)",
-                        "selectAll": "SELECT * FROM activations",
-                        "update": "INSERT OR REPLACE INTO activations (id,name,create_date,modified_date,activation_identifier,event,is_active) VALUES (?,?,?,?,?,?,?)",
-                        "delete": "DELETE FROM activations where id=?",
-                        "deleteIn": "delete FROM activations where id in (?)",
-                        "deleteAll": "delete FROM activations"
-                    }
-                }
-            ],
-            queries: []
+            queries: [
+                "alter table forms add column activations text",
+            ]
         },
     }
 };

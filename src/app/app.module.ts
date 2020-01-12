@@ -1,3 +1,4 @@
+import { ActivationViewPage } from './../pages/activation-view/activation-view';
 import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
 import { buttonBar } from './../components/form-view/button-bar/button-bar';
 import { Keyboard } from '@ionic-native/keyboard';
@@ -117,7 +118,6 @@ import { Intercom } from '@ionic-native/intercom';
 import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
 import { ActivationsPage } from '../views/activations/activations';
 import { ActivationsProvider } from '../providers/activations/activations';
-import { ActivationCapturePage } from '../pages/activation-capture/activation-capture';
 
 @NgModule({
   declarations: [
@@ -166,7 +166,8 @@ import { ActivationCapturePage } from '../pages/activation-capture/activation-ca
     SupportPage,
     SkeletonLoadingComponent,
     ActivationsPage,
-    ActivationCapturePage,
+    ActivationViewPage
+
   ],
   imports: [
     BrowserModule,
@@ -226,7 +227,7 @@ import { ActivationCapturePage } from '../pages/activation-capture/activation-ca
     SupportPage,
     SkeletonLoadingComponent,
     ActivationsPage,
-    ActivationCapturePage,
+    ActivationViewPage
   ],
   exports: [
     DynamicFormElementComponent
