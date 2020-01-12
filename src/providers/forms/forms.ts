@@ -15,7 +15,7 @@ export class FormsProvider {
   forms: Form[] = [];
   loaded: boolean = false;
   formsObs : Subject<any> = new Subject();
-  hasNewData : boolean;
+  private hasNewData : boolean;
 
   constructor(
     private dbClient: DBClient,
@@ -29,10 +29,10 @@ export class FormsProvider {
 
   setForms() {
     if (!this.loaded && this.dbClient.isWorkDbInited()){
-      this.loaded = true;
       this.dbClient.getForms().subscribe((forms) => {
         forms = this.util.sortBy(forms,-1);
         this.forms = forms;
+        this.loaded = true;
         this.pushUpdates();
       })
     }
@@ -45,12 +45,15 @@ export class FormsProvider {
 
    downloadForms(lastSyncDate: Date): Observable<Form[]> {
     console.log('Getting latest forms...')
+    if(this.forms.length) this.loaded = true;
+    else this.loaded = false;
     this.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllForms(lastSyncDate)
       .subscribe((remoteForms) => {
         remoteForms.forms = this.checkFormData(this.filterArchivedForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
+        this.loaded = true;
         this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
@@ -232,10 +235,10 @@ export class FormsProvider {
     form.isSyncing = isSyncing;
   }
 
-  updateFormLastSync(form_id: any, field : string) {
+  updateFormLastSync(form_id: any, field : string , empty = false) {
     let form = this.forms.find((e) => e.form_id == (form_id * 1));
     if(!form.lastSync) form.lastSync = {}
-    form.lastSync[field] = new Date();
+    form.lastSync[field] = empty ? '' : new Date();
     this.saveFormDb(form)
   }
 

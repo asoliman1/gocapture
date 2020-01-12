@@ -44,7 +44,7 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
-    private intercom : Intercom
+    private intercom: Intercom
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -92,7 +92,6 @@ export class MyApp {
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
         this.nav.setRoot(Main);
-        this.client.initIntercom();
       } else {
         this.nav.setRoot(Login);
       }
@@ -125,8 +124,8 @@ export class MyApp {
     if (this.platform.is('cordova')) {
       this.client.getRegistration(true).subscribe((user) => {
         if (user) {
-          this.client.getDeviceStatus(user).subscribe((status)=>{
-            this.handleAccessTokenValidationResult(status,user);
+          this.client.getDeviceStatus(user).subscribe((status) => {
+            this.handleAccessTokenValidationResult(status, user);
           });
         }
       });
@@ -134,19 +133,19 @@ export class MyApp {
   }
 
   private onAppResumes() {
-    this.platform.resume.subscribe( async () => {
+    this.platform.resume.subscribe(async () => {
       if (!this.util.getPluginPrefs() && !this.util.getPluginPrefs('rapid-scan')) {
         this.popup.dismissAll();
-        if(await this.client.getAppCloseTimeFrom() > 60){
+        if (await this.client.getAppCloseTimeFrom() > 60) {
           this.checkDeviceStatus();
-          this.client.getUpdates().subscribe();
+          this.client.getUpdates().subscribe(() => { }, (err) => { }, () => { });
         }
       }
       this.util.rmPluginPrefs()
     });
   }
 
-  onAppPause(){
+  onAppPause() {
     this.platform.pause.subscribe(() => {
       console.log('App Paused');
       this.client.setAppCloseTime();
