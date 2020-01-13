@@ -331,7 +331,8 @@ export class RESTClient {
 				let params = <any>{
 					form_id: forms[index].form_id
 				};
-				let syncDate =  null;
+				let syncDate = forms[index].lastSync && forms[index].lastSync.contacts ?
+				 new Date(forms[index].lastSync.contacts) : null;
 				if (syncDate) {
 					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
