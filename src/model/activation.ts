@@ -19,7 +19,7 @@ export class Activation {
     public static parseActivation(dbActivation: any, form : Form) {
         let act = new Activation();
         act.id = dbActivation.id;
-        act.background_image = dbActivation.activation_identifier.background_image;
+        act.background_image = dbActivation.background_image;
         act.create_date = dbActivation.create_date;
         act.modified_date = dbActivation.modified_date;
         act.event = form;

@@ -20,6 +20,7 @@ import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Intercom } from '@ionic-native/intercom';
+import { RESTClient } from '../services/rest-client';
 
 @Component({
   templateUrl: 'app.html'
@@ -34,7 +35,7 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    // private rest: RESTClient,
+    private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
     public statusBar: StatusBar,
@@ -154,29 +155,30 @@ export class MyApp {
 
 
   private handleApiErrors() {
-    /*
+    
     this.rest.error.subscribe((resp) => {
       //token is invalid => unregister current user;
-      if (resp && resp.status == 401) {
-        this.client.getRegistration(true).subscribe((user) => {
-          if (user) {
-            this.client.unregister(user).subscribe(() => {
-              this.nav.setRoot(Login, {
-                unauthorized: true
-              });
-            });
-          }
-        });
-      }
+      if(resp) this.popup.showToast(resp.message);
+      // if (resp && resp.status == 401) {
+      //   this.client.getRegistration(true).subscribe((user) => {
+      //     if (user) {
+      //       this.client.unregister(user).subscribe(() => {
+      //         this.nav.setRoot(Login, {
+      //           unauthorized: true
+      //         });
+      //       });
+      //     }
+      //   });
+      // }
 
-      if (resp && resp.status == 403) {
-        this.nav.setRoot(Login, {
-          unauthorized: true,
-          errorMessage: resp.message
-        })
-      }
+      // if (resp && resp.status == 403) {
+      //   this.nav.setRoot(Login, {
+      //     unauthorized: true,
+      //     errorMessage: resp.message
+      //   })
+      // }
     });
-     */
+     
   }
 
   private handleClientErrors() {

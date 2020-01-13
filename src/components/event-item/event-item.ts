@@ -36,7 +36,7 @@ export class EventItemComponent {
   }
 
   checkImageDownload(){
-    if(this.image) this.imageLoading = this.image.startsWith('https://');
+    if(this.image && !this.activation) this.imageLoading = this.image.startsWith('https://');
     else this.imageLoading = false;
   }
 

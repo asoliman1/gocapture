@@ -45,7 +45,7 @@ export class ActivationsPage {
     this.activations = [];
     this.restClient.getAllActivations(this.formsProvider.forms,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((data)=>{
       this.activations = [...this.activations, ...data.activations];
-      this.filteredActivations = [...this.activations, ...data.activations];
+      this.filteredActivations = [...this.filteredActivations, ...data.activations];
       this.loading = false;
     },err =>{
       this.loading = false;

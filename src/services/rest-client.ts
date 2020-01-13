@@ -27,6 +27,7 @@ import { SubmissionMapper } from "./submission-mapper";
 import { AppVersion } from '@ionic-native/app-version';
 import { Platform } from 'ionic-angular/platform/platform';
 import { Activation } from '../model/activation';
+import { ActivationSubmission } from '../model/activation-submission';
 
 @Injectable()
 export class RESTClient {
@@ -141,22 +142,18 @@ export class RESTClient {
 				return;
 			}
 			var index = 0;
-			let syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
-			new Date(forms[index].lastSync.submissions) : null;
 			let handler = (data: Activation[]) => {
 				result.activations = data;
 				result.form = forms[index];
-				obs.next(result)
+				obs.next({...result})
 				index++;
 				if (index < forms.length) {
-					 syncDate = forms[index].lastSync && forms[index].lastSync.submissions ? 
-								   new Date(forms[index].lastSync.activations) : null;
-					this.getFormActivations(forms[index] , params , syncDate).subscribe(handler);
+					this.getFormActivations(forms[index] , params ).subscribe(handler);
 				} else {
 					obs.complete();
 				}
 			};
-			this.getFormActivations(forms[index],params, syncDate).subscribe(handler,(err)=>obs.error(err));
+			this.getFormActivations(forms[index],params).subscribe(handler,(err)=>obs.error(err));
 		});
 	}
 
@@ -380,6 +377,17 @@ export class RESTClient {
 			};
 			doTheCall();
 		});
+	}
+
+	public submitActivation(data: ActivationSubmission): Observable<boolean> {
+		return this.call<BaseResponse>("POST", "/activations/submit.json", data)
+			.map((resp: FormSubmitResponse) => {
+				if (resp.status == "200") {
+					return true;
+				}
+				this.errorSource.next(resp);
+				return false;
+			});
 	}
 	/**
 	 *
