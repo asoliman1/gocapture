@@ -1,4 +1,4 @@
-<div class="ctn {{activation?'margin':''}} animated fadeIn" *ngIf="address || name || image">
+<div class="ctn {{activation?'activations margin':''}} animated fadeIn" *ngIf="address || name || image">
 
   <img *ngIf="!imageLoading" [src]="image | convertFileSrc" class="image animated fadeIn" (load)="checkImageDownload()"
     onerror="this.src = 'assets/images/image-placeholder.jpg'" />

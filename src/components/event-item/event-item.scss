@@ -13,6 +13,10 @@ $secondary : map-get($map: $colors, $key:"secondary" );
     margin-bottom: 2px;
  }
 
+ .activations{
+    height: 100% !important;
+ }
+
  .text{
      position: absolute;
      bottom: 4vh;
