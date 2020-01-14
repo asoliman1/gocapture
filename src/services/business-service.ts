@@ -28,6 +28,7 @@ import { SettingsService } from './settings-service';
 import { Geolocation } from '@ionic-native/geolocation';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
+import { Subject } from 'rxjs';
 
 @Injectable()
 /**
@@ -50,7 +51,7 @@ export class BussinessClient {
 
   private online: boolean = true;
 
-  private registration: User;
+  registration: User;
 
   private setup: boolean = false;
 
@@ -62,7 +63,7 @@ export class BussinessClient {
    */
   error: Observable<any>;
 
-
+  public userUpdates: Subject<User> = new Subject();
 
   constructor(
     private db: DBClient,
@@ -74,28 +75,16 @@ export class BussinessClient {
     private appPreferences: AppPreferences,
     private util: Util,
     private formsProvider: FormsProvider,
-    private submissionsProvider : SubmissionsProvider,
+    private submissionsProvider: SubmissionsProvider,
     private settingsService: SettingsService,
     private geolocation: Geolocation,
-    private intercom : Intercom,
+    private intercom: Intercom,
     private popup: Popup) {
-
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
-
-    this.networkOff = this.net.onDisconnect().subscribe(() => {
-      console.log("network was disconnected :-(");
-      this.setOnline(false);
-    });
-
-    this.networkOn = this.net.onConnect().subscribe(() => {
-      console.log("network was connected");
-      this.setOnline(true);
-    });
-
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
-
+    this.initNetwork();
   }
 
   public isOnline(): boolean {
@@ -107,6 +96,20 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
+    // this.getUpdates().subscribe(() => { }, (err) => { }, () => {});
+  }
+
+  private initNetwork() {
+    this.networkOff = this.net.onDisconnect().subscribe(() => {
+      console.log("network was disconnected :-(");
+      this.formsProvider.setFormsSyncStatus(false);
+      this.setOnline(false);
+    });
+
+    this.networkOn = this.net.onConnect().subscribe(() => {
+      console.log("network was connected");
+      this.setOnline(true);
+    });
   }
 
   public doAutoSync() {
@@ -142,25 +145,18 @@ export class BussinessClient {
   }
 
   public setupNotifications() {
+    
     if (!this.setup) {
       this.setup = true;
-      this.pushSubs.push(this.push.error.subscribe(() => {
-      }));
+      this.pushSubs.push(this.push.error.subscribe(() => {}));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
-
-        if (!note) {
-          return;
-        }
-
+        if (!note) return;
         this.handlePush(note);
-
       }));
 
       this.pushSubs.push(this.push.registration.subscribe((regId) => {
-        if (!regId) {
-          return;
-        }
+        if (!regId) return;
         this.db.updateRegistration(regId).subscribe((ok) => {
           this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
             if (done) {
@@ -181,15 +177,13 @@ export class BussinessClient {
       this.db.getRegistration().subscribe((user) => {
         if (user) {
           this.registration = user;
+          this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
           this.formsProvider.setForms();
           this.rest.token = user.access_token;
-          obs.next(user);
-          obs.complete();
-        } else {
-          obs.next(user);
-          obs.complete();
         }
+        obs.next(user);
+        obs.complete();
       })
     });
   }
@@ -269,14 +263,14 @@ export class BussinessClient {
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
         this.util.checkFilesDirectories();
-        this.onAuthSuccess(reply,obs);
+        this.onAuthSuccess(reply, false, obs);
       }, err => {
         obs.error("Invalid authentication code");
       });
     });
   }
 
- private onAuthSuccess(reply : User , obs : Observer <any>){
+  private onAuthSuccess(reply: User, update: boolean, obs: Observer<any>) {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
@@ -284,7 +278,11 @@ export class BussinessClient {
       this.db.saveRegistration(reply).subscribe((done) => {
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
-        if(reply.in_app_support) this.initIntercom();
+        if (reply.in_app_support) {
+          if(update) this.updateIntercom();
+          else this.registerIntercom();
+        };
+        this.userUpdates.next(reply);
         obs.next({ user: reply, message: "Done" });
         obs.complete();
       }, err => {
@@ -295,38 +293,42 @@ export class BussinessClient {
     });
   }
 
-  initIntercom(){
-    this.intercom.registerIdentifiedUser(
-      { user_id:this.registration.id,
-        email:this.registration.email,name:`${this.registration.first_name} ${this.registration.last_name}`
+
+ async registerIntercom(){
+    this.intercom.registerIdentifiedUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+    }).then((data)=>{
+      console.log('Intercome register : ' + JSON.stringify(data));
+      this.intercom.registerForPush().then(console.log).catch(console.log);
+      this.updateIntercom();
+    })
+  }
+
+ async updateIntercom(){
+    this.intercom.updateUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+      name: `${this.registration.first_name} ${this.registration.last_name}`,
+      customer_id: this.registration.customerID,
+      custom_attributes: {
+        mobile_app_name: this.registration.app_name,
+      },
+      instance: this.registration.customer_name,
+      avatar: {
+        type: "avatar",
+        image_url: this.registration.user_profile_picture
       }
-      ).then((data)=>{
-        this.intercom.registerForPush().then();
-      });
+    }).then((data)=>{
+      console.log('Intercome update : ' + JSON.stringify(data));
+    })
   }
 
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
       this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
         if (done) {
-          this.db.deleteRegistration();
-          this.push.shutdown();
-          this.pushSubs.forEach(sub => {
-            sub.unsubscribe();
-          });
-          try {
-            await this.appPreferences.clearAll();
-            await this.intercom.reset();
-          } catch (error) {
-            console.log(error);
-          }
-          this.formsProvider.resetForms()
-          this.util.rmDir("leadliaison", "");
-          this.pushSubs = [];
-          this.setup = false;
-          obs.next(user);
-          obs.complete();
-
+          this.onUnAuthSuccess(obs)
         } else {
           obs.error("Could not unauthenticate");
         }
@@ -336,24 +338,42 @@ export class BussinessClient {
     });
   }
 
+  private async onUnAuthSuccess(obs) {
+    this.db.deleteRegistration();
+    this.push.shutdown();
+    this.pushSubs.forEach(sub => {
+      sub.unsubscribe();
+    });
+    try {
+      await this.appPreferences.clearAll();
+      await this.intercom.reset();
+    } catch (error) {
+      console.log(error);
+    }
+    this.formsProvider.resetForms();
+    this.util.rmDir("leadliaison", "");
+    this.pushSubs = [];
+    this.setup = false;
+    obs.next(null);
+    obs.complete();
+  }
+
   public getDeviceStatus(user: User) {
     return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
       this.rest.validateAccessToken(user.access_token).subscribe((status) => {
-        this.onAuthSuccess(status.data,obs)
+        this.onAuthSuccess(status.data, true, obs)
         obs.next(status);
         obs.complete();
       })
     });
   }
 
-  updateUser(user : User){
-
-  }
 
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
         obs.error('No internet connection available');
+        this.formsProvider.setFormsSyncStatus(false);
         return;
       }
       this.db.getConfig("lastSyncDate").subscribe(time => {
@@ -403,14 +423,11 @@ export class BussinessClient {
 
   public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
     sub.updateFields(form);
-
     return new Observable<boolean>((obs: Observer<boolean>) => {
       this.db.saveSubmission(sub).subscribe((done) => {
-
         if (syncData) {
           this.doAutoSync();
         }
-
         obs.next(done);
         obs.complete();
       }, (err) => {
@@ -466,7 +483,7 @@ export class BussinessClient {
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {
             sub.status = SubmissionStatus.Submitting;
-            this.submissionsProvider.updateSubmissionStatus(sub.id,sub.status)
+            this.submissionsProvider.updateSubmissionStatus(sub.id, sub.status)
             sub.last_sync_date = new Date().toISOString();
             let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);
@@ -520,7 +537,7 @@ export class BussinessClient {
     console.log('Push received - ' + JSON.stringify(note));
 
     if (note.action == 'sync') {
-      this.getUpdates().subscribe();
+      this.getUpdates().subscribe(() => { }, (err) => { }, () => { });
     } else if (note.action == 'resync') {
       this.sync.download(null).subscribe(data => {
         //
@@ -534,7 +551,7 @@ export class BussinessClient {
   }
 
   setAppCloseTime() {
-    this.db.saveConfig('appCloseTime', Date.now() + "");
+    this.db.saveConfig('appCloseTime', Date.now() + "").subscribe();
   }
 
   async getAppCloseTimeFrom() {

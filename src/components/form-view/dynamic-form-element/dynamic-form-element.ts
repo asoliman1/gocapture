@@ -41,7 +41,7 @@ export class DynamicFormElementComponent {
   setElementsStyle(){
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
     document.documentElement.style.setProperty(`--elements_bg_color`,this.hexToRgb(this.form.event_style.element_background_color));
-    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity.toString());
+    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity+'');
   }
 
   isControlInvalid() {

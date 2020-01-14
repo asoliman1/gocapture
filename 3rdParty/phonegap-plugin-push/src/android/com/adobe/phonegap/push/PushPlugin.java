@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.intercom.android.sdk.push.IntercomPushClient;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class PushPlugin extends CordovaPlugin implements PushConstants {
@@ -45,8 +46,10 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
   private static CordovaWebView gWebView;
   private static List<Bundle> gCachedExtras = Collections.synchronizedList(new ArrayList<Bundle>());
   private static boolean gForeground = false;
+  private final IntercomPushClient intercomPushClient = new IntercomPushClient();
 
   private static String registration_id = "";
+  private String pushToken = "";
 
   /**
    * Gets the application context from cordova's main activity.
@@ -213,14 +216,16 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
             }
 
             if (!"".equals(token)) {
+              pushToken = token;
               JSONObject json = new JSONObject().put(REGISTRATION_ID, token);
               json.put(REGISTRATION_TYPE, FCM);
 
-              Log.v(LOG_TAG, "onRegistered: " + json.toString());
+              Log.v(LOG_TAG, "onRegistered: " + token);
 
               JSONArray topics = jo.optJSONArray(TOPICS);
               subscribeToTopics(topics, registration_id);
 
+              intercomPushClient.sendTokenToIntercom(cordova.getActivity().getApplication(), token);
               PushPlugin.sendEvent(json);
             } else {
               callbackContext.error("Empty registration ID received from FCM");
@@ -520,6 +525,7 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
 
   @Override
   public void onResume(boolean multitasking) {
+    intercomPushClient.sendTokenToIntercom(cordova.getActivity().getApplication(), pushToken);
     super.onResume(multitasking);
     gForeground = true;
   }

@@ -45,9 +45,13 @@
 </ion-header>
 
 <ion-content class="form-summary">
+  <div *ngIf="loading" text-center > <ion-spinner></ion-spinner> </div>
+  <div class="no-data" *ngIf="!loading && !submissions.length" >
+    <img src="./assets/images/no-Submissions.png" />
+  </div>
   <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="100px" [virtualTrackBy]="itemTracker">
     <ion-item-sliding [ngStyle]="{'opacity': submission.isDownloading ? '0.5' : '1.0'}" *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
-      <ion-item (click)="goToEntry(submission)">
+      <ion-item *ngIf="submissions.length" (click)="goToEntry(submission)">
 
         <ng-container *ngIf="submission.id == -1">
           <div >

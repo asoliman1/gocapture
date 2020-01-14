@@ -24,6 +24,8 @@ import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
 import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
+import { AppVersion } from '@ionic-native/app-version';
+import { Platform } from 'ionic-angular/platform/platform';
 
 @Injectable()
 export class RESTClient {
@@ -37,21 +39,36 @@ export class RESTClient {
 	token: string;
 
 	private online = true;
-	private device: Device;
+	public device: Device;
+	private bundleId: string;
 
 	constructor(private http: Http,
 		private submissionsRepository: SubmissionsRepository,
 		private submissionMapper: SubmissionMapper,
+		private appVersion: AppVersion,
+		private platform: Platform
 		) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
 		this.device = new Device();
+		this.setPackageName();
 	}
 
 	public setOnline(val: boolean) {
 		this.online = val;
 	}
 
+
+	private setPackageName() {
+		this.platform.ready().then((readySource)=>{
+		  this.appVersion.getPackageName().then((packageName) => {
+			this.bundleId = packageName;
+			console.log('bundleId - ' + this.bundleId);
+		  }, (error) => {
+			console.error(error);
+		  })
+		})
+	  }
 	/**
 	 *
 	 * @returns Observable
@@ -62,7 +79,7 @@ export class RESTClient {
 		req.device_manufacture = this.device.manufacturer;
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
-		
+		req.bundle_id = this.bundleId;
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
 				if (resp.status != "200") {
@@ -136,48 +153,6 @@ export class RESTClient {
 		});
 	}
 
-	/*
-	public getDispatches(offset: number = 0, lastSync?: Date): Observable<RecordsResponse<Dispatch>> {
-		var opts: any = {
-		};
-
-		if (lastSync) {
-			opts.updated_at = lastSync.toISOString().split(".")[0] + "+00:00";;
-		}
-		if(offset > 0){
-			opts.offset = offset;
-		}
-		return this.call<RecordsResponse<Dispatch>>("GET", "/dispatches.json", opts)
-			.map(resp => {
-				if (resp.status != "200") {
-					this.errorSource.next(resp);
-				}
-				return resp;
-			});
-	}
-
-	public getAllDispatches(lastSyncDate: Date) : Observable<Dispatch[]>{
-		let opts: any = {};
-		if(lastSyncDate){
-			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";;
-		}
-		return this.getAll<Dispatch>("/dispatches.json", opts)
-				.map(resp => {
-					resp.forEach((dispatch) => {
-						dispatch.orders.forEach((order)=>{
-							let form: Form = null;
-							dispatch.forms.forEach((f)=>{
-								if(f.form_id == order.form_id){
-									order.form = f;
-								}
-							});
-							order.form = form;
-						});
-					});
-					return resp;
-				});
-	}
-	 */
 
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
@@ -279,7 +254,7 @@ export class RESTClient {
 	}
 
 	public unauthenticate(token: string): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', JSON.stringify(""))
+		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', {"":""})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
 					return true;
@@ -319,9 +294,9 @@ export class RESTClient {
 		});
 	}
 
-	public getAllDeviceFormMemberships(forms: Form[]): Observable<{contacts:DeviceFormMembership[],form:Form}> {
-		return new Observable<{contacts:DeviceFormMembership[],form:Form}>((obs: Observer<{contacts:DeviceFormMembership[],form:Form}>) => {
-			var result: { contacts:DeviceFormMembership[] , form:Form } = {contacts:[],form:new Form()} ;
+	public getAllDeviceFormMemberships(forms: Form[]): Observable<{contacts:DeviceFormMembership[],form:Form,all:boolean}> {
+		return new Observable<{contacts:DeviceFormMembership[],form:Form,all:boolean}>((obs: Observer<{contacts:DeviceFormMembership[],form:Form,all:boolean}>) => {
+			var result: { contacts:DeviceFormMembership[] , form:Form ,all:boolean} = {contacts:[],form:new Form(),all:false} ;
 			if (!forms || forms.length == 0) {
 				setTimeout(() => {
 					obs.next(result);
@@ -337,24 +312,31 @@ export class RESTClient {
 				});
 				result.contacts = data;
 				result.form = forms[index];
+				result.all = false;
+				obs.next(result);
+			};
+			let handlerCmp = () =>{
+				result.contacts = [];
+				result.form = forms[index];
+				result.all = true;
 				obs.next(result);
 				index++;
-				if (index < forms.length) {
-					doTheCall();
-				} else {
-					obs.complete();
-				}
-			};
+			   if (index < forms.length) {
+				   doTheCall();
+			   }else {
+				   obs.complete();
+			   }
+			}
 			let doTheCall = () => {
 				let params = <any>{
 					form_id: forms[index].form_id
 				};
-				let form = forms[index];
-				let syncDate = form.lastSync && form.lastSync.contacts ? new Date(form.lastSync.contacts) : null;
+				let syncDate = forms[index].lastSync && forms[index].lastSync.contacts ?
+				 new Date(forms[index].lastSync.contacts) : null;
 				if (syncDate) {
 					params.last_sync_date = syncDate.toISOString().split(".")[0] + "+00:00";
 				}
-				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler);
+				this.getAll<DeviceFormMembership>("/forms/memberships.json", params).subscribe(handler,(err)=>obs.error(err),handlerCmp);
 			};
 			doTheCall();
 		});
@@ -462,11 +444,11 @@ export class RESTClient {
 				}
 
 				result.push.apply(result, records);
+				obs.next(records);
 				if (data.count + offset < data.total_count) {
 					offset += data.count;
 					doTheCall();
 				} else {
-					obs.next(result);
 					obs.complete();
 				}
 			};
@@ -475,7 +457,7 @@ export class RESTClient {
 				if (offset > 0) {
 					params.offset = offset;
 				}
-				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler);
+				this.call<RecordsResponse<T>>("GET", relativeUrl, params).subscribe(handler,(err)=>obs.error(err));
 			};
 			doTheCall();
 

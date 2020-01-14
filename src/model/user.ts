@@ -21,4 +21,5 @@ export class User {
 	in_app_support : 0 | 1;
 	documentation_url : string;
 	support_email : string;
+	app_name : string;
 }

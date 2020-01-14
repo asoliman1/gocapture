@@ -1,6 +1,0 @@
-$theme-color: color($colors, orange);
-$theme-text-color : color($colors, white);
-
-.default-theme {
-  @include theme($theme-color,$theme-text-color);
-}

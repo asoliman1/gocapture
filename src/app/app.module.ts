@@ -115,6 +115,7 @@ import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
 import { OfflineFilesProvider } from '../providers/offline-files/offline-files';
+import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
 
 @NgModule({
   declarations: [
@@ -160,7 +161,8 @@ import { OfflineFilesProvider } from '../providers/offline-files/offline-files';
     SectionBlock,
     buttonBar,
     CustomFabMenu,
-    SupportPage
+    SupportPage,
+    SkeletonLoadingComponent
   ],
   imports: [
     BrowserModule,
@@ -217,7 +219,9 @@ import { OfflineFilesProvider } from '../providers/offline-files/offline-files';
     EventItemComponent,
     ScreenSaverPage,
     CustomFabMenu,
-    SupportPage
+    SupportPage,
+    SkeletonLoadingComponent
+
   ],
   exports: [
     DynamicFormElementComponent

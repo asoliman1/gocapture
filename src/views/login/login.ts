@@ -20,7 +20,7 @@ export class Login {
 	authCode: string;
 	email: string;
 	user: User = <any>{};
-
+	codeInputType = 'password';
 	useProd: boolean = true;
 
 	constructor(private navCtrl: NavController,
@@ -57,6 +57,11 @@ export class Login {
 					this.user = user;
 				}
 			});
+	}
+
+	changeInputType(){
+		if(this.codeInputType == 'password') this.codeInputType = 'text';
+		else this.codeInputType = 'password';
 	}
 
 	onClick() {
