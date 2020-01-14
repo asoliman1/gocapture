@@ -11,17 +11,17 @@ import { from } from 'rxjs/observable/from';
 @Injectable()
 export class OfflineFilesProvider {
 
-  CurrentDownloadings: Map<string, Observable<string>> = new Map();
+  private CurrentDownloadings: Map<string, Observable<string>> = new Map();
 
-  constructor(public http: HTTP, private util: Util, private dbClient: DBClient, private file: File) {
+  constructor(private http: HTTP, private util: Util, private dbClient: DBClient, private file: File) {
     console.log('Hello OfflineFilesProvider Provider');
   }
 
-  addToCurrentDownloadings(key: string, obs: Observable<string>) {
+  private addToCurrentDownloadings(key: string, obs: Observable<string>) {
     this.CurrentDownloadings.set(key, obs);
   }
 
-  rmFromCurrentDownloadings(key: string) {
+  private rmFromCurrentDownloadings(key: string) {
     this.CurrentDownloadings.delete(key);
   }
 
@@ -31,7 +31,7 @@ export class OfflineFilesProvider {
     return d;
   }
 
-  saveFile(file: DbFile) {
+  private saveFile(file: DbFile) {
     this.downloadFile(file).subscribe((entry: string) => {
       file.status = DOWNLOAD_STATUS.DOWNLOADED;
       this.saveToDb(file);
@@ -52,7 +52,7 @@ export class OfflineFilesProvider {
     });
   }
 
-  async rmFile(url: string, formId: number, type: string) {
+  private async rmFile(url: string, formId: number, type: string) {
     let file = this.getFilePath(url, formId, type);
     if (await this.rmFileStorage(`${this.file.dataDirectory}${file.folderPath}`, file.name)) {
       await this.rmFileDb(file.downloadURL).toPromise();
@@ -106,7 +106,7 @@ export class OfflineFilesProvider {
     })
   }
 
-  getFileQueue(id : string , obs : Observer<string>) {
+ private getFileQueue(id : string , obs : Observer<string>) {
     this.CurrentDownloadings.get(id).subscribe((data) => {
       obs.next(data);
       obs.complete();
@@ -119,9 +119,16 @@ export class OfflineFilesProvider {
 
   checkFile(downloadURL: string, formId: number, type: string, typeId: number) {
     let f = this.getFilePath(downloadURL, formId, type);
+    if(this.CurrentDownloadings.get(this.getFileId(formId,type,typeId))) return;
     this.getFileDb(this.getFileId(formId, type, typeId)).subscribe((data) => {
       if (data) {
-        if (data.downloadURL != downloadURL) this.addFileToQueue(f.downloadURL, f.folderPath + f.name, formId, type, typeId, DOWNLOAD_STATUS.DOWNLOADING)
+        if (data.downloadURL != downloadURL) {
+          this.rmFile(f.downloadURL,formId,type).then((data)=>{
+            console.log(data,'rm file promise');
+            if(data)
+            this.addFileToQueue(f.downloadURL, f.folderPath + f.name, formId, type, typeId, DOWNLOAD_STATUS.DOWNLOADING)
+          })
+        }
         else console.log('file already downloaded before');
       } else {
         this.addFileToQueue(f.downloadURL, f.folderPath + f.name, formId, type, typeId, DOWNLOAD_STATUS.DOWNLOADING)
@@ -129,7 +136,7 @@ export class OfflineFilesProvider {
     })
   }
 
-  addFileToQueue(downloadURL: string, path: string, formId: number, type: string, typeId: number, status: DownloadStatus) {
+ private addFileToQueue(downloadURL: string, path: string, formId: number, type: string, typeId: number, status: DownloadStatus) {
     let file: DbFile = { downloadURL, path, formId, type, typeId, status, id: this.getFileId(formId, type, typeId) };
     this.saveToDb(file);
     this.saveFile(file);
@@ -138,13 +145,11 @@ export class OfflineFilesProvider {
   // A.S
   private getFilePath(url: string, form: number, type: string) {
     if (url && url != '') {
-      let isSplashImage = url.includes('https://images.unsplash.com/');
-      url = isSplashImage ? url.split('?')[0] : url;
-      let name = url.substr(url.lastIndexOf("/") + 1);
-      name = name.replace('.mp3', '.m4a')
-      let downloadURL = encodeURI(url);
-      let folderPath = `leadliaison/${form}/${type}/`;
-      let fullPath = this.file.dataDirectory + folderPath + name;
+      let name = url.substr(url.lastIndexOf("/") + 1).replace('.mp3','m4a'),
+       downloadURL = encodeURI(url),
+       folderPath = `leadliaison/`,
+       fullPath = this.file.dataDirectory + folderPath + name;
+       console.log(name)
       return { fullPath, downloadURL, name, form, folderPath }
     }
     else {

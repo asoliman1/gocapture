@@ -9,6 +9,7 @@ import { ThemeProvider } from "../../providers/theme/theme";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { FormsProvider } from '../../providers/forms/forms';
 import { DBClient } from '../../services/db-client';
+import { OfflineFilesProvider } from '../../providers/offline-files/offline-files';
 
 @Component({
 	selector: 'main',
@@ -27,7 +28,8 @@ export class Main {
 		private rapidCaptureService: RapidCaptureService,
 		private formsProvider: FormsProvider,
 		private ngZone : NgZone,
-		private dbClient : DBClient
+		private dbClient : DBClient,
+		private offlineFilesProvider : OfflineFilesProvider
 	) {
 
 	}
@@ -59,6 +61,7 @@ export class Main {
 		this.client.setupNotifications();
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
+		this.offlineFilesProvider.checkFailedDownloads();
 		this.client.userUpdates.subscribe((user: User)=>{
 			this.setUser(user);
 		})
