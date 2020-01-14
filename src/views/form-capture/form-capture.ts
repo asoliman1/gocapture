@@ -177,6 +177,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   ngOnInit() {
+    
   }
 
   private setupIdleMode() {

@@ -254,7 +254,7 @@ export class RESTClient {
 	}
 
 	public unauthenticate(token: string): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', JSON.stringify(""))
+		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', {"":""})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
 					return true;
