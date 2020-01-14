@@ -114,6 +114,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
+import { OfflineFilesProvider } from '../providers/offline-files/offline-files';
 
 @NgModule({
   declarations: [
@@ -285,7 +286,8 @@ import { Intercom } from '@ionic-native/intercom';
     FilterService,
     Keyboard,
     ContactsProvider,
-    Intercom
+    Intercom,
+    OfflineFilesProvider
   ]
 })
 export class AppModule { }

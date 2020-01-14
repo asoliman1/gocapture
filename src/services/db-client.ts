@@ -16,6 +16,7 @@ import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
 import { settingsKeys } from "../constants/constants";
+import { DbFile } from "../model/dbFile";
 
 let MASTER = "master";
 let WORK = "work";
@@ -221,6 +222,28 @@ export class DBClient {
 				"deleteIn": "DELETE FROM documents WHERE id IN (?)",
 				"deleteBySet": "DELETE FROM documents WHERE setId IN (?)",
 				"deleteAll": "DELETE FROM documents"
+			}
+		},	{
+			name: 'files',
+			master: false,
+			columns: [
+				{ name: 'id', type: 'text not null primary key' },
+				{ name: 'formId', type: 'integer' },
+				{ name: 'type', type: 'text' },
+				{ name: 'typeId', type: 'integer' },
+				{ name: 'status', type: 'integer' },
+				{ name: 'downloadURL', type: 'text' },
+				{ name: 'path', type: 'text' },
+			],
+			queries: {
+				"select": "SELECT * FROM files WHERE id=?",
+				"selectAll": "SELECT * FROM files",
+				"update": "INSERT OR REPLACE INTO files ( id, formId, type, typeId, status, downloadURL, path ) VALUES (?,?,?,?,?,?,?)",
+				"delete": "DELETE FROM files WHERE id=?",
+				"deleteIn": "DELETE FROM files WHERE id IN (?)",
+				"deleteAll": "DELETE FROM files",
+				"selectFailed" : "SELECT * FROM files WHERE status IN (0,-1)",
+				"deleteByFormId" : "DELETE FROM files WHERE formId=?"
 			}
 		}
 	];
@@ -460,7 +483,25 @@ export class DBClient {
 				queries: [
 					"alter table forms add column lastSync text",
 				]
-			}
+			},
+			29: {
+				tables: [
+					{
+						name: 'files',
+						columns: [
+							{ name: 'id', type: 'text not null primary key' },
+							{ name: 'formId', type: 'integer' },
+							{ name: 'type', type: 'text' },
+							{ name: 'typeId', type: 'integer' },
+							{ name: 'status', type: 'integer' },
+							{ name: 'downloadURL', type: 'text' },
+							{ name: 'path', type: 'text' },
+						],
+
+					}
+				],
+				queries: []
+			},
 		}
 	};
 	/**
@@ -1406,5 +1447,29 @@ export class DBClient {
 				console.log(err);
 			})
 		})
+	}
+
+	public saveFile(file: DbFile) {
+		return this.save(WORK, "files", [file.id, file.formId, file.type, file.typeId, file.status, file.downloadURL, file.path]);
+	}
+
+	public deleteFile(key: string): Observable<boolean> {
+		return this.remove(WORK, "files", [key]);
+	}
+
+	public deleteFiles(): Observable<boolean> {
+		return this.removeAll(WORK, "files");
+	}
+
+	public deleteFormFiles(formId: number): Observable<boolean> {
+		return this.doUpdate(WORK, "deleteByFormId", "files", [formId])
+	}
+
+	public getFile(id: string): Observable<DbFile> {
+		return this.getSingle(WORK, "files", [id]);
+	}
+
+	public getNonDownloadedFiles(): Observable<DbFile[]> {
+		return this.doGet(WORK, "selectFailed", "files", [])
 	}
 }
