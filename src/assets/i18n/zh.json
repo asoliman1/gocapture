@@ -1,0 +1,171 @@
+﻿{
+  "login": {
+    "header": "请与您的公司管理员联系以获取身份验证代码。请在下面输入您的身份验证代码。",
+    "email-placeholder": "输入电子邮件地址",
+    "auth-placeholder": "输入登录密码",
+    "auth-button": "认证",
+    "continue-button": "继续",
+    "connection-mode": {
+      "title": "连接方式",
+      "normal": "正常",
+      "demo": "演示"
+    }
+  },
+
+  "sideMenu": {
+    "events":   "事件",
+    "settings": "设置",
+    "hi": "你好",
+    "welcome-back": "欢迎回来"
+  },
+
+  "general": {
+    "syncing": "同步",
+    "cancel": "取消",
+    "select-badge-type": "选择徽章类型",
+    "remind-about-leads": "提醒我线索"
+  },
+
+  "settings": {
+    "title": "设置",
+    "organization": {
+      "header": "组织",
+      "name": "姓名",
+      "key": "钥匙",
+      "operator": "操作员",
+      "deviceId": "设备ID"
+    },
+    "application": {
+      "header": "应用程序",
+      "localization": "本地化"
+    },
+    "operations": {
+      "header": "操作",
+      "automatic-upload": "自动上传",
+      "save-business-cards": "在设备上保存名片",
+      "reminder-for-unsubmitted-leads": "未提交线索的提醒",
+      "auto-crop": "自动裁剪"
+    },
+    "dropdown": {
+      "header": "下拉列表",
+      "label": "单选"
+    },
+    "kiosk-mode": {
+      "header": "全屏浏览模式",
+      "label": "密码"
+    },
+    "diagnostics": {
+      "header": "诊断",
+      "app-version": "应用程序版本",
+      "enable-logging": "启用日志记录",
+      "view-log-button": "查看日志",
+      "test-badge-scan": "测试徽章扫描"
+    },
+    "unauth-device-btn": "未经验证的设备"
+  },
+
+  "form-capture": {
+    "submit-btn": "提交",
+    "edit-btn": "编辑",
+    "update-btn": "更新",
+    "date-info": "录制",
+    "search-list": "搜索列表"
+  },
+
+  "logs": {
+    "title": "载入",
+    "show-more": "显示更多"
+  },
+
+  "alerts": {
+    "warning": "警告",
+    "error": "错误",
+    "info": "信息",
+    "Ok": "好",
+    "cancel": "取消",
+    "business-card": {
+      "message": "名片被保存到照片库"
+    },
+    "duplicate-lead": {
+      "message": "重复线索"
+    },
+    "kiosk-mode": {
+      "message": "没有设置信息亭模式密码！"
+    },
+    "audio-recording": {
+      "cant-start": "无法开始录制",
+      "delete-recording": "是否要删除记录"
+    },
+    "settings": {
+      "unauthenticate": {
+        "title": "未经认证？",
+        "message": "您确定要取消此设备的身份验证吗？"
+      }
+    }
+  },
+  "toast": {
+    "no-internet-connection": "没有可用的网络连接"
+  },
+  "forms": {
+    "submitted": "提交",
+    "pending": "待定",
+    "unsubmitted": "未提交",
+    "capture": "捕捉",
+    "review-submissions": "审阅提交的内容",
+    "rapid-scan": "快速扫描",
+    "documents": "文件",
+    "instructions": "说明"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "全部",
+        "description": "点击条目进行编辑/审阅"
+      },
+      "complete": {
+        "title": "完成",
+        "description": "条目已上传。点击查看"
+      },
+      "pending": {
+        "title": "待定",
+        "description": "待转录/验证的条目。点击查看。"
+      },
+      "ready": {
+        "title": "准备好了",
+        "description": "已准备好上传条目。轻触可编辑，轻触蓝色圆圈可阻止，或向左滑动可删除。"
+      },
+      "blocked": {
+        "title": "已锁定",
+        "description": "阻止上传的条目。轻按可编辑，轻按红色圆圈可取消阻止，或轻按左键可删除。"
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "选择搜索条件",
+
+    "titles": {
+      "name": "姓名",
+      "email": "电子邮件",
+      "capture-method": "捕获方法",
+      "capture-date": "捕获日期",
+      "captured-by": "被捕获"
+    },
+
+    "modifiers": {
+      "equals": "等于",
+      "doesnt-equal": "不等于",
+      "contains": "包含",
+      "does-not-contain": "不包含"
+    },
+
+    "capture-type": {
+      "normal": "正常",
+      "badge-scan": "选择徽章类型",
+      "list": "列表",
+      "transcription": "转录"
+    }
+  }
+}

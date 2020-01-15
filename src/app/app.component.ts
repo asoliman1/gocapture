@@ -20,6 +20,8 @@ import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Intercom } from '@ionic-native/intercom';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: 'app.html'
@@ -44,7 +46,9 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
-    private intercom: Intercom
+    private intercom: Intercom,
+    private translateConfigService: TranslateConfigService,
+    private translate: TranslateService
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -80,10 +84,21 @@ export class MyApp {
       this.onAppPause();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+      this.setAppLocalization();
       this.intercom.setLauncherVisibility('GONE');
     });
   }
 
+  private setAppLocalization() {
+    
+    this.client.getRegistration(true).subscribe((user) => {
+      if (user && user.localization) {
+        this.translateConfigService.setLanguage(user.localization);
+      } else {
+        this.translateConfigService.initTranslate();
+      }
+    });
+  }
 
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {

@@ -190,7 +190,7 @@ export class DBClient {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"makeAllInactive": "UPDATE org_master set active = 0",
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId, support, supportEmail, documentationURL) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId, support, supportEmail, documentationURL , localizations , localization) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?',
 				"deleteAll": "delete from org_master"
@@ -273,7 +273,13 @@ export class DBClient {
 					"alter table org_master add column supportEmail text",
 					"alter table org_master add column documentationURL text",
 				]
-			}
+			},
+			9: {
+				queries: [
+				  "ALTER TABLE org_master add column localizations text",
+				  "ALTER TABLE org_master add column localization text",
+				]
+			  }
 		},
 		work: {
 			1: {
@@ -689,48 +695,12 @@ export class DBClient {
 			user.in_app_support = data.support;
 			user.support_email = data.supportEmail;
 			user.documentation_url = data.documentationURL;
+			user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
+            user.localization = data.localization;
 			this.registration = user;
 			return user;
 		}else return null;
 	}
-
-	/*
-	public getDispatches(): Observable<DispatchOrder[]> {
-		return this.getAll<any[]>(WORK, "forms", [true, true, true, true])
-			.map((data) => {
-				let forms = [];
-				data.forEach((dbForm: any) => {
-					let form = new DispatchOrder();
-					form.form_id = dbForm.id;
-					form.description = dbForm.description;
-					form.name = dbForm.name;
-					form.total_submissions = dbForm.totalSub;
-					form.total_hold = dbForm.totalHold;
-					let dispatch = JSON.parse(dbForm.dispatchData);
-					form.device_id = dispatch.device_id;
-					form.prospect_id = dispatch.prospect_id;
-					form.fields_values = dispatch.fields_values;
-					form.status = dispatch.status;
-					form.form = this.parseForm(dispatch.form);
-					forms.push(form);
-				});
-				return forms;
-			});
-	}
-	 */
-
-	public saveDispatchOrder(order: DispatchOrder): Observable<boolean> {
-		//console.log("saving");
-		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
-		return this.save(WORK, "forms", [order.id, order.form_id, order.name, order.form.title, order.description || order.form.description, order.form.success_message, order.form.submit_error_message, order.form.submit_button_text, order.date_created, order.date_last_modified, JSON.stringify(order.form.elements), true, JSON.stringify(order), null, null]);
-	}
-
-	/*
-	public saveDispatches(forms: DispatchOrder[]): Observable<boolean> {
-		return this.saveAll<DispatchOrder>(forms, "DispatchOrder");
-	}
-
-	 */
 
 	public getMemberships(form_id: number): Observable<DeviceFormMembership[]> {
 		return this.getAll<any[]>(WORK, "contacts", [form_id])
@@ -1138,7 +1108,9 @@ export class DBClient {
 			user.device_id,
 			user.in_app_support,
 			user.support_email,
-			user.documentation_url
+			user.documentation_url,
+			JSON.stringify(user.localizations),
+			user.localization
 		]).map(data => {
 			this.registration = user;
 			return data;

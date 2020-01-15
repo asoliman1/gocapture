@@ -39,12 +39,12 @@ export class Main {
 
 	setPages() {
 		this.pages = [
-			{ title: 'Events', component: Forms, icon: "document" },
-			{ title: 'Settings', component: Settings, icon: "cog" },
+			{ title: 'sideMenu.events', component: Forms, icon: "document" },
+			{ title: 'sideMenu.settings', component: Settings, icon: "cog" },
 		];
 		if (this.user.in_app_support)
 			this.pages.push({
-				title: 'Support',
+				title: 'sideMenu.support',
 				component: SupportPage,
 				icon: "help",
 				data: { documentation: this.user.documentation_url, email: this.user.support_email }

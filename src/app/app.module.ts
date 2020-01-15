@@ -115,7 +115,15 @@ import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
 import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
+import { LocalizationsPage } from '../views/localizations/localizations';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 @NgModule({
   declarations: [
     MyApp,
@@ -161,7 +169,8 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     buttonBar,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   imports: [
     BrowserModule,
@@ -178,6 +187,14 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     ComponentsModule,
     NgSelectModule,
     FormsModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -219,8 +236,8 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     ScreenSaverPage,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent
-
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -289,7 +306,8 @@ import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleto
     FilterService,
     Keyboard,
     ContactsProvider,
-    Intercom
+    Intercom,
+    TranslateConfigService
   ]
 })
 export class AppModule { }

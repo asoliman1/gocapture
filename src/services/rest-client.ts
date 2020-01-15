@@ -129,6 +129,16 @@ export class RESTClient {
 		});
 	}
 
+	public updateAccountSettings(settings: {}): Observable<User> {
+		return this.call<DataResponse<User>>("POST", "/device/settings.json", settings)
+		  .map(resp => {
+			if (resp.status != "200") {
+			  this.errorSource.next(resp);
+			}
+			return resp.data;
+		  });
+	  }
+
 	public getAllForms(lastSyncDate: Date): Observable<{forms:Form[],availableForms:number[]}> {
 		let opts: any = {
 			form_type: "device",

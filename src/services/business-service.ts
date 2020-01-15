@@ -286,9 +286,11 @@ export class BussinessClient {
         obs.next({ user: reply, message: "Done" });
         obs.complete();
       }, err => {
+        obs.error(err);
         console.log(err);
       });
     }, err => {
+      obs.error(err);
       console.log(err);
     });
   }
@@ -558,5 +560,9 @@ export class BussinessClient {
     let closeTime = await this.db.getConfig('appCloseTime').toPromise();
     return (Date.now() - parseInt(closeTime)) / 1000;
   }
+
+  updateAccountSettings(settings): Observable<User> {
+    return this.rest.updateAccountSettings(settings);
+}
 
 }

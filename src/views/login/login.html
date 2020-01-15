@@ -9,15 +9,14 @@
 			<form *ngIf="doAuth">
 				<ion-list padding>
 					<ion-item>
-						<ion-label class="tagline">Please contact your company administrator to obtain an Auth
-							Code.<br />Enter your Auth Code below.</ion-label>
+						<ion-label class="tagline">{{'login.header' | translate}}</ion-label>
 					</ion-item>
 					<ion-item>
-						<input type="email" name="email" autocomplete="on" clearInput="true" required placeholder="Enter Email Address"
+						<input type="email" name="email" autocomplete="on" clearInput="true" required placeholder="{{'login.email-placeholder' | translate}}"
 							[(ngModel)]="email" />
 					</ion-item>
 					<ion-item>
-						<input type="{{codeInputType}}" autocomplete="on" clearInput="true" name="authCode" required placeholder="Enter Auth Code"
+						<input type="{{codeInputType}}" autocomplete="on" clearInput="true" name="authCode" required placeholder="{{'login.auth-placeholder' | translate}}"
 							[(ngModel)]="authCode" />
 						<button ion-button clear item-end (click)="changeInputType()" >
 							<ion-icon name="{{codeInputType == 'password' ? 'eye-off' : 'eye'}}" ></ion-icon>

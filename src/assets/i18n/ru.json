@@ -1,0 +1,173 @@
+{
+  "login": {
+    "header": "Пожалуйста, свяжитесь с администратором вашей компании, чтобы получить код авторизации. Введите код авторизации ниже.",
+    "email-placeholder": "Введите адрес электронной почты",
+    "auth-placeholder": "Введите код авторизации",
+    "auth-button": "Аутентифицировать",
+    "continue-button": "Продолжыть",
+    "connection-mode": {
+      "title": "Режим подключения",
+      "normal": "Обычный",
+      "demo": "Демо"
+    }
+  },
+
+  "sideMenu": {
+    "events":   "Мероприятия",
+    "settings": "Настройки",
+    "hi": "Здравствуй",
+    "welcome-back": "Добро пожаловать"
+  },
+
+  "general": {
+    "syncing": "Синхронизация",
+    "cancel": "Отмена",
+    "select-barcode-type": "Выберите тип бейджа",
+    "remind-about-leads": "Напоминание о контактах"
+  },
+
+  "settings": {
+      "title": "Настройки",
+    "organization": {
+      "header": "Организация",
+      "name": "Название",
+      "key": "Ключ",
+      "operator": "Оператор",
+      "deviceId": "Идентификатор устройства"
+    },
+    "application": {
+      "header": "Приложение",
+      "localization": "Язык"
+    },
+    "operations": {
+      "header": "Операции",
+      "automatic-upload": "Автоматическая загрузка",
+      "save-business-cards": "Сохранить визитки на устройстве",
+      "reminder-for-unsubmitted-leads": "Напоминание о неотосланных контактах",
+      "auto-crop": "Auto-Crop"
+    },
+    "dropdown": {
+      "header": "Випадающий список",
+      "label": "Вибор кликом"
+    },
+    "kiosk-mode": {
+      "header": "Режим киоска",
+      "label": "Пароль"
+    },
+    "diagnostics": {
+      "header": "Диагностика",
+      "app-version": "Версия приложения",
+      "enable-logging": "Включить логи",
+      "view-log-button": "Посмотреть лог",
+      "test-badge-scan": "Тестовое сканирование бейджей"
+    },
+    "unauth-device-btn": "Отменить регистрацию"
+  },
+
+  "form-capture": {
+    "submit-btn": "Сохранить",
+    "edit-btn": "Редактировать",
+    "update-btn": "Обновить",
+    "date-info": "Cоздан",
+    "search-list": "Поиск"
+  },
+
+  "logs": {
+    "title": "Логи",
+    "show-more": "Больше"
+  },
+
+  "alerts": {
+    "warning": "Предупреждение",
+    "error": "Ошибка",
+    "info": "Информация",
+    "Ok": "Ok",
+    "cancel": "Отмена",
+    "business-card": {
+      "message": "Визитка была сохранена в библиотеке"
+    },
+    "duplicate-lead": {
+      "message": "Дупликат"
+    },
+    "kiosk-mode": {
+      "message": "Пароль для режима \"Киоск\" не установлен!"
+    },
+    "audio-recording": {
+      "cant-start": "Не могу начать запись",
+      "delete-recording": "Вы хотите удалить запись?"
+    },
+    "settings": {
+      "unauthenticate": {
+        "title": "Оменить регистрацию ?",
+        "message": "Вы уверены, что хотите отменить регистрацию устройства?"
+      }
+    }
+  },
+
+  "toast": {
+    "no-internet-connection": "Интернет соединение отсутствует."
+  },
+
+  "forms": {
+    "submitted": "Отправленно",
+    "pending": "В ожидании",
+    "unsubmitted": "Не отправленно",
+    "capture": "Новый",
+    "review-submissions": "Просмотр",
+    "rapid-scan": "Быстрое сканирование",
+    "documents": "Документы",
+    "instructions": "Инструкции"
+  },
+
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "Все",
+        "description": "Нажмите на запись для редактирования / просмотра."
+      },
+      "complete": {
+        "title": "Сохраненны",
+        "description": "Записи сохранены. Нажмите, чтобы просмотреть."
+      },
+      "pending": {
+        "title": "В ожидании",
+        "description": "Записи в ожидании транскрипции / проверке. Нажмите, чтобы просмотреть."
+      },
+      "ready": {
+        "title": "Готовые",
+        "description": "Записи готовы к загрузке. Нажмите, чтобы редактировать, нажмите синий кружок, чтобы заблокировать, или свайп влево, чтобы удалить."
+      },
+      "blocked": {
+        "title": "Заблокированные",
+        "description": "Записи заблокированы. Нажмите, чтобы редактировать, нажмите красный кружок, чтобы разблокировать, или свайп влево, чтобы удалить."
+      }
+    }
+  },
+
+  "filters-view": {
+
+    "select-search-criteria": "Выберите критерии поиска",
+
+    "titles": {
+      "name": "Имя",
+      "email": "Эл. адрес",
+      "capture-method": "Метод создания",
+      "capture-date": "Дата создания",
+      "captured-by": "Создан"
+    },
+
+    "modifiers": {
+      "equals": "Равно",
+      "doesnt-equal": "Не равно",
+      "contains": "Содержит",
+      "does-not-contain": "Не содержит"
+    },
+
+    "capture-type": {
+      "normal": "Обычный",
+      "badge-scan": "Сканирование",
+      "list": "Список",
+      "transcription": "Транскрипция"
+    }
+  }
+}
