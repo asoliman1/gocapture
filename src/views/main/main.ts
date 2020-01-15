@@ -11,7 +11,6 @@ import { ThemeProvider } from "../../providers/theme/theme";
 import { App } from "ionic-angular";
 import { FormCapture } from "../form-capture";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
-import { TranslateService } from "@ngx-translate/core";
 
 @Component({
 	selector: 'main',
@@ -47,7 +46,6 @@ export class Main {
 		private themeProvider: ThemeProvider,
 		private app: App,
 		private rapidCaptureService: RapidCaptureService,
-    private translate: TranslateService
 		) {
 
 	}
