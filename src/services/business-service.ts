@@ -1,4 +1,3 @@
-import { AppVersion } from '@ionic-native/app-version';
 import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
@@ -80,7 +79,6 @@ export class BussinessClient {
     private settingsService: SettingsService,
     private geolocation: Geolocation,
     private intercom: Intercom,
-    private appVersion: AppVersion,
     private popup: Popup) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -315,7 +313,6 @@ export class BussinessClient {
       customer_id: this.registration.customerID,
       custom_attributes: {
         mobile_app_name: this.registration.app_name,
-        mobile_app_version: await this.appVersion.getVersionNumber(),
       },
       instance: this.registration.customer_name,
       avatar: {

@@ -22,7 +22,7 @@
   <ion-spinner  ></ion-spinner>
   </div>
   <div *ngIf="!filteredItems.length && !loading" class="no-data" >
-    <img src="assets/images/no-Records.png" />
+    <img src="./assets/images/no-Records.png" />
   </div>  
   <ion-list [class]="selectedTheme">
     <ion-item  *ngFor="let item of filteredItems" class="option-item"
