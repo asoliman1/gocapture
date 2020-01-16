@@ -115,7 +115,6 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
-import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
 import { ActivationsPage } from '../views/activations/activations';
 import { ActivationsProvider } from '../providers/activations/activations';
 
@@ -164,10 +163,8 @@ import { ActivationsProvider } from '../providers/activations/activations';
     buttonBar,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent,
     ActivationsPage,
     ActivationViewPage
-
   ],
   imports: [
     BrowserModule,
@@ -225,7 +222,6 @@ import { ActivationsProvider } from '../providers/activations/activations';
     ScreenSaverPage,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent,
     ActivationsPage,
     ActivationViewPage
   ],

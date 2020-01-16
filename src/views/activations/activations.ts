@@ -21,11 +21,11 @@ export class ActivationsPage {
 
   @ViewChild("search") searchbar: Searchbar;
 
-  activations : Activation[] = [];
   loading : boolean;
   sortBy  = ACTIVATIONS_PARAMS.SORT_BY.UPDATE_DATE;
   sortOrder = ACTIVATIONS_PARAMS.SORT_ORDER.DESC;
-  filteredActivations : Activation[] = [];
+  activations : { activations : Activation[] , form : Form }[] = [];
+  filteredActivations : { activations : Activation[] , form : Form }[] = [] ;
   
   constructor(public navCtrl: NavController, 
     public navParams: NavParams , 
@@ -42,10 +42,9 @@ export class ActivationsPage {
   }
 
   getAllActivations(){
-    this.activations = [];
     this.restClient.getAllActivations(this.formsProvider.forms,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((data)=>{
-      this.activations = [...this.activations, ...data.activations];
-      this.filteredActivations = [...this.filteredActivations, ...data.activations];
+      this.activations = [...this.activations, data];
+      this.filteredActivations = [...this.filteredActivations, data];
       this.loading = false;
     },err =>{
       this.loading = false;
@@ -53,10 +52,9 @@ export class ActivationsPage {
   }
 
   getFormActivations(form : Form){
-    this.activations = [];
     this.restClient.getFormActivations(form,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((data)=>{
-      this.activations = data;
-      this.filteredActivations = data;
+      this.activations[0].form = form;
+      this.activations[0].activations = data;
       this.loading = false;
     },err =>{
       this.loading = false;
@@ -81,9 +79,12 @@ export class ActivationsPage {
   getItems(event) {
     let val = event.target.value;
     let regexp = new RegExp(val, "i");
-    this.filteredActivations = this.activations.filter(act => {
+    this.filteredActivations.forEach((e,i)=>{
+      e.activations = this.activations[i].activations.filter(act => {
       return !val || regexp.test(act.name);
     });
+  });
+
   }
 
   navigate(act : Activation){
