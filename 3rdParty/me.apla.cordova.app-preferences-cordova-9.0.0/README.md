@@ -1,4 +1,4 @@
-Application preferences plugin for Cordova 3+
+Application preferences plugin for Cordova 8+
 -----------------------
 
 Why you should use this plugin?
