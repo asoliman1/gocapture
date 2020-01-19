@@ -61,13 +61,12 @@
     "angular2-text-mask": "^8.0.4",
     "com-sarriaroman-photoviewer": "1.1.18",
     "cordova-android": "^8.1.0",
-    "cordova-browser": "6.0.0",
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
-    "cordova-ios": "^5.0.1",
+    "cordova-ios": "^5.1.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^2.0.4",
-    "cordova-plugin-app-preferences": "git+https://github.com/apla/me.apla.cordova.app-preferences.git",
+    "cordova-plugin-app-preferences": "file:3rdParty/me.apla.cordova.app-preferences-cordova-9.0.0",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-camera": "file:3rdParty/cordova-plugin-camera",
@@ -165,10 +164,6 @@
       "cordova-plugin-insomnia": {},
       "cordova-plugin-document-viewer": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-add-swift-support": {},
-      "cordova-plugin-photo-library": {
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
-      },
       "phonegap-plugin-barcodescanner": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
@@ -188,18 +183,19 @@
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-plugin-intercom": {},
-      "cordova-plugin-app-preferences": {},
       "cordova-plugin-gocapture-ocr": {},
       "phonegap-nfc": {
         "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
       },
       "cordova-plugin-local-notification": {},
-      "phonegap-plugin-push": {}
+      "phonegap-plugin-push": {},
+      "cordova-plugin-photo-library": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
+      },
+      "cordova-plugin-app-preferences": {},
+      "cordova-plugin-add-swift-support": {}
     },
-    "platforms": [
-      "browser",
-      "ios"
-    ]
+    "platforms": []
   },
   "config": {
     "ionic_webpack": "./webpack.config.js"
