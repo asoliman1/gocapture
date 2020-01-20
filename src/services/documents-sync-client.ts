@@ -142,7 +142,7 @@ export class DocumentsSyncClient {
   }
 
   public showSyncingToast() {
-    this.popup.showToast(`Documents are still syncing. Please try again later.`);
+    this.popup.showToast({text:'documents.syncing-error'});
   }
 
   // private getDocumentsSetByForm(form: Form): IDocumentSet[] {

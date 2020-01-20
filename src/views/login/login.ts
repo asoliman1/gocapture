@@ -69,11 +69,11 @@ export class Login {
 			if (!this.authCode || !this.email) {
 				return;
 			}
-			this.popup.showLoading("Authenticating...");
+			this.popup.showLoading({text:'alerts.loading.authenticating'});
 			Config.isProd = this.useProd;
 			this.client.authenticate(this.email, this.authCode)
 				.subscribe(data => {
-					this.popup.setLoadingContent(data.message);
+					this.popup.setLoadingContent({text:data.message});
 					// this.themeProvider.setActiveTheme()
 				}, err => {
 					this.popup.dismiss('loading');

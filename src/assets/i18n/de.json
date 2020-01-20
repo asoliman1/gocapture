@@ -169,5 +169,12 @@
       "list": "List",
       "transcription": "Transcription"
     }
+  },
+  "support" : {
+    "header":"",
+    "title":"",
+    "doc-button":"",
+    "ticket-button":"",
+    "conversation-button":""
   }
 }

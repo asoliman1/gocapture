@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
-import {BasePage} from "../base/base";
-import {ThemeProvider} from "../../providers/theme/theme";
-import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
-import {FilterService, Modifier} from "../../services/filter-service";
-import {iFilterItem} from "../../model/protocol/ifilter-item";
-import {iTagItem} from "../../model/protocol/itag-item";
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { BasePage } from "../base/base";
+import { ThemeProvider } from "../../providers/theme/theme";
+import { FilterType, GCFilter } from "../../components/filters-view/gc-filter";
+import { FilterService, Modifier } from "../../services/filter-service";
+import { iFilterItem } from "../../model/protocol/ifilter-item";
+import { iTagItem } from "../../model/protocol/itag-item";
 
 @IonicPage()
 @Component({
@@ -28,9 +28,9 @@ export class FilterPage extends BasePage {
   isAll: boolean = false;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
-              public themeProvider: ThemeProvider,
-              public viewCtrl: ViewController) {
+    public navParams: NavParams,
+    public themeProvider: ThemeProvider,
+    public viewCtrl: ViewController) {
     super(navCtrl, navParams, themeProvider);
   }
 
@@ -64,7 +64,7 @@ export class FilterPage extends BasePage {
       data = this.selectedTags;
     }
 
-    this.viewCtrl.dismiss({data: data, modifier: this.selectedModifier});
+    this.viewCtrl.dismiss({ data: data, modifier: this.selectedModifier });
   }
 
   getSearchedItems(event) {
@@ -85,13 +85,13 @@ export class FilterPage extends BasePage {
   addTagFn(value) {
     let trimmedValue = value && value.trim();
     if (trimmedValue.length) {
-      return {value: trimmedValue, tag: true, isSelected: true };
+      return { value: trimmedValue, tag: true, isSelected: true };
     }
     return;
   }
 
   isModifierMode() {
-    return  this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
+    return this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
   }
 
   clearSelectedItems() {

@@ -18,7 +18,7 @@
 
   .alert-button,
   .action-sheet-button,
-  [aria-checked=true] .alert-radio-label {
+  [aria-checked=true] .alert-radio-label, .s-header ion-icon  {
     color: $theme-color !important;
   }
 

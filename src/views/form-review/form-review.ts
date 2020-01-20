@@ -277,7 +277,7 @@ export class FormReview {
 			this.zone.run(() => {
 				this.syncing = false;
 				this.doRefresh();
-				this.popup.showToast("There was an error sync-ing the submissions");
+				this.popup.showToast({text:'toast.syncing-submissions-error'});
 				console.log(err)
 			});
 		});

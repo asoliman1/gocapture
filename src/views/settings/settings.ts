@@ -107,7 +107,7 @@ export class Settings {
     let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations(), shouldShowSearch: false });
     localizationPage.onDidDismiss((localization: Localization) => {
       if (localization) {
-        this.popup.showLoading('Processing...');
+        this.popup.showLoading({text:'alerts.loading.processing'});
         this.client.updateAccountSettings({'localization': localization.id})
           .subscribe((result) => {
             this.updateUser(result);
@@ -257,7 +257,7 @@ export class Settings {
 
   // A.S GOC-300
   testBadgeScanner() {
-    this.popup.showActionSheet("Select Barcode Type", [
+    this.popup.showActionSheet('alerts.settings.select-barcode', [
       {
         text: 'Barcode', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Barcode);
@@ -266,23 +266,23 @@ export class Settings {
         text: 'NFC', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Nfc);
         }
-      }, { text: 'Cancel', role: 'cancel' }
+      }, { text: 'general.cancel', role: 'cancel' }
     ], this.selectedTheme)
   }
 
   unauthenticate() {
     const buttons = [
       {
-        text: 'Cancel',
+        text: 'general.cancel',
         handler: () => {
         }
       },
       {
-        text: 'Unauthenticate',
+        text: 'general.unauthenticate',
         handler: () => {
           if(this.businessService.isOnline() ){
             // A.S
-            this.popup.showLoading('Unauthenticating...')
+            this.popup.showLoading({text:'alerts.loading.unauthenticating'})
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
               this.themeProvider.setActiveTheme();
@@ -294,11 +294,11 @@ export class Settings {
               this.popup.dismiss('loading');
             })
           }
-          else this.popup.showToast('No internet connection available.',"top","warning") // A.S GOC-324
+          else this.popup.showToast({text:'toast.no-internet-connection'},"top","warning") // A.S GOC-324
         }
       }
     ];
-    this.popup.showAlert("Unauthenticate ?", "Are you sure you want to unauthenticate this device?", buttons, this.selectedTheme);
+    this.popup.showAlert("toast.settings.unauthenticate.title", {text:"toast.settings.unauthenticate.message"}, buttons, this.selectedTheme);
   }
 
 }

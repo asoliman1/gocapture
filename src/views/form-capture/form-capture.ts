@@ -314,7 +314,7 @@ export class FormCapture implements AfterViewInit {
   private async startRapidScanModeForSource(source: string) {
     this.selectedScanSource = source;
 
-    this.popup.showLoading("Loading scanner...");
+    this.popup.showLoading({text:'alerts.loading.loading-scanner'});
 
     let element = this.getElementForId(this.selectedScanSource);
     this.startRapidScan(element);
@@ -348,7 +348,7 @@ export class FormCapture implements AfterViewInit {
 
   private processRapidScanResult(items, element) {
     // A.S GOC-322
-    this.popup.showToast("Uploading leads… Keep the app open until this process completes.", "bottom", "success");
+    this.popup.showToast({text:'toast.uploading-leads'}, "bottom", "success");
 
     let submissions = [];
 
@@ -468,19 +468,19 @@ export class FormCapture implements AfterViewInit {
 
           const inputs = [{
             name: 'passcode',
-            placeholder: 'Kiosk Mode Pass Code',
+            placeholder: 'alerts.kiosk-mode.placeholder',
             value: ""
           }];
 
           const buttons = [
             {
-              text: 'Cancel',
+              text: 'general.cancel',
               role: 'cancel',
               handler: () => {
               }
             },
             {
-              text: 'Ok',
+              text: 'general.ok',
               handler: (data) => {
                 let password = data.passcode;
                 this.client.setKioskPassword(password).subscribe((valid) => {
@@ -489,7 +489,7 @@ export class FormCapture implements AfterViewInit {
               }
             }];
 
-          this.popup.showPrompt('Set kiosk mode pass code', "", inputs, buttons, this.selectedTheme);
+          this.popup.showPrompt({text:'alerts.kiosk-mode.set-password'}, {text:''}, inputs, buttons, this.selectedTheme);
         }
       })
     }
@@ -538,13 +538,13 @@ export class FormCapture implements AfterViewInit {
 
           const buttons = [
             {
-              text: 'Cancel',
+              text: 'general.cancel',
               role: 'cancel',
               handler: () => {
               }
             },
             {
-              text: 'Ok',
+              text: 'general.ok',
               handler: (data) => {
                 let password = data.passcode;
                 this.client.validateKioskPassword(password).subscribe((valid) => {
@@ -561,22 +561,22 @@ export class FormCapture implements AfterViewInit {
 
           const inputs = [{
             name: 'passcode',
-            placeholder: 'Kiosk Mode Pass Code',
+            placeholder: 'alerts.kiosk-mode.placeholder',
             value: ""
           }];
 
-          this.popup.showPrompt('Enter pass code', "", inputs, buttons, this.selectedTheme);
+          this.popup.showPrompt({text:'alerts.kiosk-mode.set-passcode'}, {text:''}, inputs, buttons, this.selectedTheme);
 
         } else {
           const buttons = [
             {
-              text: 'Ok',
+              text: 'general.ok',
               handler: () => {
                 this.internalBack();
               }
             }];
 
-          this.popup.showAlert('Info', "No kiosk password set!", buttons, this.selectedTheme);
+          this.popup.showAlert('Info', {text:'alerts.kiosk-mode.message'}, buttons, this.selectedTheme);
         }
       });
     } else {
@@ -593,14 +593,14 @@ export class FormCapture implements AfterViewInit {
 
     const buttons = [
       {
-        text: 'Cancel',
+        text: 'general.ok',
         role: 'cancel',
         handler: () => {
           //console.log('Cancel clicked');
         }
       },
       {
-        text: 'Go back',
+        text: 'general.back',
         handler: () => {
           this.clear();
           this.navCtrl.pop();
@@ -610,7 +610,7 @@ export class FormCapture implements AfterViewInit {
 
     this.vibration.vibrate(500);
 
-    this.popup.showAlert("<div class='warning-title'>WARNING</div>", 'You have unsubmitted data on this form. If you go back, this submission will not be saved. If you wish to save this submission, tap the Submit button instead.', buttons, this.selectedTheme);
+    this.popup.showAlert("alerts.warning", {text:'form-capture.unsubmitted-data-msg'}, buttons, this.selectedTheme);
   }
 
   private clear() {
@@ -745,7 +745,7 @@ export class FormCapture implements AfterViewInit {
       this.form = null;
       this.dispatch = null;
       this.popup.showToast(
-        "Submission Successful.",
+        {text:'toast.submission-successfull'},
         'bottom',
         'success',
         1500,

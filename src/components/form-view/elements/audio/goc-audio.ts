@@ -69,8 +69,8 @@ export class GOCAudio extends BaseElement {
 		}, (error) => {
 			this.onProcessingEvent.emit('false');
 
-			this.popup.showAlert('Error', "Can't start recording", [{
-				text: 'Cancel',
+			this.popup.showAlert('alerts.error', {text:"alerts.audio-recording.cant-start"}, [{
+				text: 'general.cancel',
 				role: 'cancel'
 			}], this.selectedTheme);
 		});
@@ -165,7 +165,7 @@ export class GOCAudio extends BaseElement {
 		let filePath = this.currentVal;
 	
 		if (filePath.startsWith('https://')) {
-			this.popup.showLoading("Record downloading...");
+			this.popup.showLoading({text:"audio-recording.downloading"});
 			await this.audioCaptureService.downloadRecord(filePath);
 			this.popup.dismiss('loading');
 		}
@@ -215,20 +215,20 @@ export class GOCAudio extends BaseElement {
 
 		const buttons = [
 			{
-				text: 'Cancel',
+				text: 'general.cancel',
 				role: 'cancel',
 				handler: () => {
 				}
 			},
 			{
-				text: 'Remove',
+				text: 'general.remove',
 				role: '',
 				handler: () => {
 					this.removeRecordingHandler();
 				}
 			}];
 
-		this.popup.showAlert('Warning', "Do you want to delete the recording?", buttons, this.selectedTheme);
+		this.popup.showAlert('alerts.warnings', {text:"audio-recording.delete-recording"}, buttons, this.selectedTheme);
 	}
 
 	removeRecordingHandler() {

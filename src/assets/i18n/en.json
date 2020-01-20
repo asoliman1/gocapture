@@ -23,7 +23,15 @@
     "syncing": "Syncing...",
     "cancel": "Cancel",
     "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+    "remind-about-leads": "Remind me about leads",
+    // "important":"",
+    // "share":"",
+    // "done":""
+    // "ok":"Ok",
+    // "unauthenticate": "Unauthenticate",
+    // "back":"",
+    // "close":"",
+    // "select" : "",
   },
 
   "settings": {
@@ -69,7 +77,8 @@
     "edit-btn": "Edit",
     "update-btn": "Update",
     "date-info": "Captured on",
-    "search-list": "Search List"
+    "search-list": "Search List",
+    // "unsubmitted-data-msg" : ""
   },
 
   "logs": {
@@ -81,31 +90,67 @@
     "warning": "Warning",
     "error": "Error",
     "info": "Info",
-    "Ok": "Ok",
-    "cancel": "Cancel",
+    "ok": "OK",
+    // "badge-id":"",
+    // "choose-from":"",
+    // "cancel": "Cancel",
+    // "remove": "Remove",
+    "loading" : {
+      // "one-momnet":"One moment. Loading record…", 
+      // "loading":"Loading",
+      // "loading-scanner":"",
+      // "authenticating":"",
+      // "unauthenticating":"",
+      // "processing":""
+    },
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "Business card was saved to the Photo Library",
+      // "save-to-library":"",
+      // "retake":"",
+      // "view-image":"",
+      // "choose-from-library":"",
+      // "saved-image": ""
+    },
+    "image":{
+      // "user-camera":"",
+      // "choose-from-album":""
+    },
+    "rapid-scan":{
+      // "process":"",
+      // "badges-reminder":" {{formName}} "
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      // "title": "Duplicate Lead",
+      // "message":" {{date}}",
+      // "remove-msg": "",
+      // "already-scanned":"{{date}}"
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "No kiosk password set!",
+      // "set-password": "",
+      // "set-passcode" : "",
+      // "placeholder" : "",
     },
     "audio-recording": {
       "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "delete-recording": "Do you want to delete recording?",
+      // "downloading":"Record Downloading..."
     },
     "settings": {
+      // "select-barcode" : "",
       "unauthenticate": {
-        "title": "Unauthenticate ?",
+        "title": "Unauthenticate?",
         "message": "Are you sure you want to unauthenticate this device?"
       }
     }
   },
 
   "toast": {
-    "no-internet-connection": "No internet connection available."
+    "no-internet-connection": "No internet connection available.",
+    // "scanned-successfully" : "{{badgeName}}",
+    // "uploading-leads" : "",
+    // "submission-successfull" : "",
+    // "syncing-submissions-error":""
   },
 
   "forms": {
@@ -120,7 +165,10 @@
   },
 
   "form-review": {
+    // "clear":"",
+    // "back":"",
     "filter": {
+      // "filter":"",
       "all": {
         "title": "All",
         "description": "Tap an entry to edit/review."
@@ -169,5 +217,27 @@
       "list": "List",
       "transcription": "Transcription"
     }
+  },
+  "support" : {
+    // "header":"",
+    // "title":"",
+    // "doc-button":"",
+    // "ticket-button":"",
+    // "conversation-button":""
+  },
+  "signature":{
+    // "title":"",
+    // "sign-above":""
+  },
+  "notifications":{
+    // "submit-reminder":""
+  },
+  "documents":{
+    // "open-error":"",
+    // "empty-set" : "",
+    // "syncing-error":"",
+    // "share-error":"",
+    // "how-to-send":"",
+    // "edit-error":""
   }
 }

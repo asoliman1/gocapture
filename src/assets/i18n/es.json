@@ -156,8 +156,14 @@
       "list": "Lista",
       "transcription": "Transcripción"
     }
+  },
+  "support" : {
+    "header":"",
+    "title":"",
+    "doc-button":"",
+    "ticket-button":"",
+    "conversation-button":""
   }
-
 }
 
 

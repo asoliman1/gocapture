@@ -2,13 +2,13 @@
   <ion-navbar color="primary">
     <ion-buttons left>
       <button ion-button icon-only (click)="done()">
-        <ion-label>Close</ion-label>
+        <ion-label>{{'general.close' | translate}}</ion-label>
       </button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
     <ion-buttons end>
       <button ion-button (click)="filter()">
-        Filter
+        {{'form-review.filter.filter' | translate}}
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -17,7 +17,7 @@
 
 <ion-content padding>
   <div *ngIf="selectedFilter && !isModifierMode()">
-    Select {{selectedFilter && selectedFilter.title}}
+    {{'general.select' | translate}} {{selectedFilter && selectedFilter.title}}
   </div>
 
   <ng-select *ngIf="selectedFilter && isModifierMode()"

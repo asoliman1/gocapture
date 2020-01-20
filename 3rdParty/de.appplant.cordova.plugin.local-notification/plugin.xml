@@ -24,7 +24,9 @@
     </engines>
 
     <!-- dependencies -->
-    <dependency id="org.apache.cordova.device" />
+    <dependency id="cordova-plugin-app-event" />
+
+    <!-- <dependency id="org.apache.cordova.device" /> -->
 
     <!-- info -->
     <info>
@@ -53,7 +55,7 @@
     <!-- ios -->
     <platform name="ios">
 
-        <dependency id="de.appplant.cordova.common.registerusernotificationsettings" />
+        <!-- <dependency id="de.appplant.cordova.common.registerusernotificationsettings" /> -->
 
         <config-file target="config.xml" parent="/*">
             <feature name="LocalNotification">

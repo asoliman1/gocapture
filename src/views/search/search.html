@@ -2,13 +2,13 @@
   <ion-navbar color="primary">
     <ion-buttons start>
       <button ion-button (click)="cancel()">
-        Cancel
+        {{'cancel' | translate}}
       </button>
     </ion-buttons>
     <ion-title>Select items</ion-title>
     <ion-buttons end *ngIf="!isSingleTap">
       <button  ion-button [disabled]="!selectedItem" (click)="done()">
-        OK
+        {{'ok' | translate}}
       </button>
     </ion-buttons>
   </ion-navbar>

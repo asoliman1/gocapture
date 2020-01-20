@@ -2,7 +2,7 @@
 	<ion-navbar color="primary" [hideBackButton]="isFilterExpanded">
 		<ion-buttons start>
       <button ion-button (click)="onBack()" *ngIf="isFilterExpanded">
-        Back
+        {{'general.back' | translate}}
       </button>
 		</ion-buttons>
 		<ion-title >{{isFilterExpanded ? 'Filter' : form.name}}</ion-title>
@@ -18,7 +18,7 @@
 		</ion-buttons>
     <ion-buttons end *ngIf="isFilterExpanded">
       <button ion-button (click)="resetFilter()">
-        Clear
+        {{'form-review.clear' | translate}}
       </button>
     </ion-buttons>
 	</ion-navbar>

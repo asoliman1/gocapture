@@ -21,7 +21,6 @@ import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Intercom } from '@ionic-native/intercom';
 import { TranslateConfigService } from '../services/translate/translateConfigService';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: 'app.html'
@@ -48,7 +47,6 @@ export class MyApp {
     private util: Util,
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
-    private translate: TranslateService
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -234,10 +232,10 @@ export class MyApp {
 
       const buttons = [
         {
-          text: 'Unauthenticate',
+          text: 'general.unauthenticate',
           handler: () => {
             // A.S
-            this.popup.showLoading('');
+            this.popup.showLoading({text:''});
             this.client.unregister(user).subscribe(() => {
               this.nav.setRoot(Login, { unauthenticated: true });
               this.popup.dismiss('loading');
@@ -249,7 +247,7 @@ export class MyApp {
       ];
 
 
-      this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
+      this.popup.showAlert('alerts.warning', {text:status.message}, buttons, this.selectedTheme);
     } else {
 
     }

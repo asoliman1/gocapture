@@ -167,5 +167,12 @@
       "list": "列表",
       "transcription": "转录"
     }
+  },
+  "support" : {
+    "header":"",
+    "title":"",
+    "doc-button":"",
+    "ticket-button":"",
+    "conversation-button":""
   }
 }

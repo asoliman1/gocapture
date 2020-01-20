@@ -165,5 +165,12 @@
       "list": "リスト",
       "transcription": "転記"
     }
+  },
+  "support" : {
+    "header":"",
+    "title":"",
+    "doc-button":"",
+    "ticket-button":"",
+    "conversation-button":""
   }
 }

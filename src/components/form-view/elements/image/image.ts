@@ -79,7 +79,7 @@ export class Image extends BaseElement {
 			title: "",
 			buttons: [
 				{
-					text: 'Use Camera',
+					text: 'alerts.image.user-camera',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({
@@ -99,7 +99,7 @@ export class Image extends BaseElement {
 					}
 				},
 				{
-					text: 'Choose from Album',
+					text: 'alerts.image.choose-from-album',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({
@@ -119,7 +119,7 @@ export class Image extends BaseElement {
 					}
 				},
 				{
-					text: 'Cancel',
+					text: 'general.cancel',
 					role: 'cancel'
 				}
 			],

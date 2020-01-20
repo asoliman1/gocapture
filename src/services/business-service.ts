@@ -127,7 +127,7 @@ export class BussinessClient {
         console.error(error);
       });
     } else {
-      this.popup.showToast('No internet connection available.', "top", "warning")
+      this.popup.showToast({text:'toast.no-internet-connection'}, "top", "warning")
     }
   }
 

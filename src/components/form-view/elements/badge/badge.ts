@@ -103,7 +103,7 @@ export class Badge extends BaseElement implements OnInit {
         return;
       }
 
-     this.popup.showToast(this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully", "bottom", "success", 1500);
+     this.popup.showToast({text:'toast.scanned-successfully',params:{badgeName:this.utils.capitalizeFirstLetter(this.scanner.name)}}, "bottom", "success", 1500);
 
       this.processData(response.scannedId);
 
@@ -121,7 +121,7 @@ export class Badge extends BaseElement implements OnInit {
   private processData(scannedId: string) {
     this.onProcessingEvent.emit('true');
     // A.S GOC-312
-    this.popup.showLoading('One moment. Loading record…');
+    this.popup.showLoading({text:'alerts.loading.one-moment'});
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, 0, this.form.form_id + '').subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();

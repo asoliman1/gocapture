@@ -82,7 +82,6 @@
     "cordova-plugin-filepath": "^1.4.2",
     "cordova-plugin-geolocation": "git+https://github.com/apache/cordova-plugin-geolocation.git",
     "cordova-plugin-globalization": "^1.11.0",
-    "cordova-plugin-gocapture-ocr": "file:3rdParty/cordova-plugin-gocapture-ocr",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-intercom": "^8.0.0",
     "cordova-plugin-ionic-keyboard": "^2.1.2",
@@ -119,7 +118,7 @@
     "phonegap-nfc": "^1.0.4",
     "phonegap-plugin-barcodescanner": "file:3rdParty/phonegap-plugin-barcodescanner",
     "phonegap-plugin-multidex": "^1.0.0",
-    "phonegap-plugin-push": "^2.3.0",
+    "phonegap-plugin-push": "file:3rdParty/phonegap-plugin-push",
     "properties-parser": "^0.3.1",
     "rxjs": "^5.5.11",
     "signature_pad": "^2.3.2",
@@ -185,19 +184,22 @@
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-plugin-intercom": {},
-      "cordova-plugin-gocapture-ocr": {},
       "phonegap-nfc": {
         "NFC_USAGE_DESCRIPTION": "Read NFC Tags"
       },
-      "cordova-plugin-local-notification": {},
-      "phonegap-plugin-push": {},
       "cordova-plugin-photo-library": {
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
       },
-      "cordova-plugin-app-preferences": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-add-swift-support": {},
+      "phonegap-plugin-push": {
+        "ANDROID_SUPPORT_V13_VERSION": "27.+",
+        "FCM_VERSION": "17.0.+"
+      },
+      "cordova-plugin-local-notification": {}
     },
-    "platforms": []
+    "platforms": [
+      "android"
+    ]
   },
   "config": {
     "ionic_webpack": "./webpack.config.js"

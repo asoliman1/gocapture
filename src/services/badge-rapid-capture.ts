@@ -53,18 +53,18 @@ export class BadgeRapidCapture implements RapidCapture {
     let scanner = this.getScanner({ badge_type: type });
     scanner.testScanner().then((scannedId: ScannerResponse) => {
       if (!scannedId.isCancelled) {
-        this.popup.showAlert(`Badge ID`, scannedId.scannedId, [
+        this.popup.showAlert('alerts.badge-id', {text:scannedId.scannedId}, [
           {
-            text: 'Share', handler: () => {
+            text: 'general.share', handler: () => {
               this.share.share(`Badge ID`, scannedId.scannedId)
             }
           }
-          , { text: 'Done', role: 'cancel',  }
+          , { text: 'general.done', role: 'cancel',  }
         ])
       }
     }).catch((err) => {
-      this.popup.showAlert(`${type == ScannerType.Barcode ? 'Barcode' : 'NFC'} Error`, err, [
-        { text: 'Ok', role: 'cancel' }
+      this.popup.showAlert('alerts.error', err, [
+        { text: 'general.ok', role: 'cancel' }
       ])
     })
   }
