@@ -41,7 +41,7 @@ export class Popup {
   // A.S
   showLoading(message : {text:string,params ?:any},theme = this.theme) {
     this.loading = this.loadingCtrl.create({ 
-      content: this.translate.instant(message.text,message.params),
+      content: message.text ? this.translate.instant(message.text,message.params || {}) : '',
       cssClass:theme 
     });
     return this.loading.present();
@@ -54,7 +54,7 @@ export class Popup {
     
     this.alert = this.alertCtrl.create({
       title: title,
-      message: this.translate.instant(message.text,message.params),
+      message: message.text ? this.translate.instant(message.text,message.params || {}) : '',
       buttons: this.translateBtns(buttons),
       enableBackdropDismiss: false,
       cssClass: theme 
@@ -64,7 +64,7 @@ export class Popup {
 
   translateBtns(Btns : any[]){
     return Btns.map((e)=>{
-      e.text = this.translate.instant(e.text);
+      e.text = e.text ? this.translate.instant(e.text) : '';
       return e;
     })
   }
@@ -72,7 +72,7 @@ export class Popup {
   // A.S
   showActionSheet(title : string, buttons: ActionSheetButton[], theme = this.theme) {
     this.actionSheet = this.actionCtrl.create({
-      title : this.translate.instant(title),
+      title : title ? this.translate.instant(title) : '',
       buttons : this.translateBtns(buttons), 
       cssClass: theme
     })
@@ -82,7 +82,7 @@ export class Popup {
   // A.S
   showToast(message : {text:string,params ?:any}, position = "top", theme = "error", duration = 3000) {
     this.toast = this.toastCtrl.create({
-      message: this.translate.instant(message.text,message.params),
+      message: this.translate.instant(message.text,message.params || {}),
       duration: duration,
       position: position,
       cssClass: theme,
@@ -100,8 +100,8 @@ export class Popup {
     }
 
     this.alert = this.alertCtrl.create({
-      title: this.translate.instant( title.text,message.params ),
-      message: this.translate.instant( message.text,message.params ),
+      title: this.translate.instant( title.text,title.params || {} ),
+      message: message.text ? this.translate.instant( message.text,message.params || {} ) : '',
       inputs: this.translateInputs(inputs),
       buttons: this.translateBtns(buttons),
       cssClass: theme
@@ -111,8 +111,8 @@ export class Popup {
 
   translateInputs(inputs : AlertInputOptions[]){
     return inputs.map((e)=>{
-      e.label = this.translate.instant(e.label);
-      e.placeholder = this.translate.instant(e.placeholder)
+      e.label = e.label ? this.translate.instant(e.label) : '';
+      e.placeholder = e.placeholder ? this.translate.instant(e.placeholder) : '';
       return e;
     })
   }
@@ -133,6 +133,6 @@ export class Popup {
 
   // A.S
   setLoadingContent(content : {text:string,params ?:any}){
-    this.loading.setContent(this.translate.instant(content.text,content.params));
+    this.loading.setContent( content.text ? this.translate.instant(content.text,content.params || {}) : '');
   }
 }

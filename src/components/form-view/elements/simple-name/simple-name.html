@@ -1,7 +1,7 @@
 <ion-row class="simpleName" [formGroup]="group">
-	<ion-col *ngFor="let map of mapping">
+	<ion-col *ngFor="let map of mapping; let in = index">
 		<ion-item>
-			<ion-label class="element-name" stacked [class.required]="element.is_required">{{nameMap[map.label]}}</ion-label>
+			<ion-label class="element-name" stacked [class.required]="element.is_required">{{element.sub_elements[in].hint}}</ion-label>
 			<ion-input type="text" [attr.name]="map.id" [formControlName]="map.identifier" [placeholder]="element.placeholder"></ion-input>
 			<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(map.identifier)">
         <ion-icon name="ios-open-outline"></ion-icon>

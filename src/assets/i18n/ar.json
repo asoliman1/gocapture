@@ -168,12 +168,5 @@
       "list": "قائمه",
       "transcription": "نسخ"
     }
-  },
-  "support" : {
-    "header":"",
-    "title":"",
-    "doc-button":"",
-    "ticket-button":"",
-    "conversation-button":""
   }
 }

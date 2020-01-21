@@ -165,12 +165,5 @@
   },
   "toast": {
     "no-internet-connection": "No internet connection available."
-  },
-  "support" : {
-    "header":"",
-    "title":"",
-    "doc-button":"",
-    "ticket-button":"",
-    "conversation-button":""
   }
 }

@@ -22,15 +22,15 @@
       </button>
     </ion-buttons>
 	</ion-navbar>
-  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" [filters]="filters" *ngIf="isFilterExpanded"></filters-view>
-  <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
+  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)"  [filters]="filters" *ngIf="isFilterExpanded"></filters-view>
+  <ion-searchbar #search (ionInput)="getSearchedItems($event)" [placeholder]="'general.search' | translate" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
 
   <ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
 		<ion-row>
 			<ion-col>
 				<ion-segment [(ngModel)]="statusFilter"  (ionChange)="onFilterChanged()" color="dark" class="segment">
           <ion-segment-button [value]="filter" [ngClass]="filter.id" *ngFor="let filter of statusFilters; let i = index">
-          {{filter.title}}
+          {{filter.title | translate}}
           </ion-segment-button>
 
 				</ion-segment>
@@ -38,7 +38,7 @@
 		</ion-row>
     <ion-row>
       <ion-col>
-        <h4>{{statusFilter.description}}</h4>
+        <h4>{{statusFilter.description | translate}}</h4>
       </ion-col>
     </ion-row>
 	</ion-grid>

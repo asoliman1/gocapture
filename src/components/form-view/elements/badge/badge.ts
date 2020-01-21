@@ -36,6 +36,7 @@ export class Badge extends BaseElement implements OnInit {
   scanner: Scanner;
   isScanning: boolean = false;
   ButtonBar : Subscription;
+  
   constructor(
     private client: RESTClient,
     private popup: Popup,

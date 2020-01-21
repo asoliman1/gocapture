@@ -565,7 +565,7 @@ export class FormCapture implements AfterViewInit {
             value: ""
           }];
 
-          this.popup.showPrompt({text:'alerts.kiosk-mode.set-passcode'}, {text:''}, inputs, buttons, this.selectedTheme);
+          this.popup.showPrompt({text:'alerts.kiosk-mode.enter-passcode'}, {text:''}, inputs, buttons, this.selectedTheme);
 
         } else {
           const buttons = [

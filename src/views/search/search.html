@@ -2,18 +2,18 @@
   <ion-navbar color="primary">
     <ion-buttons start>
       <button ion-button (click)="cancel()">
-        {{'cancel' | translate}}
+        {{'general.cancel' | translate}}
       </button>
     </ion-buttons>
-    <ion-title>Select items</ion-title>
+  <ion-title>{{'general.select-items' | translate}}</ion-title>
     <ion-buttons end *ngIf="!isSingleTap">
       <button  ion-button [disabled]="!selectedItem" (click)="done()">
-        {{'ok' | translate}}
+        {{'general.ok' | translate}}
       </button>
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar *ngIf="isSearchAvailable()">
-    <ion-searchbar [(ngModel)]="searchFilter" (ionInput)="onInput($event)">
+    <ion-searchbar [(ngModel)]="searchFilter" [placeholder]="'general.search' | translate" (ionInput)="onInput($event)">
     </ion-searchbar>
   </ion-toolbar>
 </ion-header>

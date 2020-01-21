@@ -16,7 +16,7 @@
 </ion-header>
 
 <ion-content class="dispatches">
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
+	<ion-searchbar #search (ionInput)="getItems($event)" [placeholder]="'general.search' | translate" *ngIf="searchMode" [@visibleTrigger]="searchTrigger"></ion-searchbar>
   <ion-list [virtualScroll]="dispatches" approxItemHeight="50px">
 		<a ion-item detail-none *virtualItem="let dispatch" (click)="presentActionSheet(dispatch)">
 			<h1>{{dispatch.name}}</h1>

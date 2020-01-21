@@ -30,11 +30,13 @@ export class FilterPage extends BasePage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public themeProvider: ThemeProvider,
+    public filterSerive : FilterService,
     public viewCtrl: ViewController) {
     super(navCtrl, navParams, themeProvider);
   }
 
   ionViewDidLoad() {
+    
     this.items = this.navParams.get('items');
     this.selectedTags = this.navParams.get('selectedItems') || [];
 
@@ -43,8 +45,8 @@ export class FilterPage extends BasePage {
     this.title = this.navParams.get('title') || 'Filter';
     this.selectedFilter = this.navParams.get('filter');
 
-    this.modifiers = FilterService.modifiers();
-    this.selectedModifier = this.selectedFilter.modifier || FilterService.modifiers()[0];
+    this.modifiers =  this.filterSerive.modifiers();
+    this.selectedModifier = this.selectedFilter.modifier || this.filterSerive.modifiers()[0];
 
     this.items.forEach((item) => {
       item.isSelected = this.selectedTags.length > 0 && this.selectedTags.indexOf(item.value) != -1;

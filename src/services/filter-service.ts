@@ -24,7 +24,8 @@ export class FilterService {
 
   constructor(
     private translate: TranslateService
-  ){}
+  ){
+  }
 
   private gcFilters: GCFilter[];
 
@@ -48,7 +49,7 @@ export class FilterService {
     this.setupFilters();
   }
 
-  modifiers(): Modifier[] {
+ public modifiers(): Modifier[] {
     return [
       {name: this.translate.instant('filters-view.modifiers.equals'), value: Modifiers.Equals},
       {name: this.translate.instant('filters-view.modifiers.doesnt-equal'), value: Modifiers.NotEqual},

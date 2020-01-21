@@ -5,7 +5,7 @@
         {{'general.cancel' | translate}}
       </button>
     </ion-buttons>
-    <ion-title>Select localization</ion-title>
+  <ion-title>{{'localizations-view.title' | translate}}</ion-title>
     <ion-buttons end>
       <button ion-button [disabled]="!selectedItem" (click)="done()">
         {{'general.ok' | translate}}
@@ -13,7 +13,7 @@
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar *ngIf="isSearchAvailable()">
-    <ion-searchbar [(ngModel)]="searchFilter" (ionInput)="onInput($event)">
+    <ion-searchbar [(ngModel)]="searchFilter" [placeholder]="'general.search' | translate" (ionInput)="onInput($event)">
     </ion-searchbar>
   </ion-toolbar>
 </ion-header>

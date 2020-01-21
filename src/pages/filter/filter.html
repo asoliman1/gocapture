@@ -5,14 +5,14 @@
         <ion-label>{{'general.close' | translate}}</ion-label>
       </button>
     </ion-buttons>
-    <ion-title>{{title}}</ion-title>
+    <ion-title>{{title | translate}}</ion-title>
     <ion-buttons end>
       <button ion-button (click)="filter()">
         {{'form-review.filter.filter' | translate}}
       </button>
     </ion-buttons>
   </ion-navbar>
-  <ion-searchbar (ionInput)="getSearchedItems($event)" *ngIf="selectedFilter && !isModifierMode()"></ion-searchbar>
+  <ion-searchbar (ionInput)="getSearchedItems($event)" [placeholder]="'general.search' | translate" *ngIf="selectedFilter && !isModifierMode()"></ion-searchbar>
 </ion-header>
 
 <ion-content padding>

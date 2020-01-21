@@ -30,10 +30,10 @@
   <ion-toolbar *ngIf="isReadOnly(submission)">
     <div class="info-box">
       <div class="description-info">
-        {{submission | submissionStatusPipe}}
+        {{submission | submissionStatusPipe | translate}}
       </div>
       <div class="date-info">
-        Captured on {{submissionDate()}}
+        {{'form-capture.date-info' | translate}} {{submissionDate()}}
       </div>
     </div>
   </ion-toolbar>
@@ -52,7 +52,7 @@
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
-				<button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;Search List</button>
+      <button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
 			</ion-col>
 		</ion-row>
 

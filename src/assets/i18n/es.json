@@ -11,18 +11,29 @@
       "demo": "Demostración"
     }
   },
-
   "sideMenu": {
     "events":   "Eventos",
     "settings": "Configuración",
+    "support": "Soporte",
     "hi": "Hola",
     "welcome-back": "Bienvenido nuevamente"
   },
-
   "general": {
-    "syncing": "Sincronizando......"
+    "syncing": "Sincronizando......",
+    "cancel": "Cancelar",
+    "select-badge-type": "Select Badge Type",
+    "remind-about-leads": "Remind me about leads",
+    "important":"Importante",
+    "share":"Compartir",
+    "done":"Hecho",
+    "ok":"Hecho",
+    "unauthenticate": "No autenticado",
+    "back":"Regresar",
+    "close":"Cerca",
+    "select" : "Seleccione",
+    "search": "Buscar",
+    "select-items" : "Seleccionar articulos"
   },
-
   "settings": {
     "title": "Configuración",
     "organization": {
@@ -47,6 +58,10 @@
       "header": "Modo estación",
       "label": "Código de acceso"
     },
+    "application" : {
+      "header" : "Aplicación",
+      "label" : "localización"
+    },
     "diagnostics": {
       "header": "Diagnóstico",
       "app-version": "Versión de Aplicación",
@@ -61,7 +76,8 @@
     "edit-btn": "Editar",
     "update-btn": "Actualizar",
     "date-info": "Capturar en",
-    "search-list": "Lista de busqueda"
+    "search-list": "Lista de busqueda",
+    "unsubmitted-data-msg" : "Tiene datos no enviados en este formulario. Si regresa, este envío no se guardará. Si desea guardar este envío, toque el botón enviar"
   },
   "logs": {
     "title": "Registros",
@@ -73,20 +89,52 @@
     "info": "Información",
     "Ok": "Entendido",
     "cancel": "Cancelar",
+    "badge-id":"ID de insignia",
+    "choose-from":"Escoge de",
+    "remove": "Eliminar",
+    "loading" : {
+      "one-moment":"un momento. Cargando registro...", 
+      "loading":"Cargando...",
+      "loading-scanner":"Escáner de carga...",
+      "authenticating":"autenticando...",
+      "unauthenticating":"sin autenticar...",
+      "processing":"Procesando..."
+    },
     "business-card": {
-      "message": "La tarjeta de visita se guardó en la Biblioteca de fotos"
+      "message": "La tarjeta de visita se guardó en la Biblioteca de fotos",
+      "save-to-library":"Guardar en la biblioteca",
+      "retake":"Volver a tomar",
+      "view-image":"Ver imagen",
+      "choose-from-library":"Elige de la biblioteca",
+      "saved-image": "La tarjeta de visita se guardó en la Biblioteca de fotos"
+    },
+    "image":{
+      "use-camera":"Usar cámara",
+      "choose-from-album":"Elegir del álbum"
+    },
+    "rapid-scan":{
+      "process":"Proceso",
+      "badges-reminder":"Tiene insignias instantaneas escaneadas para {{formName}} guardadas en el almacenamiento local en este dispositivo que no se han enviado. ¿quieres enviarlos o eliminarlos?"
     },
     "duplicate-lead": {
-      "message": "Enlaces Duplicados"
+      "title": "Enlaces Duplicados",
+      "message":"Este Enlace ya ha sido capturado el {{date}} ¿quieres editarlo?",
+      "remove-msg": "Plomo duplicado eliminado con éxito.",
+      "already-scanned":"Cliente potencial ya escaneado en {{date}}. Edite el envío según sea necesario."
     },
     "kiosk-mode": {
-      "message": "No se ha establecido una contraseña de estación!"
+      "message": "No se ha establecido una contraseña de estación!",
+      "set-password": "Establecer código de acceso al modo estación",
+      "enter-passcode" : "Introduce un código de acceso",
+      "placeholder" : "Código de paso del modo kiosco"
     },
     "audio-recording": {
       "cant-start": "No se puede comenzar a grabar",
-      "delete-recording": "¿Desea eliminar la grabación?"
+      "delete-recording": "¿Desea eliminar la grabación?",
+      "downloading":"Descarga de registros..."
     },
     "settings": {
+      "select-barcode" : "Seleccione el tipo de código de barras",
       "unauthinticate": {
         "title": "¿No autenticado?",
         "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
@@ -94,9 +142,12 @@
     }
   },
   "toast": {
- "no-internet-connection": "No hay conección a internet disponible"
+  "no-internet-connection": "No hay conección a internet disponible",
+    "scanned-successfully" : "{{badgeName}} insignia escaneada con éxito",
+    "uploading-leads" : "Cargando clientes potenciales...mantenga la aplicación abierta hasta que se complete el proceso.",
+    "submission-successfull" : "Envío exitoso",
+    "syncing-submissions-error":"Se produjo un error al sincronizar los envíos."
   },
-  
    "forms": {
     "submitted": "Enviado",
     "pending": "Pendiente",
@@ -105,10 +156,13 @@
     "review-submissions": "Revisar envíos",
     "rapid-scan": "Escaneo Rápido",
     "documents": "Documentos",
-    "instructions": "Instrucciones"
+    "instructions": "Instrucciones",
+    "title":"Eventos"
   },
   "form-review": {
+    "clear":"Claro",
     "filter": {
+      "filter":"Filtro",
       "all": {
         "title": "Todos",
         "description": "Oprima Enter para Editar/Revisar"
@@ -132,9 +186,7 @@
     }
   },
   "filters-view": {
-
     "select-search-criteria": "Seleccione Criterios de Busqueda",
-
     "titles": {
       "name": "Nombre",
       "email": "Correo electronico",
@@ -158,11 +210,37 @@
     }
   },
   "support" : {
-    "header":"",
-    "title":"",
-    "doc-button":"",
-    "ticket-button":"",
-    "conversation-button":""
+    "header":"Soporte",
+    "title":"¿Cómo podemos ayudarte?",
+    "doc-button":"Documentación",
+    "ticket-button":"Abrir un Ticket",
+    "conversation-button":"Iniciar una Converzación"
+  },
+  "signature":{
+    "title":"Firma",
+    "sign-above":"Iniciar una Converzación"
+  },
+  "notifications":{
+    "submit-reminder":"Tienes clientes potenciales que no se han enviado. Abra la aplicación y envíela."
+  },
+  "documents":{
+    "open-error":"Se produjo un problema al abrir sus documentos. Inténtalo de nuevo.",
+    "empty-set" : "El conjunto de documentos seleccionado no contiene ningún documento.",
+    "syncing-error":"Los documentos aún se están sincronizando. Por favor, inténtelo de nuevamente más tarde.",
+    "share-error":"Se produjo un problema al intentar compartir sus documentos. Inténtalo de nuevo.",
+    "how-to-send":"¿Cómo quieres enviar los documentos?",
+    "edit-error":"No puede editar envíos en modo de vista previa. Haga clic en editar antes de realizar cambios."
+  },
+  "prospect-view" : {
+    "title":"Seleccione prospecto"
+  },
+  "stations-view" : {
+    "title":"Seleccione Estación",
+    "visited-stations" : "Estaciones visitadas",
+    "stations":"Estaciónes"
+  },
+  "localizations-view" : {
+    "title" : "Seleccione localización"
   }
 }
 
