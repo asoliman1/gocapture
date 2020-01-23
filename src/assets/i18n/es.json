@@ -80,6 +80,9 @@
     "date-info": "Capturar en",
     "search-list": "Lista de busqueda",
     "unsubmitted-data-msg": "Tiene datos no enviados en este formulario. Si regresa, este envío no se guardará. Si desea guardar este envío, toque el botón enviar",
+    "scan-mode": "Modo de escaneo :",
+    "business-card": "Tarjeta de visita",
+    "badge-scan": "Escaneo de insignia",
     "error-msg": "Se requiere correo electrónico o nombre",
     "check-fields-msg": "Por favor verifique los siguientes campos: {{fields}}"
   },
