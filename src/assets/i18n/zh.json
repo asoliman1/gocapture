@@ -13,7 +13,7 @@
   },
   "sideMenu": {
     "events": "事件",
- "support": "支持",
+    "support": "支持",
     "settings": "设置",
     "hi": "你好",
     "welcome-back": "欢迎回来"
@@ -165,8 +165,8 @@
     "review-submissions": "审阅提交的内容",
     "rapid-scan": "快速扫描",
     "documents": "文件",
-    "instructions": "说明"
-	    "title": "Events"
+    "instructions": "说明",
+	  "title": "Events"
   },
   "form-review": {
     "clear": "明确",
