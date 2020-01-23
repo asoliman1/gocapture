@@ -11,21 +11,18 @@
       "demo": "Demo"
     }
   },
-
   "sideMenu": {
-    "events":   "Events",
+    "events": "Events",
     "settings": "Settings",
     "hi": "Hi",
     "welcome-back": "Welcome back"
   },
-
   "general": {
     "syncing": "Syncing...",
     "cancel": "Cancel",
     "select-badge-type": "Select Badge Type",
     "remind-about-leads": "Remind me about leads"
   },
-
   "settings": {
     "title": "Settings",
     "organization": {
@@ -63,7 +60,6 @@
     },
     "unauth-device-btn": "Unauthenticate Device"
   },
-
   "form-capture": {
     "submit-btn": "Submit",
     "edit-btn": "Edit",
@@ -71,12 +67,10 @@
     "date-info": "Captured on",
     "search-list": "Search List"
   },
-
   "logs": {
     "title": "Logs",
     "show-more": "Show more"
   },
-
   "alerts": {
     "warning": "Warning",
     "error": "Error",
@@ -138,9 +132,7 @@
     }
   },
   "filters-view": {
-
     "select-search-criteria": "Seleccione Criterios de Busqueda",
-
     "titles": {
       "name": "Nombre",
       "email": "Correo electronico",
@@ -148,14 +140,12 @@
       "capture-date": "Fecha de Captura",
       "captured-by": "Capturar por"
     },
-
     "modifiers": {
       "equals": "Igual a",
       "doesnt-equal": "No es igual",
       "contains": "Contiene",
       "does-not-contain": "No contiene"
     },
-
     "capture-type": {
       "normal": "Normal",
       "badge-scan": "Escaneo de Insignia",

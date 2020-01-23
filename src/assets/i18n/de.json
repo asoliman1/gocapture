@@ -11,21 +11,18 @@
       "demo": "Demo"
     }
   },
-
   "sideMenu": {
     "events": "Events",
     "settings": "Settings",
     "hi": "Hi",
     "welcome-back": "Welcome back"
   },
-
   "general": {
     "syncing": "Syncing...",
     "cancel": "Cancel",
     "select-badge-type": "Select Badge Type",
     "remind-about-leads": "Remind me about leads"
   },
-
   "settings": {
     "title": "Settings",
     "organization": {
@@ -63,7 +60,6 @@
     },
     "unauth-device-btn": "Unauthenticate Device"
   },
-
   "form-capture": {
     "submit-btn": "Submit",
     "edit-btn": "Edit",
@@ -71,12 +67,10 @@
     "date-info": "Captured on",
     "search-list": "Search List"
   },
-
   "logs": {
     "title": "Logs",
     "show-more": "Show more"
   },
-
   "alerts": {
     "warning": "Warning",
     "error": "Error",
@@ -103,11 +97,9 @@
       }
     }
   },
-
   "toast": {
     "no-internet-connection": "No internet connection available."
   },
-
   "forms": {
     "submitted": "Submitted",
     "pending": "Pending",
@@ -118,7 +110,6 @@
     "documents": "Documents",
     "instructions": "Instructions"
   },
-
   "form-review": {
     "filter": {
       "all": {
@@ -143,11 +134,8 @@
       }
     }
   },
-
   "filters-view": {
-
     "select-search-criteria": "Select Search Criteria",
-
     "titles": {
       "name": "Name",
       "email": "Email",
@@ -155,14 +143,12 @@
       "capture-date": "Capture Date",
       "captured-by": "Captured By"
     },
-
     "modifiers": {
       "equals": "Equals",
       "doesnt-equal": "Does not equal",
       "contains": "Contains",
       "does-not-contain": "Does not contain"
     },
-
     "capture-type": {
       "normal": "Normal",
       "badge-scan": "Badge Scan",

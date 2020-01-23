@@ -32,9 +32,9 @@
     "close": "关",
     "select": "选择",
     "send": "发送",
-	"search": "搜索",
+    "search": "搜索",
     "select-items": "选择项目",
-	 "front" : "面前"
+    "front": "面前"
   },
   "settings": {
     "title": "设置",
@@ -80,11 +80,11 @@
     "date-info": "录制",
     "search-list": "搜索列表",
     "unsubmitted-data-msg": "您在此表格上尚未提交数据。如果您返回，则不会保存此提交。如果要保存此提交，请点击提交按钮。",
-	"scan-mode":"扫描方式：",
-    "business-card" : "名片",
-    "badge-scan" : "徽章扫描",
-    "error-msg" : "电子邮件或姓名为必填项",
-    "check-fields-msg" : "请检查以下字段： {{fields}}"
+    "scan-mode": "扫描方式：",
+    "business-card": "名片",
+    "badge-scan": "徽章扫描",
+    "error-msg": "电子邮件或姓名为必填项",
+    "check-fields-msg": "请检查以下字段： {{fields}}"
   },
   "logs": {
     "title": "载入",
@@ -154,8 +154,8 @@
     "uploading-leads": "上传线索....保持应用程序打开，直到该过程完成。",
     "submission-successfull": "提交成功",
     "syncing-submissions-error": "同步提交时出错",
-	"auth-err" : "无效证件",
-	"auth-failed" : "授权失败。请获取新的验证码" 
+    "auth-err": "无效证件",
+    "auth-failed": "授权失败。请获取新的验证码"
   },
   "forms": {
     "submitted": "提交",
@@ -166,7 +166,7 @@
     "rapid-scan": "快速扫描",
     "documents": "文件",
     "instructions": "说明",
-	  "title": "Events"
+    "title": "Events"
   },
   "form-review": {
     "clear": "明确",
@@ -217,31 +217,31 @@
     }
   },
   "support": {
-    "header":"支持",
-    "title":"我们能为您做些什么？",
-    "doc-button":"文档",
-    "ticket-button":"打开的处理单",
-    "conversation-button":"开始对话"
+    "header": "支持",
+    "title": "我们能为您做些什么？",
+    "doc-button": "文档",
+    "ticket-button": "打开的处理单",
+    "conversation-button": "开始对话"
   },
   "signature": {
-    "title":"签名",
-    "sign-above":"在上面签名"
+    "title": "签名",
+    "sign-above": "在上面签名"
   },
   "notifications": {
-    "submit-reminder":"您有尚未提交的销售线索。请打开应用并提交。"
+    "submit-reminder": "您有尚未提交的销售线索。请打开应用并提交。"
   },
   "documents": {
-    "open-error":"打开文档时出现问题。请再试一遍。",
-    "empty-set" : "所选的文档集不包含任何文档。",
-    "syncing-error":"文件仍在同步中。请稍后再试。",
-    "share-error":"尝试共享您的文档时出现问题。请再试一遍。",
-    "how-to-send":"您想如何发送文档？",
-    "edit-error":"您不能在预览模式下编辑提交。进行更改之前，请单击“编辑”。",
+    "open-error": "打开文档时出现问题。请再试一遍。",
+    "empty-set": "所选的文档集不包含任何文档。",
+    "syncing-error": "文件仍在同步中。请稍后再试。",
+    "share-error": "尝试共享您的文档时出现问题。请再试一遍。",
+    "how-to-send": "您想如何发送文档？",
+    "edit-error": "您不能在预览模式下编辑提交。进行更改之前，请单击“编辑”。",
     "long-press": "长按查看文档。",
     "tap-to-select": "点击以选择文档。长按查看。",
-	  "empty-set-msg": "该文档集为空。"
+    "empty-set-msg": "该文档集为空。"
   },
-   "prospect-view": {
+  "prospect-view": {
     "title": "选择前景"
   },
   "stations-view": {
@@ -249,24 +249,24 @@
     "visited-stations": "参观过的车站",
     "stations": "车站"
   },
-    "localizations-view": {
+  "localizations-view": {
     "title": "选择本地化"
   },
-   "submission-status" : {
-    "submitted":"潜在客户上传成功。",
-    "to-submit":"准准备上传。点击屏幕右上角的云以上传它。点击提交旁边的蓝色图标以阻止上传。",
-    "on-hold":"展望未决的转录。请待命。",
-    "blocked":"潜在客户已阻止上传。点击红色圆圈以解除阻止。"
+  "submission-status": {
+    "submitted": "潜在客户上传成功。",
+    "to-submit": "准准备上传。点击屏幕右上角的云以上传它。点击提交旁边的蓝色图标以阻止上传。",
+    "on-hold": "展望未决的转录。请待命。",
+    "blocked": "潜在客户已阻止上传。点击红色圆圈以解除阻止。"
   },
-    "badge-scanner":{
-    "scan":"扫描徽章",
-    "scanning":"扫描袋",
-    "couldnt-scan":"无法扫描徽章",
-    "nfc-msg":"准备扫描。将设备放在证章附近。",
-    "scan-nfc" :"扫描NFC徽章",
-    "scanning-nfc":"扫描NFC徽章",
-    "couldnt-scan-nfc":"无法扫描NFC徽章",
-    "rescan" : "重新扫描徽章",
+  "badge-scanner": {
+    "scan": "扫描徽章",
+    "scanning": "扫描袋",
+    "couldnt-scan": "无法扫描徽章",
+    "nfc-msg": "准备扫描。将设备放在证章附近。",
+    "scan-nfc": "扫描NFC徽章",
+    "scanning-nfc": "扫描NFC徽章",
+    "couldnt-scan-nfc": "无法扫描NFC徽章",
+    "rescan": "重新扫描徽章",
     "rescan-nfc": "重新扫描NFC徽章"
   }
 }

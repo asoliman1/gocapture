@@ -11,21 +11,18 @@
       "demo": "تجريبي"
     }
   },
-
   "sideMenu": {
-    "events":   "فعاليات",
+    "events": "فعاليات",
     "settings": "اعدادات",
     "hi": "مرحبا",
     "welcome-back": "مرحبا بعودتك"
   },
-
   "general": {
     "syncing": "جاري المزامنة...",
     "cancel": "الغاء",
     "select-badge-type": "اختار نوع شارة التعريف",
     "remind-about-leads": "ذكرني عن البيانات الغير مرسلة"
   },
-
   "settings": {
     "title": "اعدادات",
     "organization": {
@@ -63,7 +60,6 @@
     },
     "unauth-device-btn": "الغاء تسجيل الدخول"
   },
-
   "form-capture": {
     "submit-btn": "ارسال",
     "edit-btn": "تعديل",
@@ -71,12 +67,10 @@
     "date-info": "تاريخ الالتقاط",
     "search-list": "قاْئمة البحث"
   },
-
   "logs": {
     "title": "البيانات المسجلة",
     "show-more": "عرض المزيد"
   },
-
   "alerts": {
     "warning": "تحذير",
     "error": "خطأ",
@@ -106,8 +100,7 @@
   "toast": {
     "no-internet-connection": "لا يوجد اتصال بالإنترنت"
   },
-
- "forms": {
+  "forms": {
     "submitted": "تم الارسال",
     "pending": "قيد الانتظار",
     "unsubmitted": "لم يتم الارسال",
@@ -117,7 +110,6 @@
     "documents": "مستندات",
     "instructions": "تعليمات"
   },
-
   "form-review": {
     "filter": {
       "all": {
@@ -142,11 +134,8 @@
       }
     }
   },
-
   "filters-view": {
-
     "select-search-criteria": "حدد معايير البحث",
-
     "titles": {
       "name": "الاسم",
       "email": "البريد الالكتروني",
@@ -154,14 +143,12 @@
       "capture-date": "تاريخ الالتقاط",
       "captured-by": "التقطت بواسطة"
     },
-
     "modifiers": {
       "equals": "متساويين",
       "doesnt-equal": "لا يساوي",
       "contains": "يحتوي علي",
       "does-not-contain": "لا يحتوي علي"
     },
-
     "capture-type": {
       "normal": "افتراضي",
       "badge-scan": "شارة المسح الضوئي",
