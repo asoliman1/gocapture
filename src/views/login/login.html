@@ -19,12 +19,12 @@
 						<input type="{{codeInputType}}" autocomplete="on" clearInput="true" name="authCode" required placeholder="{{'login.auth-placeholder' | translate}}"
 							[(ngModel)]="authCode" />
 						<button ion-button clear item-end (click)="changeInputType()" >
-							<ion-icon name="{{codeInputType == 'password' ? 'eye-off' : 'eye'}}" ></ion-icon>
+							<ion-icon style="font-size: x-large;" name="{{codeInputType == 'password' ? 'eye-off' : 'eye'}}" ></ion-icon>
 						</button>
 					</ion-item>
 					<ion-item>
 						<button ion-button full large (click)="onClick()">
-							Authenticate
+							{{'login.auth-button' | translate}}
 						</button>
 					</ion-item>
 				</ion-list>
@@ -32,7 +32,7 @@
 			<ion-list padding *ngIf="!doAuth">
 				<ion-item>
 					<button ion-button full large (click)="onClick()">
-						Continue
+						{{'login.continue-button' | translate}}
 					</button>
 				</ion-item>
 			</ion-list>

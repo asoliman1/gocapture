@@ -30,7 +30,9 @@ export class Form extends BaseForm {
 	lastSync: {
 		submissions ?: Date;
 		contacts ?: Date;
-	}
+	};
+	search_list_background_color : string;
+	search_list_text_color : string;
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;
 		for (let i = 0; i < form.elements.length; i++) {

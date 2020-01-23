@@ -70,7 +70,7 @@ export class FormCapture implements AfterViewInit {
 
 
   valid: boolean = true;
-  errorMessage: String;
+  errorMessage: {text: string , param : string} = {text : '', param : ''};
 
   submitAttempt: boolean = false;
 
@@ -421,12 +421,12 @@ export class FormCapture implements AfterViewInit {
     //TODO: add business card rapid scan mode for android
     if (this.platform.is("ios")) {
       if (businessCardElement) {
-        sources.push({ id: businessCardElement.id, name: "Business card" });
+        sources.push({ id: businessCardElement.id, name: "form-capture.business-card" });
       }
     }
 
     if (barcodeElement) {
-      sources.push({ id: barcodeElement.id, name: "Badge scan" });
+      sources.push({ id: barcodeElement.id, name: "form-capture.badge-scan" });
     }
 
     // if (nfcElement) {
@@ -641,7 +641,7 @@ export class FormCapture implements AfterViewInit {
 
     if (isNotScanned && noTranscriptable) {
       if (!this.isEmailOrNameInputted()) {
-        this.errorMessage = "Email or name is required";
+        this.errorMessage.text = "form-capture.error-msg";
         this.content.resize();
         return;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
@@ -775,7 +775,8 @@ export class FormCapture implements AfterViewInit {
   onValidationChange(valid: boolean) {
     this.valid = valid;
     setTimeout(() => {
-      this.errorMessage = '';
+      this.errorMessage.text = '';
+      this.errorMessage.param = '';
     });
 
     this.content.resize();
@@ -982,18 +983,19 @@ export class FormCapture implements AfterViewInit {
       if (this.scanSources.length == 1) {
         this.startRapidScanModeForSource(this.scanSources[0].id);
       } else if (this.scanSources.length > 1) {
-        let alert = this.alertCtrl.create({
-          title: 'Scan Mode:',
-          buttons: [
+        this.popup.showAlert( 
+           'form-capture.scan-mode',
+           {text:''},
+           [
             {
-              text: 'Cancel',
+              text: 'general.cancel',
               role: 'cancel',
               handler: () => {
                 this.navCtrl.pop()
               }
             },
             {
-              text: 'Ok',
+              text: 'general.ok',
               handler: (scanSource) => {
                 if (!scanSource) {
                   return false;
@@ -1004,19 +1006,17 @@ export class FormCapture implements AfterViewInit {
             },
 
           ],
-          cssClass: this.selectedTheme + ' gc-alert'
-        });
+         this.selectedTheme + ' gc-alert',
+          this.scanSources.map((e)=>{
+            return {
+              label: e.name,
+              value: e.id,
+              type: 'radio',
+              checked: this.selectedStation && e.id == this.selectedStation.id
+            }
+          })
+        );
 
-        for (let scanSource of this.scanSources) {
-          alert.addInput({
-            label: scanSource.name,
-            value: scanSource.id,
-            type: 'radio',
-            checked: this.selectedStation && scanSource.id == this.selectedStation.id
-          });
-        }
-
-        alert.present();
       }
     }
   }

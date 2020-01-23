@@ -265,7 +265,7 @@ export class BussinessClient {
         this.util.checkFilesDirectories();
         this.onAuthSuccess(reply, false, obs);
       }, err => {
-        obs.error("Invalid authentication code");
+        obs.error("toast.auth-err");
       });
     });
   }
@@ -374,7 +374,7 @@ export class BussinessClient {
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
-        obs.error('No internet connection available');
+        obs.error('toast.no-internet-connection');
         this.formsProvider.setFormsSyncStatus(false);
         return;
       }
@@ -441,7 +441,7 @@ export class BussinessClient {
   public doSync(formId?: number): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
       if (!this.isOnline()) {
-        obs.error('No internet connection available');
+        obs.error('toast.no-internet-connection');
         return;
       }
 

@@ -13,6 +13,7 @@
   },
   "sideMenu": {
     "events": "イベント",
+	 "support": "サポート",
     "settings": "設定",
     "hi": "こんにちは",
     "welcome-back": "おかえりなさい"
@@ -30,7 +31,10 @@
     "back":"戻る",
     "close":"閉じる",
     "select" : "選択する",
-    "send" : "送る"
+    "send" : "送る",
+	  "search": "探す",
+    "select-items": "アイテムを選択",
+    "front" : "フロント"
   },
   "settings": {
     "title": "設定",
@@ -75,8 +79,13 @@
     "update-btn": "更新",
     "date-info": "取得日",
     "search-list": "検索リスト",
-    "unsubmitted-data-msg" : "フォームには未提出のデータあります。戻ると送信は保存されません。保存する場合は送信ボタンをタップして下さい。"
-  },
+    "unsubmitted-data-msg" : "フォームには未提出のデータあります。戻ると送信は保存されません。保存する場合は送信ボタンをタップして下さい。",
+	 "scan-mode":"スキャンモード：",
+    "business-card" : "名刺",
+    "badge-scan" : "バッジスキャン",
+    "error-msg" : "メールアドレスまたは名前が必要です",
+    "check-fields-msg" : "次のフィールドを確認してください。 {{fields}}"
+	 },
   "logs": {
     "title": "ログ",
     "show-more": "もっと見る"
@@ -144,7 +153,9 @@
     "scanned-successfully" : "{{badgeName}} が正常にスキャンされました",
     "uploading-leads" : "リードをアップロード中。プロセス完了までアプリを閉じないで下さい。",
     "submission-successfull" : "提出成功",
-    "syncing-submissions-error":"提出物の同期中にエラーが発生しました"
+    "syncing-submissions-error":"提出物の同期中にエラーが発生しました",
+		"auth-err" : "無効な資格情報",
+		"auth-failed":"認証に失敗しました。新しい認証コードを取得してください"
   },
   "forms": {
     "submitted": "提出済",
@@ -154,7 +165,8 @@
     "review-submissions": "提出物を確認",
     "rapid-scan": "高速スキャン",
     "documents": "書類",
-    "instructions": "説明"
+    "instructions": "説明",
+	   "title": "イベント"
   },
   "form-review": {
     "clear":"晴れ",
@@ -228,5 +240,33 @@
     "long-press": "長押ししてドキュメントを表示します。",
     "tap-to-select": "タップしドキュメントを選択。長押しで表示。",
 	  "empty-set-msg":"このドキュメントセットは空です。"
+  },
+  "prospect-view": {
+    "title": "見込み客を選択"
+  },
+  "stations-view": {
+    "title": "駅を選択",
+    "visited-stations": "訪問した駅",
+    "stations": "駅"
+  },
+  "localizations-view": {
+    "title": "ローカライズを選択"
+  },
+  "submission-status" : {
+    "submitted":"プロスペクトが正常にアップロードされました。",
+    "to-submit":"見込み顧客はアップロードの準備ができています。画面の右上隅にあるクラウドをタップしてアップロードします。投稿の横にある青いアイコンをタップして、アップロードをブロックします。",
+    "on-hold":"プロスペクト保留中の転写。待機してください。",
+    "blocked":"見込み顧客がアップロードをブロックしました。赤い丸をタップしてブロックを解除します。"
+  },
+  "badge-scanner":{
+    "scan":"スキャンバッジ",
+    "scanning":"スキャンバッグデ",
+    "couldnt-scan":"バッジをスキャンできませんでした",
+    "nfc-msg":"スキャンの準備ができました。デバイスをバッジの近くに保持します。",
+    "scan-nfc" :"NFCバッジをスキャン",
+    "scanning-nfc":"NFCバッジのスキャン",
+    "couldnt-scan-nfc":"NFCバッジをスキャンできませんでした",
+    "rescan" : "バッジの再スキャン",
+    "rescan-nfc": "NFCバッジの再スキャン"
   }
 }

@@ -47,15 +47,16 @@ export class Popup {
     return this.loading.present();
   }
 
-  showAlert(title :string, message : {text:string,params ?:any} , buttons: AlertButton[], theme = this.theme) {
+  showAlert(title :string, message : {text:string,params ?:any} , buttons: AlertButton[], theme = this.theme , inputs = []) {
     if (this.alert) {
       this.alert.dismiss();
     }
     
     this.alert = this.alertCtrl.create({
-      title: title,
+      title:this.translate.instant( title ),
       message: message.text ? this.translate.instant(message.text,message.params || {}) : '',
       buttons: this.translateBtns(buttons),
+      inputs:this.translateInputs(inputs),
       enableBackdropDismiss: false,
       cssClass: theme 
     });

@@ -1,3 +1,4 @@
+import { SyncClient } from './../../services/sync-client';
 import { OptionItem } from './../../model/option-item';
 import { Component } from '@angular/core';
 import { User } from "../../model";
@@ -7,7 +8,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Login } from "../login";
 import { LogView } from "../log";
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
-import { App } from "ionic-angular";
+import { App, Platform } from "ionic-angular";
 import { LogClient } from "../../services/log-client";
 import { Popup } from "../../providers/popup/popup";
 import { ThemeProvider } from "../../providers/theme/theme";
@@ -18,7 +19,6 @@ import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Localization } from '../../model/localization';
-import { TranslateService } from '@ngx-translate/core';
 import { TranslateConfigService } from '../../services/translate/translateConfigService';
 import { LocalizationsPage } from '../localizations/localizations';
 
@@ -49,8 +49,9 @@ export class Settings {
     private badgeScanner: BadgeRapidCapture,
     public geolocation : Geolocation,
     private businessService : BussinessClient,
-    private translate: TranslateService,
-    private translateConfigService: TranslateConfigService,) {
+    private syncClient: SyncClient,
+    private translateConfigService: TranslateConfigService,
+    private platform : Platform) {
 
     this.appVersion.getVersionNumber().then((version) => {
       this.version = version;
@@ -90,16 +91,17 @@ export class Settings {
       this.db.getRegistration().subscribe(user => {
         this.user = user;
         this.shouldSave = false;
+        this.setLocalization();
       });
       
     });
-    this.setLocalization();
 
   }
 
-  updateUser(result) {
+  updateUser(result : any) {
     this.user.localizations = result.localizations;
     this.user.localization = result.localization;
+    console.log(result.localization);
     this.db.saveRegistration(this.user).subscribe();
   }
   
@@ -111,7 +113,9 @@ export class Settings {
         this.client.updateAccountSettings({'localization': localization.id})
           .subscribe((result) => {
             this.updateUser(result);
+            this.platform.setDir(localization.id == 'ar' ? 'rtl' : 'ltr',true);
             this.translateConfigService.setLanguage(localization.id);
+            this.syncClient.download(null).subscribe();
             this.localization = localization;
             this.popup.dismissAll();
           }, (error) => {
@@ -123,10 +127,9 @@ export class Settings {
   }
 
   setLocalization() {
+    console.log(this.user.localization)
     if (this.user.localization && this.user.localizations) {
-      this.localization = this.user.localizations.filter((localization) => {
-        return localization.id == this.user.localization
-      })[0];
+      this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
     } else {
       this.localization = new Localization();
       this.localization.id = 'en';
@@ -298,7 +301,7 @@ export class Settings {
         }
       }
     ];
-    this.popup.showAlert("toast.settings.unauthenticate.title", {text:"toast.settings.unauthenticate.message"}, buttons, this.selectedTheme);
+    this.popup.showAlert("alerts.settings.unauthenticate.title", {text:"alerts.settings.unauthenticate.message"}, buttons, this.selectedTheme);
   }
 
 }

@@ -9,7 +9,7 @@ declare var cordova;
 export class GOCBarcodeScanner implements Scanner {
 
   readonly name: string = 'badge';
-  statusMessage: string = "Scan badge";
+  statusMessage: string = "badge-scanner.scan";
 
 
   constructor(public barcodeScanner: BarcodeScanner,
@@ -29,7 +29,7 @@ export class GOCBarcodeScanner implements Scanner {
 
   async scan(isRapidScan, id): Promise<ScannerResponse> {
 
-    this.statusMessage = "Scanning " + this.name;
+    this.statusMessage = "badge-scanner.scanning";
 
     let formats = this.getSupportedBarcodeFormat();
     console.log('Barcode formats - ' + formats);
@@ -49,7 +49,7 @@ export class GOCBarcodeScanner implements Scanner {
       cordova.plugins.barcodeScanner.scan(function (scannedData) {
         console.log(scannedData);
         if (scannedData.cancelled) {
-          self.statusMessage = "Scan " + self.name;
+          self.statusMessage = "badge-scanner.scan";
           resolve({ isCancelled: true });
           return;
         }
@@ -80,7 +80,7 @@ export class GOCBarcodeScanner implements Scanner {
         resolve({ scannedId: scannedData.text });
       }, function (error) {
         console.log(error);
-        self.statusMessage = "Could not scan " + self.name;
+        self.statusMessage = "badge-scanner.couldnt-scan";
         reject(error);
       }, options);
     })
@@ -110,14 +110,14 @@ export class GOCBarcodeScanner implements Scanner {
 
         resolve({ scannedId: scannedData.text });
       }, function (error) {
-        this.statusMessage = "Could not scan " + this.name;
+        this.statusMessage = "badge-scanner.couldnt-scan";
         reject(this.statusMessage);
       }, options);
     })
   }
 
   restart() {
-    this.statusMessage = "Scan " + this.name;
+    this.statusMessage = "badge-scanner.rescan";
   }
 
 

@@ -1,8 +1,8 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
+    "header": "Please contact your company administrator to obtain an Auth Code.",
+    "email-placeholder": "Email address",
+    "auth-placeholder": "Auth code",
     "auth-button": "Authenticate",
     "continue-button": "Continue",
     "connection-mode": {
@@ -33,7 +33,8 @@
     "select": "Select",
     "send": "Send",
     "search": "Search",
-    "select-items" : "Select Items"
+    "select-items": "Select Items",
+    "front" : "Front"
   },
   "settings": {
     "title": "Settings",
@@ -46,7 +47,7 @@
     },
     "application": {
       "header": "Application",
-      "localization": "Localization"
+      "label": "Localization"
     },
     "operations": {
       "header": "Operations",
@@ -78,7 +79,12 @@
     "update-btn": "Update",
     "date-info": "Captured on",
     "search-list": "Search List",
-    "unsubmitted-data-msg": "You have unsubmitted data on this form. If you go back, this submission will not be saved. If you want to save this submission, then tap the submit button instead."
+    "unsubmitted-data-msg": "You have unsubmitted data on this form. If you go back, this submission will not be saved. If you want to save this submission, then tap the submit button instead.",
+    "scan-mode":"Scan mode :",
+    "business-card" : "Business Card",
+    "badge-scan" : "Badge Scan",
+    "error-msg" : "Email or name is required",
+    "check-fields-msg" : "Please check the folowing fields : {{fields}}"
   },
   "logs": {
     "title": "Logs",
@@ -126,7 +132,7 @@
     "kiosk-mode": {
       "message": "No kiosk password set!",
       "set-password": "Set Kiosk Mode Pass Code",
-      "enter-passcode": "",
+      "enter-passcode": "Kiosk Mode Pass Code",
       "placeholder": "Enter pass code"
     },
     "audio-recording": {
@@ -147,7 +153,9 @@
     "scanned-successfully": "{{badgeName}} scanned successfully.",
     "uploading-leads": "Uploading leads....keep the app open until the process completes.",
     "submission-successfull": "Submission successfull.",
-    "syncing-submissions-error": "There was an error sync-ing the submissions"
+    "syncing-submissions-error": "There was an error sync-ing the submissions",
+	  "auth-err" : "Invalid credentials",
+	  "auth-failed" : "Authorization failed. Please obtain a new Authentication Code"
   },
   "forms": {
     "submitted": "Submitted",
@@ -241,7 +249,24 @@
     "visited-stations": "Stations Visited",
     "stations": "Stations"
   },
-  "localizations-view" : {
-    "title" : "Select localization"
+  "localizations-view": {
+    "title": "Select localization"
+  },
+  "submission-status" : {
+    "submitted":"Prospect uploaded successfully.",
+    "to-submit":"Prospect ready for upload. Tap on the cloud in the top-right corner of the screen to upload it. Tap on the blue icon next to the submission to block it from being uploaded.",
+    "on-hold":"Prospect pending transcription. Please standby.",
+    "blocked":"Prospect blocked from upload. Tap the red circle to unblock it."
+  },
+  "badge-scanner":{
+    "scan":"Scan badge",
+    "scanning":"Scanning bagde",
+    "couldnt-scan":"Couldn't scan badge",
+    "nfc-msg":"Ready to scan. Hold the device near the badge.",
+    "scan-nfc" :"Scan NFC badge",
+    "scanning-nfc":"Scanning NFC badge",
+    "couldnt-scan-nfc":"Couldn't Scan NFC badge",
+    "rescan" : "Rescan Badge",
+    "rescan-nfc": "Rescan NFC badge"
   }
 }

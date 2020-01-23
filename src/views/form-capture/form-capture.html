@@ -38,8 +38,8 @@
     </div>
   </ion-toolbar>
 
-  <ion-toolbar *ngIf="errorMessage && errorMessage.length > 0">
-    <div class="error-message" >{{errorMessage}}</div>
+  <ion-toolbar *ngIf="errorMessage.text">
+    <div class="error-message" >{{errorMessage | translate : errorMessage.param }}</div>
   </ion-toolbar>
 </ion-header>
 
@@ -52,7 +52,7 @@
 	<ion-grid>
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission)">
 			<ion-col>
-      <button ion-button block color="light" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
+      <button ion-button block color="light" [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
 			</ion-col>
 		</ion-row>
 

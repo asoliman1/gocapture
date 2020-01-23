@@ -31,9 +31,11 @@
     "back":"Regresar",
     "close":"Cerca",
     "select" : "Seleccione",
+	   "send": "Enviar",
     "search": "Buscar",
-    "select-items" : "Seleccionar articulos"
-  },
+    "select-items" : "Seleccionar articulos",
+	  "front" : "frente"
+},
   "settings": {
     "title": "Configuración",
     "organization": {
@@ -43,6 +45,7 @@
       "operator": "Operador",
       "deviceId": "ID del dispositivo"
     },
+	
     "operations": {
       "header": "Operaciones",
       "automatic-upload": "Carga Automática",
@@ -77,7 +80,9 @@
     "update-btn": "Actualizar",
     "date-info": "Capturar en",
     "search-list": "Lista de busqueda",
-    "unsubmitted-data-msg" : "Tiene datos no enviados en este formulario. Si regresa, este envío no se guardará. Si desea guardar este envío, toque el botón enviar"
+    "unsubmitted-data-msg" : "Tiene datos no enviados en este formulario. Si regresa, este envío no se guardará. Si desea guardar este envío, toque el botón enviar",
+	  "error-msg" : "Se requiere correo electrónico o nombre",
+    "check-fields-msg" : "Por favor verifique los siguientes campos: {{fields}}"
   },
   "logs": {
     "title": "Registros",
@@ -146,7 +151,9 @@
     "scanned-successfully" : "{{badgeName}} insignia escaneada con éxito",
     "uploading-leads" : "Cargando clientes potenciales...mantenga la aplicación abierta hasta que se complete el proceso.",
     "submission-successfull" : "Envío exitoso",
-    "syncing-submissions-error":"Se produjo un error al sincronizar los envíos."
+    "syncing-submissions-error":"Se produjo un error al sincronizar los envíos.",
+		"auth-err" : "Credenciales no válidas",
+		"auth-failed" : "Autorización fallida. Obtenga un nuevo código de autenticación" 
   },
    "forms": {
     "submitted": "Enviado",
@@ -229,7 +236,10 @@
     "syncing-error":"Los documentos aún se están sincronizando. Por favor, inténtelo de nuevamente más tarde.",
     "share-error":"Se produjo un problema al intentar compartir sus documentos. Inténtalo de nuevo.",
     "how-to-send":"¿Cómo quieres enviar los documentos?",
-    "edit-error":"No puede editar envíos en modo de vista previa. Haga clic en editar antes de realizar cambios."
+	   "long-press": "Mantenga presionado para ver el documento.",
+    "tap-to-select": "Toque para seleccionar documentos. Mantenga presionado para ver.",
+    "edit-error":"No puede editar envíos en modo de vista previa. Haga clic en editar antes de realizar cambios.",
+	   "empty-set-msg": "Este conjunto de documentos está vacío."
   },
   "prospect-view" : {
     "title":"Seleccione prospecto"
@@ -241,6 +251,23 @@
   },
   "localizations-view" : {
     "title" : "Seleccione localización"
+  }
+   "submission-status" : {
+    "submitted":"Perspectiva cargada correctamente.",
+    "to-submit":"Perspectiva lista para cargar. Toca la nube en la esquina superior derecha de la pantalla para subirla. Toque el ícono azul al lado del envío para evitar que se cargue.",
+    "on-hold":"Perspectiva pendiente de transcripción. Por favor espere.",
+    "blocked":"Perspectiva bloqueada de carga. Toca el círculo rojo para desbloquearlo."
+  },
+  "badge-scanner":{
+    "scan":"Escanear insignia",
+    "scanning":"Bolsa de escaneo",
+    "couldnt-scan":"No se pudo escanear la insignia",
+    "nfc-msg":"Listo para escanear. Sostenga el dispositivo cerca de la placa.",
+    "scan-nfc" :"Escanear insignia NFC",
+    "scanning-nfc":"Escaneo de la insignia NFC",
+    "couldnt-scan-nfc":"No se pudo escanear la insignia NFC",
+    "rescan" : "Reescanear Insignia",
+    "rescan-nfc": "Volver a escanear la insignia NFC"
   }
 }
 

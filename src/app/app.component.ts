@@ -88,7 +88,6 @@ export class MyApp {
   }
 
   private setAppLocalization() {
-    
     this.client.getRegistration(true).subscribe((user) => {
       if (user && user.localization) {
         this.translateConfigService.setLanguage(user.localization);
@@ -194,13 +193,13 @@ export class MyApp {
 
   private handleClientErrors() {
     this.client.error.subscribe((resp) => {
-      if (resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast({text:resp});
     });
   }
 
   private handleSyncErrors() {
     this.sync.error.subscribe((resp) => {
-      if (resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast({text:resp});
     });
   }
 
