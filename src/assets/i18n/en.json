@@ -239,7 +239,8 @@
     "edit-error": "You can not edit submissions in preview mode. Click edit before making changes.",
     "long-press": "Long press to view document.",
     "tap-to-select": "Tap to select documents. Long press to view.",
-    "empty-set-msg": "This document set is empty."
+    "empty-set-msg": "This document set is empty.",
+    "select-category" : "Select a document category"
   },
   "prospect-view": {
     "title": "Select Prospect"

@@ -239,7 +239,8 @@
     "long-press": "Mantenga presionado para ver el documento.",
     "tap-to-select": "Toque para seleccionar documentos. Mantenga presionado para ver.",
     "edit-error": "No puede editar envíos en modo de vista previa. Haga clic en editar antes de realizar cambios.",
-    "empty-set-msg": "Este conjunto de documentos está vacío."
+    "empty-set-msg": "Este conjunto de documentos está vacío.",
+    "select-category" : "Seleccione una categoría de documento"
   },
   "prospect-view": {
     "title": "Seleccione prospecto"
