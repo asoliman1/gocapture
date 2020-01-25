@@ -142,7 +142,7 @@
     },
     "settings": {
       "select-barcode": "Seleccione el tipo de código de barras",
-      "unauthinticate": {
+      "unauthenticate": {
         "title": "¿No autenticado?",
         "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
       }

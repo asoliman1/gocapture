@@ -81,7 +81,7 @@ export class Image extends BaseElement {
 				 "",
 			 [
 				{
-					text: 'alerts.image.user-camera',
+					text: 'alerts.image.use-camera',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({

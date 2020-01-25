@@ -89,7 +89,7 @@ export class RapidCaptureService {
   private showUserPrompt(barcodes, selectedForm, stationId, elementId, theme, captureType) {
     const buttons = [
       {
-        text: 'general.remove',
+        text: 'alerts.remove',
         role: 'cancel',
         handler: () => {
           this.isProcessing = false;

@@ -2,8 +2,7 @@ section-block {
   width: 100% !important;
 
   .section {
-    margin: 0;
-    border-radius: 0;
+    margin: 10px 0;
     width: 100% !important;
     background: transparent;
     box-shadow: none;
@@ -26,7 +25,7 @@ section-block {
       }
 
       ion-icon {
-        transition: all 350ms ease-in-out;
+        transition: all 200ms ease-in-out;
 
         &.active {
           transform: rotate(90deg);
@@ -35,10 +34,11 @@ section-block {
     }
 
     .card-content {
-      padding: 0px !important; 
-      transition-property: all;
-	    transition-duration: 350ms;
-	    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+      padding: 0 !important; 
+      // transition-property: all;
+	    // transition-duration: 350ms;
+      // transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+      transition: all 500ms ease-in-out;
       margin-left: 1px;
     }
 
