@@ -1,3 +1,4 @@
+import { TranslateConfigService } from './translate/translateConfigService';
 import { BadgeResponse } from '../model';
 import { Injectable } from "@angular/core";
 import { Headers, Http, Response, URLSearchParams } from "@angular/http";
@@ -46,7 +47,8 @@ export class RESTClient {
 		private submissionsRepository: SubmissionsRepository,
 		private submissionMapper: SubmissionMapper,
 		private appVersion: AppVersion,
-		private platform: Platform
+		private platform: Platform,
+		private translateConfigService:TranslateConfigService
 		) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
@@ -80,6 +82,7 @@ export class RESTClient {
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
 		req.bundle_id = this.bundleId;
+		req.localization = this.translateConfigService.defaultLanguage();
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
 				if (resp.status != "200") {

@@ -228,7 +228,7 @@ export class GOCAudio extends BaseElement {
 				}
 			}];
 
-		this.popup.showAlert('alerts.warning', {text:"audio-recording.delete-recording"}, buttons, this.selectedTheme);
+		this.popup.showAlert('alerts.warning', {text:"alerts.audio-recording.delete-recording"}, buttons);
 	}
 
 	removeRecordingHandler() {

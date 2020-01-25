@@ -1,3 +1,4 @@
+import { TranslateConfigService } from './translate/translateConfigService';
 import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
@@ -79,6 +80,7 @@ export class BussinessClient {
     private settingsService: SettingsService,
     private geolocation: Geolocation,
     private intercom: Intercom,
+    private translateConfigService: TranslateConfigService,
     private popup: Popup) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -274,8 +276,10 @@ export class BussinessClient {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
+    this.translateConfigService.setLanguage(this.registration.localization);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
+      
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
         if (reply.in_app_support) {

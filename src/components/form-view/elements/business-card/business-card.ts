@@ -148,12 +148,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         buttons = this.actionsForCards(type);
       }
 
-      let sheet = this.actionCtrl.create({
-        title: "",
-        buttons: buttons,
-        cssClass: this.selectedTheme.toString()
-      });
-      sheet.present();
+      this.popup.showActionSheet("",buttons);
     } else {
       if (this.readonly) {
         return;

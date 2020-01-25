@@ -101,7 +101,6 @@ export class Settings {
   updateUser(result : any) {
     this.user.localizations = result.localizations;
     this.user.localization = result.localization;
-    console.log(result.localization);
     this.db.saveRegistration(this.user).subscribe();
   }
   
@@ -127,13 +126,11 @@ export class Settings {
   }
 
   setLocalization() {
-    console.log(this.user.localization)
+    console.log(this.user.localization,this.translateConfigService.defaultLanguage())
     if (this.user.localization && this.user.localizations) {
       this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
     } else {
-      this.localization = new Localization();
-      this.localization.id = 'en';
-      this.localization.name = 'English';
+      this.localization = this.user.localizations.find((localization) => this.translateConfigService.defaultLanguage() == localization.id);
     }
   }
 
