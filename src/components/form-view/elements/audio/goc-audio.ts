@@ -221,7 +221,7 @@ export class GOCAudio extends BaseElement {
 				}
 			},
 			{
-				text: 'general.remove',
+				text: 'alerts.remove',
 				role: '',
 				handler: () => {
 					this.removeRecordingHandler();

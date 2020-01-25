@@ -221,7 +221,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         }
       },
       {
-        text: 'general.remove',
+        text: 'alerts.remove',
         role: 'destructive',
         handler: () => {
           this.zone.run(() => {

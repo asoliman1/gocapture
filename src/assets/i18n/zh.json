@@ -239,7 +239,8 @@
     "edit-error": "您不能在预览模式下编辑提交。进行更改之前，请单击“编辑”。",
     "long-press": "长按查看文档。",
     "tap-to-select": "点击以选择文档。长按查看。",
-    "empty-set-msg": "该文档集为空。"
+    "empty-set-msg": "该文档集为空。",
+    "select-category" : "选择文件类别"
   },
   "prospect-view": {
     "title": "选择前景"
