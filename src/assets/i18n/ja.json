@@ -100,7 +100,7 @@
     "choose-from": "から選ぶ",
     "remove": "削除する",
     "loading": {
-      "one-momnet": "一瞬のローディング記録",
+      "one-moment": "一瞬のローディング記録",
       "loading": "積み込み",
       "loading-scanner": "ローディングスキャナー",
       "authenticating": "認証しています...",

@@ -100,7 +100,7 @@
     "cancel": "Cancel",
     "remove": "Remove",
     "loading": {
-      "one-momnet": "One moment. Loading record...",
+      "one-moment": "One moment. Loading record...",
       "loading": "Loading...",
       "loading-scanner": "Loading scanner...",
       "authenticating": "Authenticating...",
