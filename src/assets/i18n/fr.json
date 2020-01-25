@@ -1,0 +1,231 @@
+{
+  "login": {
+    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
+    "email-placeholder": "Enter Email Address",
+    "auth-placeholder": "Enter Auth Code",
+    "auth-button": "Authenticate",
+    "continue-button": "Continue",
+    "connection-mode": {
+      "title": "Connection mode",
+      "normal": "Normal",
+      "demo": "Demo"
+    }
+  },
+  "sideMenu": {
+    "events": "Events",
+    "settings": "Settings",
+    "hi": "Hi",
+    "welcome-back": "Welcome back"
+  },
+  "general": {
+    "syncing": "Syncing...",
+    "cancel": "Cancel",
+    "select-badge-type": "Select Badge Type",
+    "remind-about-leads": "Remind me about leads",
+    "important": "Important",
+    "share": "Share",
+    "done": "Done",
+    "ok": "Ok",
+    "unauthenticate": "Unauthenticate",
+    "back": "Back",
+    "close": "Close",
+    "select": "Select",
+    "send": "Send"
+  },
+  "settings": {
+    "title": "Settings",
+    "organization": {
+      "header": "Organization",
+      "name": "Name",
+      "key": "Key",
+      "operator": "Operator",
+      "deviceId": "Device ID"
+    },
+    "application": {
+      "header": "Application",
+      "localization": "Localization"
+    },
+    "operations": {
+      "header": "Operations",
+      "automatic-upload": "Automatic Upload",
+      "save-business-cards": "Save business cards on device",
+      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
+      "auto-crop": "Auto-Crop"
+    },
+    "dropdown": {
+      "header": "Dropdown",
+      "label": "Single tap selection"
+    },
+    "kiosk-mode": {
+      "header": "Kiosk mode",
+      "label": "Pass code"
+    },
+    "diagnostics": {
+      "header": "Diagnostics",
+      "app-version": "App version",
+      "enable-logging": "Enable logging",
+      "view-log-button": "View log",
+      "test-badge-scan": "Test Badge Scan"
+    },
+    "unauth-device-btn": "Unauthenticate Device"
+  },
+  "form-capture": {
+    "submit-btn": "Submit",
+    "edit-btn": "Edit",
+    "update-btn": "Update",
+    "date-info": "Captured on",
+    "search-list": "Search List",
+    "unsubmitted-data-msg": "You have unsubmitted data on this form. If you go back, this submission will not be saved. If you want to save this submission, then tap the submit button instead."
+  },
+  "logs": {
+    "title": "Logs",
+    "show-more": "Show more"
+  },
+  "alerts": {
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info",
+    "ok": "OK",
+    "badge-id": "Badge ID",
+    "choose-from": "Choose from",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "loading": {
+      "one-momnet": "One moment. Loading record...",
+      "loading": "Loading...",
+      "loading-scanner": "Loading scanner...",
+      "authenticating": "Authenticating...",
+      "unauthenticating": "Unauthenticating...",
+      "processing": "Processing..."
+    },
+    "business-card": {
+      "message": "Business card was saved to the Photo Library",
+      "save-to-library": "Save to library",
+      "retake": "Retake",
+      "view-image": "View image",
+      "choose-from-library": "Choose from library",
+      "saved-image": "Business card was saved to the Photo Library!"
+    },
+    "image": {
+      "use-camera": "Use camera",
+      "choose-from-album": "Choose from album"
+    },
+    "rapid-scan": {
+      "process": "Process",
+      "badges-reminder": "You have Rapid Scanned badges for {{formName}} saved in  local storage on this device that have not been submitted. Do you want to submit or delete them?"
+    },
+    "duplicate-lead": {
+      "title": "Duplicate Lead",
+      "message": "This Lead has already been captured on {{date}} do you want to edit it?",
+      "remove-msg": "Duplicate lead removed successfully.",
+      "already-scanned": "Lead already scanned on {{date}}. Edit the submission as needed."
+    },
+    "kiosk-mode": {
+      "message": "No kiosk password set!",
+      "set-password": "Set Kiosk Mode Pass Code",
+      "enter-passcode": "",
+      "placeholder": "Enter pass code"
+    },
+    "audio-recording": {
+      "cant-start": "Can't start recording",
+      "delete-recording": "Do you want to delete recording?",
+      "downloading": "Record Downloading..."
+    },
+    "settings": {
+      "select-barcode": "Select barcode type ",
+      "unauthenticate": {
+        "title": "Unauthenticate?",
+        "message": "Are you sure you want to unauthenticate this device?"
+      }
+    }
+  },
+  "toast": {
+    "no-internet-connection": "No internet connection available.",
+    "scanned-successfully": "{{badgeName}} scanned successfully.",
+    "uploading-leads": "Uploading leads....keep the app open until the process completes.",
+    "submission-successfull": "Submission successfull.",
+    "syncing-submissions-error": "There was an error sync-ing the submissions"
+  },
+  "forms": {
+    "submitted": "Submitted",
+    "pending": "Pending",
+    "unsubmitted": "Unsubmitted",
+    "capture": "Capture",
+    "review-submissions": "Review Submissions",
+    "rapid-scan": "Rapid Scan",
+    "documents": "Documents",
+    "instructions": "Instructions"
+  },
+  "form-review": {
+    "clear": "Clear",
+    "filter": {
+      "filter": "Filter",
+      "all": {
+        "title": "All",
+        "description": "Tap an entry to edit/review."
+      },
+      "complete": {
+        "title": "Complete",
+        "description": "Entries uploaded. Tap to review."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "Entries pending transcription/validation. Tap to review."
+      },
+      "ready": {
+        "title": "Ready",
+        "description": "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."
+      },
+      "blocked": {
+        "title": "Blocked",
+        "description": "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "Select Search Criteria",
+    "titles": {
+      "name": "Name",
+      "email": "Email",
+      "capture-method": "Capture Method",
+      "capture-date": "Capture Date",
+      "captured-by": "Captured By"
+    },
+    "modifiers": {
+      "equals": "Equals",
+      "doesnt-equal": "Does not equal",
+      "contains": "Contains",
+      "does-not-contain": "Does not contain"
+    },
+    "capture-type": {
+      "normal": "Normal",
+      "badge-scan": "Badge Scan",
+      "list": "List",
+      "transcription": "Transcription"
+    }
+  },
+  "support": {
+    "header": "Support",
+    "title": "How can we help you?",
+    "doc-button": "Documentation",
+    "ticket-button": "Open a ticket",
+    "conversation-button": "Start a conversation"
+  },
+  "signature": {
+    "title": "Signature",
+    "sign-above": "Sign above"
+  },
+  "notifications": {
+    "submit-reminder": "You have leads that have not been submitted. Please open the app and submit them."
+  },
+  "documents": {
+    "open-error": "A problem occurred while opening your documents. Please try again.",
+    "empty-set": "The selected document group doesn’t contain any documents.",
+    "syncing-error": "Documents are still syncing. Please try again later.",
+    "share-error": "A problem occurred when trying to share your document(s). Please try again.",
+    "how-to-send": "How do you want to send the docs?",
+    "edit-error": "You can not edit submissions in preview mode. Click edit before making changes.",
+    "long-press": "Long press to view document.",
+    "tap-to-select": "Tap to select documents. Long press to view."
+  }
+}

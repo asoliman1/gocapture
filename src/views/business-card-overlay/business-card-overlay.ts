@@ -76,7 +76,10 @@ export class BusinessCardOverlayPage {
 			},
 			(err) => {
 				console.log(err);
-				this.popup.showAlert('Error', err, ['Ok']);
+				this.popup.showAlert('alerts.error', err, [{
+					text:'general.ok',
+					role:'cancel'
+				}]);
 			});
 	}
 
@@ -125,7 +128,9 @@ export class BusinessCardOverlayPage {
 
 		}, (err) => {
 			console.log(err);
-			this.popup.showAlert('Error', err, ['Ok']);
-		});
+			this.popup.showAlert('alerts.error', err, [{
+				text:'general.ok',
+				role:'cancel'
+			}]);});
 	}
 }

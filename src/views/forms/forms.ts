@@ -1,3 +1,4 @@
+import { Popup } from './../../providers/popup/popup';
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
 import { Component, ViewChild, NgZone } from '@angular/core';
@@ -33,7 +34,7 @@ export class Forms {
 
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
-    private actionCtrl: ActionSheetController,
+    private popup: Popup,
     private themeProvider: ThemeProvider,
     private duplicateLeadsService: DuplicateLeadsService,
     private modalCtrl: ModalController,
@@ -92,7 +93,7 @@ export class Forms {
 
     let buttons: [any] = [
       {
-        text: 'Capture',
+        text: 'forms.capture',
         icon: "magnet",
         handler: () => {
           //console.log('capture clicked');
@@ -103,7 +104,7 @@ export class Forms {
 
     if (form.is_enable_rapid_scan_mode) {
       buttons.push({
-        text: 'Rapid Scan',
+        text: 'forms.rapid-scan',
         icon: "qr-scanner",
         handler: () => {
           //console.log('review clicked');
@@ -113,7 +114,7 @@ export class Forms {
     }
 
     buttons.push({
-      text: 'Review Submissions',
+      text: 'forms.review-submissions',
       icon: "eye",
       handler: () => {
         //console.log('review clicked');
@@ -124,7 +125,7 @@ export class Forms {
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
       buttons.push({
-        text: 'Documents',
+        text: 'forms.documents',
         icon: 'bookmarks',
         handler: async () => {
           if (documentSets.length === 1) {
@@ -150,7 +151,7 @@ export class Forms {
 
     if (form.instructions_content && form.instructions_content.length > 0) {
       buttons.push({
-        text: 'Instructions',
+        text: 'forms.instructions',
         icon: "paper",
         handler: () => {
           //console.log('review clicked');
@@ -160,20 +161,14 @@ export class Forms {
     }
 
     buttons.push({
-      text: 'Cancel',
+      text: 'general.cancel',
       role: 'cancel',
       handler: () => {
         //console.log('Cancel clicked');
       }
     });
 
-
-    let actionSheet = this.actionCtrl.create({
-      title: form.name,
-      buttons: buttons,
-      cssClass: this.selectedTheme.toString()
-    });
-    actionSheet.present();
+      this.popup.showActionSheet(form.name,buttons);
   }
 
   ionViewDidEnter() {

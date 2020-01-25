@@ -1,3 +1,4 @@
+import { Popup } from './../../../../providers/popup/popup';
 import { Component, Input, forwardRef, NgZone } from '@angular/core';
 import { FormElement } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
@@ -45,6 +46,7 @@ export class Image extends BaseElement {
 		private camera: Camera,
 		private platform: Platform,
 		private zone: NgZone,
+		private popup:Popup,
 		public util: Util,
 		private imageProc: ImageProcessor,
 		private themeProvider: ThemeProvider,
@@ -75,11 +77,11 @@ export class Image extends BaseElement {
 		}
 
 		let camera = this.camera;
-		let sheet = this.actionCtrl.create({
-			title: "",
-			buttons: [
+		this.popup.showActionSheet(
+				 "",
+			 [
 				{
-					text: 'Use Camera',
+					text: 'alerts.image.user-camera',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({
@@ -99,7 +101,7 @@ export class Image extends BaseElement {
 					}
 				},
 				{
-					text: 'Choose from Album',
+					text: 'alerts.image.choose-from-album',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({
@@ -119,13 +121,11 @@ export class Image extends BaseElement {
 					}
 				},
 				{
-					text: 'Cancel',
+					text: 'general.cancel',
 					role: 'cancel'
 				}
-			],
-			cssClass: this.selectedTheme.toString()
-		});
-		sheet.present();
+			]
+		);
 	}
 
 	toggleSelection(index: number) {

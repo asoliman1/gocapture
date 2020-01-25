@@ -3,12 +3,10 @@ import { Injectable } from "@angular/core";
 import { FormCapture } from "../views/form-capture";
 import { BussinessClient } from "./business-service";
 import { Subscription } from "rxjs";
-import { SyncClient } from "./sync-client";
 import { Popup } from "../providers/popup/popup";
 import { App } from 'ionic-angular';
 
 import * as moment from 'moment';
-import { ThemeProvider } from "../providers/theme/theme";
 import { SubmissionMapper } from "./submission-mapper";
 
 @Injectable()
@@ -40,15 +38,15 @@ export class DuplicateLeadsService {
 
         const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
 
-          this.popup.showAlert('Duplicate Lead',
-            `This lead has already been captured on ${date}. Do you want to edit it?`,
+          this.popup.showAlert('alerts.duplicate-lead.title',
+            {text:'alerts.duplicate-lead.message',params:{date}},
             [{
               text: 'Remove', handler: () => {
                 this.client.removeSubmission({ id: data.id }).subscribe((_) => {
                   // this.doRefresh();
 
                   this.popup.showToast(
-                     "Duplicate lead removed successfully.",
+                     {text:'alerts.duplicate-lead.remove-msg'},
                      "bottom",
                      "success",
                      1500,
@@ -81,7 +79,7 @@ export class DuplicateLeadsService {
       const date = moment(data.submission.submission_date).format('MMM DD[th], YYYY [at] hh:mm A');
       setTimeout(() => {
         this.popup.showToast(
-           `Lead already scanned on ${date}. Edit the submission as needed.`,
+           {text:'alerts.duplicate-lead.already-scanned',params:{date}},
            "bottom",
            "success",
         )

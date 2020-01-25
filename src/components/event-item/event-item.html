@@ -17,13 +17,13 @@
   <div class="submissions">
 
     <ion-chip [style.color]="textColor || 'white'" > 
-      <ion-icon color="secondary" ></ion-icon>  <ion-label >{{sent || 0}} Submitted</ion-label>
+      <ion-icon color="secondary" ></ion-icon>  <ion-label >{{sent || 0}} {{'forms.submitted' | translate}}</ion-label>
     </ion-chip>
     <ion-chip [style.color]="textColor || 'white'" >
-       <ion-icon color="orange"></ion-icon> <ion-label >{{onHold || 0}} Pending</ion-label>
+       <ion-icon color="orange"></ion-icon> <ion-label >{{onHold || 0}} {{'forms.pending' | translate}}</ion-label>
       </ion-chip>
     <ion-chip [style.color]="textColor || 'white'" >
-       <ion-icon color="danger"></ion-icon> <ion-label >{{unsent || 0}} Unsubmitted</ion-label>
+       <ion-icon color="danger"></ion-icon> <ion-label >{{unsent || 0}} {{'forms.unsubmitted' | translate}}</ion-label>
       </ion-chip>
 
   </div>

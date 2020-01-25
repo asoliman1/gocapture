@@ -1,4 +1,4 @@
-<ion-menu [content]="content">
+<ion-menu [content]="content" >
   <ion-content class="sidemenu">
     <div class="profile">
       <ion-item>
@@ -6,14 +6,14 @@
           <img-loader [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture" useImg></img-loader>
           <div *ngIf="!user?.user_profile_picture"> {{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
         </ion-avatar>
-        <h1>Hi, {{user?.first_name}}</h1>
-        <h3>Welcome back</h3>
+        <h1>{{'sideMenu.hi' | translate}}, {{user?.first_name}}</h1>
+        <h3>{{'sideMenu.welcome-back' | translate}}</h3>
       </ion-item>
     </div>
     <ion-list color="dark">
       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
         <ion-icon  item-left [name]="p.icon"></ion-icon>
-        {{p.title}}
+        {{p.title | translate}}
       </button>
     </ion-list>
   </ion-content>

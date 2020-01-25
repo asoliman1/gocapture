@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { FiltersViewComponent } from './filters-view/filters-view';
 import { IonicModule } from "ionic-angular";
@@ -5,7 +6,8 @@ import { IonicModule } from "ionic-angular";
   declarations: [FiltersViewComponent,
     ],
   imports: [
-    IonicModule
+    IonicModule,
+    TranslateModule
   ],
   exports: [FiltersViewComponent,
     ]

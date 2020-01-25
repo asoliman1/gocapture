@@ -196,6 +196,7 @@ export class FormsProvider {
 
   resetForms(){
     this.forms = [];
+    this.loaded = false;
   }
 
   getForms(): Form[] {

@@ -1,3 +1,5 @@
+import { Localization } from "./localization";
+
 export class User {
 	id : number;
 	customerID : number;
@@ -22,4 +24,6 @@ export class User {
 	documentation_url : string;
 	support_email : string;
 	app_name : string;
+	localizations : [ Localization ];
+	localization : string;
 }

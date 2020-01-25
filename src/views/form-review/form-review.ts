@@ -65,11 +65,10 @@ export class FormReview {
 	) {
 
 		this.statusFilters = [
-			{ id: 'all', title: "All", status: 0, description: "Tap an entry to edit/review." },
-			{ id: 'sent', title: "Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review." },
-			{ id: 'hold', title: "Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review." },
-			{ id: 'ready', title: "Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete." },
-			{ id: 'blocked', title: "Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete." },
+			{ id: 'all', title: "form-review.filter.all.title", status: 0, description: "form-review.filter.all.description" },
+			{ id: 'sent', title: "form-review.filter.complete.title", status: SubmissionStatus.Submitted, description: "form-review.filter.complete.description" },
+			{ id: 'hold', title: "form-review.filter.pending.title", status: SubmissionStatus.OnHold, description: "form-review.filter.ready.description" },
+			{ id: 'blocked', title: "form-review.filter.blocked.title", status: SubmissionStatus.Blocked, description: "form-review.filter.blocked.description" },
 		];
 		this.statusFilter = this.statusFilters[0];
 
@@ -277,7 +276,7 @@ export class FormReview {
 			this.zone.run(() => {
 				this.syncing = false;
 				this.doRefresh();
-				this.popup.showToast("There was an error sync-ing the submissions");
+				this.popup.showToast({text:'toast.syncing-submissions-error'});
 				console.log(err)
 			});
 		});

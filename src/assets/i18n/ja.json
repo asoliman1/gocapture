@@ -1,0 +1,272 @@
+{
+  "login": {
+    "header": "管理者に連絡し、認証コードを取得して下さい。下記に認証コードを入力して下さい。",
+    "email-placeholder": "メールを入力",
+    "auth-placeholder": "認証コードを入力",
+    "auth-button": "認証する",
+    "continue-button": "続く",
+    "connection-mode": {
+      "title": "接続モード",
+      "normal": "ノーマル",
+      "demo": "デモ"
+    }
+  },
+  "sideMenu": {
+    "events": "イベント",
+    "support": "サポート",
+    "settings": "設定",
+    "hi": "こんにちは",
+    "welcome-back": "おかえりなさい"
+  },
+  "general": {
+    "syncing": "同期中",
+    "cancel": "キャンセル",
+    "select-badge-type": "バッジの種類を選択",
+    "remind-about-leads": "リードについて通知する",
+    "important": "重要",
+    "share": "共有",
+    "done": "やった",
+    "ok": "Ok",
+    "unauthenticate": "不認証",
+    "back": "戻る",
+    "close": "閉じる",
+    "select": "選択する",
+    "send": "送る",
+    "search": "探す",
+    "select-items": "アイテムを選択",
+    "front": "フロント"
+  },
+  "settings": {
+    "title": "設定",
+    "organization": {
+      "header": "組織",
+      "name": "名前",
+      "key": "キー",
+      "operator": "オペレーター",
+      "deviceId": "デバイス名"
+    },
+    "application": {
+      "header": "アプリ",
+      "localization": "ローカリゼーション"
+    },
+    "operations": {
+      "header": "操作",
+      "automatic-upload": "自動アップロード",
+      "save-business-cards": "デバイスに名刺を保存",
+      "reminder-for-unsubmitted-leads": "未提出のリードについて通知する",
+      "auto-crop": "自動クロップ"
+    },
+    "dropdown": {
+      "header": "ドロップダウン",
+      "label": "シングルタップ選択"
+    },
+    "kiosk-mode": {
+      "header": "キヲスクモード",
+      "label": "パスコード"
+    },
+    "diagnostics": {
+      "header": "診断",
+      "app-version": "アプリバージョン",
+      "enable-logging": "ログを",
+      "view-log-button": "ログ見る",
+      "test-badge-scan": "テストバッジスキャン"
+    },
+    "unauth-device-btn": "デバイス不妊症"
+  },
+  "form-capture": {
+    "submit-btn": "提出",
+    "edit-btn": "編集",
+    "update-btn": "更新",
+    "date-info": "取得日",
+    "search-list": "検索リスト",
+    "unsubmitted-data-msg": "フォームには未提出のデータあります。戻ると送信は保存されません。保存する場合は送信ボタンをタップして下さい。",
+    "scan-mode": "スキャンモード：",
+    "business-card": "名刺",
+    "badge-scan": "バッジスキャン",
+    "error-msg": "メールアドレスまたは名前が必要です",
+    "check-fields-msg": "次のフィールドを確認してください。 {{fields}}"
+  },
+  "logs": {
+    "title": "ログ",
+    "show-more": "もっと見る"
+  },
+  "alerts": {
+    "warning": "警告",
+    "error": "エラー",
+    "info": "情報",
+    "Ok": "Ok",
+    "cancel": "キャンセル",
+    "badge-id": "バッジID",
+    "choose-from": "から選ぶ",
+    "remove": "削除する",
+    "loading": {
+      "one-momnet": "一瞬のローディング記録",
+      "loading": "積み込み",
+      "loading-scanner": "ローディングスキャナー",
+      "authenticating": "認証しています...",
+      "unauthenticating": "認証されていません...",
+      "processing": "処理.."
+    },
+    "business-card": {
+      "message": "フォトライブラリーに名刺保存",
+      "save-to-library": "ライブラリに保存",
+      "retake": "再撮り",
+      "view-image": "画像を見る",
+      "choose-from-library": "ライブラリから選択",
+      "saved-image": "フォトライブラリーに名刺保存"
+    },
+    "image": {
+      "use-camera": "カメラを使う",
+      "choose-from-album": "アルバムから選ぶ"
+    },
+    "rapid-scan": {
+      "process": "処理する",
+      "badges-reminder": " このデバイスのローカルストレージには {{formName}} 送信されていない高速スキャンバッジがあります。それを送信、又は削除しますか？ "
+    },
+    "duplicate-lead": {
+      "title": "重複リード",
+      "message": " このリードは {{date}} 既にキャプチャーされてます。編集しますか",
+      "remove-msg": "重複するリードは正常に削除されました。",
+      "already-scanned": "リードは既に {{date}} にスキャンされました。必要に応じて提出物を編集します。"
+    },
+    "kiosk-mode": {
+      "message": "キオスクのパスワードが設定されていません",
+      "set-password": "キオスクモードのパスコードを設定。",
+      "enter-passcode": "",
+      "placeholder": "パスコードを入力してください"
+    },
+    "audio-recording": {
+      "cant-start": "録音できません",
+      "delete-recording": "録音削除しますか",
+      "downloading": "レコードのダウンロード"
+    },
+    "settings": {
+      "select-barcode": "バーコードタイプを選択",
+      "unauthenticate": {
+        "title": "不認証？",
+        "message": "デバイスの認証を解除しますか"
+      }
+    }
+  },
+  "toast": {
+    "no-internet-connection": "インターネットに接続できません",
+    "scanned-successfully": "{{badgeName}} が正常にスキャンされました",
+    "uploading-leads": "リードをアップロード中。プロセス完了までアプリを閉じないで下さい。",
+    "submission-successfull": "提出成功",
+    "syncing-submissions-error": "提出物の同期中にエラーが発生しました",
+    "auth-err": "無効な資格情報",
+    "auth-failed": "認証に失敗しました。新しい認証コードを取得してください"
+  },
+  "forms": {
+    "submitted": "提出済",
+    "pending": "保留中",
+    "unsubmitted": "未提出",
+    "capture": "キャプチャー",
+    "review-submissions": "提出物を確認",
+    "rapid-scan": "高速スキャン",
+    "documents": "書類",
+    "instructions": "説明",
+    "title": "イベント"
+  },
+  "form-review": {
+    "clear": "晴れ",
+    "filter": {
+      "filter": "フィルター",
+      "all": {
+        "title": "全",
+        "description": "エントリータップし、編集・レビュー"
+      },
+      "complete": {
+        "title": "完成",
+        "description": "エントリーアップロード済み。タップし、レビュー。"
+      },
+      "pending": {
+        "title": "保留中",
+        "description": "転記・検証待ちのエントリー。タップし、確認。"
+      },
+      "ready": {
+        "title": "準備完了",
+        "description": "アップロード用エントリーの準備。修正はタップ、ブロックは青い丸をタップ、左スワイプで削除。"
+      },
+      "blocked": {
+        "title": "ブロックされた",
+        "description": "アップロード用エントリーがブロックされている。修正はタップ、ブロック解除は赤い丸、左スワイプで削除。"
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "選択条件を選択",
+    "titles": {
+      "name": "名前",
+      "email": "メール",
+      "capture-method": "キャプチャー方法",
+      "capture-date": "キャプチャー日付",
+      "captured-by": "キャプチャ者"
+    },
+    "modifiers": {
+      "equals": "等しい",
+      "doesnt-equal": "等しくない",
+      "contains": "含む",
+      "does-not-contain": "含まない"
+    },
+    "capture-type": {
+      "normal": "ノーマル",
+      "badge-scan": "バッジスキャン",
+      "list": "リスト",
+      "transcription": "転記"
+    }
+  },
+  "support": {
+    "header": "サポート",
+    "title": "どうお手伝いできます？",
+    "doc-button": "ドキュメンテーション",
+    "ticket-button": "チケットを開く",
+    "conversation-button": "会話を始める"
+  },
+  "signature": {
+    "title": "署名",
+    "sign-above": "上記のサイン"
+  },
+  "notifications": {
+    "submit-reminder": "送信されていないリードがあります。アプリを開いて送信してください。"
+  },
+  "documents": {
+    "open-error": "ドキュメントを開くときに問題が発生しました。もう一度やり直してください。",
+    "empty-set": "選択したドキュメントセットにはドキュメントが含まれていません。",
+    "syncing-error": "ドキュメントは同期中です。後でもう一度やり直して下さい。",
+    "share-error": "ドキュメントを共有しようとしたときに問題が発生しました。もう一度やり直してください。",
+    "how-to-send": "ドキュメントをどのように送信しますか？",
+    "edit-error": "プレビューモードでは提出物を編集できません。変更する前に編集をクリックします。",
+    "long-press": "長押ししてドキュメントを表示します。",
+    "tap-to-select": "タップしドキュメントを選択。長押しで表示。",
+    "empty-set-msg": "このドキュメントセットは空です。"
+  },
+  "prospect-view": {
+    "title": "見込み客を選択"
+  },
+  "stations-view": {
+    "title": "駅を選択",
+    "visited-stations": "訪問した駅",
+    "stations": "駅"
+  },
+  "localizations-view": {
+    "title": "ローカライズを選択"
+  },
+  "submission-status": {
+    "submitted": "プロスペクトが正常にアップロードされました。",
+    "to-submit": "見込み顧客はアップロードの準備ができています。画面の右上隅にあるクラウドをタップしてアップロードします。投稿の横にある青いアイコンをタップして、アップロードをブロックします。",
+    "on-hold": "プロスペクト保留中の転写。待機してください。",
+    "blocked": "見込み顧客がアップロードをブロックしました。赤い丸をタップしてブロックを解除します。"
+  },
+  "badge-scanner": {
+    "scan": "スキャンバッジ",
+    "scanning": "スキャンバッグデ",
+    "couldnt-scan": "バッジをスキャンできませんでした",
+    "nfc-msg": "スキャンの準備ができました。デバイスをバッジの近くに保持します。",
+    "scan-nfc": "NFCバッジをスキャン",
+    "scanning-nfc": "NFCバッジのスキャン",
+    "couldnt-scan-nfc": "NFCバッジをスキャンできませんでした",
+    "rescan": "バッジの再スキャン",
+    "rescan-nfc": "NFCバッジの再スキャン"
+  }
+}

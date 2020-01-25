@@ -9,7 +9,7 @@ import { BaseGroupElement} from "../base-group-element";
 })
 export class SimpleName extends BaseGroupElement {
 
-	@Input() element: FormElement;
+	@Input() element: any;
 
 	@Input() rootGroup: FormGroup;
 

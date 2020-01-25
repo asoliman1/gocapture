@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { ThemeProvider } from './../theme/theme';
 import { Injectable } from '@angular/core';
 import {
@@ -12,6 +13,7 @@ import {
   AlertButton,
   Toast
 } from 'ionic-angular';
+import { AlertInputOptions } from 'ionic-angular/components/alert/alert-options';
 
 
 @Injectable()
@@ -28,6 +30,7 @@ export class Popup {
     public toastCtrl: ToastController,
     public actionCtrl: ActionSheetController,
     private themeProvider: ThemeProvider,
+    private translate : TranslateService,
     public loadingCtrl: LoadingController) {
     //
     this.themeProvider.getActiveTheme().subscribe((data)=>{
@@ -36,37 +39,51 @@ export class Popup {
   }
 
   // A.S
-  showLoading(message,theme = this.theme) {
-    this.loading = this.loadingCtrl.create({ content: message,cssClass:theme });
+  showLoading(message : {text:string,params ?:any},theme = this.theme) {
+    this.loading = this.loadingCtrl.create({ 
+      content: message.text ? this.translate.instant(message.text,message.params || {}) : '',
+      cssClass:theme 
+    });
     return this.loading.present();
   }
 
-  showAlert(title, message, buttons: AlertButton[] | string[], theme = this.theme) {
+  showAlert(title :string, message : {text:string,params ?:any} , buttons: AlertButton[], theme = this.theme , inputs = []) {
     if (this.alert) {
       this.alert.dismiss();
     }
+    
     this.alert = this.alertCtrl.create({
-      title: title,
-      message: message,
-      buttons: buttons,
+      title:this.translate.instant( title ),
+      message: message.text ? this.translate.instant(message.text,message.params || {}) : '',
+      buttons: this.translateBtns(buttons),
+      inputs:this.translateInputs(inputs),
       enableBackdropDismiss: false,
       cssClass: theme 
     });
     return this.alert.present();
   }
 
+  translateBtns(Btns : any[]){
+    return Btns.map((e)=>{
+      e.text = e.text ? this.translate.instant(e.text) : '';
+      return e;
+    })
+  }
+
   // A.S
-  showActionSheet(title, buttons: ActionSheetButton[], theme = this.theme) {
+  showActionSheet(title : string, buttons: ActionSheetButton[], theme = this.theme) {
     this.actionSheet = this.actionCtrl.create({
-      title, buttons, cssClass: theme
+      title : title ? this.translate.instant(title) : '',
+      buttons : this.translateBtns(buttons), 
+      cssClass: theme
     })
     return this.actionSheet.present();
   }
 
   // A.S
-  showToast(message, position = "top", theme = "error", duration = 3000) {
+  showToast(message : {text:string,params ?:any}, position = "top", theme = "error", duration = 3000) {
     this.toast = this.toastCtrl.create({
-      message: message,
+      message: this.translate.instant(message.text,message.params || {}),
       duration: duration,
       position: position,
       cssClass: theme,
@@ -77,20 +94,28 @@ export class Popup {
     return this.toast.present();
   }
 
-  showPrompt(title, message, inputs, buttons, theme = this.theme) {
+  showPrompt(title : {text:string,params ?:any}, message : {text:string,params ?:any}, inputs : AlertInputOptions[], buttons : AlertButton[], theme = this.theme) {
 
     if (this.alert) {
       this.alert.dismiss();
     }
 
     this.alert = this.alertCtrl.create({
-      title: title,
-      message: message,
-      inputs: inputs,
-      buttons: buttons,
+      title: this.translate.instant( title.text,title.params || {} ),
+      message: message.text ? this.translate.instant( message.text,message.params || {} ) : '',
+      inputs: this.translateInputs(inputs),
+      buttons: this.translateBtns(buttons),
       cssClass: theme
     });
     return this.alert.present();
+  }
+
+  translateInputs(inputs : AlertInputOptions[]){
+    return inputs.map((e)=>{
+      e.label = e.label ? this.translate.instant(e.label) : '';
+      e.placeholder = e.placeholder ? this.translate.instant(e.placeholder) : '';
+      return e;
+    })
   }
 
   // A.S
@@ -108,7 +133,7 @@ export class Popup {
   }
 
   // A.S
-  setLoadingContent(content){
-    this.loading.setContent(content);
+  setLoadingContent(content : {text:string,params ?:any}){
+    this.loading.setContent( content.text ? this.translate.instant(content.text,content.params || {}) : '');
   }
 }

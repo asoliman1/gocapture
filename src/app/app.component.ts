@@ -20,6 +20,7 @@ import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Intercom } from '@ionic-native/intercom';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
 
 @Component({
   templateUrl: 'app.html'
@@ -44,7 +45,8 @@ export class MyApp {
     private settingsService: SettingsService,
     private imageLoaderConfig: ImageLoaderConfig,
     private util: Util,
-    private intercom: Intercom
+    private intercom: Intercom,
+    private translateConfigService: TranslateConfigService,
   ) {
     this.subscribeThemeChanges();
     this.initializeApp();
@@ -80,10 +82,20 @@ export class MyApp {
       this.onAppPause();
       this.hideSplashScreen();
       this.util.checkFilesDirectories();
+      this.setAppLocalization();
       this.intercom.setLauncherVisibility('GONE');
     });
   }
 
+  private setAppLocalization() {
+    this.client.getRegistration(true).subscribe((user) => {
+      if (user && user.localization) {
+        this.translateConfigService.setLanguage(user.localization);
+      } else {
+        this.translateConfigService.initTranslate();
+      }
+    });
+  }
 
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
@@ -181,13 +193,13 @@ export class MyApp {
 
   private handleClientErrors() {
     this.client.error.subscribe((resp) => {
-      if (resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast({text:resp});
     });
   }
 
   private handleSyncErrors() {
     this.sync.error.subscribe((resp) => {
-      if (resp) this.popup.showToast(resp);
+      if (resp) this.popup.showToast({text:resp});
     });
   }
 
@@ -219,10 +231,10 @@ export class MyApp {
 
       const buttons = [
         {
-          text: 'Unauthenticate',
+          text: 'general.unauthenticate',
           handler: () => {
             // A.S
-            this.popup.showLoading('');
+            this.popup.showLoading({text:''});
             this.client.unregister(user).subscribe(() => {
               this.nav.setRoot(Login, { unauthenticated: true });
               this.popup.dismiss('loading');
@@ -234,7 +246,7 @@ export class MyApp {
       ];
 
 
-      this.popup.showAlert('Warning', status.message, buttons, this.selectedTheme);
+      this.popup.showAlert('alerts.warning', {text:status.message}, buttons, this.selectedTheme);
     } else {
 
     }
