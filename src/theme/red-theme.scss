@@ -1,7 +1,8 @@
 $theme-color: color($colors, red);
 $theme-text-color : color($colors, white);
+$theme-font-weight: normal ;
 
 .red-theme {
-  @include theme($theme-color,$theme-text-color);
+  @include theme($theme-color,$theme-text-color, $theme-font-weight);
 }
 

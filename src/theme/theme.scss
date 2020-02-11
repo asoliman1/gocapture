@@ -1,4 +1,4 @@
-@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
+@mixin theme ($theme-color,$theme-text-color, $theme-font-weight) { // A.S to set a text color for each theme
   $alert-ios-button-text-color: $theme-color;
 
   $action-sheet-ios-button-text-color: $theme-color;
@@ -28,9 +28,14 @@
 
   .option-item {
     &.selected {
-      color: $theme-color !important;
+      color: $theme-color  !important;
+      font-weight: $theme-font-weight;
+      .title{
+        font-weight: $theme-font-weight;
+    }
     }
   }
+
 
   ion-select.ng-dirty{
     color: $theme-color;
@@ -44,6 +49,7 @@
   .item-radio-checked.item-ios ion-label,
   .item-radio-checked.item-md ion-label {
     color: $theme-color;
+    font-weight: $theme-font-weight;
   }
 
   ion-textarea.ng-dirty {
@@ -107,6 +113,8 @@
   }
 
   .info-box,ion-text{
-    color: $theme-text-color // A.S to set a text color for each theme
+    font-size: larger;
+    color: $theme-text-color; // A.S to set a text color for each theme
   }
+
 }

@@ -1,6 +1,7 @@
 $theme-color: color($colors, blue);
 $theme-text-color : color($colors, white);
+$theme-font-weight: normal ;
 
 .blue-theme {
-  @include theme($theme-color,$theme-text-color);
+  @include theme($theme-color,$theme-text-color, $theme-font-weight);
 }
