@@ -39,7 +39,7 @@
   </ion-toolbar>
 
   <ion-toolbar *ngIf="errorMessage.text">
-    <div class="error-message" >{{errorMessage.text | translate : errorMessage.param }}</div>
+    <div class="error-message" >{{errorMessage.text | translate : {fields: (errorMessage.param)} }}</div>
   </ion-toolbar>
 </ion-header>
 

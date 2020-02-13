@@ -39,10 +39,10 @@
     </dropdown>
 
     <!--RADIO-->
-    <ion-item *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <div *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
-    </ion-item>
+    </div>
 
     <!--SIMPLE NAME-->
     <simple-name *ngSwitchCase="'simple_name'" [class.from-barcode]="element.is_filled_from_barcode" [element]="element"
@@ -67,10 +67,10 @@
     </ion-item>
 
     <!--ADDRESS-->
-    <ion-item *ngSwitchCase="'address'">
+    <div *ngSwitchCase="'address'">
       <address  [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
                [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"></address>
-    </ion-item>
+    </div>
 
 
     <!--MONEY-->
@@ -110,24 +110,24 @@
     </ion-item>
 
     <!--CHECKBOX-->
-    <ion-item *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <div *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
-    </ion-item>
+    </div>
 
     <!--IMAGE-->
-    <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <div *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <image-item [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
-    </ion-item>
+    </div>
 
     <!--BUSINESS CARD-->
-    <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <div *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
                      [formControlName]="element.identifier" [form]="form" [submission]="submission" (onProcessingEvent)="onProcessing($event)">
       </business-card>
-    </ion-item>
+    </div>
 
     <!--SIGNATURE-->
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
@@ -155,7 +155,7 @@
     </goc-audio>
 
     <!-- DOCUMENTS -->
-    <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <div *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <document
         [form]="form"
         [readonly]="readOnly"
@@ -166,7 +166,7 @@
         [isEditing]="isEditing"
         [submission]="submission">
       </document>
-    </ion-item>
+    </div>
 
 
     <!-- <ion-item *ngSwitchDefault>
