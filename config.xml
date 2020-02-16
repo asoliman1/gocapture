@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="11" id="com.leadliaison.captello" ios-CFBundleVersion="11" version="2.0.7" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="12" id="com.leadliaison.captello" ios-CFBundleVersion="12" version="2.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Captello</name>
     <description>LeadLiason Captello!</description>
     <author email="contact@leadliaison.com" href="http://leadliaison.com/">LeadLiaison Team</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -55,24 +55,6 @@
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
-        <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>Captello! use the location to pass the latitude and longitude of the device where a form submission takes place. Location is used by application administrators on our backend to do geographic reporting.</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
-            <string>Captello! use the location to pass the latitude and longitude of the device where a form submission takes place. Location is used by application administrators on our backend to do geographic reporting.</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
-            <string>Captello! needs to access microphone</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
-            <string>Captello! uses the camera to take pictures of business cards and documents that are transcribed into text. Additionally, the camera may be used to capture images used in form submissions.</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
-            <string>Captello! needs to access photo library</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
-            <string>Captello! needs to access photo library</string>
-        </edit-config>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
