@@ -1,159 +1,273 @@
 {
   "login": {
-    "header": "Please contact your company administrator to obtain an Auth Code. Enter your Auth Code below.",
-    "email-placeholder": "Enter Email Address",
-    "auth-placeholder": "Enter Auth Code",
-    "auth-button": "Authenticate",
-    "continue-button": "Continue",
+    "header": "Bitte kontaktieren Sie Ihren Unternehmensadministrator um ein Authentifizierungscode zu erhalten. Geben Sie Ihr Authentifizierungscode unten ein.",
+    "email-placeholder": "Email Adresse eingeben",
+    "auth-placeholder": "Authentifizierungscode eingeben",
+    "auth-button": "Sind Sie sich sicher das sie die Authentifizierung von diesem Gerät entfernen möchten?",
+    "continue-button": "fortsetzen",
     "connection-mode": {
-      "title": "Connection mode",
+      "title": "Verbindungsmodus",
       "normal": "Normal",
-      "demo": "Demo"
+      "demo": "Demo "
     }
   },
   "sideMenu": {
-    "events": "Events",
-    "settings": "Settings",
-    "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "events": "Veranstaltung",
+    "support": "Support",
+    "settings": "Einstellungen",
+    "hi": "Hallo",
+    "welcome-back": "Willkommen zurück"
   },
-  "general": {
-    "syncing": "Syncing...",
-    "cancel": "Cancel",
-    "select-badge-type": "Select Badge Type",
-    "remind-about-leads": "Remind me about leads"
+ "general": {
+    "syncing": "Synchronisieren...",
+    "cancel": "Abbrechen",
+    "select-badge-type": "Badge Typ auswählen",
+    "remind-about-leads": "Erinnere mich an die Leads",
+    "important": "wichtig",
+    "share": "teilen",
+    "done": "fertig",
+    "ok": "ok",
+    "unauthenticate": "Unauthentifizieren?",
+    "back": "zurück",
+    "close": "schließen",
+    "select": "auswählen",
+    "send": "senden",
+    "search": "suchen ",
+    "select-items": "Gegenstände auswählen",
+    "front" : "Vorderseite"
   },
-  "settings": {
-    "title": "Settings",
+ "settings": {
+    "title": "Einstellungen",
     "organization": {
-      "header": "Organization",
+      "header": "Organisation",
       "name": "Name",
-      "key": "Key",
-      "operator": "Operator",
-      "deviceId": "Device ID"
+      "key": "Schlüssel",
+      "operator": "Betreiber",
+      "deviceId": "Geräte ID"
     },
     "application": {
       "header": "Application",
-      "localization": "Localization"
+      "localization": "Sprache"
     },
     "operations": {
-      "header": "Operations",
-      "automatic-upload": "Automatic Upload",
-      "save-business-cards": "Save business cards on device",
-      "reminder-for-unsubmitted-leads": "Reminder for unsubmitted leads",
-      "auto-crop": "Auto-Crop"
+      "header": "Operationen",
+      "automatic-upload": "automatisch hochladen",
+      "save-business-cards": "Visitenkarte auf dem Gerät speichern",
+      "reminder-for-unsubmitted-leads": "Erinnerung für nicht eingereichte Leads",
+      "auto-crop": "automatisch zuschneiden"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "Dropdown-Liste",
+      "label": "Single-touch Auswahl"
     },
     "kiosk-mode": {
-      "header": "Kiosk mode",
-      "label": "Pass code"
+      "header": "Kiosk Modus",
+      "label": "Zugangscode"
     },
     "diagnostics": {
-      "header": "Diagnostics",
+      "header": "Diagnose",
       "app-version": "App version",
-      "enable-logging": "Enable logging",
-      "view-log-button": "View log",
-      "test-badge-scan": "Test Badge Scan"
+      "enable-logging": "Logging aktivieren",
+      "view-log-button": "Protokoll anzeigen",
+      "test-badge-scan": "Test Badge scan"
     },
-    "unauth-device-btn": "Unauthenticate Device"
+    "unauth-device-btn": "Gerätauthentifizierung entfernen"
   },
-  "form-capture": {
-    "submit-btn": "Submit",
-    "edit-btn": "Edit",
-    "update-btn": "Update",
-    "date-info": "Captured on",
-    "search-list": "Search List"
+"form-capture": {
+    "submit-btn": "einreichen",
+    "edit-btn": "bearbeiten",
+    "update-btn": "aktualisieren",
+    "date-info": "Aufgenommen am",
+    "search-list": "Liste durchsuchen",
+    "unsubmitted-data-msg": "Sie haben die Daten in diesem Formular noch nicht eingereicht. Diese Daten gehen verloren Sie zurück gehen. Wenn Sie diese speichern möchten, drücken Sie auf Einreichen.",
+    "scan-mode":"Scanmodus",
+    "business-card" : "Visitenkarte ",
+    "badge-scan" : "Badge scannen",
+    "error-msg" : "Name oder Email erforderlich",
+    "check-fields-msg" :"überprüfen Sie bitte folgende Felder {{fields}}"
   },
-  "logs": {
-    "title": "Logs",
-    "show-more": "Show more"
+ "logs": {
+    "title": "Protokolle",
+    "show-more": "Mehr anzeigen"
   },
-  "alerts": {
-    "warning": "Warning",
-    "error": "Error",
-    "info": "Info",
+"alerts": {
+    "warning": "Warnung",
+    "error": "Fehler",
+    "info": "Infomation",
     "Ok": "Ok",
-    "cancel": "Cancel",
+  "badge-id": "Badge-ID",
+    "choose-from": "auswählen von",
+    "cancel": "Abbrechen",
+     "remove": "entfernen",
+ "loading": {
+      "one-momnet": "Ein Moment, Aufzeichnung wird geladen",
+      "loading": "wird geladen",
+      "loading-scanner": "Scanner wird geladen",
+      "authenticating": "authentifizieren..",
+      "unauthenticating":"Authentifizierung wird entfernt...",
+      "processing": "wird bearbeitet"
+    },
     "business-card": {
-      "message": "Business card was saved to the Photo Library"
+      "message": "Visitenkarte wurde in der Foto Bibliothek gespeichert!",
+      "save-to-library": "zur Bibliothek speichern",
+      "retake": "Aufnahme wiederholen",
+      "view-image": "Bild anzeigen",
+      "choose-from-library": "von Bibliothek auswählen",
+      "saved-image": "Visitenkarte wurde in der Foto Bibliothek gespeichert!"
+    },
+ "image": {
+      "use-camera": "Kamera benutzen",
+      "choose-from-album": "vom Album auswählen"
+    },
+    "rapid-scan": {
+      "process": "bearbeiten",
+      "badges-reminder": "Sie haben Badge Schnellscans von {{formName}} auf diesem Gerät gespeichert die noch nicht eingereicht wurden. Möchten Sie diese jetzt einreichen, oder löschen?"
     },
     "duplicate-lead": {
-      "message": "Duplicate Lead"
+      "title": "Potenzialkundenduplikat",
+      "message": "Dieser Potenzialkunde wurde bereits{{date}}  erfasst, möchten Sie ihn bearbeiten?",
+      "remove-msg": "Duplikate erfolgreich entfernt",
+      "already-scanned": "Potenzialkunde wurde schon am {{date}} eingescannt. Bearbeiten Sie die Einreichung falls notwendig."
     },
     "kiosk-mode": {
-      "message": "No kiosk password set!"
+      "message": "Kein Kiosk Passwort festgelegt!",
+       "set-password": "Kiosk Passwort festlegen",
+       "enter-passcode": "Zugangscode eingeben",
+       "placeholder": "Zugangscode eingeben"
     },
     "audio-recording": {
-      "cant-start": "Can't start recording",
-      "delete-recording": "Do you want to delete recording?"
+      "cant-start": "Aufnahme kann nicht gestartet werden",
+      "delete-recording": "Möchten Sie die Aufnahme löschen?",
+      "downloading": "Datensätze werden runtergeladen"
     },
     "settings": {
       "unauthenticate": {
-        "title": "Unauthenticate ?",
-        "message": "Are you sure you want to unauthenticate this device?"
+        "title": "Unauthentifizieren ?",
+        "message": "Sind Sie sich sicher das sie die Authentifizierung von diesem Gerät entfernen möchten?"
       }
     }
   },
+
   "toast": {
-    "no-internet-connection": "No internet connection available."
+    "no-internet-connection": "Keine Internetverbindung vorhanden.",
+"scanned-successfully": "{{badgeName}} erfolgreich eingescannt",
+    "uploading-leads": "Potenzialkunden werden hochgeladen....schließen Sie die App erst wenn der Vorgang erledigt ist.",
+    "submission-successfull": "Einreichung war erfolgreich!",
+    "syncing-submissions-error": "Es gab ein Problem bei der Synchronisierung der Einreichungen.",
+	"auth-err" : "ungültige Anmeldeinformationen",
+	"auth-failed" : "Authentifizierung fehlgeschlagen. Bitte fragen Sie nach einem neuen Authentifizierungscode."
   },
-  "forms": {
-    "submitted": "Submitted",
-    "pending": "Pending",
-    "unsubmitted": "Unsubmitted",
-    "capture": "Capture",
-    "review-submissions": "Review Submissions",
-    "rapid-scan": "Rapid Scan",
-    "documents": "Documents",
-    "instructions": "Instructions"
+ "forms": {
+    "submitted": "eingereicht",
+    "pending": "Ausstehend",
+    "unsubmitted": "nicht eingereicht",
+    "capture": "Aufnehmen",
+    "review-submissions": "Einreichungen überprüfen",
+    "rapid-scan": "schneller Scan",
+    "documents": "Unterlagen",
+    "instructions": "Anweisung",
+    "title": "Veranstaltung"
   },
-  "form-review": {
+ "form-review": {
     "filter": {
       "all": {
-        "title": "All",
-        "description": "Tap an entry to edit/review."
+        "title": "Alles",
+        "description": "Wähle ein Beitrag um diesen zu bearbeiten/überprüfen"
+
       },
       "complete": {
-        "title": "Complete",
-        "description": "Entries uploaded. Tap to review."
+        "title": "Fertigstellen",
+        "description": "Beiträge hochgeladen. Auswählen zum Überprüfen"
       },
       "pending": {
-        "title": "Pending",
-        "description": "Entries pending transcription/validation. Tap to review."
+        "title": "Ausstehend",
+        "description": "Beiträge warten auf Transkription/Validierung. Auswählen zum Überprüfen."
       },
       "ready": {
-        "title": "Ready",
-        "description": "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."
+        "title": "Bereit",
+        "description": "Beiträge sind bereit zum Hochladen. Tippe zu bearbeiten, auf den blauen Kreis tippen zu blokieren, oder swipe nach links um zu löschen."
       },
       "blocked": {
-        "title": "Blocked",
-        "description": "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."
+        "title": "Blokiert",
+        "description": "Hochladen der Beiträge ist blokiert. Tippe zu bearbeiten, tippe auf den roten Kreis zu entsperren, oder swipe nach links um zu löschen."
       }
     }
   },
-  "filters-view": {
-    "select-search-criteria": "Select Search Criteria",
-    "titles": {
+ "filters-view": {
+      "select-search-criteria": "Suchkriterien auswählen",
+      "titles": {
       "name": "Name",
       "email": "Email",
-      "capture-method": "Capture Method",
-      "capture-date": "Capture Date",
-      "captured-by": "Captured By"
+      "capture-method": "Aufnahmemodus",
+      "capture-date": "Aufnahmedatum",
+      "captured-by": "Aufgenommen von"
     },
+
     "modifiers": {
-      "equals": "Equals",
-      "doesnt-equal": "Does not equal",
-      "contains": "Contains",
-      "does-not-contain": "Does not contain"
+      "equals": "ist gleich",
+      "doesnt-equal": "ist nicht gleich",
+      "contains": "enthält",
+      "does-not-contain": "beinhaltet nicht"
     },
-    "capture-type": {
+   "capture-type": {
       "normal": "Normal",
       "badge-scan": "Badge Scan",
-      "list": "List",
-      "transcription": "Transcription"
+      "list": "Liste",
+      "transcription": "Transkription"
     }
+  },
+"support": {
+    "header": "Support",
+    "title": "Wie können wir Ihnen helfen?",
+    "doc-button": "Dokumentation",
+    "ticket-button": "Ein Ticket öffnen",
+    "conversation-button": "Gespräch starten"
+  },
+  "signature": {
+    "title": "Unterschrift",
+    "sign-above": "oben unterschreiben"
+  },
+  "notifications": {
+    "submit-reminder": "Sie haben Potenzialkunden die noch nicht eingereicht wurden. Bitte öffnen Sie die App um diese hochzuladen."
+  },
+  "documents": {
+    "open-error": "Es gab ein Problem beim Öffnen der Dokumente. Bitte versuchen Sie es nochmal.",
+    "empty-set": "Die ausgewählten Dokumentengruppe enthält keine Dokumente",
+    "syncing-error": "Synchronisierung der Dokumente läuft noch. Bitte versuchen Sie es später nochmal.",
+    "share-error": "Ein Problem ist bei dem Teilen der Dokumente aufgetreten. Bitte versuchen Sie es nochmal.",
+    "how-to-send": "Wie möchten Sie die Dokumente schicken?",
+    "edit-error": "Sie können im Vorschaumodus keine Änderungen vornehmen. Drücken Sie auf bearbeiten um Änderungen vorzunehmen.",
+    "long-press": "Sie können im Vorschaumodus keine Veränderungen vornehmen. Bitte drücken sie auf Bearbeiten um Daten zu ändern.",
+    "tap-to-select": "Tap um Dokumente zu selektieren. Gedrückt halten um anzuschauen.",
+    "empty-set-msg": "Dieser Dokumentensatz ist leer."
+  },
+  "prospect-view": {
+    "title": "Potenzialkunde auswählen"
+  },
+  "stations-view": {
+    "title": "Station auswählen",
+    "visited-stations": "Stationen besucht!",
+    "stations": "Stationen"
+  },
+  "localizations-view": {
+    "title": "Sprache auswählen"
+  },
+  "submission-status" : {
+    "submitted":"Potenzialkunde erfolgreich hochgeladen",
+    "to-submit":"Prospekt zum Hochladen bereit. Tippen Sie auf die Wolke in der oberen rechten Ecke des Bildschirms, um sie hochzuladen. Tippen Sie auf das blaue Symbol neben der Übermittlung, um das Hochladen zu blockieren",
+    "on-hold":"Prospekt ausstehende Transkription. Bitte bereit.",
+    "blocked":"Der Interessent konnte nicht hochgeladen werden. Tippen Sie auf den roten Kreis, um die Blockierung aufzuheben."
+  },
+  "badge-scanner":{
+    "scan":"Badge scannen",
+    "scanning":"Bagde scannen",
+    "couldnt-scan":"Badge konnte nicht gescannt werden",
+    "nfc-msg":"Bereit zu scannen. Halten Sie Ihr Gerät an die Badge.",
+    "scan-nfc" :"NFC Badge scannen",
+    "scanning-nfc":"NFC Badge scannen",
+    "couldnt-scan-nfc":"NFC konnte nicht gescannt werden",
+    "rescan" : "Badge erneut scannen",
+    "rescan-nfc": "NFC Badge erneut einscannen"
   }
 }
+
