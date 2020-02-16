@@ -26,7 +26,7 @@
     "important": "重要",
     "share": "共有",
     "done": "やった",
-    "ok": "Ok",
+    "ok": "はい",
     "unauthenticate": "不認証",
     "back": "戻る",
     "close": "閉じる",
@@ -47,7 +47,7 @@
     },
     "application": {
       "header": "アプリ",
-      "localization": "ローカリゼーション"
+      "label": "ローカリゼーション"
     },
     "operations": {
       "header": "操作",
