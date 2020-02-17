@@ -34,7 +34,7 @@
     },
     "application": {
       "header": "Application",
-      "localization": "Localization"
+      "label": "Localization"
     },
     "operations": {
       "header": "Operations",

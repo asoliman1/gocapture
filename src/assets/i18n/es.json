@@ -62,7 +62,7 @@
     },
     "application": {
       "header": "Aplicación",
-      "label": "localización"
+      "label": "Idioma"
     },
     "diagnostics": {
       "header": "Diagnóstico",
