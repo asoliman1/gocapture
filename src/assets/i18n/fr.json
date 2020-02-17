@@ -47,7 +47,7 @@
     },
     "application": {
       "header": "Application",
-      "language": "Langue"
+      "label": "Langue"
     },
     "operations": {
       "header": "Opérations",

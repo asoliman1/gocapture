@@ -47,7 +47,7 @@
     },
     "application": {
       "header": "Application",
-      "localization": "Taal"
+      "label": "Taal"
     },
     "operations": {
       "header": "Operaties",

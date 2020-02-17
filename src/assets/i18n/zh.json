@@ -47,7 +47,7 @@
     },
     "application": {
       "header": "应用程序",
-      "localization": "本地化"
+      "label": "语言"
     },
     "operations": {
       "header": "操作",

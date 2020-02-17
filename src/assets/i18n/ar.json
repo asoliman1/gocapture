@@ -34,7 +34,7 @@
     },
     "application": {
       "header": "تطبيق",
-      "localization": "الموقع"
+      "label": "اللغة"
     },
     "operations": {
       "header": "الموقع/التعريب",

@@ -47,7 +47,7 @@
     },
     "application": {
       "header": "Application",
-      "localization": "Sprache"
+      "label": "Sprache"
     },
     "operations": {
       "header": "Operationen",
