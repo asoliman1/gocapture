@@ -8,8 +8,6 @@ import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
-import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
-import { ThemeProvider } from "../../providers/theme/theme";
 import { FormInstructions } from "../form-instructions";
 import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
 import { ModalController } from "ionic-angular";
@@ -30,24 +28,21 @@ export class Forms {
 
   forms: Form[] = [];
 
-  private selectedTheme: string;
-
+  syncDisabled : boolean;
+  
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
     private popup: Popup,
-    private themeProvider: ThemeProvider,
     private duplicateLeadsService: DuplicateLeadsService,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
     private Keyboard: Keyboard) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val.toString());
     this.getForms();
   }
 
   getForms() {
-    
     this.formsProvider.formsObs.subscribe((val) => {
       if (val) this.updateForms()
     }, (err) => {
@@ -75,9 +70,12 @@ export class Forms {
 
 
   sync() {
+    this.syncDisabled = true;
     this.client.getUpdates().subscribe(() => {
     }, (err) => {
+      this.syncDisabled = false;
     }, () => {
+      this.syncDisabled = false;
     });
   }
 

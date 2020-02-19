@@ -326,13 +326,13 @@ export class RESTClient {
 				result.contacts = data;
 				result.form = forms[index];
 				result.all = false;
-				obs.next(result);
+				obs.next({...result});
 			};
 			let handlerCmp = () =>{
 				result.contacts = [];
 				result.form = forms[index];
 				result.all = true;
-				obs.next(result);
+				obs.next({...result});
 				index++;
 			   if (index < forms.length) {
 				   doTheCall();

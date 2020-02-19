@@ -22,7 +22,6 @@ import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { ImageProcessor } from "../services/image-processor";
-import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
 import {
@@ -133,7 +132,6 @@ export function createTranslateLoader(http: HttpClient) {
     Forms,
     Settings,
     Dispatches,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -205,7 +203,6 @@ export function createTranslateLoader(http: HttpClient) {
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,

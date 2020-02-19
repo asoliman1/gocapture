@@ -28,7 +28,7 @@ export class FormReview {
 
 	submissions: FormSubmission[] = [];
 
-	loading: boolean = true;
+	loading: boolean;
 
 	syncing: boolean = false;
 
@@ -204,7 +204,7 @@ export class FormReview {
 	}
 
 	doRefresh() {
-		this.loading = true;
+		if(!this.submissions.length) this.loading = true;
 		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.loading = false;
 			this.submissions = submissions;

@@ -42,7 +42,6 @@ export class Image extends BaseElement {
 	private selectedTheme;
 
 	constructor(private fb: FormBuilder,
-		private actionCtrl: ActionSheetController,
 		private camera: Camera,
 		private platform: Platform,
 		private zone: NgZone,
@@ -82,6 +81,7 @@ export class Image extends BaseElement {
 			 [
 				{
 					text: 'alerts.image.use-camera',
+					icon : 'camera',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({
@@ -102,6 +102,7 @@ export class Image extends BaseElement {
 				},
 				{
 					text: 'alerts.image.choose-from-album',
+					icon : 'images',
 					handler: () => {
 						this.util.setPluginPrefs()
 						camera.getPicture({

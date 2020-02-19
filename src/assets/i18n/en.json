@@ -84,7 +84,7 @@
     "business-card": "Business Card",
     "badge-scan": "Badge Scan",
     "error-msg": "Email or name is required",
-    "check-fields-msg": "Please check the folowing fields : {{fields}}"
+    "check-fields-msg": "Please check the following fields : {{fields}}"
   },
   "logs": {
     "title": "Logs",
@@ -251,7 +251,7 @@
     "stations": "Stations"
   },
   "localizations-view": {
-    "title": "Select localization"
+    "title": "Select language"
   },
   "submission-status": {
     "submitted": "Prospect uploaded successfully.",

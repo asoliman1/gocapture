@@ -332,7 +332,7 @@ export class BussinessClient {
 
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
-      this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
+      this.rest.unauthenticate(user.access_token).subscribe((done) => {
         if (done) {
           this.onUnAuthSuccess(obs)
         } else {
@@ -379,7 +379,7 @@ export class BussinessClient {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
         obs.error('toast.no-internet-connection');
-        this.formsProvider.setFormsSyncStatus(false);
+        // this.formsProvider.setFormsSyncStatus(false);
         return;
       }
       this.db.getConfig("lastSyncDate").subscribe(time => {
@@ -503,16 +503,16 @@ export class BussinessClient {
             }, (err) => {
               console.error(err);
               obs.error(err);
-              this.errorSource.next(err);
+              // this.errorSource.next(err);
             });
           });
         }, (err) => {
           obs.error(err);
-          this.errorSource.next(err);
+          // this.errorSource.next(err);
         });
       }, (error) => {
         obs.error(error);
-        this.errorSource.next(error);
+        // this.errorSource.next(error);
       });
     });
   }

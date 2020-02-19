@@ -29,6 +29,7 @@
   .option-item {
     &.selected {
       color: $theme-color !important;
+      font-weight: 900;
     }
   }
 

@@ -171,7 +171,7 @@ export class Util {
 
   public imageUrl(path) {
     //if local image
-    if (path.startsWith("assets")) {
+    if (path.startsWith("assets") || path.startsWith('http') || !path) {
       return path;
     }
     let folder = this.file.dataDirectory + "leadliaison/images/";
