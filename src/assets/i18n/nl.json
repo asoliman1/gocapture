@@ -16,7 +16,8 @@
     "support": "Support",
     "settings": "Instellingen",
     "hi": "Hallo",
-    "welcome-back": "Welkom terug"
+    "welcome-back": "Welkom terug",
+    "activations":"Aktivierungen"
   },
  "general": {
     "syncing": "Synchroniseren...",
@@ -166,7 +167,8 @@
     "rapid-scan": "Snelle Scan",
     "documents": "Documenten",
     "instructions": "Instructies",
-    "title": "Gebeurtenissen"
+    "title": "Gebeurtenissen",
+    "activations":"Aktivierungen"
   },
  "form-review": {
     "filter": {
@@ -268,6 +270,9 @@
     "couldnt-scan-nfc":"Kan NFC badge niet scannen",
     "rescan" : "Herscan  badge",
     "rescan-nfc": "Herscan NFC badge"
+  },
+  "activations":{
+    "title":"Aktivierungen"
   }
 }
 

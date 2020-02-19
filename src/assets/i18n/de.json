@@ -16,7 +16,8 @@
     "support": "Support",
     "settings": "Einstellungen",
     "hi": "Hallo",
-    "welcome-back": "Willkommen zurück"
+    "welcome-back": "Willkommen zurück",
+    "activations":"Aktivierungen"
   },
  "general": {
     "syncing": "Synchronisieren...",
@@ -166,7 +167,8 @@
     "rapid-scan": "schneller Scan",
     "documents": "Unterlagen",
     "instructions": "Anweisung",
-    "title": "Veranstaltung"
+    "title": "Veranstaltung",
+    "activations":"Aktivierungen"
   },
  "form-review": {
     "filter": {
@@ -268,6 +270,9 @@
     "couldnt-scan-nfc":"NFC konnte nicht gescannt werden",
     "rescan" : "Badge erneut scannen",
     "rescan-nfc": "NFC Badge erneut einscannen"
+  },
+  "activations":{
+    "title":"Aktivierungen"
   }
 }
 

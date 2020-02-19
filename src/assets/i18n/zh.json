@@ -16,7 +16,8 @@
     "support": "支持",
     "settings": "设置",
     "hi": "你好",
-    "welcome-back": "欢迎回来"
+    "welcome-back": "欢迎回来",
+    "activations":"激活"
   },
   "general": {
     "syncing": "同步",
@@ -166,7 +167,8 @@
     "rapid-scan": "快速扫描",
     "documents": "文件",
     "instructions": "说明",
-    "title": "Events"
+    "title": "大事记",
+    "activations": "激活"
   },
   "form-review": {
     "clear": "明确",
@@ -269,5 +271,8 @@
     "couldnt-scan-nfc": "无法扫描NFC徽章",
     "rescan": "重新扫描徽章",
     "rescan-nfc": "重新扫描NFC徽章"
+  },
+  "activations":{
+    "title":"激活"
   }
 }

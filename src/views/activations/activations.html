@@ -3,7 +3,7 @@
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title>Activations</ion-title>
+	<ion-title>{{'activations.title' | translate}}</ion-title>
 		<ion-buttons end>
 			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
 				<ion-icon name="search"></ion-icon>
@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-content>
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode">
+	<ion-searchbar #search (ionInput)="getItems($event)" [placeholder]="'general.search' | translate" *ngIf="searchMode">
 	</ion-searchbar>
 
 	<div *ngIf="loading">

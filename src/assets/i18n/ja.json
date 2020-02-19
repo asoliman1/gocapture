@@ -16,7 +16,8 @@
     "support": "サポート",
     "settings": "設定",
     "hi": "こんにちは",
-    "welcome-back": "おかえりなさい"
+    "welcome-back": "おかえりなさい",
+    "activations":"アクティベーション"
   },
   "general": {
     "syncing": "同期中",
@@ -166,7 +167,8 @@
     "rapid-scan": "高速スキャン",
     "documents": "書類",
     "instructions": "説明",
-    "title": "イベント"
+    "title": "イベント",
+    "activations":"アクティベーション"
   },
   "form-review": {
     "clear": "晴れ",
@@ -269,5 +271,8 @@
     "couldnt-scan-nfc": "NFCバッジをスキャンできませんでした",
     "rescan": "バッジの再スキャン",
     "rescan-nfc": "NFCバッジの再スキャン"
+  },
+  "activations":{
+    "title":"アクティベーション"
   }
 }

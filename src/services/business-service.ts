@@ -31,6 +31,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
 
+declare var cordova;
 @Injectable()
 /**
  * The client to rule them all. The BussinessClient connects all the separate cients and creates
@@ -350,9 +351,11 @@ export class BussinessClient {
     this.pushSubs.forEach(sub => {
       sub.unsubscribe();
     });
+    cordova.plugins.intercom.logout();
+
     try {
       await this.appPreferences.clearAll();
-      await this.intercom.reset();
+      // await this.intercom.logout();
     } catch (error) {
       console.log(error);
     }

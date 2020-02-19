@@ -116,7 +116,6 @@ import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
 import { ActivationsPage } from '../views/activations/activations';
 import { ActivationsProvider } from '../providers/activations/activations';
-import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
 import { TranslateConfigService } from '../services/translate/translateConfigService';
 import { LocalizationsPage } from '../views/localizations/localizations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -172,7 +171,6 @@ export function createTranslateLoader(http: HttpClient) {
     SupportPage,
     ActivationsPage,
     ActivationViewPage,
-    SkeletonLoadingComponent,
     LocalizationsPage
   ],
   imports: [
@@ -240,7 +238,6 @@ export function createTranslateLoader(http: HttpClient) {
     SupportPage,
     ActivationsPage,
     ActivationViewPage,
-    SkeletonLoadingComponent,
     LocalizationsPage
   ],
   exports: [

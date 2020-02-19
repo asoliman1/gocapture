@@ -170,7 +170,7 @@ export class MyApp {
     
     this.rest.error.subscribe((resp) => {
       //token is invalid => unregister current user;
-      if(resp) this.popup.showToast(resp.message);
+      // if(resp) this.popup.showToast({text:resp.message});
       // if (resp && resp.status == 401) {
       //   this.client.getRegistration(true).subscribe((user) => {
       //     if (user) {
