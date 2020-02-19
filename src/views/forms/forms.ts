@@ -161,7 +161,7 @@ export class Forms {
 
     if(form.activations.length)
     buttons.push({
-      'text': 'Activations',
+      'text': 'forms.activations',
       'icon': 'game-controller-b',
       handler : () => {
         this.navCtrl.push(ActivationsPage, { form: form });

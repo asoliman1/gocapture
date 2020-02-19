@@ -46,7 +46,13 @@ export const VERSIONS = {
                 "alter table org_master add column supportEmail text",
                 "alter table org_master add column documentationURL text",
             ]
-        }
+        },
+        9: {
+            queries: [
+              "ALTER TABLE org_master add column localizations text",
+              "ALTER TABLE org_master add column localization text",
+            ]
+          }
     },
     work: {
         1: {
