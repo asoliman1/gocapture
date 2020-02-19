@@ -1,7 +1,7 @@
 import { formViewService } from './../../form-view-service';
 import { Subscription } from 'rxjs/Subscription';
 import { Device } from '@ionic-native/device';
-import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy } from '@angular/core';
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
@@ -105,9 +105,10 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   ngAfterContentInit() {
     this.theVal = {
-      front: this.currentVal.front,
-      back: this.currentVal.back
+      front: this.util.imageUrl( this.currentVal.front ),
+      back: this.util.imageUrl( this.currentVal.back )
     };
+    console.log(this.theVal)
   }
 
   ngOnDestroy(): void {
@@ -148,12 +149,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         buttons = this.actionsForCards(type);
       }
 
-      let sheet = this.actionCtrl.create({
-        title: "",
-        buttons: buttons,
-        cssClass: this.selectedTheme.toString()
-      });
-      sheet.present();
+      this.popup.showActionSheet("",buttons);
     } else {
       if (this.readonly) {
         return;
@@ -170,13 +166,13 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   actionsForReadonlyCards(type) {
     return [
       {
-        text: 'View Image',
+        text: 'alerts.business-card.view-image',
         handler: () => {
           this.viewImage(type);
         }
       },
       {
-        text: 'Save to Library',
+        text: 'alerts.business-card.save-to-library',
         handler: () => {
           let imageFullPath = type == this.FRONT ? this.currentVal.front : this.currentVal.back;
 
@@ -185,8 +181,8 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
           this.photoLibrary.requestAuthorization().then(() => {
             this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
-              this.popup.showAlert('Info', 'Business card was saved to the Photo Library!', [{
-                text: 'Ok',
+              this.popup.showAlert('alerts.info', {text:'alerts.business-card.saved-image'}, [{
+                text: 'general.ok',
                 role: 'cancel'
               }],
                 this.selectedTheme);
@@ -195,7 +191,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         }
       },
       {
-        text: 'Cancel',
+        text: 'general.cancel',
         role: 'cancel'
       }
     ]
@@ -204,13 +200,13 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   actionsForCards(type) {
     return [
       {
-        text: 'View Image',
+        text: 'alerts.business-card.view-image',
         handler: () => {
           this.viewImage(type);
         }
       },
       {
-        text: 'Retake',
+        text: 'alerts.business-card.retake',
         handler: () => {
           if (this.platform.is('ios')) {
             this.doCapture(type, 1);
@@ -220,13 +216,13 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         }
       },
       {
-        text: 'Choose from Library',
+        text: 'alerts.business-card.choose-from-library',
         handler: () => {
           this.doCapture(type, 2);
         }
       },
       {
-        text: 'Remove',
+        text: 'alerts.remove',
         role: 'destructive',
         handler: () => {
           this.zone.run(() => {
@@ -235,7 +231,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
         }
       },
       {
-        text: 'Cancel',
+        text: 'general.cancel',
         role: 'cancel'
       }
     ]
@@ -285,7 +281,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     }, (error) => {
       this.onProcessingEvent.emit('false');
       this.screen.unlock();
-      this.popup.showAlert("Error", error, [{ text: 'Ok', role: 'cancel' }], this.selectedTheme);
+      this.popup.showAlert("alerts.error", error, [{ text: 'general.ok', role: 'general.cancel' }], this.selectedTheme);
       console.error(error);
       this.zone.run(() => {
         this.frontLoading = false;
@@ -555,7 +551,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       self.onProcessingEvent.emit('false');
       self.screen.unlock();
       console.log(error);
-      self.popup.showAlert('Error', error, ['Ok']);
+      self.popup.showAlert('alerts.error', error, [{role:'cancel',text:'general.cancel'}]);
       self.frontLoading = false;
       self.backLoading = false;
     });

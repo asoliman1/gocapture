@@ -131,7 +131,7 @@ export class Documents implements AfterViewInit {
     ];
 
     this.popup.showActionSheet(
-      'How do you want to send the docs?',
+      'documents.how-to-send',
       buttons,
       this.selectedTheme.toString()
     );
@@ -155,10 +155,10 @@ export class Documents implements AfterViewInit {
   }
 
   private showDocumentOpeningErrorToast() {
-    this.popup.showToast(`Couldn’t open the document. Please try again.`)
+    this.popup.showToast({text:'documents.open-error'})
   }
 
   private showEditingReadOnlyDocumentsErrorToast() {
-    this.popup.showToast(`You cannot edit submissions in Preview Mode. Click Edit first before making changes.`)
+    this.popup.showToast({text:'documents.edit-error'})
   }
 }

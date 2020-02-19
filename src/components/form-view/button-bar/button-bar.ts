@@ -182,7 +182,7 @@ export class buttonBar implements OnInit {
     }
 
     showActionSheet() {
-        this.popup.showActionSheet('Choose from :', [...this.scanningEls.map((e) => {
+        this.popup.showActionSheet('alerts.choose-from', [...this.scanningEls.map((e) => {
             let el: ActionSheetButton = {
                 text: e.title, handler: () => {
                     this.formViewService.pushEvent(`scan_${e.type}`)
@@ -190,7 +190,7 @@ export class buttonBar implements OnInit {
             }
             return el;
         }), {
-            text: 'Cancel',
+            text: 'general.cancel',
             role: 'cancel'
         }]);
     }

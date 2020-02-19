@@ -228,6 +228,6 @@ export class DocumentsService {
   }
 
   showNoDocumentsToast() {
-    this.popup.showToast(`The selected documents set doesn't contains any documents.`);
+    this.popup.showToast({text:'documents.empty-set'});
   }
 }

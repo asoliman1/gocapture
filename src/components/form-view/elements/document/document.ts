@@ -100,7 +100,7 @@ export class Document extends BaseElement {
         modal.present();
 
       }, (error) => {
-        this.popup.showToast(`A problem occurred while opening your documents. Please try again.`);
+        this.popup.showToast({text:`documents.open-problem`});
       });
   }
 

@@ -105,7 +105,7 @@ export class FormView {
     return this.theForm;
   }
 
-  public getError(): String {
+  public getError()  {
     return this.composeErrorMessage();
   }
 
@@ -304,7 +304,7 @@ export class FormView {
 
   //MARK: Private
 
-  private composeErrorMessage() {
+  private composeErrorMessage() : {text : string,param:string} {
     let invalidControls = [];
     for (let key in this.theForm.controls) {
       if (this.theForm.controls[key].invalid) {
@@ -312,7 +312,7 @@ export class FormView {
         invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
-    return invalidControls.length > 0 ? ("Please check the following fields: " + invalidControls.join(', ')) : "";
+    return invalidControls.length > 0 ? {text:'form-capture.check-fields-msg',param : invalidControls.join(', ')} : {text:'',param:''};
   }
 
   private getNameForElementWithId(id) {

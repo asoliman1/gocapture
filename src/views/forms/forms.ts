@@ -1,3 +1,4 @@
+import { Popup } from './../../providers/popup/popup';
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
 import { Component, ViewChild, NgZone } from '@angular/core';
@@ -7,8 +8,6 @@ import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
 import { NavController } from 'ionic-angular/navigation/nav-controller';
-import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
-import { ThemeProvider } from "../../providers/theme/theme";
 import { FormInstructions } from "../form-instructions";
 import { DuplicateLeadsService } from "../../services/duplicate-leads-service";
 import { ModalController } from "ionic-angular";
@@ -30,24 +29,21 @@ export class Forms {
 
   forms: Form[] = [];
 
-  private selectedTheme: string;
-
+  syncDisabled : boolean;
+  
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
-    private actionCtrl: ActionSheetController,
-    private themeProvider: ThemeProvider,
+    private popup: Popup,
     private duplicateLeadsService: DuplicateLeadsService,
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
     private Keyboard: Keyboard) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val.toString());
     this.getForms();
   }
 
   getForms() {
-    
     this.formsProvider.formsObs.subscribe((val) => {
       if (val) this.updateForms()
     }, (err) => {
@@ -75,7 +71,13 @@ export class Forms {
 
 
   sync() {
-    this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
+    this.syncDisabled = true;
+    this.client.getUpdates().subscribe(() => {
+    }, (err) => {
+      this.syncDisabled = false;
+    }, () => {
+      this.syncDisabled = false;
+    });
   }
 
   getItems(event) {
@@ -90,7 +92,7 @@ export class Forms {
 
     let buttons: [any] = [
       {
-        text: 'Capture',
+        text: 'forms.capture',
         icon: "magnet",
         handler: () => {
           //console.log('capture clicked');
@@ -101,7 +103,7 @@ export class Forms {
 
     if (form.is_enable_rapid_scan_mode) {
       buttons.push({
-        text: 'Rapid Scan',
+        text: 'forms.rapid-scan',
         icon: "qr-scanner",
         handler: () => {
           //console.log('review clicked');
@@ -111,7 +113,7 @@ export class Forms {
     }
 
     buttons.push({
-      text: 'Review Submissions',
+      text: 'forms.review-submissions',
       icon: "eye",
       handler: () => {
         //console.log('review clicked');
@@ -122,7 +124,7 @@ export class Forms {
     const documentSets = this.getDocuments(form);
     if (documentSets.length) {
       buttons.push({
-        text: 'Documents',
+        text: 'forms.documents',
         icon: 'bookmarks',
         handler: async () => {
           if (documentSets.length === 1) {
@@ -148,7 +150,7 @@ export class Forms {
 
     if (form.instructions_content && form.instructions_content.length > 0) {
       buttons.push({
-        text: 'Instructions',
+        text: 'forms.instructions',
         icon: "paper",
         handler: () => {
           //console.log('review clicked');
@@ -167,20 +169,14 @@ export class Forms {
     })
 
     buttons.push({
-      text: 'Cancel',
+      text: 'general.cancel',
       role: 'cancel',
       handler: () => {
         //console.log('Cancel clicked');
       }
     });
 
-
-    let actionSheet = this.actionCtrl.create({
-      title: form.name,
-      buttons: buttons,
-      cssClass: this.selectedTheme.toString()
-    });
-    actionSheet.present();
+      this.popup.showActionSheet(form.name,buttons);
   }
 
   ionViewDidEnter() {

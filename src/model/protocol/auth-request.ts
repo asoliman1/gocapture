@@ -9,4 +9,5 @@ export class AuthenticationRequest{
 	device_manufacture: string;
 	cordova: number = 1;
 	bundle_id: string;
+	localization : string;
 }

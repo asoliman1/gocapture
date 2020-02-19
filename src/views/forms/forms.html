@@ -3,9 +3,9 @@
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title>Events</ion-title>
+		<ion-title>{{'forms.title' | translate}}</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="sync()" class="larger">
+			<button [disabled]="syncDisabled" ion-button (click)="sync()" class="larger">
 				<ion-icon name="sync"></ion-icon>
 			</button>
 			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
@@ -16,7 +16,7 @@
 </ion-header>
 
 <ion-content >
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode">
+	<ion-searchbar #search (ionInput)="getItems($event)" [placeholder]="'general.search'| translate" *ngIf="searchMode">
 	</ion-searchbar>
 	<div  *ngIf="!formsProvider.loaded">
 		<event-item *ngFor="let x of [1,2,3]" ></event-item>

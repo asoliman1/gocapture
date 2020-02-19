@@ -274,6 +274,8 @@ export class DBClient {
 			user.in_app_support = data.support;
 			user.support_email = data.supportEmail;
 			user.documentation_url = data.documentationURL;
+			user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
+            user.localization = data.localization;
 			this.registration = user;
 			return user;
 		}else return null;
@@ -688,7 +690,9 @@ export class DBClient {
 			user.device_id,
 			user.in_app_support,
 			user.support_email,
-			user.documentation_url
+			user.documentation_url,
+			JSON.stringify(user.localizations),
+			user.localization
 		]).map(data => {
 			this.registration = user;
 			return data;

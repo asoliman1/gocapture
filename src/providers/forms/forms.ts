@@ -54,11 +54,11 @@ export class FormsProvider {
         remoteForms.forms = this.checkFormData(this.filterArchivedForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
         this.loaded = true;
-        this.setFormsSyncStatus(false);
+        // this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
         },(err)=>{
-          this.setFormsSyncStatus(false);
+          // this.setFormsSyncStatus(false);
           obs.error(err);
         },()=>obs.complete())
 
@@ -93,7 +93,7 @@ export class FormsProvider {
   private async downloadFormScreenSaver(form: Form) {
     if (form.event_style.screensaver_media_items) {
       let entry: Entry;
-      this.updateFormSyncStatus(form.form_id, true)
+      // this.updateFormSyncStatus(form.form_id, true)
       form.event_style.screensaver_media_items = await Promise.all(form.event_style.screensaver_media_items.map(async (item) => {
         if (item.url != '' && item.path.startsWith('https://')) {
           try {
@@ -107,14 +107,14 @@ export class FormsProvider {
         return item;
       }))
       this.updateFormScreenSaver(form.form_id, form.event_style.screensaver_media_items);
-      this.updateFormSyncStatus(form.form_id, false)
+      // this.updateFormSyncStatus(form.form_id, false)
     }
   }
 
   private async downloadFormBackground(form: Form) {
     if (form.event_style.event_record_background.url != '' && form.event_style.event_record_background.path.startsWith('https://')) {
       let entry: Entry;
-      this.updateFormSyncStatus(form.form_id, true)
+      // this.updateFormSyncStatus(form.form_id, true)
       try {
         let file = this.util.getFilePath(form.event_style.event_record_background.url, `background_${form.form_id}_`);
         entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
@@ -123,14 +123,14 @@ export class FormsProvider {
         console.log('Error downloading a form background image', error)
       }
       this.updateFormBackground(form.form_id, form.event_style.event_record_background);
-      this.updateFormSyncStatus(form.form_id, false)
+      // this.updateFormSyncStatus(form.form_id, false)
     }
   }
 
   private async downloadFormCaptureBackground(form: Form) {
     if (form.event_style.capture_background_image.url != '' && form.event_style.capture_background_image.path.startsWith('https://')) {
       let entry: Entry;
-      this.updateFormSyncStatus(form.form_id, true)
+      // this.updateFormSyncStatus(form.form_id, true)
       try {
         let file = this.util.getFilePath(form.event_style.capture_background_image.url, `capture_background_${form.form_id}_`);
         entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
@@ -139,7 +139,7 @@ export class FormsProvider {
         console.log('Error downloading a form capture background image', error)
       }
       this.updateFormCaptureBackground(form.form_id, form.event_style.capture_background_image);
-      this.updateFormSyncStatus(form.form_id, false)
+      // this.updateFormSyncStatus(form.form_id, false)
     }
   }
 
@@ -195,6 +195,7 @@ export class FormsProvider {
 
   resetForms(){
     this.forms = [];
+    this.loaded = false;
   }
 
   getForms(): Form[] {
@@ -233,6 +234,7 @@ export class FormsProvider {
   updateFormSyncStatus(form_id: any, isSyncing: boolean) {
     let form = this.forms.find((e) => e.form_id == (form_id * 1));
     form.isSyncing = isSyncing;
+    this.pushUpdates();
   }
 
   updateFormLastSync(form_id: any, field : string , empty = false) {

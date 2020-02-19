@@ -23,7 +23,6 @@ import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { ImageProcessor } from "../services/image-processor";
-import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
 import {
@@ -117,7 +116,16 @@ import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
 import { ActivationsPage } from '../views/activations/activations';
 import { ActivationsProvider } from '../providers/activations/activations';
+import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
+import { LocalizationsPage } from '../views/localizations/localizations';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 @NgModule({
   declarations: [
     MyApp,
@@ -127,7 +135,6 @@ import { ActivationsProvider } from '../providers/activations/activations';
     Forms,
     Settings,
     Dispatches,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -164,7 +171,9 @@ import { ActivationsProvider } from '../providers/activations/activations';
     CustomFabMenu,
     SupportPage,
     ActivationsPage,
-    ActivationViewPage
+    ActivationViewPage,
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   imports: [
     BrowserModule,
@@ -181,6 +190,14 @@ import { ActivationsProvider } from '../providers/activations/activations';
     ComponentsModule,
     NgSelectModule,
     FormsModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -191,7 +208,6 @@ import { ActivationsProvider } from '../providers/activations/activations';
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -223,7 +239,9 @@ import { ActivationsProvider } from '../providers/activations/activations';
     CustomFabMenu,
     SupportPage,
     ActivationsPage,
-    ActivationViewPage
+    ActivationViewPage,
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -293,7 +311,8 @@ import { ActivationsProvider } from '../providers/activations/activations';
     Keyboard,
     ContactsProvider,
     Intercom,
-    ActivationsProvider
+    ActivationsProvider,
+    TranslateConfigService
   ]
 })
 export class AppModule { }

@@ -4,10 +4,11 @@ import { User } from "../../model";
 import { Main } from "../main";
 import { UrlChoose } from "./url-choose";
 import { Config } from "../../config";
-import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
-import { NavController } from 'ionic-angular/navigation/nav-controller';
-import { NavParams } from 'ionic-angular/navigation/nav-params';
-import { App } from "ionic-angular";
+import { 
+	App,
+	PopoverController,
+	NavController,
+	NavParams } from "ionic-angular";
 import { Popup } from '../../providers/popup/popup';
 
 @Component({
@@ -43,9 +44,9 @@ export class Login {
 
 			let errorMessage = this.navParams.get('errorMessage');
 			if (!errorMessage) {
-				errorMessage = "Authorization failed. Please obtain a new Authentication Code";
+				errorMessage = "toast.auth-failed";
 			}
-			this.popup.showToast(errorMessage);
+			this.popup.showToast({text:errorMessage});
 			return;
 		}
 		this.client.getRegistration()
@@ -69,15 +70,15 @@ export class Login {
 			if (!this.authCode || !this.email) {
 				return;
 			}
-			this.popup.showLoading("Authenticating...");
+			this.popup.showLoading({text:'alerts.loading.authenticating'});
 			Config.isProd = this.useProd;
 			this.client.authenticate(this.email, this.authCode)
 				.subscribe(data => {
-					this.popup.setLoadingContent(data.message);
+					this.popup.setLoadingContent({text:data.message});
 					// this.themeProvider.setActiveTheme()
 				}, err => {
 					this.popup.dismiss('loading');
-					this.popup.showToast(err);
+					this.popup.showToast({text:err});
 				}, () => {
 					this.popup.dismiss('loading');
 					this.navCtrl.setRoot(Main);

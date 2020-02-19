@@ -1,3 +1,4 @@
+import { TranslateConfigService } from './translate/translateConfigService';
 import { BadgeResponse } from '../model';
 import { Injectable } from "@angular/core";
 import { Headers, Http, Response, URLSearchParams } from "@angular/http";
@@ -48,7 +49,8 @@ export class RESTClient {
 		private submissionsRepository: SubmissionsRepository,
 		private submissionMapper: SubmissionMapper,
 		private appVersion: AppVersion,
-		private platform: Platform
+		private platform: Platform,
+		private translateConfigService:TranslateConfigService
 		) {
 		this.errorSource = new BehaviorSubject<any>(null);
 		this.error = this.errorSource.asObservable();
@@ -82,6 +84,7 @@ export class RESTClient {
 		req.device_os_version = this.device.version;
 		req.device_uuid = this.device.uuid;
 		req.bundle_id = this.bundleId;
+		req.localization = this.translateConfigService.defaultLanguage();
 		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
 			.map(resp => {
 				if (resp.status != "200") {
@@ -167,6 +170,15 @@ export class RESTClient {
 			return Activation.parseActivations(resp,form);
 		});
 	}
+	public updateAccountSettings(settings: {}): Observable<User> {
+		return this.call<DataResponse<User>>("POST", "/device/settings.json", settings)
+		  .map(resp => {
+			if (resp.status != "200") {
+			  this.errorSource.next(resp);
+			}
+			return resp.data;
+		  });
+	  }
 
 	public getAllForms(lastSyncDate: Date): Observable<{forms:Form[],availableForms:number[]}> {
 		let opts: any = {
@@ -292,7 +304,7 @@ export class RESTClient {
 	}
 
 	public unauthenticate(token: string): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', JSON.stringify(""))
+		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', {"":""})
 			.map((resp: BaseResponse) => {
 				if (resp.status == "200") {
 					return true;
@@ -351,13 +363,13 @@ export class RESTClient {
 				result.contacts = data;
 				result.form = forms[index];
 				result.all = false;
-				obs.next(result);
+				obs.next({...result});
 			};
 			let handlerCmp = () =>{
 				result.contacts = [];
 				result.form = forms[index];
 				result.all = true;
-				obs.next(result);
+				obs.next({...result});
 				index++;
 			   if (index < forms.length) {
 				   doTheCall();

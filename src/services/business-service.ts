@@ -1,3 +1,4 @@
+import { TranslateConfigService } from './translate/translateConfigService';
 import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
@@ -79,6 +80,7 @@ export class BussinessClient {
     private settingsService: SettingsService,
     private geolocation: Geolocation,
     private intercom: Intercom,
+    private translateConfigService: TranslateConfigService,
     private popup: Popup) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -127,7 +129,7 @@ export class BussinessClient {
         console.error(error);
       });
     } else {
-      this.popup.showToast('No internet connection available.', "top", "warning")
+      this.popup.showToast({text:'toast.no-internet-connection'}, "top", "warning")
     }
   }
 
@@ -265,7 +267,7 @@ export class BussinessClient {
         this.util.checkFilesDirectories();
         this.onAuthSuccess(reply, false, obs);
       }, err => {
-        obs.error("Invalid authentication code");
+        obs.error("toast.auth-err");
       });
     });
   }
@@ -274,8 +276,10 @@ export class BussinessClient {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
+    this.translateConfigService.setLanguage(this.registration.localization);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
+      
         this.db.setupWorkDb(reply.db);
         this.setLocation(3000);
         if (reply.in_app_support) {
@@ -286,9 +290,11 @@ export class BussinessClient {
         obs.next({ user: reply, message: "Done" });
         obs.complete();
       }, err => {
+        obs.error(err);
         console.log(err);
       });
     }, err => {
+      obs.error(err);
       console.log(err);
     });
   }
@@ -326,7 +332,7 @@ export class BussinessClient {
 
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
-      this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
+      this.rest.unauthenticate(user.access_token).subscribe((done) => {
         if (done) {
           this.onUnAuthSuccess(obs)
         } else {
@@ -372,8 +378,8 @@ export class BussinessClient {
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
       if (!this.isOnline()) {
-        obs.error('No internet connection available');
-        this.formsProvider.setFormsSyncStatus(false);
+        obs.error('toast.no-internet-connection');
+        // this.formsProvider.setFormsSyncStatus(false);
         return;
       }
       this.db.getConfig("lastSyncDate").subscribe(time => {
@@ -439,7 +445,7 @@ export class BussinessClient {
   public doSync(formId?: number): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
       if (!this.isOnline()) {
-        obs.error('No internet connection available');
+        obs.error('toast.no-internet-connection');
         return;
       }
 
@@ -497,16 +503,16 @@ export class BussinessClient {
             }, (err) => {
               console.error(err);
               obs.error(err);
-              this.errorSource.next(err);
+              // this.errorSource.next(err);
             });
           });
         }, (err) => {
           obs.error(err);
-          this.errorSource.next(err);
+          // this.errorSource.next(err);
         });
       }, (error) => {
         obs.error(error);
-        this.errorSource.next(error);
+        // this.errorSource.next(error);
       });
     });
   }
@@ -558,5 +564,9 @@ export class BussinessClient {
     let closeTime = await this.db.getConfig('appCloseTime').toPromise();
     return (Date.now() - parseInt(closeTime)) / 1000;
   }
+
+  updateAccountSettings(settings): Observable<User> {
+    return this.rest.updateAccountSettings(settings);
+}
 
 }

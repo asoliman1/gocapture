@@ -1,6 +1,6 @@
 <ion-list>
   <ion-item>
-    <h1>Select Search Criteria</h1>
+    <h1>{{'filters-view.select-search-criteria' | translate}}</h1>
     </ion-item>
   <ion-item *ngFor="let filter of filters" (click)="onSelect(filter)">
     <ion-label class="filter-name">{{filter.title}}</ion-label>

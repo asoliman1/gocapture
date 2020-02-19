@@ -4,16 +4,16 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <div class="title">
-      Support
+      {{'support.header' | translate}}
     </div>
   </div>
 
-  <h3>How can we help you?</h3>
+  <h3>{{'support.title' | translate}}</h3>
 
   <ion-list no-lines class="s-padding">
-    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="email">Open a Ticket</a></button>
-    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="documentation" >Documentation</a></button>
-    <button ion-button large class="shadow-lg" clear block color="dark" (click)="startConversation()">Start a Conversation</button>
+    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="email">{{'support.ticket-button' | translate}}</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="documentation" >{{'support.doc-button' | translate}}</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark" (click)="startConversation()">{{'support.conversation-button' | translate}}</button>
   </ion-list>
 
 </ion-content>
