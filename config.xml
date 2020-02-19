@@ -62,7 +62,7 @@
             <string>GoCapture! use the location to pass the latitude and longitude of the device where a form submission takes place. Location is used by application administrators on our backend to do geographic reporting.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
-            <string>GoCapture! needs to access microphone</string>
+            <string>GoCapture! use the microphone to record audio clips as notes on a record. Audio clips can be transcribed and the file can optionally be saved in your CRM or marketing automation system.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>GoCapture! uses the camera to take pictures of business cards and documents that are transcribed into text. Additionally, the camera may be used to capture images used in form submissions.</string>
