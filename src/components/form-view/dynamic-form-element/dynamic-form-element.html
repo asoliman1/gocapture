@@ -118,7 +118,7 @@
     <!--IMAGE-->
     <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <image-item [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
+      <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
     </ion-item>
 
     <!--BUSINESS CARD-->
@@ -155,8 +155,9 @@
     </goc-audio>
 
     <!-- DOCUMENTS -->
-    <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <!-- <ion-item > -->
       <document
+      *ngSwitchCase="'documents'" margin-top [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"
         [form]="form"
         [readonly]="readOnly"
         [formControlName]="element.identifier"
@@ -166,7 +167,7 @@
         [isEditing]="isEditing"
         [submission]="submission">
       </document>
-    </ion-item>
+    <!-- </ion-item> -->
 
 
     <!-- <ion-item *ngSwitchDefault>

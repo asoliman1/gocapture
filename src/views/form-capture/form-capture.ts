@@ -120,9 +120,7 @@ export class FormCapture implements AfterViewInit {
     private localStorage: LocalStorageProvider,
     private vibration: Vibration,
     private rapidCaptureService: RapidCaptureService,
-    private alertCtrl: AlertController,
     private appPreferences: AppPreferences,
-    private popoverCtrl: PopoverController,
     private utils: Util,
     private formViewService:formViewService,
     private formsProvider : FormsProvider,
@@ -151,29 +149,37 @@ export class FormCapture implements AfterViewInit {
 
     this.menuCtrl.enable(false);
 
+    this.checkInstructions();
+  }
+
+  private checkInstructions(){
     let instructions = this.localStorage.get("FormInstructions");
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
     let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1;
 
-
     if (shouldShowInstruction) {
-      let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
-
-      instructionsModal.present().then((result) => {
-        formsInstructions.push(this.form.id);
-        this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
-      });
-
-      instructionsModal.onDidDismiss(() => {
-        if (!this.submission.id) {
-          this.openStations();
-        }
-      })
+      this.openInstructions(formsInstructions);
     } else {
       if (!this.submission.id) {
         this.openStations();
       }
     }
+  }
+
+  private openInstructions(formsInstructions){
+
+    let instructionsModal = this.modal.create(FormInstructions, {form: this.form, isModal: true});
+
+    instructionsModal.present().then((result) => {
+      formsInstructions.push(this.form.id);
+      this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+    });
+
+    instructionsModal.onDidDismiss(() => {
+      if (!this.submission.id) {
+        this.openStations();
+      }
+    })
   }
 
   ngOnInit() {
@@ -489,13 +495,13 @@ export class FormCapture implements AfterViewInit {
               }
             }];
 
-          this.popup.showPrompt({text:'alerts.kiosk-mode.set-password'}, {text:''}, inputs, buttons, this.selectedTheme);
+          this.popup.showPrompt({text:'alerts.kiosk-mode.set-password'}, {text:''}, inputs, buttons);
         }
       })
     }
 
     this.buttonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-      if(data == 'reset') this.clear();
+      if(data == 'reset') this.resetForm();
       else if (data == 'submit') this.doSave();
     })
   }
@@ -565,7 +571,7 @@ export class FormCapture implements AfterViewInit {
             value: ""
           }];
 
-          this.popup.showPrompt({text:'alerts.kiosk-mode.enter-passcode'}, {text:''}, inputs, buttons, this.selectedTheme);
+          this.popup.showPrompt({text:'alerts.kiosk-mode.enter-passcode'}, {text:''}, inputs, buttons);
 
         } else {
           const buttons = [
@@ -576,7 +582,7 @@ export class FormCapture implements AfterViewInit {
               }
             }];
 
-          this.popup.showAlert('Info', {text:'alerts.kiosk-mode.message'}, buttons, this.selectedTheme);
+          this.popup.showAlert('Info', {text:'alerts.kiosk-mode.message'}, buttons);
         }
       });
     } else {
@@ -610,7 +616,7 @@ export class FormCapture implements AfterViewInit {
 
     this.vibration.vibrate(500);
 
-    this.popup.showAlert("alerts.warning", {text:'form-capture.unsubmitted-data-msg'}, buttons, this.selectedTheme);
+    this.popup.showAlert("alerts.warning", {text:'form-capture.unsubmitted-data-msg'}, buttons);
   }
 
   private clear() {
@@ -670,7 +676,7 @@ export class FormCapture implements AfterViewInit {
 
     this.setSubmissionType();
     // A.S
-  this.submission.location = this.location;
+    this.submission.location = this.location;
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
   
@@ -740,24 +746,28 @@ export class FormCapture implements AfterViewInit {
 
   kioskModeCallback() {
     if (this.form.is_mobile_kiosk_mode) {
-      this.clearPlaceholders();
-      this.submission = null;
-      this.form = null;
-      this.dispatch = null;
       this.popup.showToast(
         {text:'toast.submission-successfull'},
         'bottom',
         'success',
         1500,
       );
+      this.resetForm();
+    } else {
+      this.navCtrl.pop();
+    }
+  }
+
+  private resetForm(){
+    this.clearPlaceholders();
+      this.submission = null;
+      this.form = null;
+      this.dispatch = null;
       setTimeout(() => {
         this.zone.run(() => {
           this.setupForm();
         });
       }, 10);
-    } else {
-      this.navCtrl.pop();
-    }
   }
 
   setSubmissionType() {
@@ -927,33 +937,26 @@ export class FormCapture implements AfterViewInit {
   }
 
   openStations() {
-
+  
     if (this.form.event_stations && this.form.event_stations.length > 0) {
-      // this.stationsSelect.open(event);
-      // this.stationsSelect.open(new UIEvent('touch'));
-
-      this.stationsPopover = this.popoverCtrl.create(StationsPage, {
+      this.popup.showPopover(StationsPage,{
         stations: this.form.event_stations,
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
-      }, {
-        enableBackdropDismiss: false,
-        cssClass: this.selectedTheme + ' gc-popover'
-      });
-      this.stationsPopover.present();
-
-      this.stationsPopover.onDidDismiss((data) => {
-        if (data.isCancel) {
-          if (!this.submission.id && !this.selectedStation) {
-            this.navCtrl.pop();
-          }
-        } else {
-          this.selectedStation = data.station;
-          this.initiateRapidScanMode();
-        }
-      })
+      },false,this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
     } else {
+      this.initiateRapidScanMode();
+    }
+  }
+
+  private onStationDismiss(data){
+    if (data.isCancel) {
+      if (!this.submission.id && !this.selectedStation) {
+        this.navCtrl.pop();
+      }
+    } else {
+      this.selectedStation = data.station;
       this.initiateRapidScanMode();
     }
   }

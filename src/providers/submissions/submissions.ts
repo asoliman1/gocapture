@@ -4,7 +4,7 @@ import { HTTP } from '@ionic-native/http';
 import { Util } from './../../util/util';
 import { RESTClient } from './../../services/rest-client';
 import { FormsProvider } from './../forms/forms';
-import { FormMapEntry } from './../../services/sync-client';
+import { FormMapEntry, formSyncStatus } from './../../services/sync-client';
 import { DBClient } from './../../services/db-client';
 import { Observable, Observer, BehaviorSubject, Subject } from 'rxjs';
 import { FormSubmission, BarcodeStatus, SubmissionStatus } from './../../model/form-submission';
@@ -82,15 +82,18 @@ export class SubmissionsProvider {
     return this[type + 'Submissions'].find((e) => e.id == id) ? true : false
   }
 
-  downloadSubmissions(): Observable<any> {
+  downloadSubmissions(currentSyncingForms : formSyncStatus[]): Observable<any> {
     console.log('Getting latest submissions...')
-    this.formsProvider.setFormsSyncStatus(true);
+    // this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
-        mergeMap(async (e) => 
-          await this.saveSubmissions({ ...e }))
-      ).subscribe(data => {
-        // console.log(data)
+        mergeMap(async (e) => {
+          let data = {...e}; 
+          await this.saveSubmissions(data)
+          return data.form;
+          }) 
+      ).subscribe((data) => {
+        obs.next(data.form_id);
       }, err => {
         obs.error(err);
       }, () => {
@@ -101,7 +104,7 @@ export class SubmissionsProvider {
 
   async saveSubmissions(data) {
     if(data.form) { 
-    this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
+    // this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
     let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
       submissionsToDownload: number[] = [],
       submissions = this.checkSubmissionsData(oldSubs, data.submissions, data.form, submissionsToDownload);
@@ -113,10 +116,8 @@ export class SubmissionsProvider {
       } catch (error) {
         console.log(error);
       }
-    }else{
+    }
       this.formsProvider.updateFormLastSync(data.form.form_id, 'submissions')
-      this.formsProvider.updateFormSyncStatus(data.form.form_id, false)
-      }
     }
     // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
   }
@@ -173,7 +174,7 @@ export class SubmissionsProvider {
   }
 
   private async downloadSubmissionsData(form: Form, submissions: FormSubmission[]) {
-    this.formsProvider.updateFormSyncStatus(form.form_id, true)
+    // this.formsProvider.updateFormSyncStatus(form.form_id, true)
     let subDataFields: string[] = form.getUrlFields();
     submissions = await Promise.all(submissions.map(async (sub) => {
       this.setSubmissionAs(sub.id, 'downloading');
@@ -184,11 +185,9 @@ export class SubmissionsProvider {
       this.updateSubmission(sub);
       return sub;
     }))
-    this.dbClient.saveSubmisisons(submissions).subscribe(
-      () => {},
-      (err)=>{},
-      ()=>this.formsProvider.updateFormLastSync(form.form_id, 'submissions'))
-    this.formsProvider.updateFormSyncStatus(form.form_id, false)
+    // console.log(submissions);
+    this.dbClient.saveSubmisisons(submissions).subscribe();
+    // this.formsProvider.updateFormSyncStatus(form.form_id, false)
 
   }
 
@@ -214,6 +213,7 @@ export class SubmissionsProvider {
       else {
         sub1 = await this.getDownloadedFilePath(sub1, `${formId}_submission_${subId}_`)
       }
+      // console.log(sub1)
       return sub1;
     }
   }
@@ -221,15 +221,18 @@ export class SubmissionsProvider {
   private async getDownloadedFilePath(fileToDownload: string, id: string) {
     let entry: Entry;
     const fileTransfer = new FileTransfer().create();
-    if (fileToDownload.startsWith('https://')) {
+    // fileTransfer.onProgress((ev)=>{
+    //   console.log(`${(ev.loaded/ev.total)*100}`);
+    // });
+    if (fileToDownload && fileToDownload.startsWith('https://')) {
       try {
         let file = this.util.getFilePath(fileToDownload, id);
         entry = await fileTransfer.download(file.pathToDownload, file.path, true);
         return entry.nativeURL;
       } catch (error) {
-        console.log('Error downloading submission data : ' + id);
+        // console.log('Error downloading submission data : ' + id.split('_').join(' ') + 'retrying later again...');
         // console.log(error);
-        this.getDownloadedFilePath(fileToDownload,id);
+        return fileToDownload;
       }
     }
     return fileToDownload;
@@ -302,6 +305,7 @@ export class SubmissionsProvider {
 
         this.setSubmissionsUploading(data.submissions);
         this.doSubmit(data, index).subscribe((submission) => {
+          console.log(submission)
           this.downloadSubmissionsData(data.form,[submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')

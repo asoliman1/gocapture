@@ -1,7 +1,7 @@
 import { FormsProvider } from './../forms/forms';
 import { DBClient } from './../../services/db-client';
 import { Injectable } from '@angular/core';
-import { DownloadData } from '../../services/sync-client';
+import { DownloadData, formSyncStatus } from '../../services/sync-client';
 import { Observable } from 'rxjs';
 import { RESTClient } from '../../services/rest-client';
 import { Form } from '../../model';
@@ -22,31 +22,38 @@ export class ContactsProvider {
   ) {
   }
 
-  public downloadContacts(): Observable<any> {
+  public downloadContacts(currentSyncingForms: formSyncStatus[]): Observable<any> {
     console.log('Getting latest contacts...')
-    let forms = this.formsProvider.forms.filter((form) => form.list_id > 0);
     return new Observable<any>(obs => {
       this.rest
-      .getAllDeviceFormMemberships(forms)
-      .mergeMap(
-        (data)=>this.db
-        .saveMemberships(data.contacts)
-        .map((saved)=>{return {saved , form : data.form , all : data.all}})
+        .getAllDeviceFormMemberships(this.formsHaveContacts(currentSyncingForms))
+        .mergeMap(
+          (data) => this.db
+            .saveMemberships(data.contacts)
+            .map((saved) => { return { saved, form: data.form, all: data.all } })
         )
-      .subscribe((data) => {
-        this.formsProvider.updateFormSyncStatus(data.form.form_id, true);
+        .subscribe((data) => {
           if (data && data.form.form_id && data.saved && data.all) {
             this.formsProvider.updateFormLastSync(data.form.form_id, 'contacts');
-            this.formsProvider.updateFormSyncStatus(data.form.form_id, false);
-          } 
-      }, (err) => {
-        obs.error(err)
-      }, () => {
-        obs.complete();
-      }) 
+            obs.next(data.form.form_id);
+          }
+        }, (err) => {
+          obs.error(err)
+        }, () => {
+          obs.complete();
+        })
     });
 
-  
+  }
+
+  private addToFormSyncItems(currentSyncForms: formSyncStatus[], formId: number) {
+    currentSyncForms.find((e) => e.formId == formId).addToitems();
+  }
+
+  private formsHaveContacts(currentSyncingForms: formSyncStatus[]) {
+    let forms = this.formsProvider.forms.filter((form) => form.list_id > 0);
+    forms.forEach((e) => this.addToFormSyncItems(currentSyncingForms, e.form_id));
+    return forms;
   }
 
 

@@ -105,9 +105,10 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   ngAfterContentInit() {
     this.theVal = {
-      front: this.currentVal.front,
-      back: this.currentVal.back
+      front: this.util.imageUrl( this.currentVal.front ),
+      back: this.util.imageUrl( this.currentVal.back )
     };
+    console.log(this.theVal)
   }
 
   ngOnDestroy(): void {
