@@ -1,3 +1,5 @@
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { Platform } from 'ionic-angular/platform/platform';
 import { HTTP } from '@ionic-native/http';
 import { Image } from '../../model/image';
 import { Form } from '../../model/form';
@@ -19,10 +21,11 @@ export class FormsProvider {
 
   constructor(
     private dbClient: DBClient,
-    private util : Util, 
+    private util : Util,
     private http : HTTP,
     private rest : RESTClient,
-
+    private platform: Platform,
+    private fileTransfer: FileTransfer
     ) {
     this.setForms()
   }
@@ -36,14 +39,14 @@ export class FormsProvider {
         this.pushUpdates();
       })
     }
-   
+
   }
 
   setFormsSyncStatus(val : boolean){
     this.forms.forEach((e)=> e.isSyncing = val);
   }
 
-   downloadForms(lastSyncDate: Date): Observable<Form[]> {
+  downloadForms(lastSyncDate: Date): Observable<Form[]> {
     console.log('Getting latest forms...')
     if(this.forms.length) this.loaded = true;
     else this.loaded = false;
@@ -68,7 +71,7 @@ export class FormsProvider {
 
   filterArchivedForms(forms : Form[]){
     let current = new Date();
-   return forms.filter(form => {
+    return forms.filter(form => {
       form.id = form.form_id + "";
       if (new Date(form.archive_date) > current) return true;
       else {console.log(`Form ${form.name} (${form.id}) is past it's expiration date. Filtering it out`); return false};
@@ -99,7 +102,7 @@ export class FormsProvider {
         if (item.url != '' && item.path.startsWith('https://')) {
           try {
             let file = this.util.getFilePath(item.path, `screen_saver_${form.form_id}_`);
-            entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
+            entry = await this.downloadFile(file.pathToDownload, file.path);
             item = { path: entry.nativeURL, url: item.url };
           } catch (error) {
             console.log('Error downloading a form screen saver image', error)
@@ -118,7 +121,7 @@ export class FormsProvider {
       // this.updateFormSyncStatus(form.form_id, true)
       try {
         let file = this.util.getFilePath(form.event_style.event_record_background.url, `background_${form.form_id}_`);
-        entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
+        entry = await this.downloadFile(file.pathToDownload, file.path);
         form.event_style.event_record_background = { path: entry.nativeURL, url: form.event_style.event_record_background.url };
       } catch (error) {
         console.log('Error downloading a form background image', error)
@@ -134,7 +137,7 @@ export class FormsProvider {
       // this.updateFormSyncStatus(form.form_id, true)
       try {
         let file = this.util.getFilePath(form.event_style.capture_background_image.url, `capture_background_${form.form_id}_`);
-        entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
+        entry = await this.downloadFile(file.pathToDownload, file.path);
         form.event_style.capture_background_image = { path: entry.nativeURL, url: form.event_style.capture_background_image.url };
       } catch (error) {
         console.log('Error downloading a form capture background image', error)
@@ -276,6 +279,14 @@ export class FormsProvider {
 
   pushUpdates(){
     this.formsObs.next(true);
+  }
+
+  async downloadFile(pathToDownload: string, path: string) {
+    if (!this.platform.is('mobile')) {
+      return this.fileTransfer.create().download(pathToDownload, path);
+    }
+
+    return this.http.downloadFile(pathToDownload, {}, {}, path);
   }
 
 }
