@@ -1,6 +1,9 @@
 import { Activation } from './../../model/activation';
 import { Component, Input } from '@angular/core';
 import { Form } from '../../model/form';
+import { NavController } from 'ionic-angular';
+import { ActivationViewPage } from '../../pages/activation-view/activation-view';
+import { FormCapture } from '../../views/form-capture';
 
 /**
  * Generated class for the ActivationItemComponent component.
@@ -17,7 +20,14 @@ export class ActivationItemComponent {
   @Input() activations : [Activation];
   @Input() form : Form;
   
-  constructor() {
+  constructor(private navCtrl : NavController) {
   }
 
+
+  navigate(act : Activation){
+    if(act.activation_capture_form_after)
+    this.navCtrl.push(ActivationViewPage,{activation:{...act}});
+    else this.navCtrl.push(FormCapture,{activation:act,form:this.form});
+  }
+  
 }

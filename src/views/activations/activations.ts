@@ -52,9 +52,9 @@ export class ActivationsPage {
   }
 
   getFormActivations(form : Form){
-    this.restClient.getFormActivations(form,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((data)=>{
-      this.activations[0].form = form;
-      this.activations[0].activations = data;
+    this.restClient.getFormActivations(form,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((activations)=>{
+      this.activations.push({activations , form})
+      this.filteredActivations.push({activations , form});
       this.loading = false;
     },err =>{
       this.loading = false;
@@ -85,12 +85,6 @@ export class ActivationsPage {
     });
   });
 
-  }
-
-  navigate(act : Activation){
-    if(act.activation_capture_form_after)
-    this.navCtrl.push(ActivationViewPage,{activation:{...act}});
-    else this.navCtrl.push(FormCapture,{activation:act,form:act.event});
   }
 
 }
