@@ -101,7 +101,7 @@ export class FormCapture implements AfterViewInit {
   private idle: Idle;
 
   private _modal: Modal;
-  
+
   private location;
 
   buttonBar : Subscription;
@@ -183,7 +183,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   ngOnInit() {
-    
+
   }
 
   private setupIdleMode() {
@@ -214,9 +214,9 @@ export class FormCapture implements AfterViewInit {
   private async showScreenSaver() {
     // get updated data of form
     this.form.event_style = this.getFormStyle();
-    let active = 
-    this.navCtrl.last().instance instanceof FormCapture && 
-    this.form.event_style.is_enable_screensaver && 
+    let active =
+    this.navCtrl.last().instance instanceof FormCapture &&
+    this.form.event_style.is_enable_screensaver &&
     !this.isRapidScanMode;
 
     if (this.imagesDownloaded()) {
@@ -241,7 +241,7 @@ export class FormCapture implements AfterViewInit {
     if(this.form.event_style.is_randomize)
     this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
   }
-  
+
 // A.S
   private imagesDownloaded() {
     this.form.event_style.screensaver_media_items = this.form.event_style.screensaver_media_items.filter((e)=> !e.path.startsWith('https://'))
@@ -266,7 +266,7 @@ export class FormCapture implements AfterViewInit {
 
   private async setupForm() {
    // return new object data of form (not updated)
-    this.form = Object.assign(new Form(),this.navParams.get("form")); 
+    this.form = Object.assign(new Form(),this.navParams.get("form"));
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission");
     this.setStation(this.submission);
@@ -456,9 +456,11 @@ export class FormCapture implements AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.intercom.setInAppMessageVisibility('GONE');
-    this.intercom.setLauncherVisibility('GONE');
-    
+    if (this.platform.is('mobile')) {
+      this.intercom.setInAppMessageVisibility('GONE');
+      this.intercom.setLauncherVisibility('GONE');
+    }
+
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
     }, Number.MAX_VALUE);
@@ -508,7 +510,9 @@ export class FormCapture implements AfterViewInit {
 
 
   ionViewWillLeave() {
-    this.intercom.setInAppMessageVisibility('VISIBLE');
+    if (this.platform.is('mobile')) {
+      this.intercom.setInAppMessageVisibility('VISIBLE');
+    }
 
     if (this.backUnregister) {
       this.backUnregister();
@@ -634,7 +638,7 @@ export class FormCapture implements AfterViewInit {
 
   public doSave(shouldSyncData = true) {
 
-    
+
     this.submitAttempt = true;
 
     /*
@@ -679,7 +683,7 @@ export class FormCapture implements AfterViewInit {
     this.submission.location = this.location;
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-  
+
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();
@@ -693,7 +697,7 @@ export class FormCapture implements AfterViewInit {
       }, (err) => {
         console.error(err);
       });
- 
+
   }
 
   invalidControls() {
@@ -818,9 +822,9 @@ export class FormCapture implements AfterViewInit {
             let audioRecorderEl = this.getElementForType("audio");
 
             let isAudio = audioRecorderEl.identifier == id;
-            let value = 
-            isAudio && data.fields[field] && data.fields[field].startsWith('http') ? 
-            data.fields[field] : 
+            let value =
+            isAudio && data.fields[field] && data.fields[field].startsWith('http') ?
+            data.fields[field] :
             data.fields[field] || this.formView.getFormGroup().value[id] ;
 
             this.submission.fields[id] = value;
@@ -937,7 +941,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   openStations() {
-  
+
     if (this.form.event_stations && this.form.event_stations.length > 0) {
       this.popup.showPopover(StationsPage,{
         stations: this.form.event_stations,
@@ -986,7 +990,7 @@ export class FormCapture implements AfterViewInit {
       if (this.scanSources.length == 1) {
         this.startRapidScanModeForSource(this.scanSources[0].id);
       } else if (this.scanSources.length > 1) {
-        this.popup.showAlert( 
+        this.popup.showAlert(
            'form-capture.scan-mode',
            {text:''},
            [

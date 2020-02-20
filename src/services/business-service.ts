@@ -1,3 +1,4 @@
+import { Platform } from 'ionic-angular/platform/platform';
 import { TranslateConfigService } from './translate/translateConfigService';
 import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
@@ -81,7 +82,9 @@ export class BussinessClient {
     private geolocation: Geolocation,
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
-    private popup: Popup) {
+    private popup: Popup,
+    private platform: Platform
+  ) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
     this.errorSource = new BehaviorSubject<any>(null);
@@ -300,34 +303,38 @@ export class BussinessClient {
   }
 
 
- async registerIntercom(){
-    this.intercom.registerIdentifiedUser({
-      user_id: this.registration.id,
-      email: this.registration.email,
-    }).then((data)=>{
-      console.log('Intercome register : ' + JSON.stringify(data));
-      this.intercom.registerForPush().then(console.log).catch(console.log);
-      this.updateIntercom();
-    })
+  async registerIntercom() {
+    if (this.platform.is('mobile')) {
+      this.intercom.registerIdentifiedUser({
+        user_id: this.registration.id,
+        email: this.registration.email,
+      }).then((data)=>{
+        console.log('Intercome register : ' + JSON.stringify(data));
+        this.intercom.registerForPush().then(console.log).catch(console.log);
+        this.updateIntercom();
+      })
+    }
   }
 
- async updateIntercom(){
-    this.intercom.updateUser({
-      user_id: this.registration.id,
-      email: this.registration.email,
-      name: `${this.registration.first_name} ${this.registration.last_name}`,
-      customer_id: this.registration.customerID,
-      custom_attributes: {
-        mobile_app_name: this.registration.app_name,
-      },
-      instance: this.registration.customer_name,
-      avatar: {
-        type: "avatar",
-        image_url: this.registration.user_profile_picture
-      }
-    }).then((data)=>{
-      console.log('Intercome update : ' + JSON.stringify(data));
-    })
+  async updateIntercom() {
+    if (this.platform.is('mobile')) {
+      this.intercom.updateUser({
+        user_id: this.registration.id,
+        email: this.registration.email,
+        name: `${this.registration.first_name} ${this.registration.last_name}`,
+        customer_id: this.registration.customerID,
+        custom_attributes: {
+          mobile_app_name: this.registration.app_name,
+        },
+        instance: this.registration.customer_name,
+        avatar: {
+          type: "avatar",
+          image_url: this.registration.user_profile_picture
+        }
+      }).then((data)=>{
+        console.log('Intercome update : ' + JSON.stringify(data));
+      })
+    }
   }
 
   public unregister(user: User): Observable<User> {
