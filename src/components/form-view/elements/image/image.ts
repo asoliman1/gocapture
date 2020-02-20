@@ -4,7 +4,6 @@ import { FormElement } from "../../../../model";
 import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseElement } from "../base-element";
 import { Camera } from '@ionic-native/camera';
-import { ActionSheetController } from 'ionic-angular/components/action-sheet/action-sheet-controller';
 import { Platform } from 'ionic-angular/platform/platform';
 import { Util } from "../../../../util/util";
 import { ImageProcessor } from "../../../../services/image-processor";
@@ -38,10 +37,12 @@ export class Image extends BaseElement {
 	selection: any[] = [];
 
 	max = 5;
+  isWindows: boolean = false;
 
-	private selectedTheme;
+  private selectedTheme;
 
-	constructor(private fb: FormBuilder,
+	constructor(
+    private fb: FormBuilder,
 		private camera: Camera,
 		private platform: Platform,
 		private zone: NgZone,
@@ -49,8 +50,10 @@ export class Image extends BaseElement {
 		public util: Util,
 		private imageProc: ImageProcessor,
 		private themeProvider: ThemeProvider,
-		private dom: DomSanitizer) {
-		super();
+    private dom: DomSanitizer
+  ) {
+    super();
+    this.isWindows = !this.platform.is('mobile');
 		this.currentVal = [];
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
@@ -77,8 +80,8 @@ export class Image extends BaseElement {
 
 		let camera = this.camera;
 		this.popup.showActionSheet(
-				 "",
-			 [
+      "",
+			[
 				{
 					text: 'alerts.image.use-camera',
 					icon : 'camera',
@@ -160,7 +163,6 @@ export class Image extends BaseElement {
 	}
 
 	private imageUrl(path) {
-
 		let folder = this.file.dataDirectory + "leadliaison/images";
 		let name = path.substr(path.lastIndexOf("/") + 1);
 		let url = folder + "/" + name;
