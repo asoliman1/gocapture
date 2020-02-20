@@ -214,7 +214,7 @@ export class Settings {
           if(this.businessService.isOnline() ){
             // A.S
             this.popup.showLoading('Unauthenticating...')
-            this.client.unregister(this.user).subscribe(() => {
+            this.client.unregister(this.user).subscribe(() => { 
               this.popup.dismiss('loading');
               this.themeProvider.setActiveTheme();
               setTimeout(() => {

@@ -158,7 +158,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       if (this.readonly) {
         return;
       }
-      if (this.platform.is('ios')) {
+      if (this.platform.is('ios') || !this.platform.is('mobile')) {
         this.doCapture(type);
       } else {
         // this.showBusinessCardOverlay(type);
@@ -212,7 +212,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       {
         text: 'Retake',
         handler: () => {
-          if (this.platform.is('ios')) {
+          if (this.platform.is('ios') || !this.platform.is('mobile')) {
             this.doCapture(type, 1);
           } else {
             this.startCamera(type);
@@ -486,7 +486,6 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   }
 
   public async startCamera(type: number) {
-
     await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
 
     let width = Math.min(screen.width, screen.height);

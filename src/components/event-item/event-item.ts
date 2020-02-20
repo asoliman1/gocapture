@@ -21,7 +21,7 @@ export class EventItemComponent {
   }
 
   ionViewWillEnter(){
-   this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme',''));
+    this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme',''));
   }
 
   ngOnInit(){
@@ -51,10 +51,11 @@ export class EventItemComponent {
   }
 
   checkImageDownload(){
-    if(this.form.event_style && this.form.event_style.event_record_background.path.startsWith('https://'))
-    this.imageLoading = true;
-    else
-    this.imageLoading = false;
+    if(this.form.event_style && this.form.event_style.event_record_background.path.startsWith('https://')) {
+      this.imageLoading = true;
+    } else {
+      this.imageLoading = false;
+    }
   }
 
   // getRandomImage(){

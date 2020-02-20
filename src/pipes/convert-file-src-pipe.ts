@@ -11,12 +11,13 @@ export class ConvertFileSrcPipe implements PipeTransform {
   }
 
   transform(value: string) {
-    if(this.platform.is('mobile')) // A.S
-    return this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.win.Ionic.WebView.convertFileSrc(value)
-    );
+    if(this.platform.is('mobile')) {
+      return this.domSanitizer.bypassSecurityTrustResourceUrl(
+        this.win.Ionic.WebView.convertFileSrc(value)
+      );
+    }
 
-    return value;
+    return this.domSanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
 }

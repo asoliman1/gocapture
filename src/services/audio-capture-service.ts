@@ -31,27 +31,23 @@ export class AudioCaptureService {
 
       let extension = this.platform.is("ios") ? ".m4a" : ".mp3";
       this.fileName = new Date().getTime() + extension;
+      const filePath = this.utils.adjustFilePath(audioFolder + "/" + this.fileName);
 
-      let filePath = audioFolder + "/" + this.fileName;
-
-      if (this.platform.is("ios")) {
-        filePath = this.utils.adjustFilePath(filePath);
-      }
-
-      if (this.platform.is("ios")) {
+      if (this.platform.is('android')) {
+        this.startAudioRecording(this.fileName).subscribe((status) => {
+          obs.next(status);
+        });
+      } else {
         this.fileService.createFile(audioFolder, this.fileName, true)
           .then(() => {
             this.startAudioRecording(filePath).subscribe((status) => {
               obs.next(status);
             });
-          }).catch(error => {
-          console.error("Error - " + error);
-          obs.error(error);
-        });
-      } else {
-        this.startAudioRecording(this.fileName).subscribe((status) => {
-          obs.next(status);
-        });
+          })
+          .catch(error => {
+            console.error("Error - " + error);
+            obs.error(error);
+          });
       }
     });
   }

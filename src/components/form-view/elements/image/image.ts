@@ -151,6 +151,10 @@ export class Image extends BaseElement {
 	}
 
 	public normalizeURL(url: string): any {
+    if (!this.platform.is('mobile')) {
+      return this.dom.bypassSecurityTrustUrl(url);
+    }
+
 		return this.dom.bypassSecurityTrustUrl(this.util.normalizeURL(url));
 	}
 

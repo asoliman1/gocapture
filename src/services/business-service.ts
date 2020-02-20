@@ -207,9 +207,9 @@ export class BussinessClient {
         this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
        });
      }, timeout);
-   
+
  }
- 
+
 
  setLocationParams(position){
   let location : any = {} ;
@@ -298,7 +298,14 @@ export class BussinessClient {
             sub.unsubscribe();
           });
 
-          await this.appPreferences.clearAll();
+          // AppPreferences.clearAll() has no support for Windows 10
+          try {
+            await this.appPreferences.clearAll();
+          } catch(err) {
+            console.log("Couldn't clear app preferences.");
+            console.log(err);
+          }
+
           this.util.rmDir("leadliaison", "");
           this.pushSubs = [];
           this.setup = false;
@@ -306,6 +313,7 @@ export class BussinessClient {
           obs.complete();
 
         } else {
+          console.log("[could not unauthenticate]");
           obs.error("Could not unauthenticate");
         }
       }, err => {
@@ -333,7 +341,7 @@ export class BussinessClient {
           }
           let newD = new Date();
           this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-            // 
+            //
           },
             (err) => {
               obs.error(err);

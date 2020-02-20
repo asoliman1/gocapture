@@ -27,13 +27,13 @@ export enum DocumentShareMode {
   templateUrl: 'documents.html',
 })
 export class Documents implements AfterViewInit {
-   DocumentShareMode = DocumentShareMode;
-   documentSet: IDocumentSet;
-   selectedTheme;
-   shareMode: DocumentShareMode;
-   readonlyMode: boolean = false;
+  DocumentShareMode = DocumentShareMode;
+  documentSet: IDocumentSet;
+  selectedTheme;
+  shareMode: DocumentShareMode;
+  readonlyMode: boolean = false;
 
-   selectedDocCount: number = 0;
+  selectedDocCount: number = 0;
 
   constructor(
     public navCtrl: NavController,

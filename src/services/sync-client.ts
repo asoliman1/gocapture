@@ -1,3 +1,5 @@
+import { FileTransfer } from '@ionic-native/file-transfer';
+import { Platform } from 'ionic-angular/platform/platform';
 import { Image } from './../model/image';
 import { SettingsService } from './settings-service';
 import { Injectable } from "@angular/core";
@@ -68,7 +70,10 @@ export class SyncClient {
     private settingsService: SettingsService,
     private documentsSync: DocumentsSyncClient,
     private submissionsRepository: SubmissionsRepository,
-    private util: Util) {
+    private util: Util,
+    private fileTransfer: FileTransfer,
+    private platform: Platform
+  ) {
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
     this.syncSource = new BehaviorSubject<SyncStatus[]>(null);
@@ -102,7 +107,7 @@ export class SyncClient {
         contacts: new SyncStatus(false, false, 0, "Contacts", 0),
         submissions: new SyncStatus(false, false, 0, "Submissions", 0)
       };
-      
+
       this._isSyncing = true;
       this.lastSyncStatus = [
         map["forms"],
@@ -307,7 +312,7 @@ export class SyncClient {
 
       let uploadUrlMap = {};
       Object.keys(urlMap).forEach((key) => {
-        if (key.startsWith("file://") || key.startsWith("data:image")) {
+        if (key.startsWith("file://") || key.startsWith("data:image") || key.startsWith("ms-appdata://")) {
           uploadUrlMap[key] = urlMap[key];
         }
       });
@@ -337,7 +342,7 @@ export class SyncClient {
           } else {
             this.actuallySubmitForm(data.form, submission, obs);
           }
-          this.entitySyncedSource.next("Submissions"); 
+          this.entitySyncedSource.next("Submissions");
         }, (err) => {
           obs.error(err);
           this.errorSource.next("Could not save updated submission for form " + data.form.name);
@@ -555,7 +560,7 @@ export class SyncClient {
             obs.error(err);
           })
         } else {
-         
+
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
           let folder = this.file.dataDirectory + 'leadliaison/' + this.util.folderForFile(`.${file.split('.')[1]}`).replace('/','');
           this.file.resolveDirectoryUrl(folder)
@@ -683,7 +688,11 @@ export class SyncClient {
 
   // A.S GOC-326 download form images
   private async downloadFile(pathToDownload: string, path: string) {
-    return this.http.downloadFile(pathToDownload, {}, {}, path)
+    if (!this.platform.is('mobile')) {
+      return this.fileTransfer.create().download(pathToDownload, path);
+    }
+
+    return this.http.downloadFile(pathToDownload, {}, {}, path);
   }
 
   public downloadFileWithPath(path) {
@@ -914,7 +923,7 @@ export class SyncClient {
           // A.S
           let file = this.util.getFilePath(urls[index], '');
 
-          this.http.downloadFile(file.pathToDownload, {}, {}, file.path).then(entry => {
+          this.downloadFile(file.pathToDownload, file.path).then(entry => {
             urlMap[urls[index]] = urls[index];
             index++;
             setTimeout(() => {

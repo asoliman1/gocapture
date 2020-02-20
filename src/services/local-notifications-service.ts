@@ -21,6 +21,7 @@ export class LocalNotificationsService {
   }
 
   async scheduleUnsubmittedLeadsNotification() {
+
 	  let hasPermission = await this.localNotifications.hasPermission();
 
 	  if (!hasPermission) {
@@ -63,7 +64,12 @@ export class LocalNotificationsService {
 	}
 
 	private async checkPermissions() {
-    return await this.localNotifications.hasPermission();
+    try {
+      return await this.localNotifications.hasPermission();
+    } catch (err) {
+      console.log("[Checking localNotification permissions]");
+      console.log(err);
+    }
   }
 
 }

@@ -1,3 +1,4 @@
+import { Platform } from 'ionic-angular/platform/platform';
 import { Component, forwardRef, Input, NgZone } from "@angular/core";
 import { BaseElement } from "../base-element";
 import { Form, FormElement, FormSubmission } from "../../../../model";
@@ -44,11 +45,14 @@ export class GOCAudio extends BaseElement {
 	timeUp;
 	timeDown;
 
-	constructor(private audioCaptureService: AudioCaptureService,
+	constructor(
+    private audioCaptureService: AudioCaptureService,
 		private themeProvider: ThemeProvider,
 		private popup: Popup,
 		private zone: NgZone,
-		private content: Content) {
+    private content: Content,
+    private platform: Platform
+  ) {
 		super();
 
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
@@ -89,8 +93,13 @@ export class GOCAudio extends BaseElement {
 	}
 
 	pauseRecording() {
-		this.isRecordingPaused = true;
-		this.audioCaptureService.pauseRecord();
+    this.isRecordingPaused = true;
+    try {
+      console.log("pausing recording....");
+      this.audioCaptureService.pauseRecord();
+    } catch(err) {
+      console.log("couldn't pause recording");
+    }
 	}
 
 	resumeRecording() {
@@ -172,8 +181,13 @@ export class GOCAudio extends BaseElement {
 		}
 
 		if (!fileExist) {
-			this.popup.showLoading("Record downloading...");
-			await this.audioCaptureService.downloadRecord(filePath);
+      this.popup.showLoading("Record downloading...");
+      if (this.platform.is('mobile')) {
+        await this.audioCaptureService
+          .downloadRecord(filePath)
+          .catch((err) => console.log(err));
+      }
+
 			this.popup.dismiss('loading');
 		}
 

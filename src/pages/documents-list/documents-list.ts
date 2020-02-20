@@ -49,7 +49,7 @@ export class DocumentsListPage {
 
   openDocuments(documentSet: IDocumentSet) {
     this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
-      if (documents && documents.length) { 
+      if (documents && documents.length) {
         documentSet.documents = unionBy(documents, documentSet, 'id');
       }
 
@@ -58,7 +58,7 @@ export class DocumentsListPage {
       console.log('SOMETHING WENT WRONG OPENING THE DOCUMENT SET');
       console.log(JSON.stringify(error));
 
-     this.popup.showToast( `A problem occurred while opening your documents. Please try again.`)
+      this.popup.showToast( `A problem occurred while opening your documents. Please try again.`)
     });
   }
 
