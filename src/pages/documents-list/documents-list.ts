@@ -58,7 +58,7 @@ export class DocumentsListPage {
       console.log('SOMETHING WENT WRONG OPENING THE DOCUMENT SET');
       console.log(JSON.stringify(error));
 
-      this.popup.showToast( `A problem occurred while opening your documents. Please try again.`)
+     this.popup.showToast({text : `documents.open-problem`})
     });
   }
 

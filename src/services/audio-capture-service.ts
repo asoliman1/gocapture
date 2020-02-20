@@ -1,3 +1,4 @@
+import { HTTP } from '@ionic-native/http';
 import { Injectable } from "@angular/core";
 import { Media, MEDIA_STATUS, MediaObject } from "@ionic-native/media";
 import { File, RemoveResult } from '@ionic-native/file';
@@ -17,19 +18,19 @@ export class AudioCaptureService {
   isRecordingPaused: boolean = false;
 
   constructor(private media: Media,
-              private fileService: File,
-              private platform: Platform,
-              private utils: Util,
-              private syncClient: SyncClient) {
+    private fileService: File,
+    private platform: Platform,
+    private utils: Util,
+    private http: HTTP,
+    private syncClient: SyncClient) {
     //
   }
 
   startRecord(): Observable<MEDIA_STATUS> {
 
     return new Observable<MEDIA_STATUS>((obs: Observer<MEDIA_STATUS>) => {
-      let audioFolder =  this.audioFolder();
-
-      let extension = this.platform.is("ios") ? ".m4a" : ".mp3";
+      let audioFolder = this.audioFolder();
+      let extension = ".m4a" ;
       this.fileName = new Date().getTime() + extension;
       const filePath = this.utils.adjustFilePath(audioFolder + "/" + this.fileName);
 
@@ -43,8 +44,7 @@ export class AudioCaptureService {
             this.startAudioRecording(filePath).subscribe((status) => {
               obs.next(status);
             });
-          })
-          .catch(error => {
+          }).catch(error => {
             console.error("Error - " + error);
             obs.error(error);
           });
@@ -78,16 +78,24 @@ export class AudioCaptureService {
     this.audioFile.resumeRecord();
   }
 
-  playRecord(filePath): Observable<MEDIA_STATUS> {
+  init(filePath) {
     let fileName = filePath.split('/').pop();
-    this.audioFile = this.media.create(this.utils.adjustFilePath(this.audioFolder() + "/" + fileName ));
-    this.audioFile.play();
+    this.audioFile = this.media.create(this.utils.adjustFilePath(this.audioFolder() + "/" + fileName));
+  }
+
+  playRecord(){
+     this.audioFile.play();
+  }
+
+  getAudioStatus(): Observable<MEDIA_STATUS>{
     return this.audioFile.onStatusUpdate;
   }
 
   stopPlayback() {
-    this.audioFile.stop();
-    this.audioFile.release();
+    if(this.audioFile){
+      this.audioFile.stop();
+      this.audioFile.release();
+    }
   }
 
   pausePlayback() {
@@ -100,7 +108,7 @@ export class AudioCaptureService {
 
       return this.fileService.removeFile(this.audioFolder(), fileName);
     }
-    return Promise.reject({success: false, entry: null});
+    return Promise.reject({ success: false, entry: null });
   }
 
   trackDuration() {
@@ -130,6 +138,7 @@ export class AudioCaptureService {
   }
 
   public downloadRecord(url) {
-    return this.syncClient.downloadFileWithPath(url);
+    let file = this.utils.getFilePath(url, '');
+    return this.http.downloadFile(file.pathToDownload, {}, {}, file.path);
   }
 }

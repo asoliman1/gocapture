@@ -1,10 +1,10 @@
-<div class="document" [class]="selectedTheme">
-  <ion-label text-center>{{document.name}}</ion-label>
+<div class="document" >
+  <ion-label [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" text-center>{{document.name}}</ion-label>
 
-  <div tappable (tap)="select()" class="preview" (press)="openDocument()">
+  <div tappable (tap)="select()" class="preview"  (press)="openDocument()">
     <ion-icon *ngIf="document.selected" name="checkmark-circle"></ion-icon>
-    <img-loader *ngIf="!isWindows" [src]="thumbnail" [fallbackUrl]="fallbackUrl" useImg></img-loader>
-    <img *ngIf="isWindows" [src]="thumbnail" (error)="onWindowsImageLoadError($event)" />
+    <img-loader [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="thumbnail && !isWindows" [src]="thumbnail" [fallbackUrl]="fallbackUrl" useImg></img-loader>
+    <img [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="isWindows" [src]="thumbnail" (error)="onWindowsImageLoadError($event)" />
+    <div class="fi-extentions" [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="!thumbnail" > <i [style.color]="color"  class="fi flaticon-{{document.file_extension}}" ></i> </div>
   </div>
-
 </div>

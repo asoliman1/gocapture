@@ -4,8 +4,8 @@
 		<ion-row responsive-sm>
 			<ion-col>
 				<ion-item>
-					<ion-label stacked>Street address</ion-label>
-					<ion-input type="text"[attr.name]="element.identifier + '_1'" [formControlName]="element.identifier + '_1'" [placeholder]="element.placeholder"></ion-input>
+				<ion-label stacked>{{element.sub_elements[0].hint}}</ion-label>
+					<ion-input type="text" [attr.name]="element.identifier + '_1'" [formControlName]="element.identifier + '_1'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_1')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
@@ -13,7 +13,7 @@
 		<ion-row responsive-sm>
 			<ion-col>
 				<ion-item>
-					<ion-label stacked>Address line 2</ion-label>
+					<ion-label stacked>{{element.sub_elements[1].hint}}</ion-label>
 					<ion-input type="text" [attr.name]="element.identifier + '_2'" [formControlName]="element.identifier + '_2'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_2')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
@@ -22,14 +22,14 @@
 		<ion-row responsive-sm>
 			<ion-col>
 				<ion-item>
-					<ion-label stacked>City</ion-label>
+					<ion-label stacked>{{element.sub_elements[2].hint}}</ion-label>
 					<ion-input type="text" [attr.name]="element.identifier + '_3'" [formControlName]="element.identifier + '_3'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_3')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
 			<ion-col>
 				<ion-item>
-					<ion-label stacked>State</ion-label>
+					<ion-label stacked>{{element.sub_elements[3].hint}}</ion-label>
 					<ion-input type="text" [attr.name]="element.identifier + '_4'" [formControlName]="element.identifier + '_4'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_4')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
@@ -38,17 +38,17 @@
 		<ion-row responsive-sm>
 			<ion-col>
 				<ion-item>
-					<ion-label stacked>Zip code</ion-label>
+					<ion-label stacked>{{element.sub_elements[4].hint}}</ion-label>
 					<ion-input type="text" [attr.name]="element.identifier + '_5'" [formControlName]="element.identifier + '_5'" [placeholder]="element.placeholder"></ion-input>
 					<button *ngIf="selection" ion-button clear item-right icon-only (click)="selectEntry(element.identifier + '_5')"><ion-icon name="ios-open-outline"></ion-icon></button>
 				</ion-item>
 			</ion-col>
 			<ion-col>
 				<ion-item (click)="showOptions()">
-					<ion-label stacked >Country</ion-label>
+					<ion-label stacked >{{element.sub_elements[5].hint}}</ion-label>
 					<ion-select [disabled]="true" [ngModel]="country" [attr.name]="element.identifier + '_6'"
                       [formControlName]="element.identifier + '_6'">
-            <ion-option *ngFor="let country of countries" [value]="country.value">{{country.name}}</ion-option>
+                     <ion-option *ngFor="let country of countries" [value]="country.value">{{country.name}}</ion-option>
 					</ion-select>
 				</ion-item>
 			</ion-col>

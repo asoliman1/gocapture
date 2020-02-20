@@ -1,5 +1,5 @@
+import { SubmissionsProvider } from './../../providers/submissions/submissions';
 import { Component, NgZone, ViewChild } from '@angular/core';
-import { SyncClient } from "../../services/sync-client";
 import { BussinessClient } from "../../services/business-service";
 import { BarcodeStatus, Form, FormElementType, FormSubmission, SubmissionStatus } from "../../model";
 import { FormCapture } from "../form-capture";
@@ -9,7 +9,7 @@ import { NavParams } from 'ionic-angular/navigation/nav-params';
 import { Util } from "../../util/util";
 import { Content, ModalController } from "ionic-angular";
 import { FilterType, GCFilter } from "../../components/filters-view/gc-filter";
-import { FilterService, Modifier, Modifiers } from "../../services/filter-service";
+import { FilterService, Modifier } from "../../services/filter-service";
 import { ThemeProvider } from "../../providers/theme/theme";
 import { DateTimeUtil } from "../../util/date-time-util";
 import { Popup } from "../../providers/popup/popup";
@@ -24,11 +24,11 @@ export class FormReview {
 
 	form: Form = new Form();
 
-	statusFilter = {};
+	statusFilter: any = {};
 
 	submissions: FormSubmission[] = [];
 
-	loading: boolean = true;
+	loading: boolean;
 
 	syncing: boolean = false;
 
@@ -56,20 +56,19 @@ export class FormReview {
 		private navParams: NavParams,
 		private client: BussinessClient,
 		private zone: NgZone,
-		private syncClient: SyncClient,
 		private popup: Popup,
 		private util: Util,
 		private modalCtrl: ModalController,
 		private filterService: FilterService,
-		private themeProvider: ThemeProvider
+		private themeProvider: ThemeProvider,
+		private submissionsProvider: SubmissionsProvider
 	) {
 
 		this.statusFilters = [
-			{ id: 'all', title: "All", status: 0, description: "Tap an entry to edit/review." },
-			{ id: 'sent', title: "Complete", status: SubmissionStatus.Submitted, description: "Entries uploaded. Tap to review." },
-			{ id: 'hold', title: "Pending", status: SubmissionStatus.OnHold, description: "Entries pending transcription/validation. Tap to review." },
-			{ id: 'ready', title: "Ready", status: SubmissionStatus.ToSubmit, description: "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete." },
-			{ id: 'blocked', title: "Blocked", status: SubmissionStatus.Blocked, description: "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete." },
+			{ id: 'all', title: "form-review.filter.all.title", status: 0, description: "form-review.filter.all.description" },
+			{ id: 'sent', title: "form-review.filter.complete.title", status: SubmissionStatus.Submitted, description: "form-review.filter.complete.description" },
+			{ id: 'hold', title: "form-review.filter.pending.title", status: SubmissionStatus.OnHold, description: "form-review.filter.ready.description" },
+			{ id: 'blocked', title: "form-review.filter.blocked.title", status: SubmissionStatus.Blocked, description: "form-review.filter.blocked.description" },
 		];
 		this.statusFilter = this.statusFilters[0];
 
@@ -77,20 +76,10 @@ export class FormReview {
 
 		this.form = this.navParams.get("form");
 		this.isDispatch = this.navParams.get("isDispatch");
-		this.loading = true;
-		this.doRefresh();
-		this.syncing = this.syncClient.isSyncing();
-
-		this.sub = this.syncClient.onSync.subscribe(stats => { },
-			(err) => { },
-			() => {
-				this.syncing = this.syncClient.isSyncing();
-				this.doRefresh();
-			});
 	}
 
-	ionViewDidEnter() {
-		//
+	ionViewWillEnter() {
+		this.doRefresh();
 	}
 
 	ionViewWillLeave() {
@@ -120,6 +109,7 @@ export class FormReview {
 			(submission.status != SubmissionStatus.Submitted && !this.isNoProcessedRapidScan(submission) && submission.id != -1);
 	}
 
+
 	getColor(submission: FormSubmission) {
 		let result = "";
 		switch (submission.status) {
@@ -144,9 +134,7 @@ export class FormReview {
 	}
 
 	deleteSubmission(submission) {
-		this.client.removeSubmission(submission).subscribe(result => {
-			this.doRefresh();
-		});
+		this.submissionsProvider.removeSubmission(submission);
 	}
 
 
@@ -182,7 +170,7 @@ export class FormReview {
 		} else if (hasFirstLastName) {
 			return submission.first_name + ' ' + submission.last_name;
 		} else if (isScannedAndNoProcessed || isScannedAndPending || submission.barcode_processed == BarcodeStatus.PostShowReconsilation) {
-			return submission.fields[this.form.elements.find(e=>e.type == "barcode").identifier]
+			return submission.fields[this.form.elements.find(e => e.type == "barcode").identifier]
 		}
 		return ''; // A.S GOC-336
 	}
@@ -206,17 +194,20 @@ export class FormReview {
 
 	getBusinessCard(submission: FormSubmission) {
 		let id = this.form.getIdByFieldType(FormElementType.business_card);
-		let front = submission.fields[id] ? submission.fields[id]["front"] : "";
-		if (front && front.length > 0) {
-			front = this.util.imageUrl(front);
-		}
-		return front;
+		let bc: any = submission ? submission.fields[id] : null;
+		if (bc && bc.front)
+			bc.front = this.util.imageUrl(bc.front);
+		if (bc && bc.back)
+			bc.back = this.util.imageUrl(bc.back);
+		submission.fields[id] = bc;
+		return bc && bc.front ? bc.front : null;
 	}
 
 	doRefresh() {
-		this.client.getSubmissions(this.form, this.isDispatch).subscribe(submissions => {
-			this.submissions = submissions;
+		if(!this.submissions.length) this.loading = true;
+		this.submissionsProvider.getSubmissions(this.form.form_id).subscribe(submissions => {
 			this.loading = false;
+			this.submissions = submissions;
 			this.onFilterChanged();
 		});
 	}
@@ -253,7 +244,6 @@ export class FormReview {
 				return this.isSubmissionNeedToBeSubmitted(sub);
 			}).length > 0;
 
-			console.log(this.hasSubmissionsToSend);
 
 			if (this.filteredSubmissions.length == 0) {
 				let fakeSubmission = new FormSubmission();
@@ -286,7 +276,7 @@ export class FormReview {
 			this.zone.run(() => {
 				this.syncing = false;
 				this.doRefresh();
-				this.popup.showToast("There was an error sync-ing the submissions");
+				this.popup.showToast({text:'toast.syncing-submissions-error'});
 				console.log(err)
 			});
 		});

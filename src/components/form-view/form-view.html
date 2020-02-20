@@ -3,9 +3,9 @@
   
     <!-- A.S GOC-319 -->
     <form [formGroup]="theForm" style="width:100%;" novalidate *ngIf="theForm">
-      <ion-row *ngIf="isSeparatable">
-        <ion-col>
-          <ion-row *ngFor="let element of splitEls(true)">
+      <ion-row >
+        <ion-col class="spacer" *ngFor="let els of elements" >
+          <ion-row *ngFor="let element of els" >
             <section-block 
               *ngIf="element.type == 'section_block' && !element.is_hidden && shouldElementBeDisplayed(element)" 
               [element]="element">
@@ -36,76 +36,10 @@
               (onProcessingEvent)="onProcessing($event)">
             </dynamic-form-element>
           </ion-row>
+
         </ion-col>
-        <div class="spacer"></div>
-        <ion-col>
-          <ion-row *ngFor="let element of splitEls(false)">
-            <section-block 
-              *ngIf="element.type == 'section_block' && !element.is_hidden && shouldElementBeDisplayed(element)" 
-              [element]="element">
-              <ng-container *ngFor="let child of element.children">
-                <dynamic-form-element
-                  *ngIf="shouldElementBeDisplayedInsideSection(child)"
-                  [theForm]="theForm"
-                  [element]="child"
-                  [submitAttempt]="submitAttempt"
-                  [readOnly]="readOnly"
-                  [isEditing]="isEditing"
-                  [form]="form"
-                  [submission]="submission"
-                  (onProcessingEvent)="onProcessing($event)">
-                </dynamic-form-element>
-              </ng-container>
-            </section-block>
-            <dynamic-form-element 
-              *ngIf="shouldElementBeDisplayed(element)" 
-              [theForm]="theForm" 
-              [element]="element"
-              [submitAttempt]="submitAttempt" 
-              [readOnly]="readOnly" 
-              [isEditing]="isEditing" 
-              [form]="form"
-              [submission]="submission" 
-              (onProcessingEvent)="onProcessing($event)">
-            </dynamic-form-element>
-          </ion-row>
-        </ion-col>
+
       </ion-row>
-  
-      <div *ngIf="!isSeparatable">
-        <div class="" *ngFor="let element of displayForm.elements; let i = index; trackBy: trackByFn" #notSeparatable>
-  
-          <section-block 
-            *ngIf="element.type == 'section_block' && !element.is_hidden && shouldElementBeDisplayed(element)" 
-            [element]="element">
-            <ng-container *ngFor="let child of element.children">
-              <dynamic-form-element
-                *ngIf="shouldElementBeDisplayedInsideSection(child)"
-                [theForm]="theForm"
-                [element]="child"
-                [submitAttempt]="submitAttempt"
-                [readOnly]="readOnly"
-                [isEditing]="isEditing"
-                [form]="form"
-                [submission]="submission"
-                (onProcessingEvent)="onProcessing($event)">
-              </dynamic-form-element>
-            </ng-container>
-          </section-block>
-  
-          <dynamic-form-element
-            *ngIf="shouldElementBeDisplayed(element) && element.type != 'section_block'"
-            [theForm]="theForm"
-            [element]="element"
-            [submitAttempt]="submitAttempt"
-            [readOnly]="readOnly"
-            [isEditing]="isEditing"
-            [form]="form"
-            [submission]="submission"
-            (onProcessingEvent)="onProcessing($event)">
-          </dynamic-form-element>
-        </div>
-      </div>
     </form>
     <div class="spacing"></div>
   </div>

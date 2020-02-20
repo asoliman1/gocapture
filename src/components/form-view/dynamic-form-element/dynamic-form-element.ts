@@ -25,7 +25,6 @@ export class DynamicFormElementComponent {
   minYear = "0";
   maxYear = "0";
 
-
   constructor() {
     this.setYearsRange();
   }
@@ -35,27 +34,35 @@ export class DynamicFormElementComponent {
   }
 
   ngOnInit(){
-    this.setFormLabelColor();
-    this.setItemBackground()
+    this.setElementsStyle()
   }
 
     // A.S GOC-326
-  setFormLabelColor(){
+  setElementsStyle(){
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
-  }
-
-    // A.S GOC-353
-  setItemBackground(){
-    document.documentElement.style.setProperty(`--elements_background_color`, this.form.event_style.capture_background_color);
+    document.documentElement.style.setProperty(`--elements_bg_color`,this.hexToRgb(this.form.event_style.element_background_color));
+    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity+'');
   }
 
   isControlInvalid() {
-    return !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
+    return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
 
   setHour(event) {
 
   }
+
+  hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    let rgb = result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    } : null;
+
+    return rgb ? `${rgb.r},${rgb.g},${rgb.b}` : '0,0,0';
+}
 
   setDate(event) {
     //console.log(event);

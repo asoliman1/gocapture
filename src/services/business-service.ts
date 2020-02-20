@@ -1,5 +1,5 @@
-import { Geolocation, Geoposition, Coordinates } from '@ionic-native/geolocation';
-import { SettingsService } from './settings-service';
+import { TranslateConfigService } from './translate/translateConfigService';
+import { FormsProvider } from './../providers/forms/forms';
 import { Util } from './../util/util';
 import { AppPreferences } from '@ionic-native/app-preferences';
 import { Popup } from './../providers/popup/popup';
@@ -25,7 +25,11 @@ import { Network } from '@ionic-native/network';
 import { StatusResponse } from "../model/protocol/status-response";
 import { LocalNotificationsService } from "./local-notifications-service";
 import { settingsKeys } from '../constants/constants';
-declare var cordova: any;
+import { SettingsService } from './settings-service';
+import { Geolocation } from '@ionic-native/geolocation';
+import { SubmissionsProvider } from '../providers/submissions/submissions';
+import { Intercom } from '@ionic-native/intercom';
+import { Subject } from 'rxjs';
 
 @Injectable()
 /**
@@ -48,7 +52,7 @@ export class BussinessClient {
 
   private online: boolean = true;
 
-  private registration: User;
+  registration: User;
 
   private setup: boolean = false;
 
@@ -60,9 +64,10 @@ export class BussinessClient {
    */
   error: Observable<any>;
 
+  public userUpdates: Subject<User> = new Subject();
 
-
-  constructor(private db: DBClient,
+  constructor(
+    private db: DBClient,
     private rest: RESTClient,
     private sync: SyncClient,
     private push: PushClient,
@@ -70,29 +75,18 @@ export class BussinessClient {
     private localNotificationsService: LocalNotificationsService,
     private appPreferences: AppPreferences,
     private util: Util,
-    private settingsService : SettingsService,
-    private geolocation : Geolocation,
+    private formsProvider: FormsProvider,
+    private submissionsProvider: SubmissionsProvider,
+    private settingsService: SettingsService,
+    private geolocation: Geolocation,
+    private intercom: Intercom,
+    private translateConfigService: TranslateConfigService,
     private popup: Popup) {
-
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
-
-    this.networkOff = this.net.onDisconnect().subscribe(() => {
-      console.log("network was disconnected :-(");
-      this.setOnline(false);
-      // A.S setting sync off when network is off
-      this.sync.setSync(false);
-    });
-
-    this.networkOn = this.net.onConnect().subscribe(() => {
-      console.log("network was connected");
-      this.setOnline(true);
-    });
-
     this.errorSource = new BehaviorSubject<any>(null);
     this.error = this.errorSource.asObservable();
-
-
+    this.initNetwork();
   }
 
   public isOnline(): boolean {
@@ -104,12 +98,26 @@ export class BussinessClient {
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
     this.doAutoSync();
+    // this.getUpdates().subscribe(() => { }, (err) => { }, () => {});
+  }
+
+  private initNetwork() {
+    this.networkOff = this.net.onDisconnect().subscribe(() => {
+      console.log("network was disconnected :-(");
+      this.formsProvider.setFormsSyncStatus(false);
+      this.setOnline(false);
+    });
+
+    this.networkOn = this.net.onConnect().subscribe(() => {
+      console.log("network was connected");
+      this.setOnline(true);
+    });
   }
 
   public doAutoSync() {
     if (this.isOnline()) {
       this.db.isWorkDbInited() && this.db.getConfig("autoUpload").flatMap((val) => {
-        if (val + "" == "true") {
+        if (val + "" != "false") {
           return this.doSync();
         }
         this.scheduleUnsubmittedLeadsNotification();
@@ -121,7 +129,7 @@ export class BussinessClient {
         console.error(error);
       });
     } else {
-      this.popup.showToast('No internet connection available.', "top", "warning")
+      this.popup.showToast({text:'toast.no-internet-connection'}, "top", "warning")
     }
   }
 
@@ -139,27 +147,18 @@ export class BussinessClient {
   }
 
   public setupNotifications() {
+
     if (!this.setup) {
       this.setup = true;
-      this.pushSubs.push(this.push.error.subscribe((err) => {
-        // console.error("notification", err);
-        // console.error(JSON.stringify(err));
-      }));
+      this.pushSubs.push(this.push.error.subscribe(() => {}));
 
       this.pushSubs.push(this.push.notification.subscribe((note) => {
-
-        if (!note) {
-          return;
-        }
-
+        if (!note) return;
         this.handlePush(note);
-
       }));
 
       this.pushSubs.push(this.push.registration.subscribe((regId) => {
-        if (!regId) {
-          return;
-        }
+        if (!regId) return;
         this.db.updateRegistration(regId).subscribe((ok) => {
           this.rest.registerDeviceToPush(regId, true).subscribe((done) => {
             if (done) {
@@ -180,51 +179,50 @@ export class BussinessClient {
       this.db.getRegistration().subscribe((user) => {
         if (user) {
           this.registration = user;
+          this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
+          this.formsProvider.setForms();
           this.rest.token = user.access_token;
-          obs.next(user);
-          obs.complete();
-        } else {
-          obs.next(user);
-          obs.complete();
         }
+        obs.next(user);
+        obs.complete();
       })
     });
   }
 
-    // A.S
-   setLocation(timeout = 2000){
-     setTimeout(() => {
-      console.log('Getting location')
+  // A.S
+  setLocation(timeout = 2000) {
+    setTimeout(() => {
+      // console.log('Getting location')
       this.util.setPluginPrefs()
-      this.geolocation.getCurrentPosition({enableHighAccuracy:true,timeout:5000}).then(position=>{
+      this.geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 }).then(position => {
         let location = this.setLocationParams(position);
-        console.log('Current location data : ' + location);
-        this.settingsService.setSetting(settingsKeys.LOCATION,location).subscribe()
-       }).catch((err)=>{
+        // console.log('Current location data : ' + location);
+        this.settingsService.setSetting(settingsKeys.LOCATION, location).subscribe()
+      }).catch((err) => {
         console.log('Error getting location')
         console.log(err);
-        this.settingsService.setSetting(settingsKeys.LOCATION,'').subscribe()
-       });
-     }, timeout);
+        this.settingsService.setSetting(settingsKeys.LOCATION, '').subscribe()
+      });
+    }, timeout);
 
- }
+  }
 
 
- setLocationParams(position){
-  let location : any = {} ;
-  let coords : any = {} ;
-  coords.latitude = position.coords.latitude;
-  coords.longitude = position.coords.longitude;
-  coords.altitude = position.coords.altitude;
-  coords.accuracy = position.coords.accuracy;
-  coords.altitudeAccuracy = position.coords.altitudeAccuracy;
-  coords.heading = position.coords.heading;
-  coords.speed = position.coords.speed;
-  location.coords = coords;
-  location.timestamp = position.timestamp;
-  return JSON.stringify(location)
- }
+  setLocationParams(position) {
+    let location: any = {};
+    let coords: any = {};
+    coords.latitude = position.coords.latitude;
+    coords.longitude = position.coords.longitude;
+    coords.altitude = position.coords.altitude;
+    coords.accuracy = position.coords.accuracy;
+    coords.altitudeAccuracy = position.coords.altitudeAccuracy;
+    coords.heading = position.coords.heading;
+    coords.speed = position.coords.speed;
+    location.coords = coords;
+    location.timestamp = position.timestamp;
+    return JSON.stringify(location)
+  }
 
 
   public validateKioskPassword(password: string): Observable<boolean> {
@@ -267,51 +265,76 @@ export class BussinessClient {
       req.device_name = email;
       this.rest.authenticate(req).subscribe(reply => {
         this.util.checkFilesDirectories();
-        this.registration = reply;
-        reply.pushRegistered = 1;
-        reply.is_production = Config.isProd ? 1 : 0;
-        this.db.makeAllAccountsInactive().subscribe((done) => {
-          this.db.saveRegistration(reply).subscribe((done) => {
-            this.db.setupWorkDb(reply.db);
-             this.setLocation();
-            obs.next({ user: reply, message: "Done" });
-            obs.complete();
-          }, err => {
-            console.log(err);
-          });
-        }, err => {
-          console.log(err);
-        });
+        this.onAuthSuccess(reply, false, obs);
       }, err => {
-        obs.error("Invalid authentication code");
+        obs.error("toast.auth-err");
       });
     });
   }
 
+  private onAuthSuccess(reply: User, update: boolean, obs: Observer<any>) {
+    reply.pushRegistered = 1;
+    reply.is_production = Config.isProd ? 1 : 0;
+    this.registration = reply;
+    this.translateConfigService.setLanguage(this.registration.localization);
+    this.db.makeAllAccountsInactive().subscribe((done) => {
+      this.db.saveRegistration(reply).subscribe((done) => {
+
+        this.db.setupWorkDb(reply.db);
+        this.setLocation(3000);
+        if (reply.in_app_support) {
+          if(update) this.updateIntercom();
+          else this.registerIntercom();
+        };
+        this.userUpdates.next(reply);
+        obs.next({ user: reply, message: "Done" });
+        obs.complete();
+      }, err => {
+        obs.error(err);
+        console.log(err);
+      });
+    }, err => {
+      obs.error(err);
+      console.log(err);
+    });
+  }
+
+
+ async registerIntercom(){
+    this.intercom.registerIdentifiedUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+    }).then((data)=>{
+      console.log('Intercome register : ' + JSON.stringify(data));
+      this.intercom.registerForPush().then(console.log).catch(console.log);
+      this.updateIntercom();
+    })
+  }
+
+ async updateIntercom(){
+    this.intercom.updateUser({
+      user_id: this.registration.id,
+      email: this.registration.email,
+      name: `${this.registration.first_name} ${this.registration.last_name}`,
+      customer_id: this.registration.customerID,
+      custom_attributes: {
+        mobile_app_name: this.registration.app_name,
+      },
+      instance: this.registration.customer_name,
+      avatar: {
+        type: "avatar",
+        image_url: this.registration.user_profile_picture
+      }
+    }).then((data)=>{
+      console.log('Intercome update : ' + JSON.stringify(data));
+    })
+  }
+
   public unregister(user: User): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
-      this.rest.unauthenticate(user.access_token).subscribe(async (done) => {
+      this.rest.unauthenticate(user.access_token).subscribe((done) => {
         if (done) {
-          this.db.deleteRegistration();
-          this.push.shutdown();
-          this.pushSubs.forEach(sub => {
-            sub.unsubscribe();
-          });
-
-          // AppPreferences.clearAll() has no support for Windows 10
-          try {
-            await this.appPreferences.clearAll();
-          } catch(err) {
-            console.log("Couldn't clear app preferences.");
-            console.log(err);
-          }
-
-          this.util.rmDir("leadliaison", "");
-          this.pushSubs = [];
-          this.setup = false;
-          obs.next(user);
-          obs.complete();
-
+          this.onUnAuthSuccess(obs)
         } else {
           console.log("[could not unauthenticate]");
           obs.error("Could not unauthenticate");
@@ -322,39 +345,63 @@ export class BussinessClient {
     });
   }
 
+  private async onUnAuthSuccess(obs) {
+    this.db.deleteRegistration();
+    this.push.shutdown();
+    this.pushSubs.forEach(sub => {
+      sub.unsubscribe();
+    });
+    try {
+      await this.appPreferences.clearAll();
+      await this.intercom.reset();
+    } catch (error) {
+      console.log(error);
+    }
+    this.formsProvider.resetForms();
+    this.util.rmDir("leadliaison", "");
+    this.pushSubs = [];
+    this.setup = false;
+    obs.next(null);
+    obs.complete();
+  }
+
   public getDeviceStatus(user: User) {
     return new Observable<StatusResponse<string>>((obs: Observer<StatusResponse<string>>) => {
       this.rest.validateAccessToken(user.access_token).subscribe((status) => {
+        this.onAuthSuccess(status.data, true, obs)
         obs.next(status);
         obs.complete();
       })
     });
   }
 
+
   public getUpdates(): Observable<boolean> {
     return new Observable<boolean>((obs: Observer<boolean>) => {
+      if (!this.isOnline()) {
+        obs.error('toast.no-internet-connection');
+        // this.formsProvider.setFormsSyncStatus(false);
+        return;
+      }
       this.db.getConfig("lastSyncDate").subscribe(time => {
-        this.db.getConfig("getAllContacts").subscribe(getAllContacts => {
-          let d = new Date();
-          if (time) {
-            d.setTime(parseInt(time));
-          }
-          let newD = new Date();
-          this.sync.download(time ? d : null, getAllContacts != "true").subscribe(downloadData => {
-            //
-          },
-            (err) => {
-              obs.error(err);
-            },
-            () => {
-              this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
-                this.db.saveConfig("getAllContacts", "true").subscribe(() => {
-                  obs.next(true);
-                  obs.complete();
-                });
-              })
-            });
-        });
+        let d = new Date();
+        if (time) {
+          d.setTime(parseInt(time));
+        }
+        let newD = new Date();
+        this.sync.download(time ? d : null).subscribe(
+          (downloadData) => { },
+          (err) => { obs.error(err); },
+          () => {
+            console.log('Finished syncing at : ' + newD + "")
+            this.db.saveConfig("lastSyncDate", newD.getTime() + "").subscribe(() => {
+              this.db.saveConfig("getAllContacts", "true").subscribe(() => {
+                obs.next(true);
+                obs.complete();
+              });
+            })
+          });
+        this.doAutoSync()
       });
     });
   }
@@ -363,11 +410,11 @@ export class BussinessClient {
     return this.db.getForms();
   }
 
-  /*
-    public getDispatches(): Observable<DispatchOrder[]> {
-        return this.db.getDispatches();
-    }
-     */
+  public async getFormById(formId): Promise<Form> {
+    let forms = await this.db.getFormsByIds([formId]).toPromise();
+    return forms[0]
+  }
+
 
   public getContacts(form: Form): Observable<DeviceFormMembership[]> {
     return this.db.getMemberships(form.form_id);
@@ -383,14 +430,11 @@ export class BussinessClient {
 
   public saveSubmission(sub: FormSubmission, form: Form, syncData: boolean = true): Observable<boolean> {
     sub.updateFields(form);
-
     return new Observable<boolean>((obs: Observer<boolean>) => {
       this.db.saveSubmission(sub).subscribe((done) => {
-
         if (syncData) {
           this.doAutoSync();
         }
-
         obs.next(done);
         obs.complete();
       }, (err) => {
@@ -402,19 +446,14 @@ export class BussinessClient {
   public doSync(formId?: number): Observable<any> {
     return new Observable<any>((obs: Observer<any>) => {
       if (!this.isOnline()) {
-        obs.error('No internet connection available');
-        return;
-      }
-
-      if (this.sync.isSyncing()) {
-        console.log("Sync is in progress. Skip...");
-        obs.complete();
+        obs.error('toast.no-internet-connection');
         return;
       }
 
       this.db.getSubmissionsToSend().subscribe((submissions) => {
 
-        console.log("Submissions to submit - " + JSON.stringify(submissions));
+        console.log("Submissions to submit :");
+        console.log(submissions)
 
         if (submissions.length == 0) {
           obs.complete();
@@ -440,8 +479,6 @@ export class BussinessClient {
         }
         this.db.getFormsByIds(formIds).subscribe(forms => {
 
-          //sync submissions with status "ToSubmit"
-          //sync submissions with status "Submitting" in case the first attempt was 9 min ago
           let filteredSubmissions = submissions.filter((submission) => {
             return this.isSubmissionNeedToBeSubmitted(submission)
           });
@@ -453,31 +490,30 @@ export class BussinessClient {
           let dbUpdates = [];
           filteredSubmissions.forEach((sub) => {
             sub.status = SubmissionStatus.Submitting;
+            this.submissionsProvider.updateSubmissionStatus(sub.id, sub.status)
             sub.last_sync_date = new Date().toISOString();
             let subUpdateObs = this.db.updateSubmissionStatus(sub);
             dbUpdates.push(subUpdateObs);
           });
-
+          let i = 0;
           Observable.zip(...dbUpdates).subscribe(() => {
-            this.sync.sync(filteredSubmissions, forms).subscribe((submitted) => {
-              console.log("Sync process is completed");
-
+            this.submissionsProvider.sync(filteredSubmissions, forms).subscribe((submitted) => {
               obs.next(true);
               this.localNotificationsService.cancelAll();
               obs.complete();
             }, (err) => {
               console.error(err);
               obs.error(err);
-              this.errorSource.next(err);
+              // this.errorSource.next(err);
             });
           });
         }, (err) => {
           obs.error(err);
-          this.errorSource.next(err);
+          // this.errorSource.next(err);
         });
       }, (error) => {
         obs.error(error);
-        this.errorSource.next(error);
+        // this.errorSource.next(error);
       });
     });
   }
@@ -493,7 +529,8 @@ export class BussinessClient {
     }
 
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
-    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.05;
+    let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
+
     return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 
@@ -507,7 +544,7 @@ export class BussinessClient {
     console.log('Push received - ' + JSON.stringify(note));
 
     if (note.action == 'sync') {
-      this.getUpdates().subscribe();
+      this.getUpdates().subscribe(() => { }, (err) => { }, () => { });
     } else if (note.action == 'resync') {
       this.sync.download(null).subscribe(data => {
         //
@@ -519,4 +556,18 @@ export class BussinessClient {
       });
     }
   }
+
+  setAppCloseTime() {
+    this.db.saveConfig('appCloseTime', Date.now() + "").subscribe();
+  }
+
+  async getAppCloseTimeFrom() {
+    let closeTime = await this.db.getConfig('appCloseTime').toPromise();
+    return (Date.now() - parseInt(closeTime)) / 1000;
+  }
+
+  updateAccountSettings(settings): Observable<User> {
+    return this.rest.updateAccountSettings(settings);
+}
+
 }

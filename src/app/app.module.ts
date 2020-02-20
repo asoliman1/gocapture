@@ -22,7 +22,6 @@ import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { ImageProcessor } from "../services/image-processor";
-import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
 import {
@@ -109,7 +108,21 @@ import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
+import { FormsProvider } from '../providers/forms/forms';
+import { SubmissionsProvider } from '../providers/submissions/submissions';
+import { ContactsProvider } from '../providers/contacts/contacts';
+import { SupportPage } from '../pages/support/support';
+import { Intercom } from '@ionic-native/intercom';
+import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
+import { LocalizationsPage } from '../views/localizations/localizations';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 @NgModule({
   declarations: [
     MyApp,
@@ -119,7 +132,6 @@ import { SectionBlock } from '../components/section-block';
     Forms,
     Settings,
     Dispatches,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -153,13 +165,16 @@ import { SectionBlock } from '../components/section-block';
     ScreenSaverPage,
     SectionBlock,
     buttonBar,
-    CustomFabMenu
+    CustomFabMenu,
+    SupportPage,
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    BrowserAnimationsModule,
     IonicModule.forRoot(MyApp),
+    BrowserAnimationsModule,
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,
@@ -170,6 +185,14 @@ import { SectionBlock } from '../components/section-block';
     ComponentsModule,
     NgSelectModule,
     FormsModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -180,7 +203,6 @@ import { SectionBlock } from '../components/section-block';
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -209,7 +231,10 @@ import { SectionBlock } from '../components/section-block';
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-    CustomFabMenu
+    CustomFabMenu,
+    SupportPage,
+    SkeletonLoadingComponent,
+    LocalizationsPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -262,6 +287,7 @@ import { SectionBlock } from '../components/section-block';
     BadgeRapidCapture,
     BCRapidCapture,
     DuplicateLeadsService,
+    FormsProvider,
     AppPreferences,
     DocumentViewer,
     FileOpener,
@@ -272,9 +298,13 @@ import { SectionBlock } from '../components/section-block';
     SubmissionMapper,
     ShareService,
     Insomnia,
+    SubmissionsProvider,
     formViewService,
     FilterService,
     Keyboard,
+    ContactsProvider,
+    Intercom,
+    TranslateConfigService
   ]
 })
 export class AppModule { }

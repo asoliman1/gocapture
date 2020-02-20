@@ -3,6 +3,7 @@ import {Form, FormSubmission, FormSubmissionType} from "../model";
 import {FilterType, GCFilter} from "../components/filters-view/gc-filter";
 import {DateTimeUtil} from "../util/date-time-util";
 import {iFilterItem} from "../model/protocol/ifilter-item";
+import { TranslateService } from "@ngx-translate/core";
 
 export enum Modifiers {
   Equals = 'equal',
@@ -21,15 +22,20 @@ export interface Modifier {
 
 export class FilterService {
 
+  constructor(
+    private translate: TranslateService
+  ){
+  }
+
   private gcFilters: GCFilter[];
 
   private setupFilters() {
     this.gcFilters = [
-      {title: 'Name', id: FilterType.Name, icon:'information-circle-outline'},
-      {title: 'Email', id: FilterType.Email, icon: 'at'},
-      {title: 'Capture Method', id: FilterType.CaptureType, icon: 'attach'},
-      {title: 'Capture Date', id: FilterType.CaptureDate, icon: 'calendar'},
-      {title: 'Captured By', id: FilterType.CapturedBy, icon: 'person'}];
+      {title: this.translate.instant('filters-view.titles.name'), id: FilterType.Name, icon:'information-circle-outline'},
+      {title: this.translate.instant('filters-view.titles.email'), id: FilterType.Email, icon: 'at'},
+      {title: this.translate.instant('filters-view.titles.capture-method'), id: FilterType.CaptureType, icon: 'attach'},
+      {title: this.translate.instant('filters-view.titles.capture-date'), id: FilterType.CaptureDate, icon: 'calendar'},
+      {title: this.translate.instant('filters-view.titles.captured-by'), id: FilterType.CapturedBy, icon: 'person'}];
   }
 
   filters(shouldReset: boolean = false) {
@@ -43,12 +49,12 @@ export class FilterService {
     this.setupFilters();
   }
 
-  static modifiers(): Modifier[] {
+ public modifiers(): Modifier[] {
     return [
-      {name: 'Equals', value: Modifiers.Equals},
-      {name: 'Does not equal', value: Modifiers.NotEqual},
-      {name: 'Contains', value: Modifiers.Contains},
-      {name: 'Does not contain', value: Modifiers.NotContain}];
+      {name: this.translate.instant('filters-view.modifiers.equals'), value: Modifiers.Equals},
+      {name: this.translate.instant('filters-view.modifiers.doesnt-equal'), value: Modifiers.NotEqual},
+      {name: this.translate.instant('filters-view.modifiers.contains'), value: Modifiers.Contains},
+      {name: this.translate.instant('filters-view.modifiers.does-not-contain'), value: Modifiers.NotContain}];
   }
 
   resetFilters() {
@@ -66,10 +72,10 @@ export class FilterService {
 
     if (filter.id == FilterType.CaptureType) {
       return [
-        {title: "Normal", value: FormSubmissionType.normal, displayedProperty: 'title'},
-        {title: "Badge Scan", value: FormSubmissionType.barcode, displayedProperty: 'title'},
-        {title: "List", value: FormSubmissionType.list, displayedProperty: 'title'},
-        {title: "Transcription", value: FormSubmissionType.transcription, displayedProperty: 'title'}];
+        {title: this.translate.instant('filters-view.capture-type.normal'), value: FormSubmissionType.normal, displayedProperty: 'title'},
+        {title: this.translate.instant('filters-view.capture-type.badge-scan'), value: FormSubmissionType.barcode, displayedProperty: 'title'},
+        {title: this.translate.instant('filters-view.capture-type.list'), value: FormSubmissionType.list, displayedProperty: 'title'},
+        {title: this.translate.instant('filters-view.capture-type.transcription'), value: FormSubmissionType.transcription, displayedProperty: 'title'}];
     }
 
     if (filter.id == FilterType.CaptureDate) {

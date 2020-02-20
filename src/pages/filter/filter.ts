@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
-import {BasePage} from "../base/base";
-import {ThemeProvider} from "../../providers/theme/theme";
-import {FilterType, GCFilter} from "../../components/filters-view/gc-filter";
-import {FilterService, Modifier} from "../../services/filter-service";
-import {iFilterItem} from "../../model/protocol/ifilter-item";
-import {iTagItem} from "../../model/protocol/itag-item";
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { BasePage } from "../base/base";
+import { ThemeProvider } from "../../providers/theme/theme";
+import { FilterType, GCFilter } from "../../components/filters-view/gc-filter";
+import { FilterService, Modifier } from "../../services/filter-service";
+import { iFilterItem } from "../../model/protocol/ifilter-item";
+import { iTagItem } from "../../model/protocol/itag-item";
 
 @IonicPage()
 @Component({
@@ -28,13 +28,15 @@ export class FilterPage extends BasePage {
   isAll: boolean = false;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
-              public themeProvider: ThemeProvider,
-              public viewCtrl: ViewController) {
+    public navParams: NavParams,
+    public themeProvider: ThemeProvider,
+    public filterSerive : FilterService,
+    public viewCtrl: ViewController) {
     super(navCtrl, navParams, themeProvider);
   }
 
   ionViewDidLoad() {
+    
     this.items = this.navParams.get('items');
     this.selectedTags = this.navParams.get('selectedItems') || [];
 
@@ -43,8 +45,8 @@ export class FilterPage extends BasePage {
     this.title = this.navParams.get('title') || 'Filter';
     this.selectedFilter = this.navParams.get('filter');
 
-    this.modifiers = FilterService.modifiers();
-    this.selectedModifier = this.selectedFilter.modifier || FilterService.modifiers()[0];
+    this.modifiers =  this.filterSerive.modifiers();
+    this.selectedModifier = this.selectedFilter.modifier || this.filterSerive.modifiers()[0];
 
     this.items.forEach((item) => {
       item.isSelected = this.selectedTags.length > 0 && this.selectedTags.indexOf(item.value) != -1;
@@ -64,7 +66,7 @@ export class FilterPage extends BasePage {
       data = this.selectedTags;
     }
 
-    this.viewCtrl.dismiss({data: data, modifier: this.selectedModifier});
+    this.viewCtrl.dismiss({ data: data, modifier: this.selectedModifier });
   }
 
   getSearchedItems(event) {
@@ -85,13 +87,13 @@ export class FilterPage extends BasePage {
   addTagFn(value) {
     let trimmedValue = value && value.trim();
     if (trimmedValue.length) {
-      return {value: trimmedValue, tag: true, isSelected: true };
+      return { value: trimmedValue, tag: true, isSelected: true };
     }
     return;
   }
 
   isModifierMode() {
-    return  this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
+    return this.selectedFilter.id == FilterType.Name || this.selectedFilter.id == FilterType.Email;
   }
 
   clearSelectedItems() {

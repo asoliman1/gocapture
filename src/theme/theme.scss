@@ -11,13 +11,14 @@
   .toolbar .toolbar-background,
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
-  .fab-md-in-list , .fab-md-in-list , .fab , .fab.activated{
+  .fab-md-in-list , .fab-md-in-list , .fab ,
+  .fab.activated , .s-header .title::after , .document button[full]{
     background-color: $theme-color;
   }
 
   .alert-button,
   .action-sheet-button,
-  [aria-checked=true] .alert-radio-label {
+  [aria-checked=true] .alert-radio-label, .s-header ion-icon  {
     color: $theme-color !important;
   }
 
@@ -28,6 +29,7 @@
   .option-item {
     &.selected {
       color: $theme-color !important;
+      font-weight: 900;
     }
   }
 
@@ -97,6 +99,11 @@
   }
 
   .bar-button {
+    color: $theme-color;
+  }
+
+  .fi-extentions{
+    font-size: 125px;
     color: $theme-color;
   }
 

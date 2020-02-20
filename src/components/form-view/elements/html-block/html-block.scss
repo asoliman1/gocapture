@@ -23,6 +23,9 @@
         height   : 4em;
       }
     }
+    img{
+      object-fit: contain !important;
+    }
   }
 
   #expand-button {

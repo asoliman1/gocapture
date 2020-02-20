@@ -5,7 +5,7 @@ import { Popup } from './../../../providers/popup/popup';
 import { FormSubmission, BarcodeStatus } from './../../../model/form-submission';
 import { formViewService } from './../form-view-service';
 import { Form } from './../../../model/form';
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { FormReview } from '../../../views/form-review';
 import { DBClient } from '../../../services/db-client';
@@ -182,7 +182,7 @@ export class buttonBar implements OnInit {
     }
 
     showActionSheet() {
-        this.popup.showActionSheet('Choose from :', [...this.scanningEls.map((e) => {
+        this.popup.showActionSheet('alerts.choose-from', [...this.scanningEls.map((e) => {
             let el: ActionSheetButton = {
                 text: e.title, handler: () => {
                     this.formViewService.pushEvent(`scan_${e.type}`)
@@ -190,7 +190,7 @@ export class buttonBar implements OnInit {
             }
             return el;
         }), {
-            text: 'Cancel',
+            text: 'general.cancel',
             role: 'cancel'
         }]);
     }

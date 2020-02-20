@@ -106,15 +106,14 @@ form-view, .form-view {
     display: none;
   }
 
-  .spacer{
-		width: 1.5px;
-		background-color: lightgray;
-		margin: 5px;
-	}
-	
+  ion-col.spacer:nth-child(2){
+	border-left: 1.5px solid lightgray;
+  }
+
 	.spacing {
 		display: block;
 		width: 100%;
 		height: 150px;
 	}
+
 }

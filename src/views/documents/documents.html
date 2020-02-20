@@ -2,28 +2,28 @@
   <ion-navbar color="primary">
     <ion-buttons start navPop (click)="close()">
       <button ion-button>
-        Cancel
+        {{'general.cancel' | translate}}
       </button>
     </ion-buttons>
     <ion-title>{{documentSet.name}}</ion-title>
 
     <ion-buttons end (click)="shareDocuments()" *ngIf="shareMode === DocumentShareMode.SHARE && selectedDocCount && !readonlyMode">
-      <button ion-button>Send</button>
+      <button ion-button>{{'general.send' | translate}}</button>
     </ion-buttons>
 
     <ion-buttons end (click)="submitSelectedDocuments()" *ngIf="shareMode === DocumentShareMode.SUBMISSION && !readonlyMode">
-      <button ion-button>Done</button>
+      <button ion-button>{{'general.done' | translate }}</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
   <ion-label text-center *ngIf="documentSet && documentSet.documents && documentSet.documents.length">
-    {{readonlyMode ? 'Long press to view document.' : 'Tap to select documents. Long press to view.'}}
+    {{readonlyMode ? 'documents.long-press' : 'documents.tap-to-select' | translate}}
   </ion-label>
 
   <ion-label text-center *ngIf="documentSet && documentSet.documents && !documentSet.documents.length">
-    This document set is empty.
+    {{'documents.empty-set-msg-set' | translate}}
   </ion-label>
 
   <ion-grid class="documents-list">

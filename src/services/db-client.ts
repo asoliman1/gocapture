@@ -29,7 +29,7 @@ export class DBClient {
 	private registration: User;
 
 	private saveAllEnabled = false;
-	private saveAllPageSize = 50;
+	private saveAllPageSize = 500;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
 
 	private tables: Table[] = [
@@ -58,8 +58,8 @@ export class DBClient {
 			queries: {
 				"select": "SELECT * FROM forms where isDispatch=?",
 				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style,lastSync, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
+				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style , lastSync) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from forms where id=?",
 				"deleteIn": "delete FROM forms where formId in (?)",
 				"deleteAll": "delete from forms"
@@ -88,7 +88,7 @@ export class DBClient {
 				"selectById": "SELECT * FROM submissions where id=? limit 1",
 				"toSend": "SELECT * FROM submissions where status in (4,5)",
 				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name, location) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=?, location=? where id=?",
+				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
 				"delete": "DELETE from submissions where id=?",
 				"deleteIn": "DELETE from submissions where formId in (?)",
 				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
@@ -183,13 +183,14 @@ export class DBClient {
 				{ name: 'email', type: 'text' },
 				{ name: 'title', type: 'text' },
 				{ name: 'operatorFirstName', type: 'text' },
-				{ name: 'operatorLastName', type: 'text' }
+				{ name: 'operatorLastName', type: 'text' },
+				
 			],
 			queries: {
 				"select": "SELECT * from org_master WHERE active = 1",
 				"makeAllInactive": "UPDATE org_master set active = 0",
 				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId, support, supportEmail, documentationURL , localizations , localization) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				"delete": "DELETE from org_master where id = ?",
 				'updateRegistration': 'UPDATE org_master set registrationId = ?',
 				"deleteAll": "delete from org_master"
@@ -266,6 +267,19 @@ export class DBClient {
 					"ALTER TABLE org_master add column deviceId integer"
 				]
 			},
+			8: {
+				queries: [
+					"alter table org_master add column support integer default 0",
+					"alter table org_master add column supportEmail text",
+					"alter table org_master add column documentationURL text",
+				]
+			},
+			9: {
+				queries: [
+				  "ALTER TABLE org_master add column localizations text",
+				  "ALTER TABLE org_master add column localization text",
+				]
+			  }
 		},
 		work: {
 			1: {
@@ -447,6 +461,11 @@ export class DBClient {
 				queries: [
 					"alter table submissions add column location text",
 				]
+			},
+			28: {
+				queries: [
+					"alter table forms add column lastSync text",
+				]
 			}
 		}
 	};
@@ -534,6 +553,7 @@ export class DBClient {
 		form.event_address = typeof dbForm.event_address == "string" ? JSON.parse(dbForm.event_address) : dbForm.event_address;
 		form.event_style = typeof dbForm.event_style == "string" ? JSON.parse(dbForm.event_style) : dbForm.event_style;
 		form.available_for_users = typeof dbForm.available_for_users == "string" ? JSON.parse(dbForm.available_for_users) : dbForm.available_for_users;
+		form.lastSync = typeof dbForm.lastSync == "string" ? JSON.parse(dbForm.lastSync) : dbForm.lastSync;
 
 		if (form.elements && form.elements.length > 0) {
 			form.elements.sort((e1: FormElement, e2: FormElement): number => {
@@ -603,7 +623,7 @@ export class DBClient {
 		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-		JSON.stringify(form.event_address), JSON.stringify(form.event_style)]);
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync)]);
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -647,70 +667,40 @@ export class DBClient {
 	public getRegistration(): Observable<User> {
 		return this.getSingleWithCleanup<any>(MASTER, "org_master", null)
 			.map((data) => {
-				if (data) {
-					let user = new User();
-					user.access_token = data.token;
-					user.customer_account_name = data.custAccName;
-					user.user_profile_picture = data.avatar;
-					user.customer_logo = data.logo;
-					user.user_name = data.username;
-					user.customer_name = data.name;
-					user.theme = data.theme;
-					user.db = data.db;
-					user.email = data.email;
-					user.first_name = data.operatorFirstName;
-					user.id = data.id;
-					user.is_active = data.active;
-					user.last_name = data.operatorLastName;
-					user.title = data.title;
-					user.pushRegistered = data.pushRegistered;
-					user.device_token = data.registrationId;
-					user.is_production = data.isProduction;
-					user.device_id = data.deviceId;
-					this.registration = user;
-					return user;
-				}
-				return null;
+				return this.mapUser(data);
 			});
 	}
 
-	/*
-	public getDispatches(): Observable<DispatchOrder[]> {
-		return this.getAll<any[]>(WORK, "forms", [true, true, true, true])
-			.map((data) => {
-				let forms = [];
-				data.forEach((dbForm: any) => {
-					let form = new DispatchOrder();
-					form.form_id = dbForm.id;
-					form.description = dbForm.description;
-					form.name = dbForm.name;
-					form.total_submissions = dbForm.totalSub;
-					form.total_hold = dbForm.totalHold;
-					let dispatch = JSON.parse(dbForm.dispatchData);
-					form.device_id = dispatch.device_id;
-					form.prospect_id = dispatch.prospect_id;
-					form.fields_values = dispatch.fields_values;
-					form.status = dispatch.status;
-					form.form = this.parseForm(dispatch.form);
-					forms.push(form);
-				});
-				return forms;
-			});
+	private mapUser(data : any) : User {
+		if (data) {
+			let user = new User();
+			user.access_token = data.token;
+			user.customer_account_name = data.custAccName;
+			user.user_profile_picture = data.avatar;
+			user.customer_logo = data.logo;
+			user.user_name = data.username;
+			user.customer_name = data.name;
+			user.theme = data.theme;
+			user.db = data.db;
+			user.email = data.email;
+			user.first_name = data.operatorFirstName;
+			user.id = data.id;
+			user.is_active = data.active;
+			user.last_name = data.operatorLastName;
+			user.title = data.title;
+			user.pushRegistered = data.pushRegistered;
+			user.device_token = data.registrationId;
+			user.is_production = data.isProduction;
+			user.device_id = data.deviceId;
+			user.in_app_support = data.support;
+			user.support_email = data.supportEmail;
+			user.documentation_url = data.documentationURL;
+			user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
+            user.localization = data.localization;
+			this.registration = user;
+			return user;
+		}else return null;
 	}
-	 */
-
-	public saveDispatchOrder(order: DispatchOrder): Observable<boolean> {
-		//console.log("saving");
-		//id, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary
-		return this.save(WORK, "forms", [order.id, order.form_id, order.name, order.form.title, order.description || order.form.description, order.form.success_message, order.form.submit_error_message, order.form.submit_button_text, order.date_created, order.date_last_modified, JSON.stringify(order.form.elements), true, JSON.stringify(order), null, null]);
-	}
-
-	/*
-	public saveDispatches(forms: DispatchOrder[]): Observable<boolean> {
-		return this.saveAll<DispatchOrder>(forms, "DispatchOrder");
-	}
-
-	 */
 
 	public getMemberships(form_id: number): Observable<DeviceFormMembership[]> {
 		return this.getAll<any[]>(WORK, "contacts", [form_id])
@@ -874,7 +864,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -885,10 +875,9 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									console.log(data);
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, SubmissionStatus.Submitted, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
 										.then((data) => {
-											console.log(data);
+											// console.log(data);
 											obs.next(true);
 											obs.complete();
 										}, (err) => {
@@ -952,7 +941,6 @@ export class DBClient {
 	}
 
 	public updateSubmissionId(form: FormSubmission): Observable<boolean> {
-		//id, formId, data, sub_date, status, isDispatch, dispatchId
 		let formId = form.activity_id || form.id;
 		return this.updateById(WORK, "submissions", [formId, form.status, form.activity_id, form.hold_request_id, form.invalid_fields, form.id]);
 	}
@@ -963,7 +951,7 @@ export class DBClient {
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
 		sub.updateFields(form);
-		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id, JSON.stringify(sub.location)]);
+		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
 	}
 
 	public getDocumentsByIds(ids: number[]) {
@@ -1117,9 +1105,13 @@ export class DBClient {
 			user.pushRegistered,
 			user.is_production,
 			user.theme,
-			user.device_id
+			user.device_id,
+			user.in_app_support,
+			user.support_email,
+			user.documentation_url,
+			JSON.stringify(user.localizations),
+			user.localization
 		]).map(data => {
-			this.saveConfig(settingsKeys.AUTO_UPLOAD, "true").subscribe();
 			this.registration = user;
 			return data;
 		});
@@ -1222,19 +1214,16 @@ export class DBClient {
 					console.log(error)
 				})
 			};
-
 			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
-				if (index + 1 % page == 0) {  // bug here
-					// console.log("save " + type + " " + index);
+				if (index + 1 % page == 0) {  
 					exec(index == items.length);
 					if (index == items.length) {
 						return;
 					}
 				} else if (index == items.length) {
 					this.saveAllEnabled = false;
-					// console.log("save " + type + " " + index);
 					exec(true);
 					return;
 				} else if (index < items.length) {
@@ -1249,11 +1238,9 @@ export class DBClient {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			if (this.saveAllEnabled) {
 				this.saveAllData.push({ query: this.getQuery(table, "update"), type: type, parameters: parameters });
-				setTimeout(() => {
 					responseObserver.next(true);
 					responseObserver.complete();
-				});
-				return;
+				    return;
 			}
 			this.doUpdate(type, "update", table, parameters).subscribe((value) => {
 				responseObserver.next(value);
@@ -1361,6 +1348,7 @@ export class DBClient {
 							responseObserver.complete();
 						}
 					}, (err) => {
+						console.log(err);
 						responseObserver.error("An error occurred: " + JSON.stringify(err));
 					});
 			}, (error) => {

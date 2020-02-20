@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import {Documents} from "./documents";
@@ -11,7 +12,8 @@ import {IonicImageLoader} from "ionic-image-loader";
   ],
   imports: [
     IonicPageModule.forChild(Documents),
-    IonicImageLoader
+    IonicImageLoader,
+    TranslateModule
   ],
 })
 export class DocumentsPageModule {}

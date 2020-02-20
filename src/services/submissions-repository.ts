@@ -39,6 +39,7 @@ export class SubmissionsRepository {
   }
 
   public handleMergedSubmission(activityId, localSubmission, mergedSubmission, form) {
+
     return this.dbClient.getSubmissionById(activityId).flatMap((sub) => {
       if (sub) {
         //remove local submission with the same activityId
