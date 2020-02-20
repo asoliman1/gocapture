@@ -7,8 +7,8 @@ ion-item .image button{
 
 #addImage{
   height: 150px;
-  -webkit-mask: url(../../../../assets/images/add-image.svg) no-repeat center / contain;
-  mask: url(../../../../assets/images/add-image.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/images/add-image.svg) no-repeat center / contain;
+  mask: url(../assets/images/add-image.svg) no-repeat center / contain;
   background:var(--elements_label_color);
 }
 

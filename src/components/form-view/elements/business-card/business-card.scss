@@ -20,16 +20,16 @@ business-card{
 	ion-spinner.hidden{
 		display: none;
   }
-  
+
   #frontImage{
-    -webkit-mask: url(../../../../assets/images/business-card-front.svg) no-repeat center / contain;
-    mask: url(../../../../assets/images/business-card-front.svg) no-repeat center / contain;
+    -webkit-mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
+    mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
     background:var(--elements_label_color);
   }
 
   #backImage{
-    -webkit-mask: url(../../../../assets/images/business-card-back.svg) no-repeat center / contain;
-    mask: url(../../../../assets/images/business-card-back.svg) no-repeat center / contain;
+    -webkit-mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
+    mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
     background:var(--elements_label_color);
   }
 
