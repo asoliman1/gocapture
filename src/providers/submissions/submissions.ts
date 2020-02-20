@@ -88,10 +88,10 @@ export class SubmissionsProvider {
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => {
-          let data = {...e}; 
+          let data = {...e};
           await this.saveSubmissions(data)
           return data.form;
-          }) 
+          })
       ).subscribe((data) => {
         obs.next(data.form_id);
       }, err => {
@@ -103,7 +103,7 @@ export class SubmissionsProvider {
   }
 
   async saveSubmissions(data) {
-    if(data.form) { 
+    if(data.form) {
     // this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
     let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
       submissionsToDownload: number[] = [],
@@ -337,7 +337,7 @@ export class SubmissionsProvider {
 
       let uploadUrlMap = {};
       Object.keys(urlMap).forEach((key) => {
-        if (key.startsWith("file://") || key.startsWith("data:image")) {
+        if (key.startsWith("file://") || key.startsWith("data:image") || key.startsWith("ms-appdata://")) {
           uploadUrlMap[key] = urlMap[key];
         }
       });
@@ -348,7 +348,7 @@ export class SubmissionsProvider {
 
       this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
 
-        // console.log("Submission uploaded data");
+       // console.log("Submission uploaded data");
 
         this.updateUrlMapWithData(uploadUrlMap, uploadedData);
 
