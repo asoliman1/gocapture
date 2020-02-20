@@ -16,10 +16,6 @@ export class SectionBlock extends BaseElement implements OnChanges {
   active: boolean = true;
   selectedThemeColor: string;
   
-  private contentHeight: number;
-  private visibleElementsCount: number;
-  private shouldResetSectionHeight: boolean = false;
-  
   @Input('element') element: FormElement;
   @ViewChild("content") content: any;
 
@@ -43,22 +39,6 @@ export class SectionBlock extends BaseElement implements OnChanges {
     }
   }
 
-  // TODO: check the height calculation for better animations later
-  // ngAfterViewInit() {
-  //   this.updateSectionHeight();
-  //   this.visibleElementsCount = this.getNumberOfVisibleElements();
-  // }
-
-  // ngAfterViewChecked() {
-  //   if (this.shouldResetSectionHeight) {
-  //     this.updateSectionHeight();
-  //   }
-  // }
-
-  // ngDoCheck() {
-  //   const currentVisibleElements = this.getNumberOfVisibleElements();
-  //   this.shouldResetSectionHeight = currentVisibleElements !== this.visibleElementsCount;
-  // }
 
   toggleSection() {
     this.active = !this.active;
@@ -66,29 +46,10 @@ export class SectionBlock extends BaseElement implements OnChanges {
   }
 
   private updateSectionHeight() {
-    // if (this.content.nativeElement && this.content.nativeElement.scrollHeight) {
-    //   const defaultPadding = 5;
-    //   this.contentHeight = this.content.nativeElement.scrollHeight + defaultPadding;
-
-    //   const contentHeight = this.contentHeight ? this.contentHeight + 'px' : 'initial';
-    //   const maxHeighValue = this.active ? contentHeight : "0px";
     if (this.content.nativeElement) {
-      const maxHeighValue = this.active ? 'initial' : "0px";
-      this.renderer.setStyle(this.content.nativeElement, "max-height", maxHeighValue);
+      const maxHeighValue = this.active ? 'block' : "none";
+      this.renderer.setStyle(this.content.nativeElement, "display", maxHeighValue);
     }
   }
 
-  // private getNumberOfVisibleElements() {
-  //   let count = 0;
-
-  //   if (this.element.children) {
-  //     this.element.children.forEach((child: FormElement) => {
-  //       if (child.isMatchingRules) {
-  //         count++;
-  //       }
-  //     });
-  //   }
-  
-  //   return count;
-  // }
 }
