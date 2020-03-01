@@ -55,7 +55,6 @@ export class Document implements OnChanges {
     } else {
       this.thumbnail = preview_urls['large'];
     }
-
   }
 
   select() {
@@ -66,15 +65,12 @@ export class Document implements OnChanges {
     this.onOpen.emit(null);
   }
 
-  checkLoadingDoc(){
-   if(this.documentsService.currentDownloadingDocs.find((e)=> e == this.document.id)) return true;
-   return false;
-  }
+  checkLoadingDoc() {
+    if (this.documentsService.currentDownloadingDocs.find((e)=> e == this.document.id)) {
+      return true;
+    }
 
-  onWindowsImageLoadError(event) {
-    console.log("Failed to load document image on windows");
-    console.log(event);
-    this.thumbnail = this.fallbackUrl;
+    return false;
   }
 
 }

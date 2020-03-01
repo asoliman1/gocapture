@@ -4,7 +4,9 @@
   <div tappable (tap)="select()" class="preview"  (press)="openDocument()">
     <ion-icon *ngIf="document.selected" name="checkmark-circle"></ion-icon>
     <img-loader [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="thumbnail && !isWindows" [src]="thumbnail" [fallbackUrl]="fallbackUrl" useImg></img-loader>
-    <img [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="isWindows" [src]="thumbnail" (error)="onWindowsImageLoadError($event)" />
-    <div class="fi-extentions" [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="!thumbnail" > <i [style.color]="color"  class="fi flaticon-{{document.file_extension}}" ></i> </div>
+    <img [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="thumbnail && isWindows" [src]="thumbnail" />
+    <div class="fi-extentions" [style.opacity]="checkLoadingDoc() ? '0.5' : '1.0'" *ngIf="!thumbnail" >
+      <i [style.color]="color"  class="fi flaticon-{{document.file_extension}}" ></i>
+    </div>
   </div>
 </div>
