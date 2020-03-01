@@ -567,7 +567,6 @@ export class SubmissionsProvider {
             obs.error(err);
           })
         } else {
-
           let file = urls[index].substr(urls[index].lastIndexOf("/") + 1);
           let folder = this.file.dataDirectory + 'leadliaison/' + this.util.folderForFile(`.${file.split('.')[1]}`).replace('/', '');
           this.file.resolveDirectoryUrl(folder)
@@ -578,6 +577,13 @@ export class SubmissionsProvider {
               fileEntry.getMetadata((metadata) => {
                 this.file.readAsDataURL(folder, file)
                   .then((data: string) => {
+                    // NOTE: this and edge case on Windows
+                    // The audio file (.m4a) gets encoded as mp4 when the file is encoded in base64
+                    // being mp4 it prevents the Media plugin from playing the file
+                    if (data.includes("audio/mp4")) {
+                      data = data.replace(/audio\/mp4/, "audio/m4a");
+                    }
+
                     let entry = this.util.createFile(data, file, metadata.size);
                     request.files.push(entry);
                     filesUploader.push(this.rest.uploadFiles(request));

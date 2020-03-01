@@ -241,12 +241,15 @@ export class Util {
 
   // A.S
   public folderForFile(ext: string) {
-    if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
+    if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg') {
       return "images";
-    else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a')
+    } else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a') {
       return "audio";
-    else
-      return "videos"
+    } else if (ext == '.mp4' && !this.platform.is('mobile')) {
+      return "audio";
+    } else {
+      return "videos";
+    }
   }
 
   // A.S

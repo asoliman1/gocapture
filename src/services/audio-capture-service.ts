@@ -1,3 +1,4 @@
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { HTTP } from '@ionic-native/http';
 import { Injectable } from "@angular/core";
 import { Media, MEDIA_STATUS, MediaObject } from "@ionic-native/media";
@@ -5,7 +6,6 @@ import { File, RemoveResult } from '@ionic-native/file';
 import { Observable, Observer } from "rxjs";
 import { Platform } from "ionic-angular";
 import { Util } from "../util/util";
-import { SyncClient } from "./sync-client";
 
 @Injectable()
 
@@ -17,12 +17,14 @@ export class AudioCaptureService {
 
   isRecordingPaused: boolean = false;
 
-  constructor(private media: Media,
+  constructor(
+    private media: Media,
     private fileService: File,
     private platform: Platform,
     private utils: Util,
     private http: HTTP,
-    private syncClient: SyncClient) {
+    private fileTransfer: FileTransfer
+  ) {
     //
   }
 
@@ -63,7 +65,7 @@ export class AudioCaptureService {
           }, (err) => {
             console.error(err);
             reject(err);
-          })
+          });
       } else {
         resolve(this.audioFolder() + "/" + this.fileName);
       }
@@ -83,8 +85,8 @@ export class AudioCaptureService {
     this.audioFile = this.media.create(this.utils.adjustFilePath(this.audioFolder() + "/" + fileName));
   }
 
-  playRecord(){
-     this.audioFile.play();
+  playRecord() {
+    this.audioFile.play();
   }
 
   getAudioStatus(): Observable<MEDIA_STATUS>{
@@ -139,6 +141,10 @@ export class AudioCaptureService {
 
   public downloadRecord(url) {
     let file = this.utils.getFilePath(url, '');
+    if (!this.platform.is('mobile')) {
+      return this.fileTransfer.create().download(file.pathToDownload, file.path);
+    }
+
     return this.http.downloadFile(file.pathToDownload, {}, {}, file.path);
   }
 }
