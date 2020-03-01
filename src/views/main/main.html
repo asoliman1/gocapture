@@ -3,8 +3,9 @@
     <div class="profile">
       <ion-item>
         <ion-avatar item-left>
-          <img-loader [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture" useImg></img-loader>
-          <div *ngIf="!user?.user_profile_picture"> {{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
+          <img-loader [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture && !isWindows" useImg></img-loader>
+          <img [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture && isWindows" />
+          <div *ngIf="!user?.user_profile_picture">{{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
         </ion-avatar>
         <h1>{{'sideMenu.hi' | translate}}, {{user?.first_name}}</h1>
         <h3>{{'sideMenu.welcome-back' | translate}}</h3>

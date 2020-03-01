@@ -1,3 +1,4 @@
+import { Platform } from 'ionic-angular/platform/platform';
 import { SupportPage } from './../../pages/support/support';
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { Forms } from "../forms";
@@ -19,7 +20,8 @@ export class Main {
 	@ViewChild(Nav) nav: Nav;
 	rootPage: any = Forms;
 	user: User = new User();
-	pages: Array<{ title: string, component: any, icon: string, data?: any }>;
+  pages: Array<{ title: string, component: any, icon: string, data?: any }>;
+  isWindows: boolean;
 
 	constructor(
 		public client: BussinessClient,
@@ -27,9 +29,10 @@ export class Main {
 		private rapidCaptureService: RapidCaptureService,
 		private formsProvider: FormsProvider,
 		private ngZone : NgZone,
-		private dbClient : DBClient
+    private dbClient : DBClient,
+    private platform: Platform
 	) {
-
+    this.isWindows = !this.platform.is("mobile");
 	}
 
 	openPage(page) {
@@ -66,7 +69,7 @@ export class Main {
 			this.setUser(user)
 		})
 	}
-	
+
 	checkUnsentBadges(){
 		setTimeout(() => {
 			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');
@@ -75,15 +78,15 @@ export class Main {
 
 	setUser(user : User){
 		this.ngZone.run(()=>{
-			this.user = user;
+      this.user = user;
 			this.setPages();
 			this.setTheme();
-		})
+		});
 	}
 
 	setTheme(){
 		let theme = this.user.theme ? this.user.theme : 'default';
-		this.themeProvider.setActiveTheme(theme + '-theme'); // 
+		this.themeProvider.setActiveTheme(theme + '-theme'); //
 	}
 
 }
