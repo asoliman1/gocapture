@@ -36,7 +36,7 @@ export class Badge extends BaseElement implements OnInit {
   scanner: Scanner;
   isScanning: boolean = false;
   ButtonBar : Subscription;
-  
+
   constructor(
     private client: RESTClient,
     private popup: Popup,
@@ -53,19 +53,21 @@ export class Badge extends BaseElement implements OnInit {
 
   }
 
-  ionViewDidLeave(){
-   this.ButtonBar.unsubscribe();
-  } 
+  ionViewDidLeave() {
+    this.ButtonBar.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.scanner = this.getScanner();
-    this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-       if(data === 'scan_barcode') this.scan();
-     })
+    this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data) => {
+      if(data === 'scan_barcode') {
+        this.scan();
+      }
+    });
   }
 
-  
-  ngOnDestroy(){
+
+  ngOnDestroy() {
     this.ButtonBar.unsubscribe();
   }
 
@@ -83,7 +85,7 @@ export class Badge extends BaseElement implements OnInit {
 
     console.log("Badge scan started");
     this.utils.setPluginPrefs()
-    
+
     this.scanner.scan(false).then((response) => {
 
       console.log("Badge scan finished: " + response.scannedId);
@@ -91,7 +93,7 @@ export class Badge extends BaseElement implements OnInit {
       this.onProcessingEvent.emit('false');
 
       if (response.isCancelled) return;
-    
+
 
       this.onChange(response.scannedId);
 

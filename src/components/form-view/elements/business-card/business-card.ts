@@ -63,7 +63,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   private selectedTheme;
 
-  //only for IOS
+  // only for IOS
   private needCrop = false;
 
   constructor(private actionCtrl: ActionSheetController,
@@ -91,7 +91,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
     this.settingsService.getSetting(settingsKeys.AUTO_CROP).subscribe((data) => {
       if (data) {
-        this.needCrop = JSON.parse(data)
+        this.needCrop = JSON.parse(data);
       }
     })
   }
@@ -105,28 +105,30 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   ngAfterContentInit() {
     this.theVal = {
-      front: this.util.imageUrl( this.currentVal.front ),
-      back: this.util.imageUrl( this.currentVal.back )
+      front: this.util.imageUrl(this.currentVal.front),
+      back: this.util.imageUrl(this.currentVal.back)
     };
-    console.log(this.theVal)
   }
 
   ngOnDestroy(): void {
     if (this.actionSubscription) {
       this.actionSubscription.unsubscribe();
     }
-    this.ButtonBar.unsubscribe();
 
+    this.ButtonBar.unsubscribe();
   }
 
   ngOnInit() {
     this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-      if(data == 'scan_business_card') this.captureImage(this.FRONT);
-      else if(data == 'reset') this.initImages();
-    })
+      if(data == 'scan_business_card') {
+        this.captureImage(this.FRONT);
+      } else if(data == 'reset') {
+        this.initImages();
+      }
+    });
   }
 
-  initImages(){
+  initImages() {
     this.theVal = {
       front: this.front,
       back: this.back

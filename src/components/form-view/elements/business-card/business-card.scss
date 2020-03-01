@@ -1,36 +1,40 @@
-business-card{
-	width: 100%;
+business-card {
+  width: 100%;
+
 	ion-col:first-child {
 		padding-left: 0;
 	}
 
-	ion-col:last-child{
+	ion-col:last-child {
 		padding-right: 0;
 	}
 
-	.rotateright{
+	.rotateright {
 		transform: rotate(90deg) translateY(-100%);
-    	transform-origin: top left;
-    	height: 100%;
-	}
-	img.hidden{
+    transform-origin: top left;
+    height: 100%;
+  }
+
+	img.hidden {
 		opacity: 0;
 	}
 
-	ion-spinner.hidden{
+	ion-spinner.hidden {
 		display: none;
   }
 
   #frontImage{
-    -webkit-mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
-    mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
-    background:var(--elements_label_color);
+    //-webkit-mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
+    //mask: url(../assets/images/business-card-front.svg) no-repeat center / contain;
+    //background:var(--elements_label_color);
+    background: url(../assets/images/business-card-front.svg) no-repeat center / contain;
   }
 
-  #backImage{
-    -webkit-mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
-    mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
-    background:var(--elements_label_color);
+  #backImage {
+    //-webkit-mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
+    //mask: url(../assets/images/business-card-back.svg) no-repeat center / contain;
+    //background: var(--elements_label_color);
+    background: url(../assets/images/business-card-back.svg) no-repeat center / contain;
   }
 
   .card-container {
@@ -61,8 +65,8 @@ business-card{
   }
 }
 
-image-viewer{
-	.scroll-content{
+image-viewer {
+	.scroll-content {
 		background-color: black;
 	}
 }

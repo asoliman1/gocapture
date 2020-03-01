@@ -2,42 +2,42 @@ image-item, .image{
 	width: 100%;
 }
 
-ion-item .image button{
-}
+ion-item .image button{}
 
-#addImage{
+#addImage {
   height: 150px;
-  -webkit-mask: url(../assets/images/add-image.svg) no-repeat center / contain;
-  mask: url(../assets/images/add-image.svg) no-repeat center / contain;
-  background:var(--elements_label_color);
+  //-webkit-mask: url(../assets/images/add-image.svg) no-repeat center / contain;
+  //mask: url(../assets/images/add-image.svg) no-repeat center / contain;
+  //background:var(--elements_label_color);
+  background: url(../assets/images/add-image.svg) no-repeat center / contain;
 }
 
 .image ion-scroll {
-   white-space: nowrap;
-   height: 125px;
+  white-space: nowrap;
+  height: 125px;
 
-   .scroll-zoom-wrapper{
-	   overflow-y: hidden;
-   }
+  .scroll-zoom-wrapper {
+    overflow-y: hidden;
+  }
 }
 
-.image ion-scroll div{
+.image ion-scroll div {
 	height: 100%;
 }
 
-.image ion-scroll .img{
+.image ion-scroll .img {
 	position: relative;
 	display: inline-block;
 }
 
 .image ion-scroll ion-img,
-.image ion-scroll img{
+.image ion-scroll img {
 	height:100%;
 	width:auto;
 	display:inline-block;
 }
 
-.image ion-scroll .img:not(:last-child){
+.image ion-scroll .img:not(:last-child) {
 	margin-right:10px;
 }
 
@@ -55,22 +55,22 @@ ion-col[width-15] {
   max-width: 15%;
 }
 
-.image ion-col{
+.image ion-col {
 	padding: 0;
 }
 
-.image .overlay{
+.image .overlay {
 	position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    text-align: center;
-    vertical-align: middle;
-    background-color: rgba(2, 2, 2, 0.3);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+  vertical-align: middle;
+  background-color: rgba(2, 2, 2, 0.3);
 }
 
-.image .overlay ion-icon{
+.image .overlay ion-icon {
 	font-size: 4em!important;
     color: white;
     margin-top: calc(50% - 1em);
