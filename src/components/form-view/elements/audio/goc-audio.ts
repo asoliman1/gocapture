@@ -43,7 +43,9 @@ export class GOCAudio extends BaseElement {
 	private isSeeked = false;
 
 	timeUp;
-	timeDown;
+  timeDown;
+
+  private isWindows: boolean;
 
 	constructor(
     private audioCaptureService: AudioCaptureService,
@@ -53,8 +55,8 @@ export class GOCAudio extends BaseElement {
     private content: Content,
     private platform: Platform
   ) {
-		super();
-
+    super();
+    this.isWindows = !this.platform.is("windows");
 		this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 	}
 

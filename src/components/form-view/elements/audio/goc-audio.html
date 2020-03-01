@@ -11,7 +11,7 @@
       <div class="recording-dot blink" *ngIf="!isRecordingPaused"></div>
       <div class="recording-dot" *ngIf="isRecordingPaused"></div>
       <ion-row>
-        <ion-col>
+        <ion-col *ngIf="!isWindows">
           <button ion-button icon-only outline block (click)="pauseRecording()" *ngIf="!isRecordingPaused">
             <ion-icon name="pause"></ion-icon>
           </button>
