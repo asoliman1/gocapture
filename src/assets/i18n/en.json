@@ -147,6 +147,9 @@
         "title": "Unauthenticate?",
         "message": "Are you sure you want to unauthenticate this device?"
       }
+    },
+    "activation":{
+      "message":"Are you sure you want to go back?"
     }
   },
   "toast": {
@@ -273,6 +276,7 @@
     "rescan-nfc": "Rescan NFC badge"
   },
   "activations":{
-    "title":"Activations"
+    "title":"Activations",
+    "launch":"Launch"
   }
 }

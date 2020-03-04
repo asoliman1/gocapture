@@ -2,6 +2,6 @@
 	<div class="no-data" *ngIf="isLoading == null || isLoading == true">
 		<ion-spinner></ion-spinner>
 	</div>
-	<iframe *ngIf="!reload" [src]="activation.url | safeUrl" width="100%" height="100%" frameborder="0"
+	<iframe *ngIf="!reload" [src]="activationUrl | safeUrl" width="100%" height="100%" frameborder="0"
 		id="activation-{{activation.id}}" (load)="loaded($event)"></iframe>
 </ion-content>

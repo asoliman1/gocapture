@@ -82,16 +82,16 @@ export class SubmissionsProvider {
     return this[type + 'Submissions'].find((e) => e.id == id) ? true : false
   }
 
-  downloadSubmissions(currentSyncingForms : formSyncStatus[]): Observable<any> {
+  downloadSubmissions(currentSyncingForms: formSyncStatus[]): Observable<any> {
     console.log('Getting latest submissions...')
     // this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => {
-          let data = {...e}; 
+          let data = { ...e };
           await this.saveSubmissions(data)
           return data.form;
-          }) 
+        })
       ).subscribe((data) => {
         obs.next(data.form_id);
       }, err => {
@@ -103,20 +103,20 @@ export class SubmissionsProvider {
   }
 
   async saveSubmissions(data) {
-    if(data.form) { 
-    // this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
-    let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
-      submissionsToDownload: number[] = [],
-      submissions = this.checkSubmissionsData(oldSubs, data.submissions, data.form, submissionsToDownload);
-    this.dbClient.saveSubmisisons(submissions).subscribe(() => { }, () => { }, () => this.formsProvider.updateFormSubmissions(data.form.form_id))
-    submissions = submissions.filter((s) => submissionsToDownload.findIndex((e) => e == s.id) != -1)
-    if (submissionsToDownload.length) {
-      try {
-        await this.downloadSubmissionsData(data.form, submissions);
-      } catch (error) {
-        console.log(error);
+    if (data.form) {
+      // this.formsProvider.updateFormSyncStatus(data.form.form_id, true)
+      let oldSubs = await this.dbClient.getSubmissions(data.form.form_id, false).toPromise(),
+        submissionsToDownload: number[] = [],
+        submissions = this.checkSubmissionsData(oldSubs, data.submissions, data.form, submissionsToDownload);
+      this.dbClient.saveSubmisisons(submissions).subscribe(() => { }, () => { }, () => this.formsProvider.updateFormSubmissions(data.form.form_id))
+      submissions = submissions.filter((s) => submissionsToDownload.findIndex((e) => e == s.id) != -1)
+      if (submissionsToDownload.length) {
+        try {
+          await this.downloadSubmissionsData(data.form, submissions);
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
       this.formsProvider.updateFormLastSync(data.form.form_id, 'submissions')
     }
     // console.log(`finished saving downloaded submissions data of form ${data.form.form_id}`)
@@ -290,6 +290,60 @@ export class SubmissionsProvider {
     });
   }
 
+
+  doSubmitFormForActivation(data: FormMapEntry, mSubmission: FormSubmission):Observable<FormSubmission> {
+    return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
+      let submission = mSubmission;
+      let urlMap: { [key: string]: string } = {};
+      this.buildUrlMap(submission, data.urlFields, urlMap);
+
+      // console.log("Do submit");
+
+      let uploadUrlMap = {};
+      Object.keys(urlMap).forEach((key) => {
+        if (key.startsWith("file://") || key.startsWith("data:image")) {
+          uploadUrlMap[key] = urlMap[key];
+        }
+      });
+
+      let hasUrls = Object.keys(uploadUrlMap).length > 0;
+
+      // console.log("Submission has urls - " + JSON.stringify(hasUrls));
+
+      this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
+
+        // console.log("Submission uploaded data");
+
+        this.updateUrlMapWithData(uploadUrlMap, uploadedData);
+
+        Object.keys(uploadUrlMap).forEach((key) => {
+          urlMap[key] = uploadUrlMap[key];
+        });
+
+        this.updateSubmissionFields(submission, data, urlMap);
+
+        this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
+          console.log("Updated submission fields :");
+          console.log(submission)
+          if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
+            this.processBarcode(data, submission, obs);
+          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
+            this.processBarcode(data, submission, obs);
+          } else {
+            this.actuallySubmitForm(data.form, submission, obs);
+          }
+        }, (err) => {
+          console.log(err);
+          obs.error("Could not save updated submission for form " + data.form.name);
+        });
+
+      }, (err) => {
+        console.log(err);
+        obs.error("Could not process submission for form " + data.form.name);
+      });
+    });
+  }
+
   doSubmitAll(data: FormMapEntry): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
@@ -306,7 +360,7 @@ export class SubmissionsProvider {
         this.setSubmissionsUploading(data.submissions);
         this.doSubmit(data, index).subscribe((submission) => {
           console.log(submission)
-          this.downloadSubmissionsData(data.form,[submission]).then();
+          this.downloadSubmissionsData(data.form, [submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')
           this.formsProvider.updateFormSubmissions(data.form.form_id);
@@ -325,6 +379,7 @@ export class SubmissionsProvider {
       handler();
     });
   }
+
 
   private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission> {
 

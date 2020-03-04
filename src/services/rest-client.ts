@@ -395,9 +395,11 @@ export class RESTClient {
 	public submitActivation(data: ActivationSubmission): Observable<boolean> {
 		return this.call<BaseResponse>("POST", "/activations/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
+				console.log("response", resp)
 				if (resp.status == "200") {
 					return true;
 				}
+				
 				this.errorSource.next(resp);
 				return false;
 			});

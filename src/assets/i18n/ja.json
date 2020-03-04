@@ -147,6 +147,9 @@
         "title": "不認証？",
         "message": "デバイスの認証を解除しますか"
       }
+    },
+    "activation":{
+      "message":"本当に戻りたいですか?"
     }
   },
   "toast": {
@@ -273,6 +276,7 @@
     "rescan-nfc": "NFCバッジの再スキャン"
   },
   "activations":{
-    "title":"アクティベーション"
+    "title":"アクティベーション",
+    "launch":"打ち上げる"
   }
 }

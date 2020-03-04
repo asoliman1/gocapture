@@ -147,6 +147,9 @@
         "title": "¿No autenticado?",
         "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
       }
+    },
+    "activation":{
+      "message":"Estas seguro que quieres volver?"
     }
   },
   "toast": {
@@ -273,6 +276,7 @@
     "rescan-nfc": "Volver a escanear la insignia NFC"
   },
   "activations":{
-    "title":"Activaciones"
+    "title":"Activaciones",
+    "launch":"lanzamiento"
   }
 }

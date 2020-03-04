@@ -109,4 +109,8 @@
   .info-box,ion-text{
     color: $theme-text-color // A.S to set a text color for each theme
   }
+
+  .activation-event-header{
+    color: $theme-color;
+  }
 }

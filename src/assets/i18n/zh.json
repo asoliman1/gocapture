@@ -147,6 +147,9 @@
         "title": "未经认证？",
         "message": "您确定要取消此设备的身份验证吗？"
       }
+    },
+    "activation":{
+      "message":"确定要回去吗?"
     }
   },
   "toast": {
@@ -273,6 +276,7 @@
     "rescan-nfc": "重新扫描NFC徽章"
   },
   "activations":{
-    "title":"激活"
+    "title":"激活",
+    "launch":"发射"
   }
 }

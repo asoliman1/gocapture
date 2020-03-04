@@ -13,7 +13,7 @@
   },
   "sideMenu": {
     "events": "Événements",
-    "support": "Support",
+    "support": "soutiens",
     "settings": "Réglages",
     "hi": "Bonjour",
     "welcome-back": "Bienvenue à nouveau",
@@ -147,6 +147,9 @@
         "title": "Annuler l'authentification?",
         "message": "Voulez-vous vraiment annuler l’authentification de cet appareil ?"
       }
+    },
+    "activation":{
+      "message":"Êtes-vous sûr de vouloir revenir en arrière?"
     }
   },
   "toast": {
@@ -272,6 +275,7 @@
     "rescan-nfc": "re-scanner le badge NFC"
   },
   "activations":{
-    "title":"Activations"
+    "title":"Activations",
+    "launch":"lancement"
   }
 }

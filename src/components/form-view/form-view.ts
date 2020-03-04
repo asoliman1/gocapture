@@ -15,6 +15,7 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import { ModalController, Platform } from "ionic-angular";
+import { Activation } from '../../model/activation';
 
 @Component({
   selector: 'form-view',
@@ -34,6 +35,7 @@ export class FormView {
   @Input() isEditing: boolean = false;
 
   @Input() submitAttempt: boolean = false;
+  @Input() activation : boolean;
 
   @ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
 
@@ -80,6 +82,7 @@ export class FormView {
   }
 
   ngAfterViewInit() {
+    console.log("Activation fron form-view",this.activation)
     setTimeout(() => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
       var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);

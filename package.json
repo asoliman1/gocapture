@@ -63,6 +63,7 @@
     "angular2-text-mask": "^8.0.4",
     "com-sarriaroman-photoviewer": "1.1.18",
     "cordova-android": "^8.1.0",
+    "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
     "cordova-ios": "^5.1.1",
@@ -193,6 +194,9 @@
       "phonegap-plugin-push": {
         "ANDROID_SUPPORT_V13_VERSION": "27.+",
         "FCM_VERSION": "17.0.+"
+      },
+      "cordova-android-support-gradle-release": {
+        "ANDROID_SUPPORT_VERSION": "27.+"
       }
     },
     "platforms": [

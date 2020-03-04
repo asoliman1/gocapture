@@ -25,7 +25,8 @@ import {
   DispatchOrder,
   Form,
   FormSubmission, FormSubmissionType,
-  SubmissionStatus
+  SubmissionStatus,
+  SyncStatus
 } from "../../model";
 
 import { FormView } from "../../components/form-view";
@@ -48,6 +49,10 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
 import { Intercom } from '@ionic-native/intercom';
+import { ActivationsProvider } from '../../providers/activations/activations';
+import { ActivationsPage } from '../activations/activations';
+import { SubmissionsProvider } from '../../providers/submissions/submissions';
+import { FormMapEntry } from '../../services/sync-client';
 
 
 
@@ -133,7 +138,9 @@ export class FormCapture implements AfterViewInit {
     private settingsService: SettingsService,
     private restClient: RESTClient,
     private intercom: Intercom,
-    private insomnia: Insomnia) {
+    private insomnia: Insomnia,
+    private submissionsProvider: SubmissionsProvider
+    ) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
     this.idle = new Idle();
@@ -484,7 +491,7 @@ export class FormCapture implements AfterViewInit {
       this.doBack();
     };
     let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
-    if (isKioskMode) {
+    if (isKioskMode || (this.activation && !this.activation.activation_capture_form_after)) {
       this.client.hasKioskPassword().subscribe(hasPwd => {
 
         if (!hasPwd) {
@@ -555,7 +562,7 @@ export class FormCapture implements AfterViewInit {
       this.stationsAlert.dismiss();
     }
     let isKioskMode = this.form.is_mobile_kiosk_mode && !this.form.is_mobile_quick_capture_mode;
-    if (isKioskMode) {
+    if (isKioskMode || (this.activation && !this.activation.activation_capture_form_after) ) {
       this.client.hasKioskPassword().subscribe((hasPas) => {
         if (hasPas) {
 
@@ -596,6 +603,7 @@ export class FormCapture implements AfterViewInit {
               text: 'general.ok',
               handler: () => {
                 this.internalBack();
+                
               }
             }];
 
@@ -607,10 +615,43 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  private internalBack() {
 
-    if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
+  doBackWithCheckingActivation(){
+    if(this.activation){
+      if(this.activation.activation_capture_form_after){
+        const buttons = [
+          {
+            text: 'general.cancel',
+            role: 'cancel',
+            handler: () => {
+            }
+          },
+          {text: 'general.ok',
+                  handler: () => {
+                    let currentIndex = this.navCtrl.getActive().index;
+                    this.navCtrl.push(ActivationViewPage,{activation:{...this.activation}}).then(() => {
+                      console.log("removing capture")
+                      this.navCtrl.remove(currentIndex);
+                    
+                  });
+                }
+                }
+        
+        ]
+        this.popup.showAlert('Warning', {text:'alerts.activation.message'}, buttons);
+      }
+      else{
+        this.navCtrl.pop();
+      }
+    }
+    else{
       this.navCtrl.pop();
+    }
+  }
+  private internalBack() {
+console.log("we entered internalBack")
+    if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
+      this.doBackWithCheckingActivation();
       return;
     }
 
@@ -626,7 +667,7 @@ export class FormCapture implements AfterViewInit {
         text: 'general.back',
         handler: () => {
           this.clear();
-          this.navCtrl.pop();
+          this.doBackWithCheckingActivation();
         }
       }
     ];
@@ -698,6 +739,7 @@ export class FormCapture implements AfterViewInit {
     if (this.activation) this.submitActivation();
     else
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
+        console.log("Submissions..........",sub);
         this.tryClearDocumentsSelection();
 
         if (this.isEditing) {
@@ -717,29 +759,52 @@ export class FormCapture implements AfterViewInit {
 
   }
 
+  handleUploads(submission){
+    
+  }
+
   submitActivation() {
     this.submission.updateFields(this.form);
-    this.restClient.submitForm(this.submission).subscribe(async (data) => {
-      if (data.response_status == "200") {
-        if (this.navParams.get('activationResult'))
-          await this.restClient.submitActivation({
-            activation_id: this.activation.id,
-            activation_result: this.navParams.get('activationResult'),
-            activity_id: data.submission.activity_id,
-            prospect_id: data.submission.prospect_id
-          }).toPromise();
-        if (this.navParams.get("isNext") || !this.navParams.get('activationResult')) {
-          if (this.navCtrl.getPrevious().component == ActivationViewPage) this.navCtrl.pop();
-          else
-            this.navCtrl.push(ActivationViewPage, {
-              activation: this.activation,
-              activityId: data.submission.activity_id,
-              prospectId: data.submission.prospect_id
-            })
-        }
-      }
-
+    let map: { [key: number]: FormMapEntry } = {};
+    map[this.form.form_id + ""] = {
+      form: this.form,
+      urlFields: this.form.getUrlFields(),
+      submissions: [],
+      status: new SyncStatus(false, false, this.form.form_id, this.form.name)}
+      this.submissionsProvider.doSubmitFormForActivation(map[this.form.form_id + ""], this.submission).subscribe (async(submission) => {
+        this.restClient.submitForm(submission).subscribe(async (data) => {
+          console.log(data.response_status)
+          if (data.response_status == "200") {
+            if (this.navParams.get('activationResult')){
+              if(Object.keys(this.navParams.get('activationResult')).length >0)
+              await this.restClient.submitActivation({
+                activation_id: this.activation.id,
+                activation_result: this.navParams.get('activationResult'),
+                activity_id: data.submission.activity_id,
+                prospect_id: data.submission.prospect_id
+              }).toPromise();
+            }
+            if (this.navParams.get("isNext") || !this.navParams.get('activationResult')) {
+              // if (this.navCtrl.getPrevious().component == ActivationViewPage) this.navCtrl.pop();
+              // else
+              let currentIndex = this.navCtrl.getActive().index;
+                this.navCtrl.push(ActivationViewPage, {
+                  activation: this.activation,
+                  activityId: data.submission.activity_id,
+                  prospectId: data.submission.prospect_id
+                }).then(() => {
+                  console.log("removing capture")
+                  this.navCtrl.remove(currentIndex);
+              });
+            }
+          }
+    
+    
+        }, (err) => {
+          this.popup.showToast({text:'Check your connection, Please'}, "bottom");
+      })
     })
+
 
   }
 
@@ -851,6 +916,7 @@ export class FormCapture implements AfterViewInit {
     let search = this.modal.create(ProspectSearch, { form: this.form });
     search.onDidDismiss((data: DeviceFormMembership) => {
       if (data) {
+        data.fields["Email"] = data.fields["Email"].trim();
         this.submission.is_filled_from_list = true;
         this.prospect = data;
         this.submission.prospect_id = data.prospect_id;
@@ -1017,6 +1083,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   tryClearDocumentsSelection() {
+    console.log("tryClearDocumentsSelection")
     this.form.elements
       .filter((d) => d.type === 'documents')
       .forEach((element) => {
@@ -1080,4 +1147,8 @@ export class FormCapture implements AfterViewInit {
 
     return null;
   }
+
+  isThereActivation(){
+    return this.activation? true: false;
+    }
 }

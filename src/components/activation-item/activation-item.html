@@ -1,7 +1,7 @@
 <div *ngIf="form && activations.length">
-  <div class="form-header">{{form.name}}</div>
+  <div class="activation-event-header">{{form.name}}</div>
   <div class="grid-container grid-container--fit">
-    <div class="grid-item" (click)="navigate(act)" *ngFor="let act of activations">
+    <div class="grid-item" (click)="presentActionSheet(act, form.name)" *ngFor="let act of activations">
       <img [src]="act.background_image" style="width:100%">
       <h2 class="banner" >{{act.name}}</h2>
     </div>

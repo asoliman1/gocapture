@@ -263,6 +263,7 @@ export class FormsProvider {
   }
 
   updateFormSubmissions(form_id: any) {
+    console.log("updateFormSubmissions")
     let form = this.forms.find((e) => e.form_id === (form_id * 1));
     if(form)
     this.dbClient.getSubmissions(form.form_id,false).subscribe((submissions)=>{

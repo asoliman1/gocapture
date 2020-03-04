@@ -13,7 +13,7 @@
   },
   "sideMenu": {
     "events": "Gebeurtenissen",
-    "support": "Support",
+    "support": "ondersteuning",
     "settings": "Instellingen",
     "hi": "Hallo",
     "welcome-back": "Welkom terug",
@@ -146,6 +146,9 @@
         "title": "Authenticatie ongedaan maken ??",
         "message": "Weet u zeker dat u de authenticatie van dit apparaat ongedaan wilt maken?"
       }
+    },
+    "activation":{
+      "message":"Weet je zeker dat je terug wilt gaan?"
     }
   },
 
@@ -272,7 +275,8 @@
     "rescan-nfc": "Herscan NFC badge"
   },
   "activations":{
-    "title":"Aktivierungen"
+    "title":"Aktivierungen",
+    "launch":"lancering"
   }
 }
 

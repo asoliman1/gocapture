@@ -13,7 +13,7 @@
   },
   "sideMenu": {
     "events": "Veranstaltung",
-    "support": "Support",
+    "support": "Unterstützung",
     "settings": "Einstellungen",
     "hi": "Hallo",
     "welcome-back": "Willkommen zurück",
@@ -146,6 +146,9 @@
         "title": "Unauthentifizieren ?",
         "message": "Sind Sie sich sicher das sie die Authentifizierung von diesem Gerät entfernen möchten?"
       }
+    },
+    "activation":{
+      "message":"Bist du sicher, dass du zurück willst?"
     }
   },
 
@@ -272,7 +275,8 @@
     "rescan-nfc": "NFC Badge erneut einscannen"
   },
   "activations":{
-    "title":"Aktivierungen"
+    "title":"Aktivierungen",
+    "launch":"starten"
   }
 }
 
