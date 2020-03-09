@@ -28,6 +28,7 @@ export class Activation {
         act.activation_capture_form_after = dbActivation.activation_capture_form_after;
         act.url = dbActivation.url;
         act.capture_screen_url = dbActivation.capture_screen_url;
+        act.display_capture_form = dbActivation.display_capture_form;
         return act;
     }
 

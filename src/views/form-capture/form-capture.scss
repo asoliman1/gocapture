@@ -3,7 +3,19 @@ form-capture {
     vertical-align: text-bottom;
   }
 
+  .footer-grid {
+    display: flex ;
+    padding: 0 10px;
+    button[round]{
+      margin-right: 10px;
+    }
+  }
+
 }
+
+// ion-col.col{
+//   padding: 0px !important;
+// }
 
 .icon-md.capture{
 	font-size: 2em !important;
@@ -32,6 +44,7 @@ form-capture {
   }
 }
 
+
 .gc-popover {
   .toolbar-background {
     background-color: white !important;
@@ -53,6 +66,8 @@ form-capture {
     padding: 0 40px 1px !important;
   }
 
+
+
   .bar-button {
     padding-left: 20px;
     padding-right: 20px;
@@ -61,6 +76,10 @@ form-capture {
   .toolbar:last-child {
     min-height: 44px !important;
     padding-bottom: 4px !important;
+  }
+
+  .button.btn-background {
+    background-color: inherit;
   }
   
 }

@@ -167,7 +167,9 @@ export class RESTClient {
 			...params
 		};
 		return this.getAll<{records:Activation[]}>("/activations.json", opts).map(resp => {
-			return Activation.parseActivations(resp,form);
+			let acs = Activation.parseActivations(resp,form);
+			console.log(acs)
+			return acs;
 		});
 	}
 	public updateAccountSettings(settings: {}): Observable<User> {

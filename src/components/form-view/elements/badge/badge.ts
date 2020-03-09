@@ -32,6 +32,7 @@ export class Badge extends BaseElement implements OnInit {
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() readonly: boolean = false;
+  @Input() activation: boolean = false;
 
   scanner: Scanner;
   isScanning: boolean = false;
@@ -214,7 +215,7 @@ export class Badge extends BaseElement implements OnInit {
     if (this.element.badge_type && this.element.badge_type == ScannerType.Nfc) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences, this.activation);
   }
 
   setDisabledState(isDisabled: boolean): void {

@@ -13,6 +13,7 @@ import { ActivationsPage } from '../../views/activations/activations';
 import { BussinessClient } from '../../services/business-service';
 import { concatStatic } from 'rxjs/operator/concat';
 import { Network } from '@ionic-native/network';
+import { IfObservable } from 'rxjs/observable/IfObservable';
 
 
 @Component({
@@ -30,9 +31,8 @@ export class ActivationViewPage {
   reload: boolean;
   actvationResultFromSubmit: any;
   private backUnregister;
-  private networkOn: Subscription;
-  private networkOff: Subscription;
-  private online: boolean = true;
+  private networkSubs : Subscription;
+  online: boolean = true;
 
   constructor(
     public navCtrl: NavController,
@@ -44,7 +44,6 @@ export class ActivationViewPage {
     private client: BussinessClient,
     private net: Network
   ) {
-    this.initNetwork();
   }
 
   loaded(ev) {
@@ -53,12 +52,15 @@ export class ActivationViewPage {
   }
 
   ionViewWillEnter() {
+    if(this.activation.activation_capture_form_after){
+      this.statusBar.hide();
+    }
     this.prepareActivationUrl();
   }
   ionViewDidEnter() {
     this.reloadGame();
-    this.statusBar.hide();
     this.listenToGameEvents();
+    this.initNetwork();
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.goBack(this.actvationResultFromSubmit);
     }, Number.MAX_VALUE);
@@ -112,8 +114,7 @@ export class ActivationViewPage {
     if (this.backUnregister) {
       this.backUnregister();
     }
-    this.networkOn.unsubscribe();
-    this.networkOff.unsubscribe()
+    this.networkSubs.unsubscribe();
   }
 
   reloadGame() {
@@ -165,7 +166,6 @@ export class ActivationViewPage {
   }
 
   ionViewDidLeave() {
-    this.statusBar.show();
     this.onGameEndSubs.unsubscribe();
   }
 
@@ -187,6 +187,7 @@ export class ActivationViewPage {
               this.client.validateKioskPassword(password).subscribe((valid) => {
                 if (valid) {
                   setTimeout(() => {
+                    this.statusBar.show();
                     this.navCtrl.pop();
                   }, 500);
                 } else {
@@ -209,6 +210,7 @@ export class ActivationViewPage {
           {
             text: 'general.ok',
             handler: () => {
+              this.statusBar.show();
               this.navCtrl.pop();
             }
           }];
@@ -300,30 +302,18 @@ export class ActivationViewPage {
   }
 
   private async setOnline(val: boolean) {
+    if(this.online == val) return;
     this.online = val;
+    if(!val) this.retryToRefreshActivation()
   }
 
   private initNetwork() {
     console.log("initNetwork")
-    this.networkOn = this.net.onConnect().subscribe(() => {
-      console.log("network was connected");
-      this.setOnline(true);
-    });
-    this.networkOff = this.net.onDisconnect().subscribe(() => {
-      console.log("network was disconnected :-(");
-      this.retryToRefreshActivation()
-      this.setOnline(false);
-    });
-
-    // if(this.client.isOnline()){
-    //   console.log("network was connected");
-    //   this.setOnline(true);
-    // }
-    // else{
-    //   console.log("network was disconnected :-(");
-    //   this.retryToRefreshActivation()
-    //   this.setOnline(false);
-    // }
+    // this.setOnline(this.client.online);
+   this.networkSubs = this.client.network.subscribe((data)=>{
+      console.log(data);
+      this.setOnline(data == 'ON');
+    })
 
   }
 

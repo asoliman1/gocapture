@@ -8,6 +8,7 @@ import { Activation } from './../../model/activation';
 import { ActivationsProvider } from './../../providers/activations/activations';
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, Searchbar } from 'ionic-angular';
+import { concatStatic } from 'rxjs/operator/concat';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class ActivationsPage {
   sortOrder = ACTIVATIONS_PARAMS.SORT_ORDER.DESC;
   activations : { activations : Activation[] , form : Form }[] = [];
   filteredActivations : { activations : Activation[] , form : Form }[] = [] ;
+  isThereNoActivations: boolean = false;
   
   constructor(public navCtrl: NavController, 
     public navParams: NavParams , 
@@ -46,7 +48,11 @@ export class ActivationsPage {
       this.activations = [...this.activations, data];
       this.filteredActivations = [...this.filteredActivations, data];
       this.loading = false;
+      console.log("filteredActivations",this.filteredActivations[0].activations.length)
+      if(this.filteredActivations[0].activations.length > 0) this.isThereNoActivations = false
+      else this.isThereNoActivations = true
     },err =>{
+      console.log(err)
       this.loading = false;
     })
   }

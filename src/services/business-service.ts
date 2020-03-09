@@ -51,7 +51,7 @@ export class BussinessClient {
   private networkOn: Subscription;
   private networkOff: Subscription;
 
-  private online: boolean = true;
+  online: boolean = true;
 
   registration: User;
 

@@ -36,7 +36,7 @@ export class BadgeRapidCapture implements RapidCapture {
     if (element.badge_type == ScannerType.Nfc) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, element.barcode_type, this.platform, this.appPreferences);
+    return new GOCBarcodeScanner(this.barcodeScanner, element.barcode_type, this.platform, this.appPreferences, false);
   }
 
   capture(element: FormElement, id: string) {

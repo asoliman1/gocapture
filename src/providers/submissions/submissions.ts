@@ -16,6 +16,7 @@ import { settingsKeys } from '../../constants/constants';
 import { FileUploadRequest } from '../../model/protocol';
 import { mergeMap } from 'rxjs/operators';
 import { FileTransfer } from '@ionic-native/file-transfer';
+import { Popup } from '../popup/popup';
 
 
 @Injectable()
@@ -43,7 +44,9 @@ export class SubmissionsProvider {
     private submissionsRepository: SubmissionsRepository,
     private settingsService: SettingsService,
     private file: File,
-    private util: Util) {
+    private util: Util,
+    private popup: Popup
+    ) {
     this.duplicateLeadSource = new BehaviorSubject<any>(null);
     this.duplicateLead = this.duplicateLeadSource.asObservable();
 
@@ -326,11 +329,11 @@ export class SubmissionsProvider {
           console.log("Updated submission fields :");
           console.log(submission)
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs);
+            this.processBarcode(data, submission, obs, true);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs);
+            this.processBarcode(data, submission, obs, true);
           } else {
-            this.actuallySubmitForm(data.form, submission, obs);
+            this.actuallySubmitForm(data.form, submission, obs, true);
           }
         }, (err) => {
           console.log(err);
@@ -344,7 +347,7 @@ export class SubmissionsProvider {
     });
   }
 
-  doSubmitAll(data: FormMapEntry): Observable<FormSubmission[]> {
+  doSubmitAll(data: FormMapEntry,isActivation = false): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
@@ -358,7 +361,7 @@ export class SubmissionsProvider {
         }
 
         this.setSubmissionsUploading(data.submissions);
-        this.doSubmit(data, index).subscribe((submission) => {
+        this.doSubmit(data, index,isActivation).subscribe((submission) => {
           console.log(submission)
           this.downloadSubmissionsData(data.form, [submission]).then();
           // A.S
@@ -381,7 +384,7 @@ export class SubmissionsProvider {
   }
 
 
-  private doSubmit(data: FormMapEntry, index: number): Observable<FormSubmission> {
+  private doSubmit(data: FormMapEntry, index: number , isActivation = false): Observable<FormSubmission> {
 
     return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
       let submission = data.submissions[index];
@@ -417,11 +420,11 @@ export class SubmissionsProvider {
           console.log("Updated submission fields :");
           console.log(submission)
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs);
+            this.processBarcode(data, submission, obs,isActivation);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs);
+            this.processBarcode(data, submission, obs,isActivation);
           } else {
-            this.actuallySubmitForm(data.form, submission, obs);
+            this.actuallySubmitForm(data.form, submission, obs,isActivation);
           }
         }, (err) => {
           console.log(err);
@@ -471,7 +474,7 @@ export class SubmissionsProvider {
     }
   }
 
-  private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>) {
+  private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>, isActivation: boolean = false) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
     this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '')
@@ -496,7 +499,12 @@ export class SubmissionsProvider {
         });
 
         this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          this.actuallySubmitForm(data.form, submission, obs, JSON.stringify(barcodeData));
+          if(isActivation){
+          this.actuallySubmitForm(data.form, submission, obs, true, JSON.stringify(barcodeData));
+          }
+          else{
+            this.actuallySubmitForm(data.form, submission, obs, false, JSON.stringify(barcodeData));
+          }
         }, (err) => {
           console.log(err);
           obs.error("Could not save updated barcode info into the submission for form " + data.form.name);
@@ -511,7 +519,12 @@ export class SubmissionsProvider {
           submission.hold_submission_reason = err.message ? err.message : "";
           submission.barcode_processed = BarcodeStatus.Processed;
           this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-            this.actuallySubmitForm(data.form, submission, obs);
+            if(isActivation){
+              this.actuallySubmitForm(data.form, submission, obs, true);
+              }
+              else{
+                this.actuallySubmitForm(data.form, submission, obs);
+              }
           });
         } else {
           console.log(err);
@@ -520,7 +533,7 @@ export class SubmissionsProvider {
       });
   }
 
-  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, barcodeData?: string) {
+  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false,barcodeData?: string) {
 
     console.log("Submit form to api: " + JSON.stringify(submission));
     if (barcodeData) {
@@ -528,6 +541,10 @@ export class SubmissionsProvider {
     }
 
     this.rest.submitForm(submission).subscribe((d) => {
+      console.log("response from submissions", d);
+      if(isActivation){
+        submission.prospect_id = d.submission.prospect_id;
+      }
       this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
         const autoUpload = String(setting) == "true";
 
@@ -545,6 +562,9 @@ export class SubmissionsProvider {
           submission.hold_request_id = 0;
           submission.status = SubmissionStatus.InvalidFields;
           this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
+            if(isActivation){
+            this.popup.showToast({text:'Invalid Submission'}, "top");
+            }
             console.log('invalid submission')
             console.log(submission);
           }, err => {
@@ -588,6 +608,9 @@ export class SubmissionsProvider {
     }, err => {
       console.log(err);
       obs.error("Could not process submission for form " + form.name);
+      if(isActivation){
+      this.popup.showToast({text:'Check your connection, Please'}, "top");
+      }
     });
 
   }
