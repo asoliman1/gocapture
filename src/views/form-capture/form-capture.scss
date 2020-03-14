@@ -13,9 +13,11 @@ form-capture {
 
 }
 
-// ion-col.col{
-//   padding: 0px !important;
-// }
+ion-content {
+  div{
+  padding-bottom: 0px !important;
+}
+}
 
 .icon-md.capture{
 	font-size: 2em !important;

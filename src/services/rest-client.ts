@@ -395,6 +395,7 @@ export class RESTClient {
 	}
 
 	public submitActivation(data: ActivationSubmission): Observable<boolean> {
+		console.log("we are here in submit activation")
 		return this.call<BaseResponse>("POST", "/activations/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				console.log("response", resp)

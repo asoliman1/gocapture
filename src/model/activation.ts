@@ -15,6 +15,9 @@ export class Activation {
     display_capture_form : number;
     url : string;
     capture_screen_url : string;
+    submit_button_background_color: string;
+    submit_button_text_color: string;
+    submit_button_text: string;
 
     public static parseActivation(dbActivation: any, form : Form) {
         let act = new Activation();
@@ -29,6 +32,9 @@ export class Activation {
         act.url = dbActivation.url;
         act.capture_screen_url = dbActivation.capture_screen_url;
         act.display_capture_form = dbActivation.display_capture_form;
+        act.submit_button_background_color = dbActivation.submit_button_background_color;
+        act.submit_button_text = dbActivation.submit_button_text;
+        act.submit_button_text_color = dbActivation.submit_button_text_color
         return act;
     }
 

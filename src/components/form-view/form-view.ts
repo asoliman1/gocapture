@@ -433,11 +433,21 @@ export class FormView {
   }
 
   private shouldElementBeDisplayed(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
+    }
+    else{
     return element.isMatchingRules && !element.parent_element_id;
+  }
   }
 
   private shouldElementBeDisplayedInsideSection(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && element.available_in_activations;
+    }
+    else{
     return element.isMatchingRules;
+    }
   }
 
   resetField(element) {

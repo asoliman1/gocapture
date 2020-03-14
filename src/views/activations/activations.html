@@ -4,7 +4,7 @@
 			<ion-icon name="menu"></ion-icon>
 		</button>
 	<ion-title>{{'activations.title' | translate}}</ion-title>
-		<ion-buttons *ngIf="activations.length > 1" end>
+		<ion-buttons *ngIf="!isThereNoActivations" end>
 			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
 				<ion-icon name="search"></ion-icon>
 			</button>
@@ -20,11 +20,12 @@
 		<activation-item  *ngFor="let x of [0,1]" ></activation-item>
 	</div>
 
-	<div class="no-data" *ngIf="isThereNoActivations">
+	<div class="no-data" *ngIf="isThereNoActivations && !loading">
 		<img src="./assets/images/no-activations.png" />
 	</div>
 
-	<ion-list  *ngIf="!isThereNoActivations" approxItemHeight="300px">
+	<ion-list *ngIf="!isThereNoActivations"
+	approxItemHeight="300px">
 		<activation-item *ngFor="let act of filteredActivations" [activations]="act.activations" [form]="act.form" ></activation-item>
 	</ion-list>
 </ion-content>

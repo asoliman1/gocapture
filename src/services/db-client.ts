@@ -146,6 +146,8 @@ export class DBClient {
 		form.total_hold = dbForm.totalHold;
 		form.total_sent = dbForm.totalSent;
 		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
+		form.show_reject_prompt = dbForm.show_reject_prompt == 1;
+		form.duplicate_action = dbForm.duplicate_action;
 		form.computeIdentifiers();
 		return form;
 	}
@@ -194,7 +196,8 @@ export class DBClient {
 		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations)]);
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
+		 form.duplicate_action]);
 	}
 
 	public saveActivation(activation: Activation): Observable<boolean> {
@@ -275,7 +278,8 @@ export class DBClient {
 			user.support_email = data.supportEmail;
 			user.documentation_url = data.documentationURL;
 			user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
-            user.localization = data.localization;
+			user.localization = data.localization;
+			user.activations = data.activations;
 			this.registration = user;
 			return user;
 		}else return null;
@@ -692,7 +696,8 @@ export class DBClient {
 			user.support_email,
 			user.documentation_url,
 			JSON.stringify(user.localizations),
-			user.localization
+			user.localization,
+			user.activations
 		]).map(data => {
 			this.registration = user;
 			return data;

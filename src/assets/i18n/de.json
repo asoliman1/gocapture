@@ -148,18 +148,20 @@
       }
     },
     "activation":{
-      "message":"Bist du sicher, dass du zurück willst?"
+      "message":"Bist du sicher, dass du zurück willst?",
+      "retry": "wiederholen"
     }
   },
 
   "toast": {
     "no-internet-connection": "Keine Internetverbindung vorhanden.",
-"scanned-successfully": "{{badgeName}} erfolgreich eingescannt",
+    "scanned-successfully": "{{badgeName}} erfolgreich eingescannt",
     "uploading-leads": "Potenzialkunden werden hochgeladen....schließen Sie die App erst wenn der Vorgang erledigt ist.",
     "submission-successfull": "Einreichung war erfolgreich!",
     "syncing-submissions-error": "Es gab ein Problem bei der Synchronisierung der Einreichungen.",
-	"auth-err" : "ungültige Anmeldeinformationen",
-	"auth-failed" : "Authentifizierung fehlgeschlagen. Bitte fragen Sie nach einem neuen Authentifizierungscode."
+	  "auth-err" : "ungültige Anmeldeinformationen",
+    "auth-failed" : "Authentifizierung fehlgeschlagen. Bitte fragen Sie nach einem neuen Authentifizierungscode.",
+    "duplicate-submission": "Doppelte Einreichung"
   },
  "forms": {
     "submitted": "eingereicht",

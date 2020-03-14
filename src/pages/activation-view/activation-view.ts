@@ -58,6 +58,7 @@ export class ActivationViewPage {
     this.prepareActivationUrl();
   }
   ionViewDidEnter() {
+    console.log(this.activation)
     this.reloadGame();
     this.listenToGameEvents();
     this.initNetwork();
@@ -250,6 +251,18 @@ export class ActivationViewPage {
   goToForm(activationResult: any, isNext: boolean = false) {
       console.log("Go to Form")
       let currentIndex = this.navCtrl.getActive().index;
+      if(!this.activation.activation_capture_form_after){
+      this.navCtrl.push(FormCapture,
+        {
+          activation: this.activation,
+          form: this.activation.event,
+          isNext
+        }).then(() => {
+          console.log("removing game")
+          this.navCtrl.remove(currentIndex);
+        });
+      }
+      else{
       this.navCtrl.push(FormCapture,
         {
           activation: this.activation,
@@ -260,6 +273,7 @@ export class ActivationViewPage {
           console.log("removing game")
           this.navCtrl.remove(currentIndex);
         });
+      }
    
    
   }
@@ -270,6 +284,7 @@ export class ActivationViewPage {
 
     if (activityId && prospectId) {
       console.log("we have data from the capture")
+      console.log(this.navParams.get('activityId'), this.navParams.get('prospectId'))
       this.restClient.submitActivation({
         activation_id: this.activation.id,
         activation_result: activationResult,
@@ -277,6 +292,9 @@ export class ActivationViewPage {
         prospect_id: prospectId,
       }).subscribe((data) => {
         if (data) {
+          console.log(data);
+          console.log(isNext)
+          console.log(activationResult)
           if (isNext) this.goToForm(activationResult, true);
         }
       }, (err) => {
@@ -287,10 +305,13 @@ export class ActivationViewPage {
 
     else {
       console.log("we do not have data from the capture");
+      console.log(resultAction);
       if(resultAction == ACTIVATIONS_ACTIONS.SUBMIT_NEXT){
+        console.log(resultAction);
         this.goToForm(activationResult, true)
       }
       else{
+        console.log(resultAction);
       this.actvationResultFromSubmit = activationResult;
       }
     }
@@ -309,24 +330,25 @@ export class ActivationViewPage {
 
   private initNetwork() {
     console.log("initNetwork")
-    // this.setOnline(this.client.online);
-   this.networkSubs = this.client.network.subscribe((data)=>{
-      console.log(data);
-      this.setOnline(data == 'ON');
-    })
+    setTimeout(() => {
+      this.networkSubs = this.client.network.subscribe((data)=>{
+        console.log(data);
+        this.setOnline(data == 'ON');
+      })
+    }, 200);
 
   }
 
   retryForSubmitActivation(activationResult: any, isNext: boolean = false, resultAction: string){
     const buttons = [
       {
-        text: 'Go Back',
+        text: 'general.back',
         handler: () => {
           this.goBack(activationResult)
         }
       },
       {
-        text: 'retry',
+        text: 'alerts.activation.retry',
         handler: () => {
         if (this.isOnline()){
           this.submitActivation(activationResult, isNext, resultAction)
@@ -338,14 +360,14 @@ export class ActivationViewPage {
       }
 
     ]
-    this.popup.showAlert('Warning', { text: 'No Internet Connection' }, buttons);
+    this.popup.showAlert('Warning', { text: 'toast.no-internet-connection' }, buttons);
   }
 
   retryToRefreshActivation(){
     if(this.isGameloaded === false){
     const buttons = [
       {
-        text: 'Go Back',
+        text: 'general.back',
         handler: () => {
           let actvResult = {}
           this.goBack(actvResult)
@@ -353,7 +375,7 @@ export class ActivationViewPage {
         }
       },
       {
-        text: 'retry',
+        text: 'alerts.activation.retry',
         handler: () => {
         if (this.isOnline()){
           console.log("if online")
@@ -367,7 +389,7 @@ export class ActivationViewPage {
       }
 
     ]
-    this.popup.showAlert('Warning', { text: 'No Internet Connection' }, buttons);
+    this.popup.showAlert('Warning', { text: 'toast.no-internet-connection' }, buttons);
   }
 }
 

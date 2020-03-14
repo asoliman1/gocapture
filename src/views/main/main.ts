@@ -28,9 +28,8 @@ export class Main {
 		private rapidCaptureService: RapidCaptureService,
 		private formsProvider: FormsProvider,
 		private ngZone : NgZone,
-		private dbClient : DBClient
+		private dbClient : DBClient,
 	) {
-
 	}
 
 	openPage(page) {
@@ -40,10 +39,24 @@ export class Main {
 
 	setPages() {
 		this.pages = [
-			{ title: 'sideMenu.events', component: Forms, icon: "document" },
-			{ title: 'sideMenu.activations', component: ActivationsPage, icon: "game-controller-b" },
-			{ title: 'sideMenu.settings', component: Settings, icon: "cog" },
+			{ title: 'sideMenu.events', component: Forms, icon: "document" }
 		];
+		
+		if (this.user.activations)
+			this.pages.push({
+				title: 'sideMenu.activations',
+				component: ActivationsPage,
+				icon: "game-controller-b" 
+			})
+
+			else {
+				this.pages = this.pages.filter((e) => e.title != 'Activations');
+			}
+
+			this.pages.push({
+				title: 'sideMenu.settings', component: Settings, icon: "cog"
+			})
+
 		if (this.user.in_app_support)
 			this.pages.push({
 				title: 'sideMenu.support',
@@ -62,6 +75,7 @@ export class Main {
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{
+			console.log("useer", user);
 			this.setUser(user);
 		})
 		this.dbClient.getRegistration().subscribe((user)=>{

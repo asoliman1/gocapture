@@ -294,59 +294,6 @@ export class SubmissionsProvider {
   }
 
 
-  doSubmitFormForActivation(data: FormMapEntry, mSubmission: FormSubmission):Observable<FormSubmission> {
-    return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
-      let submission = mSubmission;
-      let urlMap: { [key: string]: string } = {};
-      this.buildUrlMap(submission, data.urlFields, urlMap);
-
-      // console.log("Do submit");
-
-      let uploadUrlMap = {};
-      Object.keys(urlMap).forEach((key) => {
-        if (key.startsWith("file://") || key.startsWith("data:image")) {
-          uploadUrlMap[key] = urlMap[key];
-        }
-      });
-
-      let hasUrls = Object.keys(uploadUrlMap).length > 0;
-
-      // console.log("Submission has urls - " + JSON.stringify(hasUrls));
-
-      this.uploadData(uploadUrlMap, hasUrls).subscribe((uploadedData) => {
-
-        // console.log("Submission uploaded data");
-
-        this.updateUrlMapWithData(uploadUrlMap, uploadedData);
-
-        Object.keys(uploadUrlMap).forEach((key) => {
-          urlMap[key] = uploadUrlMap[key];
-        });
-
-        this.updateSubmissionFields(submission, data, urlMap);
-
-        this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          console.log("Updated submission fields :");
-          console.log(submission)
-          if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs, true);
-          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs, true);
-          } else {
-            this.actuallySubmitForm(data.form, submission, obs, true);
-          }
-        }, (err) => {
-          console.log(err);
-          obs.error("Could not save updated submission for form " + data.form.name);
-        });
-
-      }, (err) => {
-        console.log(err);
-        obs.error("Could not process submission for form " + data.form.name);
-      });
-    });
-  }
-
   doSubmitAll(data: FormMapEntry,isActivation = false): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
@@ -562,9 +509,6 @@ export class SubmissionsProvider {
           submission.hold_request_id = 0;
           submission.status = SubmissionStatus.InvalidFields;
           this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
-            if(isActivation){
-            this.popup.showToast({text:'Invalid Submission'}, "top");
-            }
             console.log('invalid submission')
             console.log(submission);
           }, err => {
@@ -609,7 +553,7 @@ export class SubmissionsProvider {
       console.log(err);
       obs.error("Could not process submission for form " + form.name);
       if(isActivation){
-      this.popup.showToast({text:'Check your connection, Please'}, "top");
+      this.popup.showToast({text:'toast.no-internet-connection'}, "top");
       }
     });
 

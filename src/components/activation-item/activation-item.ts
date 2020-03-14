@@ -34,7 +34,7 @@ export class ActivationItemComponent {
         handler : () => {
           if(act.activation_capture_form_after){
             if(this.client.isOnline()) this.navCtrl.push(ActivationViewPage,{activation:{...act}});
-            else this.popup.showToast({text:'Check your connection, Please'}, "bottom");
+            else this.popup.showToast({text:'toast.no-internet-connection'}, "bottom");
           }
           else this.navCtrl.push(FormCapture,{activation:act,form:this.form});
         }

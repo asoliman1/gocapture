@@ -148,18 +148,20 @@
       }
     },
     "activation":{
-      "message":"Weet je zeker dat je terug wilt gaan?"
+      "message":"Weet je zeker dat je terug wilt gaan?",
+      "retry": "probeer opnieuw"
     }
   },
 
   "toast": {
     "no-internet-connection": "Geen internetverbinding beschikbaar",
-"scanned-successfully": "{{badgeName}} scannen geslaagd",
+    "scanned-successfully": "{{badgeName}} scannen geslaagd",
     "uploading-leads": "Leads uploaden....houd de app open totdat het proces is voltooid.",
     "submission-successfull": "Inzending geslaagd",
     "syncing-submissions-error": "Er is een fout opgetreden bij het synchroniseren van de inzendingen",
-	"auth-err" : "Ongeldige inloggegevens",
-	"auth-failed" : "Autorisatie mislukt. Vraag een nieuwe authenticatiecode aan"
+	  "auth-err" : "Ongeldige inloggegevens",
+    "auth-failed" : "Autorisatie mislukt. Vraag een nieuwe authenticatiecode aan",
+    "duplicate-submission": "Dubbele inzending"
   },
  "forms": {
     "submitted": "Herinnering voor niet-ingezonden leads",

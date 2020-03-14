@@ -37,6 +37,7 @@ export class FormElement {
 	children?: FormElement[];
 	collapse_content?: boolean;
 	style : ElementStyle
+	available_in_activations : boolean;
 }
 
 class ElementStyle{

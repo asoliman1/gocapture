@@ -149,7 +149,8 @@
       }
     },
     "activation":{
-      "message":"确定要回去吗?"
+      "message":"确定要回去吗?",
+      "retry": "重试"
     }
   },
   "toast": {
@@ -159,7 +160,8 @@
     "submission-successfull": "提交成功",
     "syncing-submissions-error": "同步提交时出错",
     "auth-err": "无效证件",
-    "auth-failed": "授权失败。请获取新的验证码"
+    "auth-failed": "授权失败。请获取新的验证码",
+    "duplicate-submission": "重复提交"
   },
   "forms": {
     "submitted": "提交",

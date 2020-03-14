@@ -3,7 +3,7 @@ import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { BussinessClient } from "../../services/business-service";
-import { Form } from "../../model";
+import { Form, User } from "../../model";
 import { FormCapture } from "../form-capture";
 import { FormReview } from "../form-review";
 import { Searchbar } from 'ionic-angular/components/searchbar/searchbar';
@@ -14,6 +14,7 @@ import { ModalController } from "ionic-angular";
 import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
 import { ActivationsPage } from '../activations/activations';
+import { DBClient } from '../../services/db-client';
 
 @Component({
   selector: 'forms',
@@ -24,6 +25,8 @@ export class Forms {
   searchMode = false;
 
   searchTrigger = "hidden";
+
+  user: User = new User();
 
   @ViewChild("search") searchbar: Searchbar;
 
@@ -39,9 +42,20 @@ export class Forms {
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
-    private Keyboard: Keyboard) {
+    private Keyboard: Keyboard, 
+    private dbClient : DBClient
+    ) {
     this.getForms();
   }
+
+  ngOnInit() {
+		this.client.userUpdates.subscribe((user: User)=>{
+			this.user=user
+		})
+		this.dbClient.getRegistration().subscribe((user)=>{
+			this.user=user;
+		})
+	}
 
   getForms() {
     this.formsProvider.formsObs.subscribe((val) => {
@@ -159,7 +173,7 @@ export class Forms {
       })
     }
 
-    if(form.activations.length)
+    if(form.activations.length && this.user.activations)
     buttons.push({
       'text': 'forms.activations',
       'icon': 'game-controller-b',

@@ -149,7 +149,8 @@
       }
     },
     "activation":{
-      "message":"Are you sure you want to go back?"
+      "message":"Are you sure you want to go back?",
+      "retry": "Retry"
     }
   },
   "toast": {
@@ -159,7 +160,8 @@
     "submission-successfull": "Submission successfull.",
     "syncing-submissions-error": "There was an error sync-ing the submissions",
     "auth-err": "Invalid credentials",
-    "auth-failed": "Authorization failed. Please obtain a new Authentication Code"
+    "auth-failed": "Authorization failed. Please obtain a new Authentication Code",
+    "duplicate-submission": "Duplicate Submission"
   },
   "forms": {
     "submitted": "Submitted",

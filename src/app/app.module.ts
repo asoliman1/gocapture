@@ -176,7 +176,10 @@ export function createTranslateLoader(http: HttpClient) {
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {
+      scrollPadding: false,
+      scrollAssist: false
+    }),
     BrowserAnimationsModule,
     TextMaskModule,
     PipesModule,
@@ -309,7 +312,7 @@ export function createTranslateLoader(http: HttpClient) {
     ContactsProvider,
     Intercom,
     ActivationsProvider,
-    TranslateConfigService
+    TranslateConfigService,
   ]
 })
 export class AppModule { }

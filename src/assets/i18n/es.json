@@ -149,7 +149,8 @@
       }
     },
     "activation":{
-      "message":"Estas seguro que quieres volver?"
+      "message":"Estas seguro que quieres volver?",
+      "retry": "procesar de nuevo"
     }
   },
   "toast": {
@@ -159,7 +160,8 @@
     "submission-successfull": "Envío exitoso",
     "syncing-submissions-error": "Se produjo un error al sincronizar los envíos.",
     "auth-err": "Credenciales no válidas",
-    "auth-failed": "Autorización fallida. Obtenga un nuevo código de autenticación"
+    "auth-failed": "Autorización fallida. Obtenga un nuevo código de autenticación",
+    "duplicate-submission": "Sumisión duplicada"
   },
   "forms": {
     "submitted": "Enviado",

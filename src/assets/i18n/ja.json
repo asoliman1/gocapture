@@ -149,7 +149,8 @@
       }
     },
     "activation":{
-      "message":"本当に戻りたいですか?"
+      "message":"本当に戻りたいですか?",
+      "retry": "リトライ"
     }
   },
   "toast": {
@@ -159,7 +160,8 @@
     "submission-successfull": "提出成功",
     "syncing-submissions-error": "提出物の同期中にエラーが発生しました",
     "auth-err": "無効な資格情報",
-    "auth-failed": "認証に失敗しました。新しい認証コードを取得してください"
+    "auth-failed": "認証に失敗しました。新しい認証コードを取得してください",
+    "duplicate-submission": "重複した提出"
   },
   "forms": {
     "submitted": "提出済",

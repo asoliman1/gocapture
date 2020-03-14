@@ -52,6 +52,11 @@ export const VERSIONS = {
               "ALTER TABLE org_master add column localizations text",
               "ALTER TABLE org_master add column localization text",
             ]
+          },
+          10: {
+            queries: [
+              "ALTER TABLE org_master add column activations integer default 0",
+            ]
           }
     },
     work: {
@@ -243,6 +248,16 @@ export const VERSIONS = {
         29 :  {
             queries: [
                 "alter table forms add column activations text",
+            ]
+        },
+        30 :  {
+            queries: [
+                "alter table forms add column show_reject_prompt integer default 0",
+            ]
+        },
+        31 :  {
+            queries: [
+                "alter table forms add column duplicate_action text",
             ]
         },
     }

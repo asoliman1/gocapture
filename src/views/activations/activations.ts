@@ -48,19 +48,26 @@ export class ActivationsPage {
       this.activations = [...this.activations, data];
       this.filteredActivations = [...this.filteredActivations, data];
       this.loading = false;
-      console.log("filteredActivations",this.filteredActivations[0].activations.length)
-      if(this.filteredActivations[0].activations.length > 0) this.isThereNoActivations = false
-      else this.isThereNoActivations = true
+      this.isThereNoActivations = !this.hasActivations();
     },err =>{
       console.log(err)
       this.loading = false;
     })
   }
 
+  hasActivations (){
+    for (let index = 0; index < this.filteredActivations.length; index++) {
+      const element = this.filteredActivations[index];
+      if(element.activations.length) return true;
+    }
+    return false;
+  }
+
   getFormActivations(form : Form){
     this.restClient.getFormActivations(form,{sort_by : this.sortBy,sort_order : this.sortOrder}).subscribe((activations)=>{
       this.activations.push({activations , form})
       this.filteredActivations.push({activations , form});
+      this.isThereNoActivations = !this.hasActivations();
       this.loading = false;
     },err =>{
       this.loading = false;

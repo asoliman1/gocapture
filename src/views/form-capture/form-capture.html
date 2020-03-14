@@ -49,15 +49,16 @@
   'background-image':'url('+captureBg+')',
   'background-size':'cover',
   'background-position':'center'}" class="form-summary">
-	<ion-grid [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
+  <ion-grid style="height: 100%;"
+  [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
 		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
 			<ion-col>
       <button ion-button block color="light" [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
 			</ion-col>
 		</ion-row>
 
-		<ion-row>
-      <ion-col style="order:1" >
+		<ion-row style="height: inherit;">
+      <ion-col style="order:1; height: inherit; overflow-y: scroll;" >
         <form-view
           *ngIf="form"
           [form]="form"
@@ -72,7 +73,8 @@
           >
         </form-view>
       </ion-col>
-      <ion-col no-padding
+      <ion-col style="height: inherit;"
+      no-padding
       *ngIf="activation && activation.display_capture_form != 1" [style.order]="getCaptureScreenUrlOrder(activation.display_capture_form)" >
         <iframe [src]="activation.capture_screen_url | safeUrl" width="100%" height="100%" frameborder="0" ></iframe>
       </ion-col>
@@ -94,9 +96,9 @@
       <ion-icon name="arrow-round-back"></ion-icon>
     </button>
 
-    <button ion-button full class="btn-background play-btn"
-    (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
-      {{'form-capture.submit-btn' | translate}}
+    <button ion-button full [ngStyle]="{'background-color':activation.submit_button_background_color,'color':activation.submit_button_text_color}"
+    (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isActivationProcessing">
+      {{activation.submit_button_text}}
     </button>
   </div>
   <ion-toolbar *ngIf="errorMessage.text">
