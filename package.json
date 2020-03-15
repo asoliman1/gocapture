@@ -197,7 +197,8 @@
       },
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.+"
-      }
+      },
+      "cordova-plugin-app-preferences": {}
     },
     "platforms": [
       "android",

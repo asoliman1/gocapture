@@ -509,8 +509,10 @@ export class SubmissionsProvider {
           submission.hold_request_id = 0;
           submission.status = SubmissionStatus.InvalidFields;
           this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
-            console.log('invalid submission')
-            console.log(submission);
+            if(isActivation){
+              this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
+              obs.error("invalid submission");
+            }
           }, err => {
             console.log(err);
             obs.error("Could not process submission for form \"" + form.name + "\": " + d.message);

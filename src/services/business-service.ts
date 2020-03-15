@@ -332,8 +332,11 @@ export class BussinessClient {
     })
   }
 
-  public unregister(user: User): Observable<User> {
+  public unregister(user: User,isValidToken = true): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
+      if(!isValidToken)
+       this.onUnAuthSuccess(obs);
+      else
       this.rest.unauthenticate(user.access_token).subscribe((done) => {
         if (done) {
           this.onUnAuthSuccess(obs)

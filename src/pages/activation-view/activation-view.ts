@@ -330,12 +330,10 @@ export class ActivationViewPage {
 
   private initNetwork() {
     console.log("initNetwork")
-    setTimeout(() => {
       this.networkSubs = this.client.network.subscribe((data)=>{
         console.log(data);
         this.setOnline(data == 'ON');
       })
-    }, 200);
 
   }
 

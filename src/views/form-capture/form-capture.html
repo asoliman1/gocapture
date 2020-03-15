@@ -98,7 +98,8 @@
 
     <button ion-button full [ngStyle]="{'background-color':activation.submit_button_background_color,'color':activation.submit_button_text_color}"
     (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isActivationProcessing">
-      {{activation.submit_button_text}}
+      <span *ngIf="!isActivationProcessing" >{{activation.submit_button_text}}</span>
+      <ion-spinner *ngIf="isActivationProcessing" ></ion-spinner>
     </button>
   </div>
   <ion-toolbar *ngIf="errorMessage.text">
