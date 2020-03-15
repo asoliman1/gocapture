@@ -237,7 +237,7 @@ export class MyApp {
           handler: () => {
             // A.S
             this.popup.showLoading({text:''});
-            this.client.unregister(user).subscribe(() => {
+            this.client.unregister(user,false).subscribe(() => {
               this.nav.setRoot(Login, { unauthenticated: true });
               this.popup.dismiss('loading');
             }, err => {

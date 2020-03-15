@@ -812,6 +812,7 @@ export class FormCapture implements AfterViewInit {
       urlFields: this.form.getUrlFields(),
       submissions: [this.submission]
     }
+
     this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true).subscribe(async (sub) => {
       this.tryClearDocumentsSelection();
       if (sub[0].prospect_id) {
@@ -831,7 +832,6 @@ export class FormCapture implements AfterViewInit {
       this.isActivationProcessing = false;
       console.log(err);
     })
-
 
   }
 
