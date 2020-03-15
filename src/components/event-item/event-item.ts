@@ -16,8 +16,10 @@ export class EventItemComponent {
   @Input() name : string;
   @Input() textColor : string;
   @Input() isSyncing : boolean;
+  @Input() activation : boolean = false;
 
   imageLoading : boolean = true;
+  submissionsCounter : boolean;
 
   constructor() {
   }
@@ -29,8 +31,13 @@ export class EventItemComponent {
   ngOnInit(){
   }
 
+  isUnidentified(val){
+    return typeof val == 'undefined';
+  }
+
   checkImageDownload(){
-    this.imageLoading = this.image.startsWith('https://');
+    if(this.image && !this.activation) this.imageLoading = this.image.startsWith('https://');
+    else this.imageLoading = false;
   }
 
 }

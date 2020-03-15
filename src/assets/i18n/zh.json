@@ -16,7 +16,8 @@
     "support": "支持",
     "settings": "设置",
     "hi": "你好",
-    "welcome-back": "欢迎回来"
+    "welcome-back": "欢迎回来",
+    "activations":"激活"
   },
   "general": {
     "syncing": "同步",
@@ -146,6 +147,10 @@
         "title": "未经认证？",
         "message": "您确定要取消此设备的身份验证吗？"
       }
+    },
+    "activation":{
+      "message":"确定要回去吗?",
+      "retry": "重试"
     }
   },
   "toast": {
@@ -155,7 +160,8 @@
     "submission-successfull": "提交成功",
     "syncing-submissions-error": "同步提交时出错",
     "auth-err": "无效证件",
-    "auth-failed": "授权失败。请获取新的验证码"
+    "auth-failed": "授权失败。请获取新的验证码",
+    "duplicate-submission": "重复提交"
   },
   "forms": {
     "submitted": "提交",
@@ -166,7 +172,8 @@
     "rapid-scan": "快速扫描",
     "documents": "文件",
     "instructions": "说明",
-    "title": "Events"
+    "title": "大事记",
+    "activations": "激活"
   },
   "form-review": {
     "clear": "明确",
@@ -269,5 +276,9 @@
     "couldnt-scan-nfc": "无法扫描NFC徽章",
     "rescan": "重新扫描徽章",
     "rescan-nfc": "重新扫描NFC徽章"
+  },
+  "activations":{
+    "title":"激活",
+    "launch":"发射"
   }
 }

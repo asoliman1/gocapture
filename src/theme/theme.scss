@@ -1,6 +1,5 @@
 @mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
   $alert-ios-button-text-color: $theme-color;
-
   $action-sheet-ios-button-text-color: $theme-color;
   $button-ios-background-color: $theme-color;
   $button-md-background-color: $theme-color;
@@ -12,7 +11,7 @@
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
   .fab-md-in-list , .fab-md-in-list , .fab ,
-  .fab.activated , .s-header .title::after , .document button[full]{
+  .fab.activated , .s-header .title::after , .document button[full],.form-header{
     background-color: $theme-color;
   }
 
@@ -109,5 +108,12 @@
 
   .info-box,ion-text{
     color: $theme-text-color // A.S to set a text color for each theme
+  }
+
+  .activation-event-header{
+    color: $theme-color;
+  }
+  .btn-background {
+    background-color: $theme-color;
   }
 }

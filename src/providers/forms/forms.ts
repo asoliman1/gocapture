@@ -51,8 +51,7 @@ export class FormsProvider {
     return new Observable<any>(obs => {
       this.rest.getAllForms(lastSyncDate)
       .subscribe((remoteForms) => {
-        remoteForms.forms = this.filterArchivedForms(remoteForms.forms);
-        remoteForms.forms = this.checkFormData(remoteForms.forms, this.forms);
+        remoteForms.forms = this.checkFormData(this.filterArchivedForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
         this.loaded = true;
         // this.setFormsSyncStatus(false);
@@ -264,6 +263,7 @@ export class FormsProvider {
   }
 
   updateFormSubmissions(form_id: any) {
+    console.log("updateFormSubmissions")
     let form = this.forms.find((e) => e.form_id === (form_id * 1));
     if(form)
     this.dbClient.getSubmissions(form.form_id,false).subscribe((submissions)=>{

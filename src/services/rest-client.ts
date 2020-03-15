@@ -27,6 +27,8 @@ import { SubmissionsRepository } from "./submissions-repository";
 import { SubmissionMapper } from "./submission-mapper";
 import { AppVersion } from '@ionic-native/app-version';
 import { Platform } from 'ionic-angular/platform/platform';
+import { Activation } from '../model/activation';
+import { ActivationSubmission } from '../model/activation-submission';
 
 @Injectable()
 export class RESTClient {
@@ -132,6 +134,44 @@ export class RESTClient {
 		});
 	}
 
+	public getAllActivations(forms : Form[],params : any){
+		return new Observable<{activations :Activation[],form: Form}>((obs: Observer<{activations :Activation[],form: Form}>) => {
+			var result: {activations :Activation[],form: Form} = {activations:[],form:null};
+			if (!forms || forms.length == 0) {
+				setTimeout(() => {
+					obs.next(result);
+					obs.complete();
+				});
+				return;
+			}
+			var index = 0;
+			let handler = (data: Activation[]) => {
+				result.activations = data;
+				result.form = forms[index];
+				obs.next({...result})
+				index++;
+				if (index < forms.length) {
+					this.getFormActivations(forms[index] , params ).subscribe(handler);
+				} else {
+					obs.complete();
+				}
+			};
+			this.getFormActivations(forms[index],params).subscribe(handler,(err)=>obs.error(err));
+		});
+	}
+
+	public getFormActivations(form : Form,params : any,lastSyncDate ? : Date ): Observable<Activation[]> {
+		let opts: any = {
+			form_id: form.form_id,
+			include_inactive : 0,
+			...params
+		};
+		return this.getAll<{records:Activation[]}>("/activations.json", opts).map(resp => {
+			let acs = Activation.parseActivations(resp,form);
+			console.log(acs)
+			return acs;
+		});
+	}
 	public updateAccountSettings(settings: {}): Observable<User> {
 		return this.call<DataResponse<User>>("POST", "/device/settings.json", settings)
 		  .map(resp => {
@@ -165,7 +205,6 @@ export class RESTClient {
 			return result;
 		});
 	}
-
 
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
@@ -353,6 +392,20 @@ export class RESTClient {
 			};
 			doTheCall();
 		});
+	}
+
+	public submitActivation(data: ActivationSubmission): Observable<boolean> {
+		console.log("we are here in submit activation")
+		return this.call<BaseResponse>("POST", "/activations/submit.json", data)
+			.map((resp: FormSubmitResponse) => {
+				console.log("response", resp)
+				if (resp.status == "200") {
+					return true;
+				}
+				
+				this.errorSource.next(resp);
+				return false;
+			});
 	}
 	/**
 	 *

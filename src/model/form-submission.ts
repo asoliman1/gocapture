@@ -82,6 +82,7 @@ export enum FormSubmissionType {
 	normal = 'normal',
 	barcode = 'barcode',
 	list = 'list',
-	transcription = 'transcription'
+	transcription = 'transcription',
+	activation = 'activation'
 }
 

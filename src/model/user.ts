@@ -26,4 +26,5 @@ export class User {
 	app_name : string;
 	localizations : [ Localization ];
 	localization : string;
+	activations : 0 | 1;
 }

@@ -18,9 +18,9 @@
 <ion-content >
 	<ion-searchbar #search (ionInput)="getItems($event)" [placeholder]="'general.search'| translate" *ngIf="searchMode">
 	</ion-searchbar>
-	<!-- <div text-center margin-top *ngIf="!formsProvider.loaded">
-		<ion-spinner></ion-spinner>
-	</div> -->
+	<div  *ngIf="!formsProvider.loaded">
+		<event-item *ngFor="let x of [1,2,3]" ></event-item>
+	</div>
 
 	<div class="no-data" *ngIf="formsProvider.loaded && !forms.length"> 
 		<img src="./assets/images/no-Events.png" />

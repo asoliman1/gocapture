@@ -1,3 +1,4 @@
+import { Activation } from './../model/activation';
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/observable/forkJoin';
@@ -16,6 +17,8 @@ import { Migrator, Manager, Table } from "./db";
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Platform } from "ionic-angular/platform/platform";
 import { settingsKeys } from "../constants/constants";
+import { TABLES } from "./db/tables";
+import { VERSIONS } from "./db/versions";
 
 let MASTER = "master";
 let WORK = "work";
@@ -25,453 +28,13 @@ export class DBClient {
 
 	private migrator: Migrator;
 	private manager: Manager;
-
 	private registration: User;
-
 	private saveAllEnabled = false;
 	private saveAllPageSize = 500;
 	private saveAllData: { query: string, type: string, parameters: any[] }[] = [];
+	private tables: Table[] = TABLES;
+	private versions = VERSIONS;
 
-	private tables: Table[] = [
-		{
-			name: 'forms',
-			master: false,
-			columns: [
-				{ name: 'id', type: 'integer not null' },
-				{ name: 'formId', type: 'integer' },
-				{ name: 'name', type: 'text' },
-				{ name: 'title', type: 'text' },
-				{ name: 'listId', type: 'text' },
-				{ name: 'description', type: 'text' },
-				{ name: 'success_message', type: 'text' },
-				{ name: 'submit_error_message', type: 'text' },
-				{ name: 'submit_button_text', type: 'text' },
-				{ name: 'created_at', type: 'text' },
-				{ name: 'updated_at', type: 'text' },
-				{ name: 'elements', type: 'text' },
-				{ name: 'isDispatch', type: 'integer not null' },
-				{ name: 'dispatchData', type: 'text' },
-				{ name: 'prospectData', type: 'text' },
-				{ name: 'summary', type: 'text' },
-				{ name: "primary key", type: "(id, isDispatch)" },
-			],
-			queries: {
-				"select": "SELECT * FROM forms where isDispatch=?",
-				"selectByIds": "SELECT * FROM forms where id in (?)",
-				"selectAll": "SELECT id, formId, listId, name, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, is_mobile_kiosk_mode, is_mobile_quick_capture_mode, members_last_sync_date, is_enforce_instructions_initially, instructions_content, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style,lastSync, (SELECT count(*) FROM submissions WHERE status >= 1 and submissions.formId=Forms.id and  submissions.isDispatch = (?)) AS totalSub, (SELECT count(*) FROM submissions WHERE status in (2, 3) and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalHold, (SELECT count(*) FROM submissions WHERE status = 1 and submissions.formId=Forms.id and submissions.isDispatch = (?)) AS totalSent, archive_date FROM forms where isDispatch = (?)",
-				"update": "INSERT OR REPLACE INTO forms ( id, formId, name, listId, title, description, success_message, submit_error_message, submit_button_text, created_at, updated_at, elements, isDispatch, dispatchData, prospectData, summary, archive_date, is_mobile_kiosk_mode, members_last_sync_date, is_mobile_quick_capture_mode, instructions_content, is_enforce_instructions_initially, event_stations, is_enable_rapid_scan_mode, available_for_users, event_address, event_style , lastSync) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from forms where id=?",
-				"deleteIn": "delete FROM forms where formId in (?)",
-				"deleteAll": "delete from forms"
-			}
-		},
-		{
-			name: 'submissions',
-			master: false,
-			columns: [
-				{ name: 'id', type: 'integer primary key' },
-				{ name: 'title', type: 'text' },
-				{ name: 'sub_date', type: 'text' },
-				{ name: 'formId', type: 'integer' },
-				{ name: 'data', type: 'text' },
-				{ name: 'status', type: 'integer' },
-				{ name: 'firstName', type: 'text' },
-				{ name: 'lastName', type: 'text' },
-				{ name: 'email', type: 'text' },
-				{ name: 'dispatchId', type: 'integer' },
-				{ name: 'isDispatch', type: 'integer' }
-			],
-			queries: {
-				"select": "SELECT * FROM submissions where formId=? and isDispatch=?",
-				"selectAll": "SELECT * FROM submissions where formId=? and isDispatch=?",
-				"selectByHoldId": "SELECT * FROM submissions where hold_request_id=? limit 1",
-				"selectById": "SELECT * FROM submissions where id=? limit 1",
-				"toSend": "SELECT * FROM submissions where status in (4,5)",
-				"update": "INSERT OR REPLACE INTO submissions (id, formId, data, sub_date, status, firstName, lastName, fullName, email, isDispatch, dispatchId, activityId, hold_request_id, barcode_processed, submission_type, last_sync_date, hold_submission, hold_submission_reason, hidden_elements, station_id, is_rapid_scan, stations, captured_by_user_name, location) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"updateFields": "UPDATE submissions set data=?, email=?, firstName=?, lastName=?, fullName=?, barcode_processed=?, hold_submission=?, hold_submission_reason=? where id=?",
-				"delete": "DELETE from submissions where id=?",
-				"deleteIn": "DELETE from submissions where formId in (?)",
-				"deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
-				"updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
-				"updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
-				"updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=?, location=? where hold_request_id=?",
-				"deleteAll": "delete from submissions"
-			}
-		},
-		{
-			name: 'notifications',
-			master: false,
-			columns: [
-				{ name: 'id', type: 'integer primary key' },
-				{ name: 'data', type: 'text' },
-				{ name: 'processed', type: 'text' }
-			],
-			queries: {
-				"create": "",
-				"update": "",
-				"delete": ""
-			}
-		},
-		{
-			name: 'contacts',
-			master: false,
-			columns: [
-				{ name: 'id', type: 'integer primary key' },
-				{ name: 'data', type: 'text' },
-				{ name: 'formId', type: 'integer' },
-				{ name: 'membershipId', type: 'integer' },
-				{ name: 'prospectId', type: 'integer' },
-				{ name: 'added', type: 'string' },
-				{ name: 'searchTerm', type: 'text' },
-			],
-			queries: {
-				"selectAll": "select * from contacts inner join contact_forms on contacts.id = contact_forms.contactId where contact_forms.formId=?",
-				"select": "select * from contacts where formId=? and prospectId=?",
-				"update": "INSERT OR REPLACE INTO contacts (id, data, formId, membershipId, prospectId, added, searchTerm) VALUES (?, ?, ?, ?, ?, ?, ?)",
-				"delete": "delete from contacts where id=?",
-				"deleteIn": "delete from contacts where formId in (?)",
-				"deleteAll": "delete from contacts"
-			}
-		},
-		{
-			name: 'contact_forms',
-			master: false,
-			columns: [
-				{ name: 'formId', type: 'integer' },
-				{ name: 'contactId', type: 'integer' },
-				{ name: "primary key", type: "(formId, contactId)" }
-			],
-			queries: {
-				"selectAll": "select * from contact_forms where formId=?",
-				"update": "INSERT OR REPLACE INTO contact_forms (formId, contactId) VALUES (?, ?)",
-				"delete": "delete from contact_forms where formId=?",
-				"deleteIn": "delete from contact_forms where formId in (?)",
-				"getAll": "select id, formId from contacts where formId is not NULL",
-				"deleteAll": "delete from contact_forms"
-			}
-		},
-		{
-			name: 'configuration',
-			master: false,
-			columns: [
-				{ name: 'key', type: 'text primary key' },
-				{ name: 'value', type: 'text' }
-			],
-			queries: {
-				"select": "SELECT * FROM configuration where key =?",
-				"selectAll": "SELECT * from configuration",
-				"update": "INSERT OR REPLACE INTO configuration (key, value) VALUES (?,?)",
-				"delete": "DELETE FROM configuration WHERE key = (?)",
-				"deleteAll": "delete from configuration"
-			}
-		},
-		{
-			name: "org_master",
-			master: true,
-			columns: [
-				{ name: 'id', type: 'integer primary key' },
-				{ name: 'name', type: 'text' },
-				{ name: 'upload', type: 'integer' },
-				{ name: 'operator', type: 'text' },
-				{ name: 'db', type: 'text' },
-				{ name: 'active', type: 'integer' },
-				{ name: 'token', type: 'text' },
-				{ name: 'avatar', type: 'text' },
-				{ name: 'logo', type: 'text' },
-				{ name: 'custAccName', type: 'text' },
-				{ name: 'username', type: 'text' },
-				{ name: 'email', type: 'text' },
-				{ name: 'title', type: 'text' },
-				{ name: 'operatorFirstName', type: 'text' },
-				{ name: 'operatorLastName', type: 'text' },
-				
-			],
-			queries: {
-				"select": "SELECT * from org_master WHERE active = 1",
-				"makeAllInactive": "UPDATE org_master set active = 0",
-				"makeInactiveByIds": "UPDATE org_master set active = 0 where id in (?)",
-				"update": "INSERT or REPLACE into org_master (id, name, operator, upload, db, active, token, avatar, logo, custAccName, username, email, title, operatorFirstName, operatorLastName, pushRegistered, isProduction, theme, deviceId, support, supportEmail, documentationURL , localizations , localization) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-				"delete": "DELETE from org_master where id = ?",
-				'updateRegistration': 'UPDATE org_master set registrationId = ?',
-				"deleteAll": "delete from org_master"
-			}
-		},
-		{
-			name: 'documents',
-			master: false,
-			columns: [
-				{ name: 'id', type: 'integer not null primary key' },
-				{ name: 'setId', type: 'integer' },
-				{ name: 'name', type: 'text' },
-				{ name: 'file_path', type: 'text' },
-				{ name: 'thumbnail_path', type: 'text' },
-				{ name: 'file_type', type: 'text' },
-				{ name: 'file_extension', type: 'text' },
-				{ name: 'vanity_url', type: 'text' },
-				{ name: 'created_at', type: 'text' },
-				{ name: 'updated_at', type: 'text' }
-			],
-			queries: {
-				"selectBySet": "SELECT * FROM documents WHERE setId=?",
-				"selectByIds": "SELECT * FROM documents WHERE id IN (?)",
-				"selectAll": "SELECT * FROM documents",
-				"update": "INSERT OR REPLACE INTO documents ( id, setId, name, file_path, preview_urls, file_type, file_extension, vanity_url, created_at, updated_at ) VALUES (?,?,?,?,?,?,?,?,?,?)",
-				"updateById": "UPDATE documents SET name=?, setId=?, file_path=?, preview_urls=?, file_type=?, file_extension=?, vanity_url=?, updated_at=? WHERE id=?",
-				"delete": "DELETE FROM documents WHERE id=?",
-				"deleteIn": "DELETE FROM documents WHERE id IN (?)",
-				"deleteBySet": "DELETE FROM documents WHERE setId IN (?)",
-				"deleteAll": "DELETE FROM documents"
-			}
-		}
-	];
-
-	private versions = {
-		queries: {
-			getVersion: "select max(version) as version from versions;"
-		},
-		master: {
-			2: {
-				tables: [
-					{
-						name: 'versions',
-						columns: [
-							{ name: 'version', type: 'integer not null' },
-							{ name: 'updated_at', type: 'text' }
-						]
-					}
-				],
-				queries: []
-			},
-			3: {
-				queries: [
-					"ALTER TABLE org_master add column pushRegistered integer default 0"
-				]
-			},
-			4: {
-				queries: [
-					"ALTER TABLE org_master add column registrationId text"
-				]
-			},
-			5: {
-				queries: [
-					"ALTER TABLE org_master add column isProduction integer default 1"
-				]
-			},
-			6: {
-				queries: [
-					"ALTER TABLE org_master add column theme text"
-				]
-			},
-			7: {
-				queries: [
-					"ALTER TABLE org_master add column deviceId integer"
-				]
-			},
-			8: {
-				queries: [
-					"alter table org_master add column support integer default 0",
-					"alter table org_master add column supportEmail text",
-					"alter table org_master add column documentationURL text",
-				]
-			},
-			9: {
-				queries: [
-				  "ALTER TABLE org_master add column localizations text",
-				  "ALTER TABLE org_master add column localization text",
-				]
-			  }
-		},
-		work: {
-			1: {
-				tables: [
-					{
-						name: 'versions',
-						columns: [
-							{ name: 'version', type: 'integer not null' },
-							{ name: 'updated_at', type: 'text' }
-						]
-					},
-					{
-						name: 'documents',
-						columns: [
-							{ name: 'id', type: 'integer not null primary key' },
-							{ name: 'setId', type: 'integer' },
-							{ name: 'name', type: 'text' },
-							{ name: 'file_path', type: 'text' },
-							{ name: 'thumbnail_path', type: 'text' },
-							{ name: 'file_type', type: 'text' },
-							{ name: 'file_extension', type: 'text' },
-							{ name: 'vanity_url', type: 'text' },
-							{ name: 'created_at', type: 'text' },
-							{ name: 'updated_at', type: 'text' }
-						]
-					}
-				],
-				queries: [
-					"ALTER TABLE submissions add column activityId VARCHAR(50)"
-				]
-			},
-			2: {
-				queries: [
-					"ALTER table forms add column archive_date VARCHAR(50)"
-				]
-			},
-			3: {
-				queries: [
-					"alter table submissions add column hold_request_id integer"
-				]
-			},
-			4: {
-				queries: [
-					"alter table forms add column is_mobile_kiosk_mode integer default 0"
-				]
-			},
-			5: {
-				queries: [
-					"INSERT OR REPLACE INTO configuration (key, value) VALUES ('autoUpload','true')"
-				]
-			},
-			6: {
-				queries: [
-					"alter table submissions add column invalid_fields integer default 0"
-				]
-			},
-			7: {
-				custom: (db: SQLiteObject, callback) => {
-					let t = this;
-					db.executeSql("select id, formId from contacts where formId is not NULL", []).then(data => {
-						let list = [];
-						let index = 0;
-						while (index < data.rows.length) {
-							list.push(data.rows.item(index));
-							index++;
-						}
-						t.internalSaveAll<any>(db, list, "FormContact", 50).subscribe(() => {
-							db.executeSql("update contacts set formId=NULL", []).then(() => {
-								callback();
-							}).catch(err => {
-								console.error(err);
-							});
-						}, err => {
-							console.error(err);
-						});
-
-					});
-				},
-				queries: []
-			},
-			8: {
-				queries: [
-					"alter table submissions add column barcode_processed integer default 0"
-				]
-			},
-			9: {
-				queries: [
-					"alter table forms add column members_last_sync_date VARCHAR(50)"
-				]
-			},
-			10: {
-				queries: [
-					"alter table submissions add column submission_type VARCHAR(50)"
-				]
-			},
-			11: {
-				queries: [
-					"alter table submissions add column fullName VARCHAR(50)"
-				]
-			},
-			12: {
-				queries: [
-					"alter table forms add column is_mobile_quick_capture_mode integer default 0"
-				]
-			},
-			13: {
-				queries: [
-					"alter table forms add column is_enforce_instructions_initially integer default 0",
-					"alter table forms add column instructions_content text"
-				]
-			},
-			14: {
-				queries: [
-					"alter table submissions add column last_sync_date text"
-				]
-			},
-			15: {
-				queries: [
-					"alter table submissions add column hold_submission integer",
-					"alter table submissions add column hold_submission_reason text"
-				]
-			},
-			16: {
-				queries: [
-					"alter table submissions add column hidden_elements text"
-				]
-			},
-			17: {
-				queries: [
-					"alter table forms add column event_stations text"
-				]
-			},
-			18: {
-				queries: [
-					"alter table submissions add column station_id text"
-				]
-			},
-			19: {
-				queries: [
-					"alter table forms add column is_enable_rapid_scan_mode integer default 0"
-				]
-			},
-			20: {
-				queries: [
-					"alter table submissions add column is_rapid_scan integer default 0"
-				]
-			},
-			21: {
-				queries: [
-					"alter table submissions add column stations text"
-				]
-			},
-			22: {
-				queries: [
-					"alter table documents add column preview_urls text"
-				]
-			},
-			23: {
-				queries: [
-					"alter table submissions add column captured_by_user_name text"
-				]
-			},
-			24: {
-				queries: [
-					"alter table forms add column available_for_users text"
-				]
-			},
-			25: {
-				queries: [
-					"alter table forms add column event_address text",
-				]
-			},
-			26: {
-				queries: [
-					"alter table forms add column event_style text",
-				]
-			},
-			27: {
-				queries: [
-					"alter table submissions add column location text",
-				]
-			},
-			28: {
-				queries: [
-					"alter table forms add column lastSync text",
-				]
-			}
-		}
-	};
-	/**
-	 *
-	 */
 	constructor(private platform: Platform) {
 		this.migrator = new Migrator();
 		this.migrator.setMigrations(this.versions);
@@ -582,6 +145,9 @@ export class DBClient {
 		form.total_submissions = dbForm.totalSub;
 		form.total_hold = dbForm.totalHold;
 		form.total_sent = dbForm.totalSent;
+		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
+		form.show_reject_prompt = dbForm.show_reject_prompt == 1;
+		form.duplicate_action = dbForm.duplicate_action;
 		form.computeIdentifiers();
 		return form;
 	}
@@ -596,6 +162,13 @@ export class DBClient {
 				return forms;
 			});
 	}
+
+	// public getActivations(): Observable<Activation[]> {
+	// 	return this.getAll<any[]>(WORK, "activations", [])
+	// 		.map((data) => {
+	// 			return  Activation.parseActivations(data);
+	// 		});
+	// }
 
 	public getFormsByIds(ids: number[]): Observable<Form[]> {
 		return new Observable<Form[]>((responseObserver: Observer<Form[]>) => {
@@ -623,11 +196,20 @@ export class DBClient {
 		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync)]);
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
+		 form.duplicate_action]);
+	}
+
+	public saveActivation(activation: Activation): Observable<boolean> {
+		return this.save(WORK, "activations", Object.keys(Activation.encodeActivation(activation)).map((e)=>activation[e]));
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
 		return this.saveAll<Form>(forms, "Form");
+	}
+
+	public saveActivations(activations: Activation[]): Observable<boolean> {
+		return this.saveAll<Activation>(activations, "activations");
 	}
 
 	public deleteFormsInList(list: number[]): Observable<boolean> {
@@ -696,11 +278,13 @@ export class DBClient {
 			user.support_email = data.supportEmail;
 			user.documentation_url = data.documentationURL;
 			user.localizations = typeof data.localizations == "string" ? JSON.parse(data.localizations) : data.localizations;
-            user.localization = data.localization;
+			user.localization = data.localization;
+			user.activations = data.activations;
 			this.registration = user;
 			return user;
 		}else return null;
 	}
+
 
 	public getMemberships(form_id: number): Observable<DeviceFormMembership[]> {
 		return this.getAll<any[]>(WORK, "contacts", [form_id])
@@ -859,7 +443,6 @@ export class DBClient {
 	public saveSubmission(form: FormSubmission): Observable<boolean> {
 
 		if (form.hold_request_id > 0) {
-			//UPDATE submissions set id=?, status =?, activityId=?, data=?, sub_date=?, firstName=?, lastName=?, email=?, isDispatch=?, dispatchId=? where hold_request_id=?
 			return new Observable<boolean>((obs: Observer<boolean>) => {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
@@ -877,7 +460,6 @@ export class DBClient {
 								.then((data) => {
 									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
 										.then((data) => {
-											// console.log(data);
 											obs.next(true);
 											obs.complete();
 										}, (err) => {
@@ -1046,6 +628,10 @@ export class DBClient {
 		return this.remove(WORK, "submissions", [form.id]);
 	}
 
+	public deleteActivation(activation: Activation) {
+		return this.remove(WORK, "activations", [activation.id]);
+	}
+
 	public deleteHoldSubmission(form: FormSubmission) {
 		return this.doUpdate(WORK, 'deleteByHoldId', 'submissions', [form.hold_request_id]);
 	}
@@ -1110,7 +696,8 @@ export class DBClient {
 			user.support_email,
 			user.documentation_url,
 			JSON.stringify(user.localizations),
-			user.localization
+			user.localization,
+			user.activations
 		]).map(data => {
 			this.registration = user;
 			return data;

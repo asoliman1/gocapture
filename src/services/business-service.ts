@@ -31,6 +31,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
 
+declare var cordova;
 @Injectable()
 /**
  * The client to rule them all. The BussinessClient connects all the separate cients and creates
@@ -50,7 +51,7 @@ export class BussinessClient {
   private networkOn: Subscription;
   private networkOff: Subscription;
 
-  private online: boolean = true;
+  online: boolean = true;
 
   registration: User;
 
@@ -93,7 +94,7 @@ export class BussinessClient {
     return this.online;
   }
 
-  private setOnline(val: boolean) {
+  private async setOnline(val: boolean) {
     this.online = val;
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
@@ -273,6 +274,7 @@ export class BussinessClient {
   }
 
   private onAuthSuccess(reply: User, update: boolean, obs: Observer<any>) {
+    console.log("reply from authentication", reply)
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
@@ -350,9 +352,11 @@ export class BussinessClient {
     this.pushSubs.forEach(sub => {
       sub.unsubscribe();
     });
+    cordova.plugins.intercom.logout();
+
     try {
       await this.appPreferences.clearAll();
-      await this.intercom.reset();
+      // await this.intercom.logout();
     } catch (error) {
       console.log(error);
     }

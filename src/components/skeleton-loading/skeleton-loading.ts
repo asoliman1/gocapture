@@ -13,7 +13,7 @@ import { Component, Input } from '@angular/core';
 export class SkeletonLoadingComponent {
 
   @Input() height: string = '20px';
-
+  @Input() width : string = '100%';
   constructor() {
   }
 

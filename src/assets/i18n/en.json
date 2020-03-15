@@ -16,7 +16,8 @@
     "support": "Support",
     "settings": "Settings",
     "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "welcome-back": "Welcome back",
+    "activations" : "Activations"
   },
   "general": {
     "syncing": "Syncing...",
@@ -146,6 +147,10 @@
         "title": "Unauthenticate?",
         "message": "Are you sure you want to unauthenticate this device?"
       }
+    },
+    "activation":{
+      "message":"Are you sure you want to go back?",
+      "retry": "Retry"
     }
   },
   "toast": {
@@ -155,7 +160,8 @@
     "submission-successfull": "Submission successfull.",
     "syncing-submissions-error": "There was an error sync-ing the submissions",
     "auth-err": "Invalid credentials",
-    "auth-failed": "Authorization failed. Please obtain a new Authentication Code"
+    "auth-failed": "Authorization failed. Please obtain a new Authentication Code",
+    "duplicate-submission": "Duplicate Submission"
   },
   "forms": {
     "submitted": "Submitted",
@@ -166,7 +172,8 @@
     "rapid-scan": "Rapid Scan",
     "documents": "Documents",
     "instructions": "Instructions",
-    "title": "Events"
+    "title": "Events",
+    "activations" : "Activations"
   },
   "form-review": {
     "clear": "Clear",
@@ -269,5 +276,9 @@
     "couldnt-scan-nfc": "Couldn't Scan NFC badge",
     "rescan": "Rescan Badge",
     "rescan-nfc": "Rescan NFC badge"
+  },
+  "activations":{
+    "title":"Activations",
+    "launch":"Launch"
   }
 }

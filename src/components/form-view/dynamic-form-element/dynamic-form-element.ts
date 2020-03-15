@@ -18,6 +18,7 @@ export class DynamicFormElementComponent {
   @Input() isEditing: boolean = false;
   @Input() form: Form;
   @Input() submission: FormSubmission;
+  @Input() activation : boolean;
 
   @Output() onProcessingEvent = new EventEmitter();
   @ViewChild('dynamicForm') el:ElementRef;

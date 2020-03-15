@@ -4,6 +4,7 @@ import { BaseForm } from "./base-form";
 import { AbstractControl } from "@angular/forms";
 import { Station } from "./station";
 import { EventStyle } from "./event-style";
+import { Activation } from "./activation";
 
 export class Form extends BaseForm {
 	created_at: string;
@@ -27,12 +28,17 @@ export class Form extends BaseForm {
 	event_style: EventStyle; // A.S GOC-326
 	isSyncing: boolean;
 	available_for_users: any[];
+	activations : Activation[];
 	lastSync: {
 		submissions ?: Date;
 		contacts ?: Date;
-	};
+		activations ? : Date;
+	}
 	search_list_background_color : string;
 	search_list_text_color : string;
+	show_reject_prompt:boolean;
+	duplicate_action:string;
+
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;
 		for (let i = 0; i < form.elements.length; i++) {
@@ -174,6 +180,18 @@ export class Form extends BaseForm {
 	public getHiddenElementsPerVisibilityRules(): string[] {
 		let hiddenElements = this.elements.filter(element => {
 			return element["visible_conditions"] && !element.isMatchingRules;
+		});
+
+		let elementsIds = [];
+		for (let element of hiddenElements) {
+			elementsIds = elementsIds.concat(`element_${element["id"]}`);
+		}
+		return elementsIds;
+	}
+
+	public getHiddenElementsPerVisibilityRulesForActivation(): string[]{
+		let hiddenElements = this.elements.filter(element => {
+			return !element["available_in_activations"];
 		});
 
 		let elementsIds = [];

@@ -16,7 +16,8 @@
     "settings": "Configuración",
     "support": "Soporte",
     "hi": "Hola",
-    "welcome-back": "Bienvenido nuevamente"
+    "welcome-back": "Bienvenido nuevamente",
+    "activations":"Activaciones"
   },
   "general": {
     "syncing": "Sincronizando......",
@@ -146,6 +147,10 @@
         "title": "¿No autenticado?",
         "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
       }
+    },
+    "activation":{
+      "message":"Estas seguro que quieres volver?",
+      "retry": "procesar de nuevo"
     }
   },
   "toast": {
@@ -155,7 +160,8 @@
     "submission-successfull": "Envío exitoso",
     "syncing-submissions-error": "Se produjo un error al sincronizar los envíos.",
     "auth-err": "Credenciales no válidas",
-    "auth-failed": "Autorización fallida. Obtenga un nuevo código de autenticación"
+    "auth-failed": "Autorización fallida. Obtenga un nuevo código de autenticación",
+    "duplicate-submission": "Sumisión duplicada"
   },
   "forms": {
     "submitted": "Enviado",
@@ -166,7 +172,8 @@
     "rapid-scan": "Escaneo Rápido",
     "documents": "Documentos",
     "instructions": "Instrucciones",
-    "title": "Eventos"
+    "title": "Eventos",
+    "activations":"Activaciones"
   },
   "form-review": {
     "clear": "Claro",
@@ -269,5 +276,9 @@
     "couldnt-scan-nfc": "No se pudo escanear la insignia NFC",
     "rescan": "Reescanear Insignia",
     "rescan-nfc": "Volver a escanear la insignia NFC"
+  },
+  "activations":{
+    "title":"Activaciones",
+    "launch":"lanzamiento"
   }
 }

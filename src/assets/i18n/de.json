@@ -13,10 +13,11 @@
   },
   "sideMenu": {
     "events": "Veranstaltung",
-    "support": "Support",
+    "support": "Unterstützung",
     "settings": "Einstellungen",
     "hi": "Hallo",
-    "welcome-back": "Willkommen zurück"
+    "welcome-back": "Willkommen zurück",
+    "activations":"Aktivierungen"
   },
  "general": {
     "syncing": "Synchronisieren...",
@@ -145,17 +146,22 @@
         "title": "Unauthentifizieren ?",
         "message": "Sind Sie sich sicher das sie die Authentifizierung von diesem Gerät entfernen möchten?"
       }
+    },
+    "activation":{
+      "message":"Bist du sicher, dass du zurück willst?",
+      "retry": "wiederholen"
     }
   },
 
   "toast": {
     "no-internet-connection": "Keine Internetverbindung vorhanden.",
-"scanned-successfully": "{{badgeName}} erfolgreich eingescannt",
+    "scanned-successfully": "{{badgeName}} erfolgreich eingescannt",
     "uploading-leads": "Potenzialkunden werden hochgeladen....schließen Sie die App erst wenn der Vorgang erledigt ist.",
     "submission-successfull": "Einreichung war erfolgreich!",
     "syncing-submissions-error": "Es gab ein Problem bei der Synchronisierung der Einreichungen.",
-	"auth-err" : "ungültige Anmeldeinformationen",
-	"auth-failed" : "Authentifizierung fehlgeschlagen. Bitte fragen Sie nach einem neuen Authentifizierungscode."
+	  "auth-err" : "ungültige Anmeldeinformationen",
+    "auth-failed" : "Authentifizierung fehlgeschlagen. Bitte fragen Sie nach einem neuen Authentifizierungscode.",
+    "duplicate-submission": "Doppelte Einreichung"
   },
  "forms": {
     "submitted": "eingereicht",
@@ -166,7 +172,8 @@
     "rapid-scan": "schneller Scan",
     "documents": "Unterlagen",
     "instructions": "Anweisung",
-    "title": "Veranstaltung"
+    "title": "Veranstaltung",
+    "activations":"Aktivierungen"
   },
  "form-review": {
     "filter": {
@@ -268,6 +275,10 @@
     "couldnt-scan-nfc":"NFC konnte nicht gescannt werden",
     "rescan" : "Badge erneut scannen",
     "rescan-nfc": "NFC Badge erneut einscannen"
+  },
+  "activations":{
+    "title":"Aktivierungen",
+    "launch":"starten"
   }
 }
 
