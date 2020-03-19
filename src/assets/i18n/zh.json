@@ -279,6 +279,12 @@
   },
   "activations":{
     "title":"激活",
-    "launch":"发射"
+    "launch":"发射",
+    "search":{
+      "event": "事件",
+      "activation": "激活",
+      "all-events": "所有活动",
+      "activation-name": "激活名称"
+    }
   }
 }

@@ -60,7 +60,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
-
+import { SearchActivationsPage } from '../views/search-activations/search-activations';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -171,7 +171,8 @@ export function createTranslateLoader(http: HttpClient) {
     SupportPage,
     ActivationsPage,
     ActivationViewPage,
-    LocalizationsPage
+    LocalizationsPage,
+    SearchActivationsPage
   ],
   imports: [
     BrowserModule,
@@ -241,7 +242,8 @@ export function createTranslateLoader(http: HttpClient) {
     SupportPage,
     ActivationsPage,
     ActivationViewPage,
-    LocalizationsPage
+    LocalizationsPage,
+    SearchActivationsPage
   ],
   exports: [
     DynamicFormElementComponent

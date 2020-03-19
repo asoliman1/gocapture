@@ -105,8 +105,8 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
             self.launchNotification = userInfo;
             completionHandler(UIBackgroundFetchResultNewData);
         }
-    } else {
-         void (^safeHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result){
+    } else {  // HERE IS THE BUG
+                 void (^safeHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result){
                       dispatch_async(dispatch_get_main_queue(), ^{
                           completionHandler(result);
                       });
