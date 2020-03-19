@@ -278,7 +278,13 @@
   },
   "activations":{
     "title":"Aktivierungen",
-    "launch":"lancering"
+    "launch":"lancering",
+    "search":{
+      "event": "Evenement",
+      "activation": "Activering",
+      "all-events": "Alle evenementen",
+      "activation-name": "Activatienaam"
+    }
   }
 }
 

@@ -55,6 +55,7 @@ import { ActivationsPage } from '../activations/activations';
 import { SubmissionsProvider } from '../../providers/submissions/submissions';
 import { FormMapEntry } from '../../services/sync-client';
 import { concatStatic } from 'rxjs/operator/concat';
+import { transition } from '@angular/core/src/animation/dsl';
 
 
 
@@ -829,6 +830,7 @@ export class FormCapture implements AfterViewInit {
       }
 
     }, (err) => {
+      this.submission.prospect_id = null;
       this.isActivationProcessing = false;
       console.log(err);
     })

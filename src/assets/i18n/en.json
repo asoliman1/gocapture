@@ -268,7 +268,7 @@
   },
   "badge-scanner": {
     "scan": "Scan badge",
-    "scanning": "Scanning bagde",
+    "scanning": "Scanning badge",
     "couldnt-scan": "Couldn't scan badge",
     "nfc-msg": "Ready to scan. Hold the device near the badge.",
     "scan-nfc": "Scan NFC badge",
@@ -279,6 +279,12 @@
   },
   "activations":{
     "title":"Activations",
-    "launch":"Launch"
+    "launch":"Launch",
+    "search":{
+      "event": "Event",
+      "activation": "Activation",
+      "all-events": "All Events",
+      "activation-name": "Activation name"
+    }
   }
 }

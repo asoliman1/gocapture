@@ -278,6 +278,12 @@
   },
   "activations":{
     "title":"Activations",
-    "launch":"lancement"
+    "launch":"lancement",
+    "search":{
+      "event": "un événement",
+      "activation": "Activation",
+      "all-events": "Tous les évènements",
+      "activation-name": "Nom d'activation"
+    }
   }
 }
