@@ -97,7 +97,7 @@ export class ActivationsPage {
     this.popup.showPopover(SearchActivationsPage, {
       formName: this.searchEventName,
       activationName: this.searchActivationName
-    }, false, this.selectedTheme + ' gc-popover').onDidDismiss((data) => {
+    }, false, this.selectedTheme + ' gc-popoverActivation').onDidDismiss((data) => {
       this.searchEventName = data.eventName;
       this.searchActivationName = data.activationName;
       if (!data.isCancel) this.onSearchDismiss(data.eventForm, data.activationName)
