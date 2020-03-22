@@ -1,0 +1,29 @@
+<!--
+  Generated template for the ActivationReviewPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary" #navbar>
+    <ion-title>{{activation.name}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let sub of submissions">
+      <ng-container>
+        <div>
+          <h1 *ngIf="sub.firstName"> {{sub.firstName}} {{sub.lastName}}</h1>
+          <h2 *ngIf="sub.email">{{sub.email}} </h2>
+          <h2 *ngIf="sub.result">{{sub.result}}</h2>
+        </div>
+      </ng-container>
+    </ion-item>
+  </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)" loadingSpinner="bubbles" loadingText="Loading Users...">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

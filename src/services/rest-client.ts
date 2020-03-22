@@ -202,6 +202,47 @@ export class RESTClient {
 
 	}
 
+	public getActivationSubmissions(params: any ): any{
+		let opts: any = {
+			...params
+		};
+		// let param = Object.assign({}, opts);
+		// return this.call<RecordsResponse<any>>("GET", "/activation/submissions.json", param).subscribe((resp)=>{
+		// 	console.log(resp);
+		// 	return resp;
+		// });
+		return this.getA<{ records: any}>("/activation/submissions.json", opts).map(resp => {
+			console.log(resp);
+			return resp;
+		});
+	}
+
+	private getA<T>(relativeUrl: string, content: any): Observable<T> {
+		let response = new Observable<T>((obs: Observer<T>) => {
+			var result: T[] = [];
+			let handler = (data: RecordsResponse<T>) => {
+				var records:any;
+				if (!data.records) {
+
+				}  else {
+					records = data;
+				}
+
+				result.push.apply(result, records);
+				obs.next(records);
+				
+					obs.complete();
+			};
+			let doTheCall = () => {
+	
+				this.call<RecordsResponse<T>>("GET", relativeUrl, content).subscribe(handler, (err) => obs.error(err));
+			};
+			doTheCall();
+
+		});
+		return response;
+	}
+
 	public getFormActivations(form: Form, params: any, lastSyncDate?: Date): Observable<Activation[]> {
 		let opts: any = {
 			form_id: form.form_id,

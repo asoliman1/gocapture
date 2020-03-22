@@ -63,9 +63,6 @@ export class GOCBarcodeScanner implements Scanner {
         }
 
         if (scannedData["barcodes"]) {
-<<<<<<< HEAD
-          resolve({barcodes: this.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])});
-=======
           if (scannedData["persist"]) {
             self.appPreferences.store(RapidCaptureService.dictKey(id), id, self.platform.is('ios') ? scannedData["barcodes"] : JSON.parse(scannedData["barcodes"])).then((result) => {
               console.log('badges are saved to the defaults - ' + JSON.stringify(scannedData["barcodes"]));
@@ -86,7 +83,6 @@ export class GOCBarcodeScanner implements Scanner {
             }
             resolve({ barcodes: barcodes });
           }
->>>>>>> dev
           return;
         }
         resolve({ scannedId: scannedData.text });
