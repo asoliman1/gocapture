@@ -1,5 +1,6 @@
 <div class="document">
-  <button (click)="openDocuments()" ion-button full large [color]="selectedThemeColor">
+  <button (click)="openDocuments()" ion-button full large 
+     [ngStyle]="{'background-color':element?.style?.background_color,'color':element?.style?.text_color}">
     {{element.documents_set ? element.documents_set.name : 'Documents'}}
   </button>
 </div>

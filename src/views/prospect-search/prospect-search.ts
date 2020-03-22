@@ -27,8 +27,6 @@ export class ProspectSearch extends SearchPage {
     public themeProvider: ThemeProvider,
     public settingsService: SettingsService) {
     super(navParams, viewCtrl, themeProvider, settingsService);
-
-    //
   }
 
   ionViewDidEnter() {
@@ -37,12 +35,11 @@ export class ProspectSearch extends SearchPage {
     this.client.getContacts(this.form)
       .subscribe(contacts => {
         this.zone.run(()=>{
-          this.loading = false;
           let sortedItems = [];
           contacts.forEach((contact, index) => {
             let optionItem = new OptionItem({
               id: index.toString(),
-              title: contact.fields.FirstName + " " + contact.fields.LastName,
+              title: this.getTitle(contact.fields.FirstName,contact.fields.LastName),
               subtitle: contact.fields.Email,
               search: contact['search'],
               value: contact
@@ -60,8 +57,13 @@ export class ProspectSearch extends SearchPage {
           this.content.resize();
           ProspectSearch.formId = this.form.form_id+"";
           this.onInput({target: {value: ""}})
+          this.loading = false;
         });
       });
+  }
+
+  getTitle(firstName : string,LastName : string){
+    return LastName ? `${firstName} ${LastName}` : firstName;
   }
 
 }

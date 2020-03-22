@@ -171,12 +171,12 @@ export class Util {
 
   public imageUrl(path) {
     //if local image
-    if (path.startsWith("assets")) {
+    if (path.startsWith("assets") || path.startsWith('http') || !path) {
       return path;
     }
-    let folder = this.file.dataDirectory + "leadliaison/images";
+    let folder = this.file.dataDirectory + "leadliaison/images/";
     let name = path.substr(path.lastIndexOf("/") + 1);
-    return folder + "/" + name;
+    return folder + name;
   }
 
   public capitalizeFirstLetter(string) {
@@ -222,12 +222,11 @@ export class Util {
 
   public fileExist(url) {
     let file = this.getFilePath(url, '');
-    return this.file.checkFile(file.folderPath + '/', file.name);
+    return this.file.checkFile(file.folderPath , file.name);
   }
 
   public adjustFilePath(filePath) {
     if (this.platform.is("ios")) {
-
       return filePath.replace(/^file:\/\//, '');
     }
     return filePath;
@@ -243,24 +242,31 @@ export class Util {
   // A.S
   public folderForFile(ext: string) {
     if (ext == '.png' || ext == '.jpg' || ext == '.heic' || ext == '.jpeg')
-      return "images/";
+      return "images";
     else if (ext == '.mp3' || ext == '.aac' || ext == '.wma' || ext == '.m4a')
-      return "audio/";
+      return "audio";
     else
-      return "videos/"
+      return "videos"
   }
 
   // A.S
   getFilePath(url, id = '') {
-    let isSplashImage = url.includes('https://images.unsplash.com/');
-    url = isSplashImage ? url.split('?')[0] : url;
-    let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
-    let name = id + url.substr(url.lastIndexOf("/") + 1);
-    let pathToDownload = encodeURI(url);
-    let newFolder = this.file.dataDirectory + "leadliaison/" + this.folderForFile(ext);
-    let path = newFolder + name;
+    if (url && url != '') {
+      let isSplashImage = url.includes('https://images.unsplash.com/');
+      url = isSplashImage ? url.split('?')[0] : url;
+      let ext = isSplashImage ? '.jpg' : url.substr(url.lastIndexOf("."));
+      let name = id + url.substr(url.lastIndexOf("/") + 1);
+      name =  name.replace('.mp3','.m4a')
+      let pathToDownload = encodeURI(url);
+      let folder = this.folderForFile(ext);
+      let folderPath = `${this.file.dataDirectory}leadliaison/${folder}/`;
+      let path = folderPath + name;
 
-    return { path, pathToDownload, name, folderPath: newFolder }
+      return { path, pathToDownload, name, folder, folderPath }
+    }
+    else {
+      return { path: '', pathToDownload: '', name: '', folder: '', folderPath: '' }
+    }
   }
 
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
@@ -309,6 +315,7 @@ export class Util {
       console.log(`File ${result.fileRemoved.name} removed.`);
       return result;
     } catch (error) {
+      console.log(name);
       console.log(error);
       return error;
     }
@@ -357,6 +364,21 @@ export class Util {
             console.error("Can't create " + this.file.dataDirectory + "leadliaison" + ":\n" + JSON.stringify(err, null, 2));
           })
       });
+  }
+
+  sortBy(value, asc = 1, by = 'updated_at') {
+    let data = value.sort((a: any, b: any) => {
+      let date1 = new Date(a[by]);
+      let date2 = new Date(b[by]);
+      if (date1 > date2) {
+        return 1 * asc;
+      } else if (date1 < date2) {
+        return -1 * asc;
+      } else {
+        return 0;
+      }
+    });
+    return data;
   }
 
 }

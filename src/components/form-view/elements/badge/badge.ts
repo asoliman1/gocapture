@@ -32,10 +32,12 @@ export class Badge extends BaseElement implements OnInit {
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() readonly: boolean = false;
+  @Input() activation: boolean = false;
 
   scanner: Scanner;
   isScanning: boolean = false;
   ButtonBar : Subscription;
+  
   constructor(
     private client: RESTClient,
     private popup: Popup,
@@ -81,7 +83,8 @@ export class Badge extends BaseElement implements OnInit {
     this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
-
+    this.utils.setPluginPrefs()
+    
     this.scanner.scan(false).then((response) => {
 
       console.log("Badge scan finished: " + response.scannedId);
@@ -102,7 +105,7 @@ export class Badge extends BaseElement implements OnInit {
         return;
       }
 
-     this.popup.showToast(this.utils.capitalizeFirstLetter(this.scanner.name) + " scanned successfully", "bottom", "success", 1500);
+     this.popup.showToast({text:'toast.scanned-successfully',params:{badgeName:this.utils.capitalizeFirstLetter(this.scanner.name)}}, "bottom", "success", 1500);
 
       this.processData(response.scannedId);
 
@@ -120,7 +123,7 @@ export class Badge extends BaseElement implements OnInit {
   private processData(scannedId: string) {
     this.onProcessingEvent.emit('true');
     // A.S GOC-312
-    this.popup.showLoading('One moment. Loading record…');
+    this.popup.showLoading({text:'alerts.loading.one-moment'});
     this.client.fetchBadgeData(scannedId, this.element.barcode_provider_id, 0, this.form.form_id + '').subscribe((data) => {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
@@ -212,7 +215,7 @@ export class Badge extends BaseElement implements OnInit {
     if (this.element.badge_type && this.element.badge_type == ScannerType.Nfc) {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
-    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences);
+    return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences, this.activation);
   }
 
   setDisabledState(isDisabled: boolean): void {

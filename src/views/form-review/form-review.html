@@ -2,7 +2,7 @@
 	<ion-navbar color="primary" [hideBackButton]="isFilterExpanded">
 		<ion-buttons start>
       <button ion-button (click)="onBack()" *ngIf="isFilterExpanded">
-        Back
+        {{'general.back' | translate}}
       </button>
 		</ion-buttons>
 		<ion-title >{{isFilterExpanded ? 'Filter' : form.name}}</ion-title>
@@ -18,19 +18,19 @@
 		</ion-buttons>
     <ion-buttons end *ngIf="isFilterExpanded">
       <button ion-button (click)="resetFilter()">
-        Clear
+        {{'form-review.clear' | translate}}
       </button>
     </ion-buttons>
 	</ion-navbar>
-  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)" [filters]="filters" *ngIf="isFilterExpanded"></filters-view>
-  <ion-searchbar #search (ionInput)="getSearchedItems($event)" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
+  <filters-view id="filters-view" (onFilterSelected)="openFilterView($event)"  [filters]="filters" *ngIf="isFilterExpanded"></filters-view>
+  <ion-searchbar #search (ionInput)="getSearchedItems($event)" [placeholder]="'general.search' | translate" *ngIf="isSearchingAvailable() && !isFilterExpanded"></ion-searchbar>
 
   <ion-grid style="background-color: white;" *ngIf="!isFilterExpanded">
 		<ion-row>
 			<ion-col>
 				<ion-segment [(ngModel)]="statusFilter"  (ionChange)="onFilterChanged()" color="dark" class="segment">
           <ion-segment-button [value]="filter" [ngClass]="filter.id" *ngFor="let filter of statusFilters; let i = index">
-          {{filter.title}}
+          {{filter.title | translate}}
           </ion-segment-button>
 
 				</ion-segment>
@@ -38,16 +38,20 @@
 		</ion-row>
     <ion-row>
       <ion-col>
-        <h4>{{statusFilter.description}}</h4>
+        <h4>{{statusFilter.description | translate}}</h4>
       </ion-col>
     </ion-row>
 	</ion-grid>
 </ion-header>
 
 <ion-content class="form-summary">
-  <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="84px" [virtualTrackBy]="itemTracker">
-    <ion-item-sliding *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
-      <ion-item (click)="goToEntry(submission)">
+  <div *ngIf="loading" text-center > <ion-spinner></ion-spinner> </div>
+  <div class="no-data" *ngIf="!loading && !submissions.length" >
+    <img src="./assets/images/no-Submissions.png" />
+  </div>
+  <ion-list [virtualScroll]="searchedSubmissions" approxItemHeight="100px" [virtualTrackBy]="itemTracker">
+    <ion-item-sliding [ngStyle]="{'opacity': submission.isDownloading ? '0.5' : '1.0'}" *virtualItem="let submission"  [class.danger]="submission.invalid_fields == 1">
+      <ion-item *ngIf="submissions.length" (click)="goToEntry(submission)">
 
         <ng-container *ngIf="submission.id == -1">
           <div >
@@ -72,7 +76,7 @@
           </div>
         </ng-container>
 
-        <button *ngIf="submission.id != -1" ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="syncing">
+        <button *ngIf="submission.id != -1" ion-button item-right icon-only clear (click)="statusClick($event, submission)" [disabled]="submission.isUploading">
           <ion-icon [name]="getIcon(submission)" [color]="getColor(submission)"></ion-icon>
         </button>
       </ion-item>

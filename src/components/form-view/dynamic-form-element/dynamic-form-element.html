@@ -1,6 +1,6 @@
 <div [formGroup]="theForm" class="dynamic-form-element" #dynamicForm >
 
-  <div [ngSwitch]="element.type">
+  <div [ngSwitch]="element.type" class="{{form?.event_style?.element_background_mode || ''}}">
 
     <!--EMAIL-->
     <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode"
@@ -53,7 +53,7 @@
     <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode"
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      
+
       <!-- A.S GOC-316 -->
       <ion-textarea autocorrect="on" [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
     </ion-item>
@@ -91,7 +91,7 @@
               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
-                    [attr.name]="element.id" [formControlName]="element.identifier">
+                    [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
       </ion-datetime>
     </ion-item>
 
@@ -118,7 +118,7 @@
     <!--IMAGE-->
     <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <image-item [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
+      <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
     </ion-item>
 
     <!--BUSINESS CARD-->
@@ -140,7 +140,7 @@
     <!--BADGE-->
     <badge padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
               [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
-              [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
+              [activation]="activation" [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
     </badge>
 
     <!--HTML-BLOCK-->
@@ -155,8 +155,9 @@
     </goc-audio>
 
     <!-- DOCUMENTS -->
-    <ion-item *ngSwitchCase="'documents'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <!-- <ion-item > -->
       <document
+      *ngSwitchCase="'documents'" margin-top [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"
         [form]="form"
         [readonly]="readOnly"
         [formControlName]="element.identifier"
@@ -166,7 +167,7 @@
         [isEditing]="isEditing"
         [submission]="submission">
       </document>
-    </ion-item>
+    <!-- </ion-item> -->
 
 
     <!-- <ion-item *ngSwitchDefault>

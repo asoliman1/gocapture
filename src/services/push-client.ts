@@ -98,8 +98,8 @@ export class PushClient {
 
 	private onNotification(data : NotificationEventResponse){
 		let action = data.additionalData["action"];
-		let id = data.additionalData["id"];
-		this.notificationSource.next({id: id, action: action});
+		let id = data.additionalData["form_id"];
+		this.notificationSource.next({id, action});
 	}
 
 	private onError(err){

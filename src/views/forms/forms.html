@@ -1,11 +1,11 @@
 <ion-header>
-	<ion-navbar color="primary">
+	<ion-navbar hideBackButton="true" color="primary">
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title>Events</ion-title>
+		<ion-title>{{'forms.title' | translate}}</ion-title>
 		<ion-buttons end>
-			<button ion-button (click)="sync()" class="larger">
+			<button [disabled]="syncDisabled" ion-button (click)="sync()" class="larger">
 				<ion-icon name="sync"></ion-icon>
 			</button>
 			<button ion-button (click)="toggleSearch()" class="larger" [class.search]="searchMode">
@@ -15,19 +15,25 @@
 	</ion-navbar>
 </ion-header>
 
-<ion-content class="forms">
-	<ion-searchbar #search (ionInput)="getItems($event)" *ngIf="searchMode" [@visibleTrigger]="searchTrigger">
+<ion-content >
+	<ion-searchbar #search (ionInput)="getItems($event)" [placeholder]="'general.search'| translate" *ngIf="searchMode">
 	</ion-searchbar>
-	<ion-list approxItemHeight="300px" >
+	<div  *ngIf="!formsProvider.loaded">
+		<event-item *ngFor="let x of [1,2,3]" ></event-item>
+	</div>
+
+	<div class="no-data" *ngIf="formsProvider.loaded && !forms.length"> 
+		<img src="./assets/images/no-Events.png" />
+	</div>
+
+	<ion-list approxItemHeight="300px">
 		<!-- A.S GOC-326 -->
-		<!-- <div *virtualItem="let form"> -->
-			<event-item (click)="presentActionSheet(form)" *ngFor="let form of filteredForms" [form]="form"></event-item>
-		<!-- </div> -->
+		<event-item (click)="presentActionSheet(form)" *ngFor="let form of forms"
+			[image]="form.event_style.event_record_background.path" [name]="form.name"
+			[address]="form.event_address.address" [isSyncing]="form.isSyncing"
+			[textColor]="form.event_style.event_text_color" [sent]="form.total_submissions" [unsent]="form.total_unsent"
+			[onHold]="form.total_hold">
+		</event-item>
 	</ion-list>
-	<!--ion-refresher (ionRefresh)="doRefresh($event)">
-		<ion-refresher-content pull-max="200"></ion-refresher-content>
-	</ion-refresher>
-	<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-		<ion-infinite-scroll-content></ion-infinite-scroll-content>
-	</ion-infinite-scroll-->
+
 </ion-content>

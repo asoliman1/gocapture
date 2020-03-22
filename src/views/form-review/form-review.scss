@@ -4,6 +4,10 @@ form-review {
     font-weight: 600;
   }
 
+ ion-list{
+	 margin-top: 10px !important;
+ }
+
   .top-text {
     vertical-align: text-top;
     font-size: 10px;
@@ -24,6 +28,13 @@ form-review {
 
 .form-summary ion-item h2{
 	font-size: 2.1rem !important;
+
+}
+
+.form-summary ion-item h1{
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .form-summary img.business-card-thumbnail{

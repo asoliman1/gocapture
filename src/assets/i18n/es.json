@@ -1,0 +1,290 @@
+{
+  "login": {
+    "header": "Póngase en contacto con el administrador de su empresa para obtener un código de autenticación. Ingrese su código de autenticación a continuación.",
+    "email-placeholder": "Introdusca la direccion de correo electronico",
+    "auth-placeholder": "Introduzca el codigo de autenticación",
+    "auth-button": "Autenticar",
+    "continue-button": "Continuar",
+    "connection-mode": {
+      "title": "Modo de conección",
+      "normal": "Normal",
+      "demo": "Demostración"
+    }
+  },
+  "sideMenu": {
+    "events": "Eventos",
+    "settings": "Configuración",
+    "support": "Soporte",
+    "hi": "Hola",
+    "welcome-back": "Bienvenido nuevamente",
+    "activations":"Activaciones"
+  },
+  "general": {
+    "syncing": "Sincronizando......",
+    "cancel": "Cancelar",
+    "select-badge-type": "Select Badge Type",
+    "remind-about-leads": "Remind me about leads",
+    "important": "Importante",
+    "share": "Compartir",
+    "done": "Hecho",
+    "ok": "Hecho",
+    "unauthenticate": "No autenticado",
+    "back": "Regresar",
+    "close": "Cerca",
+    "select": "Seleccione",
+    "send": "Enviar",
+    "search": "Buscar",
+    "select-items": "Seleccionar articulos",
+    "front": "frente"
+  },
+  "settings": {
+    "title": "Configuración",
+    "organization": {
+      "header": "Organización",
+      "name": "Nombre",
+      "key": "Llave",
+      "operator": "Operador",
+      "deviceId": "ID del dispositivo"
+    },
+    "operations": {
+      "header": "Operaciones",
+      "automatic-upload": "Carga Automática",
+      "save-business-cards": "Guardar tarjetas de visitas en el dispositivo",
+      "reminder-for-unsubmitted-leads": "Recordatorio para enlaces no enviados",
+      "auto-crop": "Recorte automático"
+    },
+    "dropdown": {
+      "header": "Desplegable",
+      "label": "Seleccion de un solo toque"
+    },
+    "kiosk-mode": {
+      "header": "Modo estación",
+      "label": "Código de acceso"
+    },
+    "application": {
+      "header": "Aplicación",
+      "label": "Idioma"
+    },
+    "diagnostics": {
+      "header": "Diagnóstico",
+      "app-version": "Versión de Aplicación",
+      "enable-logging": "Habilitar el registro",
+      "view-log-button": "Ver registro",
+      "test-badge-scan": "Prueba de escaneo de insignia"
+    },
+    "unauth-device-btn": "Dispositivo no Autenticado"
+  },
+  "form-capture": {
+    "submit-btn": "Enviar",
+    "edit-btn": "Editar",
+    "update-btn": "Actualizar",
+    "date-info": "Capturar en",
+    "search-list": "Lista de busqueda",
+    "unsubmitted-data-msg": "Tiene datos no enviados en este formulario. Si regresa, este envío no se guardará. Si desea guardar este envío, toque el botón enviar",
+    "scan-mode": "Modo de escaneo :",
+    "business-card": "Tarjeta de visita",
+    "badge-scan": "Escaneo de insignia",
+    "error-msg": "Se requiere correo electrónico o nombre",
+    "check-fields-msg": "Por favor verifique los siguientes campos: {{fields}}"
+  },
+  "logs": {
+    "title": "Registros",
+    "show-more": "Mostar más"
+  },
+  "alerts": {
+    "warning": "Advertencia",
+    "error": "Error",
+    "info": "Información",
+    "Ok": "Entendido",
+    "cancel": "Cancelar",
+    "badge-id": "ID de insignia",
+    "choose-from": "Escoge de",
+    "remove": "Eliminar",
+    "loading": {
+      "one-moment": "un momento. Cargando registro...",
+      "loading": "Cargando...",
+      "loading-scanner": "Escáner de carga...",
+      "authenticating": "autenticando...",
+      "unauthenticating": "sin autenticar...",
+      "processing": "Procesando..."
+    },
+    "business-card": {
+      "message": "La tarjeta de visita se guardó en la Biblioteca de fotos",
+      "save-to-library": "Guardar en la biblioteca",
+      "retake": "Volver a tomar",
+      "view-image": "Ver imagen",
+      "choose-from-library": "Elige de la biblioteca",
+      "saved-image": "La tarjeta de visita se guardó en la Biblioteca de fotos"
+    },
+    "image": {
+      "use-camera": "Usar cámara",
+      "choose-from-album": "Elegir del álbum"
+    },
+    "rapid-scan": {
+      "process": "Proceso",
+      "badges-reminder": "Tiene insignias instantaneas escaneadas para {{formName}} guardadas en el almacenamiento local en este dispositivo que no se han enviado. ¿quieres enviarlos o eliminarlos?"
+    },
+    "duplicate-lead": {
+      "title": "Enlaces Duplicados",
+      "message": "Este Enlace ya ha sido capturado el {{date}} ¿quieres editarlo?",
+      "remove-msg": "Plomo duplicado eliminado con éxito.",
+      "already-scanned": "Cliente potencial ya escaneado en {{date}}. Edite el envío según sea necesario."
+    },
+    "kiosk-mode": {
+      "message": "No se ha establecido una contraseña de estación!",
+      "set-password": "Establecer código de acceso al modo estación",
+      "enter-passcode": "Introduce un código de acceso",
+      "placeholder": "Código de paso del modo kiosco"
+    },
+    "audio-recording": {
+      "cant-start": "No se puede comenzar a grabar",
+      "delete-recording": "¿Desea eliminar la grabación?",
+      "downloading": "Descarga de registros..."
+    },
+    "settings": {
+      "select-barcode": "Seleccione el tipo de código de barras",
+      "unauthenticate": {
+        "title": "¿No autenticado?",
+        "message": "¿Estás seguro de que deseas autenticar este dispositivo?"
+      }
+    },
+    "activation":{
+      "message":"Estas seguro que quieres volver?",
+      "retry": "procesar de nuevo"
+    }
+  },
+  "toast": {
+    "no-internet-connection": "No hay conección a internet disponible",
+    "scanned-successfully": "{{badgeName}} insignia escaneada con éxito",
+    "uploading-leads": "Cargando clientes potenciales...mantenga la aplicación abierta hasta que se complete el proceso.",
+    "submission-successfull": "Envío exitoso",
+    "syncing-submissions-error": "Se produjo un error al sincronizar los envíos.",
+    "auth-err": "Credenciales no válidas",
+    "auth-failed": "Autorización fallida. Obtenga un nuevo código de autenticación",
+    "duplicate-submission": "Sumisión duplicada"
+  },
+  "forms": {
+    "submitted": "Enviado",
+    "pending": "Pendiente",
+    "unsubmitted": "No enviado",
+    "capture": "Capturar",
+    "review-submissions": "Revisar envíos",
+    "rapid-scan": "Escaneo Rápido",
+    "documents": "Documentos",
+    "instructions": "Instrucciones",
+    "title": "Eventos",
+    "activations":"Activaciones"
+  },
+  "form-review": {
+    "clear": "Claro",
+    "filter": {
+      "filter": "Filtro",
+      "all": {
+        "title": "Todos",
+        "description": "Oprima Enter para Editar/Revisar"
+      },
+      "complete": {
+        "title": "Completar",
+        "description": "Entradas cargadas. Oprima para revisar."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "Entries pending transcription/validation. Tap to review."
+      },
+      "ready": {
+        "title": "Listo",
+        "description": "Entries ready to upload. Tap to edit, tap blue circle to block, or swipe left to delete."
+      },
+      "blocked": {
+        "title": "Bloqueado",
+        "description": "Entries blocked from upload. Tap to edit, tap red circle to unblock, or swipe left to delete."
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "Seleccione Criterios de Busqueda",
+    "titles": {
+      "name": "Nombre",
+      "email": "Correo electronico",
+      "capture-method": "Método de Captura",
+      "capture-date": "Fecha de Captura",
+      "captured-by": "Capturar por"
+    },
+    "modifiers": {
+      "equals": "Igual a",
+      "doesnt-equal": "No es igual",
+      "contains": "Contiene",
+      "does-not-contain": "No contiene"
+    },
+    "capture-type": {
+      "normal": "Normal",
+      "badge-scan": "Escaneo de Insignia",
+      "list": "Lista",
+      "transcription": "Transcripción"
+    }
+  },
+  "support": {
+    "header": "Soporte",
+    "title": "¿Cómo podemos ayudarte?",
+    "doc-button": "Documentación",
+    "ticket-button": "Abrir un Ticket",
+    "conversation-button": "Iniciar una Converzación"
+  },
+  "signature": {
+    "title": "Firma",
+    "sign-above": "Iniciar una Converzación"
+  },
+  "notifications": {
+    "submit-reminder": "Tienes clientes potenciales que no se han enviado. Abra la aplicación y envíela."
+  },
+  "documents": {
+    "open-error": "Se produjo un problema al abrir sus documentos. Inténtalo de nuevo.",
+    "empty-set": "El conjunto de documentos seleccionado no contiene ningún documento.",
+    "syncing-error": "Los documentos aún se están sincronizando. Por favor, inténtelo de nuevamente más tarde.",
+    "share-error": "Se produjo un problema al intentar compartir sus documentos. Inténtalo de nuevo.",
+    "how-to-send": "¿Cómo quieres enviar los documentos?",
+    "long-press": "Mantenga presionado para ver el documento.",
+    "tap-to-select": "Toque para seleccionar documentos. Mantenga presionado para ver.",
+    "edit-error": "No puede editar envíos en modo de vista previa. Haga clic en editar antes de realizar cambios.",
+    "empty-set-msg": "Este conjunto de documentos está vacío.",
+    "select-category" : "Seleccione una categoría de documento"
+  },
+  "prospect-view": {
+    "title": "Seleccione prospecto"
+  },
+  "stations-view": {
+    "title": "Seleccione Estación",
+    "visited-stations": "Estaciones visitadas",
+    "stations": "Estaciónes"
+  },
+  "localizations-view": {
+    "title": "Seleccione idioma"
+  },
+  "submission-status": {
+    "submitted": "Perspectiva cargada correctamente.",
+    "to-submit": "Perspectiva lista para cargar. Toca la nube en la esquina superior derecha de la pantalla para subirla. Toque el ícono azul al lado del envío para evitar que se cargue.",
+    "on-hold": "Perspectiva pendiente de transcripción. Por favor espere.",
+    "blocked": "Perspectiva bloqueada de carga. Toca el círculo rojo para desbloquearlo."
+  },
+  "badge-scanner": {
+    "scan": "Escanear insignia",
+    "scanning": "Bolsa de escaneo",
+    "couldnt-scan": "No se pudo escanear la insignia",
+    "nfc-msg": "Listo para escanear. Sostenga el dispositivo cerca de la placa.",
+    "scan-nfc": "Escanear insignia NFC",
+    "scanning-nfc": "Escaneo de la insignia NFC",
+    "couldnt-scan-nfc": "No se pudo escanear la insignia NFC",
+    "rescan": "Reescanear Insignia",
+    "rescan-nfc": "Volver a escanear la insignia NFC"
+  },
+  "activations":{
+    "title":"Activaciones",
+    "launch":"lanzamiento",
+    "search":{
+      "event": "Evento",
+      "activation": "Activación",
+      "all-events": "todos los eventos",
+      "activation-name": "Nombre de activación"
+    }
+  }
+}

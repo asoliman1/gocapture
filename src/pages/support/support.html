@@ -1,0 +1,19 @@
+<ion-content>
+  <div class="s-header">
+    <button ion-button clear menuToggle large>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <div class="title">
+      {{'support.header' | translate}}
+    </div>
+  </div>
+
+  <h3>{{'support.title' | translate}}</h3>
+
+  <ion-list no-lines class="s-padding">
+    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="email">{{'support.ticket-button' | translate}}</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark"><a [href]="documentation" >{{'support.doc-button' | translate}}</a></button>
+    <button ion-button large class="shadow-lg" clear block color="dark" (click)="startConversation()">{{'support.conversation-button' | translate}}</button>
+  </ion-list>
+
+</ion-content>

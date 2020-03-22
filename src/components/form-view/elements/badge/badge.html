@@ -1,4 +1,4 @@
-<button id="badge-scan-btn" type="button" ion-button block padding color="light" (click)="scan()">
-    <ion-spinner *ngIf="isScanning" maring-right></ion-spinner> {{scannerStatusMessage()}}
+<button id="badge-scan-btn" type="button" ion-button block padding color="light" [ngStyle]="{'background-color':element.style.background_color,'color':element.style.text_color}" [disabled]="isScanning" (click)="scan()">
+    <ion-spinner *ngIf="isScanning" maring-right></ion-spinner> {{scannerStatusMessage() | translate}}
     <!--A.S GOC-314  -->
 </button>

@@ -113,7 +113,7 @@ export class ShareService {
       })
   }
 
-  private showErrorToast(errorMsg = `A problem occurred when trying to share your document(s). Please try again.`) {
-    this.popup.showToast(errorMsg);
+  private showErrorToast(errorMsg = 'documents.share-error') {
+    this.popup.showToast({text:errorMsg});
   }
 }

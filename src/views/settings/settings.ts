@@ -1,3 +1,5 @@
+import { SyncClient } from './../../services/sync-client';
+import { OptionItem } from './../../model/option-item';
 import { Component } from '@angular/core';
 import { User } from "../../model";
 import { DBClient } from "../../services/db-client";
@@ -6,7 +8,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { Login } from "../login";
 import { LogView } from "../log";
 import { ModalController } from 'ionic-angular/components/modal/modal-controller';
-import { App } from "ionic-angular";
+import { App, Platform } from "ionic-angular";
 import { LogClient } from "../../services/log-client";
 import { Popup } from "../../providers/popup/popup";
 import { ThemeProvider } from "../../providers/theme/theme";
@@ -15,7 +17,10 @@ import { settingsKeys } from "../../constants/constants";
 import { NumberPicker } from "../../services/number-picker";
 import { BadgeRapidCapture } from '../../services/badge-rapid-capture';
 import { ScannerType } from '../../components/form-view/elements/badge/Scanners/Scanner';
-declare var screen;
+import { Geolocation } from '@ionic-native/geolocation';
+import { Localization } from '../../model/localization';
+import { TranslateConfigService } from '../../services/translate/translateConfigService';
+import { LocalizationsPage } from '../localizations/localizations';
 
 @Component({
   selector: 'settings',
@@ -29,6 +34,7 @@ export class Settings {
   shouldSave: boolean = false;
   version: string;
   private selectedTheme;
+  localization: Localization;
 
   constructor(
     private db: DBClient,
@@ -41,7 +47,11 @@ export class Settings {
     private themeProvider: ThemeProvider,
     private numberPicker: NumberPicker,
     private badgeScanner: BadgeRapidCapture,
-    private businessService : BussinessClient) {
+    public geolocation : Geolocation,
+    private businessService : BussinessClient,
+    private syncClient: SyncClient,
+    private translateConfigService: TranslateConfigService,
+    private platform : Platform) {
 
     this.appVersion.getVersionNumber().then((version) => {
       this.version = version;
@@ -62,6 +72,7 @@ export class Settings {
       } else {
         settings[settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS] = JSON.parse(settings['remindAboutUnsubmittedLeads']);
       }
+      settings[settingsKeys.AUTO_UPLOAD] = settings[settingsKeys.AUTO_UPLOAD] ? JSON.parse(settings[settingsKeys.AUTO_UPLOAD]) : true;
 
       this.settings = settings;
 
@@ -80,9 +91,77 @@ export class Settings {
       this.db.getRegistration().subscribe(user => {
         this.user = user;
         this.shouldSave = false;
+        this.setLocalization();
       });
+      
+    });
+
+  }
+
+  updateUser(result : any) {
+    this.user.localizations = result.localizations;
+    this.user.localization = result.localization;
+    this.db.saveRegistration(this.user).subscribe();
+  }
+  
+  onLocalization() {
+    let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations(), shouldShowSearch: false });
+    localizationPage.onDidDismiss((localization: Localization) => {
+      if (localization) {
+        this.popup.showLoading({text:'alerts.loading.processing'});
+        this.client.updateAccountSettings({'localization': localization.id})
+          .subscribe((result) => {
+            this.updateUser(result);
+            this.platform.setDir(localization.id == 'ar' ? 'rtl' : 'ltr',true);
+            this.translateConfigService.setLanguage(localization.id);
+            this.syncClient.download(null).subscribe();
+            this.localization = localization;
+            this.popup.dismissAll();
+          }, (error) => {
+            this.popup.dismissAll();
+          })
+      }
+    });
+    localizationPage.present();
+  }
+
+  setLocalization() {
+    console.log(this.user.localization,this.translateConfigService.defaultLanguage())
+    if (this.user.localization && this.user.localizations) {
+      this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
+    } else {
+      this.localization = this.user.localizations.find((localization) => this.translateConfigService.defaultLanguage() == localization.id);
+    }
+  }
+
+  localizations() {
+    let items = [];
+    if (this.user.localizations) {
+      this.user.localizations.forEach((localization, index) => {
+        let optionItem = this.localizationToOptionItem(localization, index);
+        items.push(optionItem);
+        if (this.user.localization && (this.user.localization == localization.id)) {
+          optionItem.isSelected = true;
+        }
+      });
+    } else {
+      let optionItem = this.localizationToOptionItem(this.localization, 0);
+      optionItem.isSelected = false;
+      items.push(optionItem);
+    }
+    return items;
+  }
+
+  localizationToOptionItem(localization: Localization, index: number): OptionItem {
+    return new OptionItem({
+      id: index.toString(),
+      title: localization.name,
+      subtitle: null,
+      search:localization.name,
+      value: localization
     });
   }
+
 
   getName(user: User) {
     let name = "";
@@ -107,8 +186,8 @@ export class Settings {
 
   onChange() {
     this.shouldSave = true;
-    setTimeout(() => {
-      this.saveSettings();
+    setTimeout(async () => {
+     await this.saveSettings();
     }, 1)
   }
 
@@ -159,8 +238,15 @@ export class Settings {
       let autosaveBCCaptures = this.db.saveConfig(settingsKeys.AUTOSAVE_BC_CAPTURES, this.settings.autosaveBCCaptures);
       let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, JSON.stringify(this.settings.remindAboutUnsubmittedLeads));
       let singleTapSelection = this.db.saveConfig(settingsKeys.SINGLE_TAP_SELECTION, this.settings.singleTapSelection);
+      let autoCrop = this.db.saveConfig(settingsKeys.AUTO_CROP, this.settings.autoCrop);
 
-      Observable.zip(autoUpload, enableLogging, kioskModePassword, autosaveBCCaptures, remindAboutUnsubmittedLeads, singleTapSelection).subscribe(() => {
+      Observable.zip(autoUpload,
+        enableLogging,
+        kioskModePassword,
+        autosaveBCCaptures,
+        remindAboutUnsubmittedLeads,
+        singleTapSelection,
+        autoCrop).subscribe(() => {
         this.shouldSave = false;
         resolve(true);
       }, error => {
@@ -169,13 +255,9 @@ export class Settings {
     });
   }
 
-  sync() {
-    this.client.getUpdates().subscribe(() => { });
-  }
-  
   // A.S GOC-300
-  testBadgeScanner() { 
-    this.popup.showActionSheet("Select Barcode Type", [
+  testBadgeScanner() {
+    this.popup.showActionSheet('alerts.settings.select-barcode', [
       {
         text: 'Barcode', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Barcode);
@@ -184,23 +266,23 @@ export class Settings {
         text: 'NFC', handler: () => {
           this.badgeScanner.testCapture(ScannerType.Nfc);
         }
-      }, { text: 'Cancel', role: 'cancel' }
+      }, { text: 'general.cancel', role: 'cancel' }
     ], this.selectedTheme)
   }
 
   unauthenticate() {
     const buttons = [
       {
-        text: 'Cancel',
+        text: 'general.cancel',
         handler: () => {
         }
       },
       {
-        text: 'Unauthenticate',
+        text: 'general.unauthenticate',
         handler: () => {
           if(this.businessService.isOnline() ){
             // A.S
-            this.popup.showLoading('Unauthenticating...')
+            this.popup.showLoading({text:'alerts.loading.unauthenticating'})
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
               this.themeProvider.setActiveTheme();
@@ -211,12 +293,12 @@ export class Settings {
               console.log(error);
               this.popup.dismiss('loading');
             })
-          } 
-          else this.popup.showToast('No internet connection available.',"top","warning") // A.S GOC-324
+          }
+          else this.popup.showToast({text:'toast.no-internet-connection'},"top","warning") // A.S GOC-324
         }
       }
     ];
-    this.popup.showAlert("Unauthenticate ?", "Are you sure you want to unauthenticate this device?", buttons, this.selectedTheme);
+    this.popup.showAlert("alerts.settings.unauthenticate.title", {text:"alerts.settings.unauthenticate.message"}, buttons, this.selectedTheme);
   }
 
 }

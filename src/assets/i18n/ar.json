@@ -1,0 +1,159 @@
+{
+  "login": {
+    "header": "برجاء الاتصال بمسؤول شركتك للحصول على رمز الدخول. أدخل رمز الدخول الخاص بك أدناه.",
+    "email-placeholder": "ادخل عنوان البريد الالكتروني",
+    "auth-placeholder": "ادخل رمز الدخول",
+    "auth-button": "تسجيل الدخول",
+    "continue-button": "استمرار",
+    "connection-mode": {
+      "title": "وضع الاتصال",
+      "normal": "افتراضي",
+      "demo": "تجريبي"
+    }
+  },
+  "sideMenu": {
+    "events": "فعاليات",
+    "settings": "اعدادات",
+    "hi": "مرحبا",
+    "welcome-back": "مرحبا بعودتك"
+  },
+  "general": {
+    "syncing": "جاري المزامنة...",
+    "cancel": "الغاء",
+    "select-badge-type": "اختار نوع شارة التعريف",
+    "remind-about-leads": "ذكرني عن البيانات الغير مرسلة"
+  },
+  "settings": {
+    "title": "اعدادات",
+    "organization": {
+      "header": "المنظمة",
+      "name": "الاسم",
+      "key": "رمز",
+      "operator": "المشغل",
+      "deviceId": "معرف الجهاز"
+    },
+    "application": {
+      "header": "تطبيق",
+      "label": "اللغة"
+    },
+    "operations": {
+      "header": "الموقع/التعريب",
+      "automatic-upload": "التحميل التلقائي",
+      "save-business-cards": "حفظ بطاقات التعريف على الجهاز",
+      "reminder-for-unsubmitted-leads": "تذكير بوجود معلومات لم يتم ارسالها",
+      "auto-crop": "الضبط التلقائي"
+    },
+    "dropdown": {
+      "header": "اختيار من متعدد",
+      "label": "اختيار من لمسة واحدة"
+    },
+    "kiosk-mode": {
+      "header": "وضع التجميع المحدود",
+      "label": "رمز المرور"
+    },
+    "diagnostics": {
+      "header": "التشخيص",
+      "app-version": "نسخة التطبيق",
+      "enable-logging": "تفعيل تجميع البيانات",
+      "view-log-button": "عرض البيانات المسجلة",
+      "test-badge-scan": "اختبار مسح شارة تعريف"
+    },
+    "unauth-device-btn": "الغاء تسجيل الدخول"
+  },
+  "form-capture": {
+    "submit-btn": "ارسال",
+    "edit-btn": "تعديل",
+    "update-btn": "تحديث",
+    "date-info": "تاريخ الالتقاط",
+    "search-list": "قاْئمة البحث"
+  },
+  "logs": {
+    "title": "البيانات المسجلة",
+    "show-more": "عرض المزيد"
+  },
+  "alerts": {
+    "warning": "تحذير",
+    "error": "خطأ",
+    "info": "معلومات",
+    "Ok": "حسنا",
+    "cancel": "الغاء",
+    "business-card": {
+      "message": "تم حفظ بطاقة التعريف في مكتبة الصور"
+    },
+    "duplicate-lead": {
+      "message": "بيان متكرر"
+    },
+    "kiosk-mode": {
+      "message": "لا يوجد رمز مرور!"
+    },
+    "audio-recording": {
+      "cant-start": "لا يمكن بدء التسجيل",
+      "delete-recording": "هل تريد حذف التسجيل؟"
+    },
+    "settings": {
+      "unauthenticate": {
+        "title": "الغاء تسجيل الدخول",
+        "message": "هل أنت متأكد؟"
+      }
+    }
+  },
+  "toast": {
+    "no-internet-connection": "لا يوجد اتصال بالإنترنت"
+  },
+  "forms": {
+    "submitted": "تم الارسال",
+    "pending": "قيد الانتظار",
+    "unsubmitted": "لم يتم الارسال",
+    "capture": "الالتقاط",
+    "review-submissions": "مراجعة الملفات",
+    "rapid-scan": "المسح السريع",
+    "documents": "مستندات",
+    "instructions": "تعليمات"
+  },
+  "form-review": {
+    "filter": {
+      "all": {
+        "title": "الكل",
+        "description": "اضغط علي ادخال للتعديل / المراجعه ."
+      },
+      "complete": {
+        "title": "مكتمل",
+        "description": "تم تحميل المدخلات. اضغط للمراجعة."
+      },
+      "pending": {
+        "title": "Pending",
+        "description": "الادخالات في انتظار النسخ / التحقق. اضغط للمراجعه."
+      },
+      "ready": {
+        "title": "استعد",
+        "description": "الادخالات جاهزه للتحميل. انقر الدائره الزرقاء للحظر, أو اسحب لليسار للحذف."
+      },
+      "blocked": {
+        "title": "حظر",
+        "description": "ادخالات محظوره من التحميل. انقر للتعديل, انقر الدائره الحمراء لالغاء الحظر, او اسحب لليسار للحذف."
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "حدد معايير البحث",
+    "titles": {
+      "name": "الاسم",
+      "email": "البريد الالكتروني",
+      "capture-method": "اسلوب الالتقاط",
+      "capture-date": "تاريخ الالتقاط",
+      "captured-by": "التقطت بواسطة"
+    },
+    "modifiers": {
+      "equals": "متساويين",
+      "doesnt-equal": "لا يساوي",
+      "contains": "يحتوي علي",
+      "does-not-contain": "لا يحتوي علي"
+    },
+    "capture-type": {
+      "normal": "افتراضي",
+      "badge-scan": "شارة المسح الضوئي",
+      "list": "قائمه",
+      "transcription": "نسخ"
+    }
+  }
+}

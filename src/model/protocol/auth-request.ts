@@ -8,4 +8,6 @@ export class AuthenticationRequest{
 	device_os_version: string;
 	device_manufacture: string;
 	cordova: number = 1;
+	bundle_id: string;
+	localization : string;
 }

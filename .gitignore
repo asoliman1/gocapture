@@ -32,10 +32,12 @@ src/app/config.ts
 .analysis/
 !3rdParty/**/*
 !3rdParty/cordova-plugin-gocapture-ocr/www
-3rdParty/cordova-plugin-gocapture-ocr/node_modules/
 
 $RECYCLE.BIN/
 
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
+mobilitEASE.keystore
+releaseMobilitEASE.bat
+src/assets/any.html

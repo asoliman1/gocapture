@@ -1,73 +1,47 @@
 {
-	"project_info": {
-	  "project_number": "56276941492",
-	  "firebase_url": "https://lead-liaison-app-project.firebaseio.com",
-	  "project_id": "lead-liaison-app-project",
-	  "storage_bucket": "lead-liaison-app-project.appspot.com"
-	},
-	"client": [
-	  {
-		"client_info": {
-		  "mobilesdk_app_id": "1:56276941492:android:670994d1f39d0ef9",
-		  "android_client_info": {
-			"package_name": "tradeshow.app"
-		  }
-		},
-		"oauth_client": [
-		  {
-			"client_id": "56276941492-iia8rsqrsc56lfvqlpp40k2plaqfhl36.apps.googleusercontent.com",
-			"client_type": 3
-		  }
-		],
-		"api_key": [
-		  {
-			"current_key": "AIzaSyAhC2prkwr5c6NI-SndMBFPLib1JSY9cmo"
-		  }
-		],
-		"services": {
-		  "analytics_service": {
-			"status": 1
-		  },
-		  "appinvite_service": {
-			"status": 1,
-			"other_platform_oauth_client": []
-		  },
-		  "ads_service": {
-			"status": 2
-		  }
-		}
-	  },
-	  {
-		"client_info": {
-		  "mobilesdk_app_id": "1:56276941492:android:24ff4e63c91feafd",
-		  "android_client_info": {
-			"package_name": "com.leadliaison.mobilitease"
-		  }
-		},
-		"oauth_client": [
-		  {
-			"client_id": "56276941492-iia8rsqrsc56lfvqlpp40k2plaqfhl36.apps.googleusercontent.com",
-			"client_type": 3
-		  }
-		],
-		"api_key": [
-		  {
-			"current_key": "AIzaSyAhC2prkwr5c6NI-SndMBFPLib1JSY9cmo"
-		  }
-		],
-		"services": {
-		  "analytics_service": {
-			"status": 1
-		  },
-		  "appinvite_service": {
-			"status": 1,
-			"other_platform_oauth_client": []
-		  },
-		  "ads_service": {
-			"status": 2
-		  }
-		}
-	  }
-	],
-	"configuration_version": "1"
-  }
+  "project_info": {
+    "project_number": "258752111324",
+    "firebase_url": "https://gocapture-8402b.firebaseio.com",
+    "project_id": "gocapture-8402b",
+    "storage_bucket": "gocapture-8402b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258752111324:android:ef33403924c2a07289ca19",
+        "android_client_info": {
+          "package_name": "com.leadliaison.mobilitease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258752111324-givic8r30of09166jktrluts34pfs214.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBktVJGT4EKK_4Hf2xy473woBpkUEHAWr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258752111324-givic8r30of09166jktrluts34pfs214.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "258752111324-h2bcq5isba7ehf0dt650dikqs7ebjsek.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.leadliaison.mobilitease"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

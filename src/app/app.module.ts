@@ -1,3 +1,6 @@
+import { ActivationViewPage } from './../pages/activation-view/activation-view';
+import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
+import { buttonBar } from './../components/form-view/button-bar/button-bar';
 import { Keyboard } from '@ionic-native/keyboard';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,7 +23,6 @@ import { SyncClient } from "../services/sync-client";
 import { LogClient } from "../services/log-client";
 import { BussinessClient } from "../services/business-service";
 import { ImageProcessor } from "../services/image-processor";
-import { IonPullUpComponent } from '../components/ion-pullup';
 import { OcrSelector } from "../components/ocr-selector";
 import { FormView, FormSelectionView } from '../components/form-view';
 import {
@@ -58,7 +60,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
-
+import { SearchActivationsPage } from '../views/search-activations/search-activations';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -107,7 +109,22 @@ import { FilterService } from "../services/filter-service";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { SectionBlock } from '../components/section-block';
+import { FormsProvider } from '../providers/forms/forms';
+import { SubmissionsProvider } from '../providers/submissions/submissions';
+import { ContactsProvider } from '../providers/contacts/contacts';
+import { SupportPage } from '../pages/support/support';
+import { Intercom } from '@ionic-native/intercom';
+import { ActivationsPage } from '../views/activations/activations';
+import { ActivationsProvider } from '../providers/activations/activations';
+import { TranslateConfigService } from '../services/translate/translateConfigService';
+import { LocalizationsPage } from '../views/localizations/localizations';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 @NgModule({
   declarations: [
     MyApp,
@@ -117,7 +134,6 @@ import { SectionBlock } from '../components/section-block';
     Forms,
     Settings,
     Dispatches,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -150,12 +166,22 @@ import { SectionBlock } from '../components/section-block';
     EventItemComponent,
     ScreenSaverPage,
     SectionBlock,
+    buttonBar,
+    CustomFabMenu,
+    SupportPage,
+    ActivationsPage,
+    ActivationViewPage,
+    LocalizationsPage,
+    SearchActivationsPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
+    IonicModule.forRoot(MyApp, {
+      scrollPadding: false,
+      scrollAssist: false
+    }),
     BrowserAnimationsModule,
-    IonicModule.forRoot(MyApp),
     TextMaskModule,
     PipesModule,
     BusinessCardOverlayPageModule,
@@ -166,6 +192,14 @@ import { SectionBlock } from '../components/section-block';
     ComponentsModule,
     NgSelectModule,
     FormsModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -176,7 +210,6 @@ import { SectionBlock } from '../components/section-block';
     Forms,
     Dispatches,
     Settings,
-    IonPullUpComponent,
     FormSummary,
     FormReview,
     FormCapture,
@@ -205,7 +238,12 @@ import { SectionBlock } from '../components/section-block';
     StationsPage,
     EventItemComponent,
     ScreenSaverPage,
-
+    CustomFabMenu,
+    SupportPage,
+    ActivationsPage,
+    ActivationViewPage,
+    LocalizationsPage,
+    SearchActivationsPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -258,6 +296,7 @@ import { SectionBlock } from '../components/section-block';
     BadgeRapidCapture,
     BCRapidCapture,
     DuplicateLeadsService,
+    FormsProvider,
     AppPreferences,
     DocumentViewer,
     FileOpener,
@@ -268,9 +307,14 @@ import { SectionBlock } from '../components/section-block';
     SubmissionMapper,
     ShareService,
     Insomnia,
+    SubmissionsProvider,
     formViewService,
     FilterService,
-    Keyboard
+    Keyboard,
+    ContactsProvider,
+    Intercom,
+    ActivationsProvider,
+    TranslateConfigService,
   ]
 })
 export class AppModule { }

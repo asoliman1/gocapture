@@ -1,0 +1,290 @@
+{
+  "login": {
+    "header": "Neem contact op met uw bedrijfsbeheerder om een ​​Autorisatiecode te verkrijgen. Voer hieronder uw Autorisatiecode in.",
+    "email-placeholder": "E-mailadres invoeren",
+    "auth-placeholder": "Autorisatiecode invoeren",
+    "auth-button": "Weet u zeker dat u de authenticatie van dit apparaat ongedaan wilt maken?",
+    "continue-button": "Doorgaan",
+    "connection-mode": {
+      "title": "Verbindungsmodus",
+      "normal": "Normaal",
+      "demo": "Demo "
+    }
+  },
+  "sideMenu": {
+    "events": "Gebeurtenissen",
+    "support": "ondersteuning",
+    "settings": "Instellingen",
+    "hi": "Hallo",
+    "welcome-back": "Welkom terug",
+    "activations":"Aktivierungen"
+  },
+ "general": {
+    "syncing": "Synchroniseren...",
+    "cancel": "Annuleren",
+    "select-badge-type": "Selecteer Badge Type",
+    "remind-about-leads": "Herinner me aan leads",
+    "important": "belangrijk",
+    "share": "delen",
+    "done": "Voltooien",
+    "ok": "ok",
+    "unauthenticate": "Authenticatie ongedaan maken ?",
+    "back": "Welkom terug",
+    "close": "sluiten",
+    "select": "selecteren",
+    "send": "verzenden",
+    "search": "zoeken",
+    "select-items": "selecteer elementen",
+    "front" : "voorkant"
+  },
+ "settings": {
+    "title": "Instellingen",
+    "organization": {
+      "header": "Organisatie",
+      "name": "Naam",
+      "key": "Sleutel",
+      "operator": "Operator",
+      "deviceId": "Apparaat ID"
+    },
+    "application": {
+      "header": "Application",
+      "label": "Taal"
+    },
+    "operations": {
+      "header": "Operaties",
+      "automatic-upload": "Automatisch Uploaden",
+      "save-business-cards": "Visitekaartjes opslaan op apparaat",
+      "reminder-for-unsubmitted-leads": "Herinnering voor niet-ingezonden leads",
+      "auto-crop": "Automatisch Bijsnijden"
+    },
+    "dropdown": {
+      "header": "Dropdown",
+      "label": "Selecteer met één tik"
+    },
+    "kiosk-mode": {
+      "header": "Kiosk modus",
+      "label": "Toegangscode"
+    },
+    "diagnostics": {
+      "header": "Diagnostiek",
+      "app-version": "App versie",
+      "enable-logging": "Logboekregistratie inschakelen",
+      "view-log-button": "Bekijk logboek",
+      "test-badge-scan": "Test Badge scan"
+    },
+    "unauth-device-btn": "Authenticatie apparaat ongedaan maken"
+  },
+"form-capture": {
+    "submit-btn": "Indienen",
+    "edit-btn": "verwerk",
+    "update-btn": "Bijwerken",
+    "date-info": "Vastgelegd op",
+    "search-list": "Zoeklijst",
+    "unsubmitted-data-msg": "U heeft niet-ingediende gegevens op dit formulier. Als u teruggaat, wordt deze inzending niet opgeslagen. Als u deze inzending wilt opslaan, tik dan op de verzendknop.",
+    "scan-mode":"Scanmodus",
+    "business-card" : "Visitekaartje is opgeslagen in de Fotobibliotheek! ",
+    "badge-scan" : "badge scannen",
+    "error-msg" : "Naam of E-mail is verplicht",
+    "check-fields-msg" :"controleer de volgende velden {{fields}}"
+  },
+ "logs": {
+    "title": "Logboeken",
+    "show-more": "Toon meer"
+  },
+"alerts": {
+    "warning": "Waarschuwing",
+    "error": "Fout",
+    "info": "Informatie",
+    "Ok": "Ok",
+  "badge-id": "Badge-ID",
+    "choose-from": "kies uit",
+    "cancel": "Annuleren",
+     "remove": "verwijderen",
+ "loading": {
+      "one-momnet": "een moment document wordt geladen",
+      "loading": "bezig met laden",
+      "loading-scanner": "scanner wordt geladen",
+      "authenticating": "Authenticeren...",
+      "unauthenticating":"Authenticeren ongedaan maken...",
+      "processing": "verwerken.."
+    },
+    "business-card": {
+      "message": "Visitekaartje is opgeslagen in de Fotobibliotheek!",
+      "save-to-library": "opslaan in bibliotheek",
+      "retake": "opnieuw opnemen",
+      "view-image": "bekijk afbeelding",
+      "choose-from-library": "kies uit bibliotheek",
+      "saved-image": "Visitekaartje is opgeslagen in de Fotobibliotheek!"
+    },
+ "image": {
+      "use-camera": "gebruik camera",
+      "choose-from-album": "kies uit album"
+    },
+    "rapid-scan": {
+      "process": "verwerk",
+      "badges-reminder": "U heeft Snel Gescande badges voor{{formName}} opgeslagen in de lokale opslag op dit apparaat die nog niet zijn verzonden. Wilt u ze verzenden of verwijderen?"
+    },
+    "duplicate-lead": {
+      "title": "Dubbele Lead",
+      "message": "Deze lead is al vastgelegd op{{date}} wilt u deze bewerken?",
+      "remove-msg": "Dubbele lead verwijderen geslaagd",
+      "already-scanned": "Lead al gescand op{{date}}.Bewerk de inzending indien nodig."
+    },
+    "kiosk-mode": {
+      "message": "Geen kiosk wachtwoord ingesteld",
+       "set-password": "Kiosk wachtwoord instellen",
+       "enter-passcode": "Voer toegangscode in",
+       "placeholder": "Voer toegangscode in"
+    },
+    "audio-recording": {
+      "cant-start": "Kan niet beginnen met opnemen",
+      "delete-recording": "Wilt u de opname verwijderen?",
+      "downloading": "Document Downloaden"
+    },
+    "settings": {
+      "unauthenticate": {
+        "title": "Authenticatie ongedaan maken ??",
+        "message": "Weet u zeker dat u de authenticatie van dit apparaat ongedaan wilt maken?"
+      }
+    },
+    "activation":{
+      "message":"Weet je zeker dat je terug wilt gaan?",
+      "retry": "probeer opnieuw"
+    }
+  },
+
+  "toast": {
+    "no-internet-connection": "Geen internetverbinding beschikbaar",
+    "scanned-successfully": "{{badgeName}} scannen geslaagd",
+    "uploading-leads": "Leads uploaden....houd de app open totdat het proces is voltooid.",
+    "submission-successfull": "Inzending geslaagd",
+    "syncing-submissions-error": "Er is een fout opgetreden bij het synchroniseren van de inzendingen",
+	  "auth-err" : "Ongeldige inloggegevens",
+    "auth-failed" : "Autorisatie mislukt. Vraag een nieuwe authenticatiecode aan",
+    "duplicate-submission": "Dubbele inzending"
+  },
+ "forms": {
+    "submitted": "Herinnering voor niet-ingezonden leads",
+    "pending": "In afwachting",
+    "unsubmitted": "Herinnering voor niet-ingezonden leads",
+    "capture": "Vastleggen",
+    "review-submissions": "Inzendingen beoordelen",
+    "rapid-scan": "Snelle Scan",
+    "documents": "Documenten",
+    "instructions": "Instructies",
+    "title": "Gebeurtenissen",
+    "activations":"Aktivierungen"
+  },
+ "form-review": {
+    "filter": {
+      "all": {
+        "title": "Alle",
+        "description": "Tik op een item om te bewerken/beoordelen"
+
+      },
+      "complete": {
+        "title": "Voltooien",
+        "description": "Inzendingen geüpload. Tik om te beoordelen"
+      },
+      "pending": {
+        "title": "In afwachting",
+        "description": "Inzendingen wachten op transcriptie/validatie. Tik om te beoordelen."
+      },
+      "ready": {
+        "title": "Gereed",
+        "description": "Inzendingen gereed om te uploaden. Tik om te bewerken, tik op blauwe cirkel om te blokkeren, of veeg naar links om te verwijderen."
+      },
+      "blocked": {
+        "title": "Geblokkeerd",
+        "description": "Inzendingen geblokkeerd voor uploaden. Tik om te bewerken, tik op rode cirkel om te deblokkeren, of veeg naar links om te verwijderen."
+      }
+    }
+  },
+ "filters-view": {
+      "select-search-criteria": "Selecteer Zoekcriteria",
+      "titles": {
+      "name": "Naam",
+      "email": "e-mail",
+      "capture-method": "Vastleg methode",
+      "capture-date": "Vastlegdatum",
+      "captured-by": "Vastgelegd Door"
+    },
+
+    "modifiers": {
+      "equals": "Gelijken",
+      "doesnt-equal": "Is niet gelijk aan",
+      "contains": "Bevat",
+      "does-not-contain": "Bevat geen"
+    },
+   "capture-type": {
+      "normal": "Normaal",
+      "badge-scan": "Badge Scan",
+      "list": "Lijst",
+      "transcription": "Transcriptie"
+    }
+  },
+"support": {
+    "header": "Support",
+    "title": "Uw succes is onze missie. Hoe kunnen wij u helpen?",
+    "doc-button": "Documentatie",
+    "ticket-button": "Open een Ticket",
+    "conversation-button": "Start een gesprek"
+  },
+  "signature": {
+    "title": "handtekening",
+    "sign-above": "teken hierboven"
+  },
+  "notifications": {
+    "submit-reminder": "U heeft leads die niet zijn ingediend. Open de app alstublieft en verzend deze"
+  },
+  "documents": {
+    "open-error": "Er is een probleem opgetreden bij het openen van uw documenten. Probeer het opnieuw.",
+    "empty-set": "De geselecteerde documentgroep bevat geen documenten",
+    "syncing-error": "Documenten worden nog steeds gesynchroniseerd. Probeer het later opnieuw.",
+    "share-error": "Er is een probleem opgetreden bij het delen van uw document(en). Probeer het opnieuw.",
+    "how-to-send": "Hoe wilt u de documenten verzenden?",
+    "edit-error": "U kunt geen inzendingen in de voorbeeldmodus bewerken. Klik op bewerken voordat u wijzigingen aanbrengt.",
+    "long-press": "Lang indrukken om document te bekijken.",
+    "tap-to-select": "Tik om documenten te selecteren. Druk lang om te bekijken.",
+    "empty-set-msg": "Deze documentset is leeg."
+  },
+  "prospect-view": {
+    "title": "Selecteer potentiële klant"
+  },
+  "stations-view": {
+    "title": "Selecteer Station",
+    "visited-stations": "Stations bezocht",
+    "stations": "Stations"
+  },
+  "localizations-view": {
+    "title": "Selecteer taal"
+  },
+  "submission-status" : {
+    "submitted":"potentiële klant succesvol geüpload.",
+    "to-submit":"Prospect klaar om te uploaden. Tik op de wolk in de rechterbovenhoek van het scherm om deze te uploaden. Tik op het blauwe pictogram naast de inzending om te voorkomen dat deze wordt geüpload.",
+    "on-hold":"Prospect in afwachting van transcriptie. Please standby.",
+    "blocked":"Prospect geblokkeerd voor uploaden. Tik op de rode cirkel om de blokkering op te heffen."
+  },
+  "badge-scanner":{
+    "scan":"Badge scannen",
+    "scanning":"Bagde scannen",
+    "couldnt-scan":"Kan badge niet scannen",
+    "nfc-msg":"klaar om te scannen houd het apparaat bij de badge",
+    "scan-nfc" :"NFC Badge scannen",
+    "scanning-nfc":"NFC Badge scannen",
+    "couldnt-scan-nfc":"Kan NFC badge niet scannen",
+    "rescan" : "Herscan  badge",
+    "rescan-nfc": "Herscan NFC badge"
+  },
+  "activations":{
+    "title":"Aktivierungen",
+    "launch":"lancering",
+    "search":{
+      "event": "Evenement",
+      "activation": "Activering",
+      "all-events": "Alle evenementen",
+      "activation-name": "Activatienaam"
+    }
+  }
+}
+

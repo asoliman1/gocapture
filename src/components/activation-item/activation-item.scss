@@ -1,0 +1,47 @@
+activation-item {
+    .grid-container {
+        display: grid;
+    }
+    
+    .grid-container--fill {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .grid-container--fit {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+
+
+    .activation-event-header {
+        width: 100%;
+        font-size: large;
+        background-color: white;
+        margin : 0 10px 0 0;
+        font-weight: bold;
+        padding: 20px;
+        color: inherit;
+        position: sticky;
+        top: 0;
+    }
+
+    .grid-item{
+        margin: 2px;
+        min-height: 200px;
+        background-color: #f4f4f4;
+        position: relative;
+        h2{
+        position: absolute;
+        width: 100%;
+        bottom: -5px;
+        padding: 10px;
+        }
+    }
+
+    .banner{
+        background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0.5),rgba(255, 255, 255, 0.3));
+        text-align: center;
+        width: 100%;
+        color: white;
+    }
+      
+}

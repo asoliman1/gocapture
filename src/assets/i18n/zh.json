@@ -1,0 +1,290 @@
+{
+  "login": {
+    "header": "请与您的公司管理员联系以获取身份验证代码。请在下面输入您的身份验证代码。",
+    "email-placeholder": "输入电子邮件地址",
+    "auth-placeholder": "输入登录密码",
+    "auth-button": "认证",
+    "continue-button": "继续",
+    "connection-mode": {
+      "title": "连接方式",
+      "normal": "正常",
+      "demo": "演示"
+    }
+  },
+  "sideMenu": {
+    "events": "事件",
+    "support": "支持",
+    "settings": "设置",
+    "hi": "你好",
+    "welcome-back": "欢迎回来",
+    "activations":"激活"
+  },
+  "general": {
+    "syncing": "同步",
+    "cancel": "取消",
+    "select-badge-type": "选择徽章类型",
+    "remind-about-leads": "提醒我线索",
+    "important": "重要",
+    "share": "分享",
+    "done": "做完了",
+    "ok": "好",
+    "unauthenticate": "未经认证",
+    "back": "回去",
+    "close": "关",
+    "select": "选择",
+    "send": "发送",
+    "search": "搜索",
+    "select-items": "选择项目",
+    "front": "面前"
+  },
+  "settings": {
+    "title": "设置",
+    "organization": {
+      "header": "组织",
+      "name": "姓名",
+      "key": "钥匙",
+      "operator": "操作员",
+      "deviceId": "设备ID"
+    },
+    "application": {
+      "header": "应用程序",
+      "label": "语言"
+    },
+    "operations": {
+      "header": "操作",
+      "automatic-upload": "自动上传",
+      "save-business-cards": "在设备上保存名片",
+      "reminder-for-unsubmitted-leads": "未提交线索的提醒",
+      "auto-crop": "自动裁剪"
+    },
+    "dropdown": {
+      "header": "下拉列表",
+      "label": "单选"
+    },
+    "kiosk-mode": {
+      "header": "全屏浏览模式",
+      "label": "密码"
+    },
+    "diagnostics": {
+      "header": "诊断",
+      "app-version": "应用程序版本",
+      "enable-logging": "启用日志记录",
+      "view-log-button": "查看日志",
+      "test-badge-scan": "测试徽章扫描"
+    },
+    "unauth-device-btn": "未经验证的设备"
+  },
+  "form-capture": {
+    "submit-btn": "提交",
+    "edit-btn": "编辑",
+    "update-btn": "更新",
+    "date-info": "录制",
+    "search-list": "搜索列表",
+    "unsubmitted-data-msg": "您在此表格上尚未提交数据。如果您返回，则不会保存此提交。如果要保存此提交，请点击提交按钮。",
+    "scan-mode": "扫描方式：",
+    "business-card": "名片",
+    "badge-scan": "徽章扫描",
+    "error-msg": "电子邮件或姓名为必填项",
+    "check-fields-msg": "请检查以下字段： {{fields}}"
+  },
+  "logs": {
+    "title": "载入",
+    "show-more": "显示更多"
+  },
+  "alerts": {
+    "warning": "警告",
+    "error": "错误",
+    "info": "信息",
+    "Ok": "好",
+    "cancel": "取消",
+    "badge-id": "徽章ID",
+    "choose-from": "从中选择",
+    "remove": "去掉",
+    "loading": {
+      "one-moment": "一分钟开始录音",
+      "loading": "装货",
+      "loading-scanner": "加载扫描仪",
+      "authenticating": "正在验证...",
+      "unauthenticating": "无法验证...",
+      "processing": "加工中"
+    },
+    "business-card": {
+      "message": "名片被保存到照片库",
+      "save-to-library": "保存到图书馆",
+      "retake": "夺回",
+      "view-image": "看图",
+      "choose-from-library": "从图书馆选择",
+      "saved-image": "名片被保存到照片库"
+    },
+    "image": {
+      "use-camera": "使用相机",
+      "choose-from-album": "从专辑中选择"
+    },
+    "rapid-scan": {
+      "process": "处理",
+      "badges-reminder": " 您已将 {{formName}} 的快速扫描标志保存在此设备的本地存储中，尚未提交。您要提交还是删除它们？"
+    },
+    "duplicate-lead": {
+      "title": "重复线索",
+      "message": " 您已在 {{date}} 捕获了此线索吗？",
+      "remove-msg": "成功删除重复的线索。",
+      "already-scanned": "潜在客户已在$ {{date}}. 进行扫描。根据需要编辑提交。"
+    },
+    "kiosk-mode": {
+      "message": "没有设置信息亭模式密码！",
+      "set-password": "设置信息亭模式密码",
+      "enter-passcode": "",
+      "placeholder": "输入密码"
+    },
+    "audio-recording": {
+      "cant-start": "无法开始录制",
+      "delete-recording": "是否要删除记录",
+      "downloading": "记录下载"
+    },
+    "settings": {
+      "select-barcode": "选择条形码类型",
+      "unauthenticate": {
+        "title": "未经认证？",
+        "message": "您确定要取消此设备的身份验证吗？"
+      }
+    },
+    "activation":{
+      "message":"确定要回去吗?",
+      "retry": "重试"
+    }
+  },
+  "toast": {
+    "no-internet-connection": "没有可用的网络连接",
+    "scanned-successfully": "{{badgeName}} 徽章扫描成功",
+    "uploading-leads": "上传线索....保持应用程序打开，直到该过程完成。",
+    "submission-successfull": "提交成功",
+    "syncing-submissions-error": "同步提交时出错",
+    "auth-err": "无效证件",
+    "auth-failed": "授权失败。请获取新的验证码",
+    "duplicate-submission": "重复提交"
+  },
+  "forms": {
+    "submitted": "提交",
+    "pending": "待定",
+    "unsubmitted": "未提交",
+    "capture": "捕捉",
+    "review-submissions": "审阅提交的内容",
+    "rapid-scan": "快速扫描",
+    "documents": "文件",
+    "instructions": "说明",
+    "title": "大事记",
+    "activations": "激活"
+  },
+  "form-review": {
+    "clear": "明确",
+    "filter": {
+      "filter": "过滤",
+      "all": {
+        "title": "全部",
+        "description": "点击条目进行编辑/审阅"
+      },
+      "complete": {
+        "title": "完成",
+        "description": "条目已上传。点击查看"
+      },
+      "pending": {
+        "title": "待定",
+        "description": "待转录/验证的条目。点击查看。"
+      },
+      "ready": {
+        "title": "准备好了",
+        "description": "已准备好上传条目。轻触可编辑，轻触蓝色圆圈可阻止，或向左滑动可删除。"
+      },
+      "blocked": {
+        "title": "已锁定",
+        "description": "阻止上传的条目。轻按可编辑，轻按红色圆圈可取消阻止，或轻按左键可删除。"
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "选择搜索条件",
+    "titles": {
+      "name": "姓名",
+      "email": "电子邮件",
+      "capture-method": "捕获方法",
+      "capture-date": "捕获日期",
+      "captured-by": "被捕获"
+    },
+    "modifiers": {
+      "equals": "等于",
+      "doesnt-equal": "不等于",
+      "contains": "包含",
+      "does-not-contain": "不包含"
+    },
+    "capture-type": {
+      "normal": "正常",
+      "badge-scan": "选择徽章类型",
+      "list": "列表",
+      "transcription": "转录"
+    }
+  },
+  "support": {
+    "header": "支持",
+    "title": "我们能为您做些什么？",
+    "doc-button": "文档",
+    "ticket-button": "打开的处理单",
+    "conversation-button": "开始对话"
+  },
+  "signature": {
+    "title": "签名",
+    "sign-above": "在上面签名"
+  },
+  "notifications": {
+    "submit-reminder": "您有尚未提交的销售线索。请打开应用并提交。"
+  },
+  "documents": {
+    "open-error": "打开文档时出现问题。请再试一遍。",
+    "empty-set": "所选的文档集不包含任何文档。",
+    "syncing-error": "文件仍在同步中。请稍后再试。",
+    "share-error": "尝试共享您的文档时出现问题。请再试一遍。",
+    "how-to-send": "您想如何发送文档？",
+    "edit-error": "您不能在预览模式下编辑提交。进行更改之前，请单击“编辑”。",
+    "long-press": "长按查看文档。",
+    "tap-to-select": "点击以选择文档。长按查看。",
+    "empty-set-msg": "该文档集为空。",
+    "select-category" : "选择文件类别"
+  },
+  "prospect-view": {
+    "title": "选择前景"
+  },
+  "stations-view": {
+    "title": "选择车站",
+    "visited-stations": "参观过的车站",
+    "stations": "车站"
+  },
+  "localizations-view": {
+    "title": "选择语言"
+  },
+  "submission-status": {
+    "submitted": "潜在客户上传成功。",
+    "to-submit": "准准备上传。点击屏幕右上角的云以上传它。点击提交旁边的蓝色图标以阻止上传。",
+    "on-hold": "展望未决的转录。请待命。",
+    "blocked": "潜在客户已阻止上传。点击红色圆圈以解除阻止。"
+  },
+  "badge-scanner": {
+    "scan": "扫描徽章",
+    "scanning": "扫描袋",
+    "couldnt-scan": "无法扫描徽章",
+    "nfc-msg": "准备扫描。将设备放在证章附近。",
+    "scan-nfc": "扫描NFC徽章",
+    "scanning-nfc": "扫描NFC徽章",
+    "couldnt-scan-nfc": "无法扫描NFC徽章",
+    "rescan": "重新扫描徽章",
+    "rescan-nfc": "重新扫描NFC徽章"
+  },
+  "activations":{
+    "title":"激活",
+    "launch":"发射",
+    "search":{
+      "event": "事件",
+      "activation": "激活",
+      "all-events": "所有活动",
+      "activation-name": "激活名称"
+    }
+  }
+}

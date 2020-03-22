@@ -6,6 +6,15 @@ $secondary : map-get($map: $colors, $key:"secondary" );
     height: 30vh;
     width: 100%;
     position: relative;
+    background-color: #f4f4f4 !important;
+ }
+
+ .margin{
+    margin-bottom: 2px;
+ }
+
+ .activations{
+    height: 100% !important;
  }
 
  .text{
@@ -36,8 +45,9 @@ $secondary : map-get($map: $colors, $key:"secondary" );
 
  .image-loading{
      position: absolute;
-     top: calc(50% - 30px) ;
-     left: calc(50% - 20px);
+     top: 0;
+     left: 0;
+     width: 100%;
  }
 
  .address{
@@ -78,14 +88,20 @@ $secondary : map-get($map: $colors, $key:"secondary" );
      height: 7vh;
      width: 7vh;
      text-align: right;
-     padding: 1vh;
      ion-icon{
         -webkit-animation: spin 700ms linear infinite;
         -moz-animation: spin 700ms linear infinite;
         animation: spin 700ms linear infinite;
-         font-size:3vh;
+        font-size:3vh;
      }
  }
 
 
 }
+.ios .sync-icon{
+    padding: 0.6vh;
+ }
+
+ .md .sync-icon{
+    padding: 1vh;
+ }

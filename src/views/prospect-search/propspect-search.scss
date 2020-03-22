@@ -7,6 +7,7 @@ prospect-search {
 
   .selected {
     background: transparent;
+    font-weight: 900;
   }
 
   .item-ios.activated, .item-md.activated {
@@ -16,4 +17,10 @@ prospect-search {
   .list-ios > .item-block:first-child,  .list-md > .item-block:first-child {
     border: none;
   }
+  
+  i{
+    font-weight: lighter;
+  }
+
+
 }

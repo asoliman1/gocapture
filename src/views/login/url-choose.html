@@ -1,11 +1,11 @@
 <ion-list class="url-choose">
-  <ion-list-header>Connection mode</ion-list-header>
+  <ion-list-header>{{'login.connection-mode.title' | translate}}</ion-list-header>
   <ion-item (click)="onClick(true)" tappable class="connMode" [class.on]="isProd">
     <ion-icon item-start name="checkmark"></ion-icon>
-    Normal
+    {{'login.connection-mode.normal' | translate}}
   </ion-item>
   <ion-item (click)="onClick(false)" tappable class="connMode" [class.on]="!isProd">
     <ion-icon item-start name="checkmark"></ion-icon>
-    Demo
+    {{'login.connection-mode.demo' | translate}}
   </ion-item>
 </ion-list>

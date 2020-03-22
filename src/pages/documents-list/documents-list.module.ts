@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { DocumentsListPage } from './documents-list';
@@ -8,6 +9,7 @@ import { DocumentsListPage } from './documents-list';
   ],
   imports: [
     IonicPageModule.forChild(DocumentsListPage),
+    TranslateModule
   ],
 })
 export class DocumentsListPageModule {}

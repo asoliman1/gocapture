@@ -1,16 +1,15 @@
-import { Component, ViewChild } from '@angular/core';
+import { ActivationsPage } from './../../views/activations/activations';
+import { SupportPage } from './../../pages/support/support';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { Forms } from "../forms";
 import { Settings } from "../settings";
 import { BussinessClient } from "../../services/business-service";
-import { User, SyncStatus } from "../../model";
-import { Subscription } from "rxjs/Subscription";
-import { SyncClient } from "../../services/sync-client";
-import { IonPullUpComponent, IonPullUpFooterState } from "../../components/ion-pullup";
+import { User } from "../../model";
 import { Nav } from 'ionic-angular/components/nav/nav';
 import { ThemeProvider } from "../../providers/theme/theme";
-import { App } from "ionic-angular";
-import { FormCapture } from "../form-capture";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
+import { FormsProvider } from '../../providers/forms/forms';
+import { DBClient } from '../../services/db-client';
 
 @Component({
 	selector: 'main',
@@ -19,188 +18,88 @@ import { RapidCaptureService } from "../../services/rapid-capture-service";
 export class Main {
 
 	@ViewChild(Nav) nav: Nav;
-
 	rootPage: any = Forms;
-
 	user: User = new User();
-
-	uploading: boolean = true;
-
-	loadingTrigger = false;
-
-	sub: Subscription;
-
-	currentSyncForm: string;
-
-	statuses: SyncStatus[] = [];
-
-	pages: Array<{ title: string, component: any, icon: string }>;
-
-	shouldShowSyncBar: boolean = false;
-
-	@ViewChild('pullup') pullup: IonPullUpComponent;
+	pages: Array<{ title: string, component: any, icon: string, data?: any }>;
 
 	constructor(
 		public client: BussinessClient,
-		private syncClient: SyncClient,
 		private themeProvider: ThemeProvider,
-		private app: App,
 		private rapidCaptureService: RapidCaptureService,
-		) {
-		this.pages = [
-			/*{ title: 'Home', component: Dashboard, icon: "home" },*/
-			{ title: 'Events', component: Forms, icon: "document" },
-			//{ title: 'Dispatches', component: Dispatches, icon: "megaphone" },
-			{ title: 'Settings', component: Settings, icon: "cog" }
-		];
+		private formsProvider: FormsProvider,
+		private ngZone : NgZone,
+		private dbClient : DBClient,
+	) {
 	}
 
 	openPage(page) {
-		this.nav.setRoot(page.component);
+		this.nav.setRoot(page.component, page.data);
 	}
 
+
+	setPages() {
+		this.pages = [
+			{ title: 'sideMenu.events', component: Forms, icon: "document" }
+		];
+		
+		if (this.user.activations)
+			this.pages.push({
+				title: 'sideMenu.activations',
+				component: ActivationsPage,
+				icon: "game-controller-b" 
+			})
+
+			else {
+				this.pages = this.pages.filter((e) => e.title != 'Activations');
+			}
+
+			this.pages.push({
+				title: 'sideMenu.settings', component: Settings, icon: "cog"
+			})
+
+		if (this.user.in_app_support)
+			this.pages.push({
+				title: 'sideMenu.support',
+				component: SupportPage,
+				icon: "help",
+				data: { documentation: this.user.documentation_url, email: this.user.support_email }
+			})
+		else {
+			this.pages = this.pages.filter((e) => e.title != 'Support');
+		}
+	}
+
+
 	ngOnInit() {
-		this.client.getRegistration().subscribe(user => {
+		this.client.setupNotifications();
+		this.checkUnsentBadges();
+		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
+		this.client.userUpdates.subscribe((user: User)=>{
+			console.log("useer", user);
+			this.setUser(user);
+		})
+		this.dbClient.getRegistration().subscribe((user)=>{
+			this.setUser(user)
+		})
+	}
+	
+	checkUnsentBadges(){
+		setTimeout(() => {
+			this.rapidCaptureService.processUnsentBadges(this.formsProvider.forms, this.user.theme ? this.user.theme : 'default');
+		}, 2000);
+	}
+
+	setUser(user : User){
+		this.ngZone.run(()=>{
 			this.user = user;
-			this.client.setupNotifications();
-			let theme = this.user.theme ? this.user.theme : 'default';
-			this.themeProvider.setActiveTheme(theme + '-theme'); // A.S a bug in some themes
-		});
-
-		//TODO: move sync bar to the separate components
-		this.app.viewWillEnter.subscribe((viewCtrl) => {
-
-			let isFormCaptureView = viewCtrl.instance instanceof FormCapture;
-
-			this.shouldShowSyncBar = !isFormCaptureView;
-
+			this.setPages();
+			this.setTheme();
 		})
 	}
 
-	footerExpanded() {
-
+	setTheme(){
+		let theme = this.user.theme ? this.user.theme : 'default';
+		this.themeProvider.setActiveTheme(theme + '-theme'); // 
 	}
 
-	footerCollapsed() {
-
-	}
-
-	ionViewDidEnter() {
-
-		this.client.getForms().subscribe((forms) => {
-			setTimeout(() => {
-				this.rapidCaptureService.processUnsentBadges(forms, this.user.theme ? this.user.theme : 'default');
-			}, 2000);
-		});
-
-		if (this.syncClient.isSyncing) {
-			this.pullup.collapse();
-			this.statuses = this.syncClient.getLastSync();
-			this.currentSyncForm = this.getCurrentUploadingForm();
-		}
-
-		this.sub = this.handleSync();
-
-		window["TesseractPlugin"] && TesseractPlugin.loadLanguage("eng", function (response) {
-			console.log(response);
-		}, function (reason) {
-			console.error(reason);
-		});
-
-		this.client.getUpdates().subscribe(done => {
-			setTimeout(() => {
-				this.client.doAutoSync();
-			}, 350);
-		}, (err) => {
-			setTimeout(() => {
-				this.client.doAutoSync();
-			}, 350);
-		});
-
-
-	}
-
-	handleSync(): Subscription {
-		let timer = null;
-		let hidePullup = false;
-		return this.syncClient.onSync.subscribe(stats => {
-			if (stats == null) {
-				return;
-			}
-			this.statuses = stats;
-			this.currentSyncForm = this.getCurrentUploadingForm();
-
-			// A.S there was a function here to call sync for documents which make performance very slow as it executed many times
-				
-			if (this.pullup.state == IonPullUpFooterState.Minimized && !hidePullup) {
-				this.pullup.collapse();
-			}
-			timer = setTimeout(() => {
-				hidePullup = true;
-				this.pullup.minimize();
-			}, 12500);
-		},
-			(err) => {
-				clearTimeout(timer);
-				setTimeout(() => {
-					this.pullup.minimize();
-					this.sub.unsubscribe();
-					this.sub = this.handleSync();
-				}, 200);
-			},
-			() => {
-				clearTimeout(timer);
-				setTimeout(() => {
-					this.pullup.minimize();
-					this.sub.unsubscribe();
-					this.sub = this.handleSync();
-				}, 500);
-			});
-	}
-
-	ionViewDidLeave() {
-		this.sub.unsubscribe();
-		this.sub = null;
-	}
-
-	getCurrentUploadingForm() {
-		if (this.statuses) {
-			for (let i = 0; i < this.statuses.length; i++) {
-				if (this.statuses[i].loading) {
-					return this.statuses[i].formName;
-				}
-			}
-		}
-		return "";
-	}
-
-	getIcon(loading, complete): string {
-		if (loading) {
-			return "refresh";
-		}
-		if (complete) {
-			return "checkmark";
-		}
-		return "flag";
-	}
-
-	getColor(loading, complete): string {
-		if (loading) {
-			return "primary";
-		}
-		if (complete) {
-			return "secondary";
-		}
-		return "orange";
-	}
-
-	getStateLabel(loading, complete, formName): string {
-		if (loading) {
-			return "Syncing " + formName;
-		}
-		if (complete) {
-			return "Sync-ed " + formName;
-		}
-		return formName;
-	}
 }

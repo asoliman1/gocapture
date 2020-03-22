@@ -1,3 +1,4 @@
+import { Geoposition } from '@ionic-native/geolocation';
 import { Form } from "./form";
 import { Station } from "./station";
 
@@ -28,7 +29,10 @@ export class FormSubmission {
 	barcode_processed: BarcodeStatus = 0;
 	submission_type: FormSubmissionType = FormSubmissionType.normal;
 	stations: Station[];
-
+	location : Geoposition;
+	isDownloading : boolean;
+	isUploading : boolean;
+	
 	public isSubmitted(): boolean {
 		return this.status == SubmissionStatus.Submitted;
 	}
@@ -78,6 +82,7 @@ export enum FormSubmissionType {
 	normal = 'normal',
 	barcode = 'barcode',
 	list = 'list',
-	transcription = 'transcription'
+	transcription = 'transcription',
+	activation = 'activation'
 }
 

@@ -36,6 +36,13 @@ export class FormElement {
 	documents_set?: IDocumentSet;
 	children?: FormElement[];
 	collapse_content?: boolean;
+	style : ElementStyle
+	available_in_activations : boolean;
+}
+
+class ElementStyle{
+	background_color : string;
+	text_color : string
 }
 
 export class Option {

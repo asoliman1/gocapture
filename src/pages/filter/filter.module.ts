@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { FilterPage } from './filter';
@@ -11,7 +12,8 @@ import {FormsModule} from "@angular/forms";
   imports: [
     IonicPageModule.forChild(FilterPage),
     NgSelectModule,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
 })
 export class FilterPageModule {}

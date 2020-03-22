@@ -1,5 +1,6 @@
 <div class="image">
-	<ion-row>
+	<div *ngIf="!currentVal.length" text-center (click)="chooseType()" id="addImage"></div>
+	<ion-row *ngIf="currentVal.length">
 		<ion-col col-3>
 			<button type="button" ion-button icon-only large full color="light" style="padding: 20px 0 !important;" (click)="chooseType()">
 				<ion-icon [name]="images[selectionEnabled]" [color]="colors[selectionEnabled]"></ion-icon>

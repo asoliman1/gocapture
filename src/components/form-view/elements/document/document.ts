@@ -1,12 +1,14 @@
-import {ModalController} from "ionic-angular";
-import {DocumentShareMode} from "../../../../views/documents/documents";
-import {Component, forwardRef, Input} from "@angular/core";
-import {DocumentsService} from "../../../../services/documents-service";
-import {Form, FormElement, FormSubmission, SubmissionStatus} from "../../../../model";
-import {BaseElement} from "../base-element";
-import {FormGroup, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {ThemeProvider} from "../../../../providers/theme/theme";
+import { ModalController } from "ionic-angular";
+import { DocumentShareMode } from "../../../../views/documents/documents";
+import { Component, forwardRef, Input } from "@angular/core";
+import { DocumentsService } from "../../../../services/documents-service";
+import { Form, FormElement, FormSubmission, SubmissionStatus } from "../../../../model";
+import { BaseElement } from "../base-element";
+import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { ThemeProvider } from "../../../../providers/theme/theme";
 import { Popup } from "../../../../providers/popup/popup";
+import { formViewService } from "../../form-view-service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'document',
@@ -25,17 +27,35 @@ export class Document extends BaseElement {
   @Input() isEditing?: boolean;
   @Input() submission?: FormSubmission;
 
-   selectedThemeColor: string;
+  selectedThemeColor: string;
+  ButtonBar : Subscription;
 
   constructor(
     private modalCtrl: ModalController,
     private documentsService: DocumentsService,
     private themeService: ThemeProvider,
-    private popup : Popup
+    private popup: Popup,
+    private formViewService : formViewService
   ) {
     super();
     this.themeService.getActiveTheme().subscribe((theme: string) => this.selectedThemeColor = theme.split('-')[0]);
   }
+
+
+  ionViewDidLeave(){
+    this.ButtonBar.unsubscribe();
+   } 
+ 
+   ngOnInit(): void {
+     this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
+        if(data === 'reset') this.element.documents_set.selectedDocumentIdsForSubmission = [];
+      })
+   }
+ 
+   
+   ngOnDestroy(){
+     this.ButtonBar.unsubscribe();
+   }
 
   isReadOnlyMode() {
     return !this.isEditing && this.submission &&
@@ -43,7 +63,7 @@ export class Document extends BaseElement {
   }
 
   ngOnChanges() {
-    console.log(this.element);
+    // console.log(this.element);
   }
 
   openDocuments() {
@@ -80,7 +100,7 @@ export class Document extends BaseElement {
         modal.present();
 
       }, (error) => {
-        this.popup.showToast( `A problem occurred while opening your documents. Please try again.`);
+        this.popup.showToast({text:`documents.open-problem`});
       });
   }
 

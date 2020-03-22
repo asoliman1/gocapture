@@ -1,3 +1,4 @@
+import { Util } from './../../util/util';
 import { formViewService } from './form-view-service';
 import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
@@ -14,6 +15,7 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import { ModalController, Platform } from "ionic-angular";
+import { Activation } from '../../model/activation';
 
 @Component({
   selector: 'form-view',
@@ -33,6 +35,7 @@ export class FormView {
   @Input() isEditing: boolean = false;
 
   @Input() submitAttempt: boolean = false;
+  @Input() activation : boolean;
 
   @ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
 
@@ -59,16 +62,18 @@ export class FormView {
   isSeparatable : boolean = false;
   separateAt: number;
   buttonBar : Subscription;
+  elements : FormElement[][];
+
   constructor(
     private fb: FormBuilder,
     private zone: NgZone,
     private modal: ModalController,
+    private util : Util,
     private platform : Platform,
     private formViewService:formViewService,
   ) {
     this.theForm = new FormGroup({});
     //this.documentsService.syncByForm(this.form.id);
-    console.log(this.isEditing)
   }
 
   showSelection() {
@@ -77,6 +82,7 @@ export class FormView {
   }
 
   ngAfterViewInit() {
+    console.log("Activation fron form-view",this.activation)
     setTimeout(() => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
       var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
@@ -102,7 +108,7 @@ export class FormView {
     return this.theForm;
   }
 
-  public getError(): String {
+  public getError()  {
     return this.composeErrorMessage();
   }
 
@@ -129,9 +135,7 @@ export class FormView {
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (changes['form'] || changes['submission']) {
       if (this.form && this.submission) {
-        setTimeout(() => {
-          this.setupFormGroup();
-        }, 1);
+       this.setupFormGroup()
       }
     } else if (changes['prospect'] && this.prospect) {
       let keys = Object.keys(this.prospect.fields);
@@ -193,18 +197,13 @@ export class FormView {
       let control = this.createFormControl(element, identifier);
       element.placeholder = element.placeholder ? element.placeholder : "";
       f.addControl(identifier, control);
-
       // A.S GOC-319
-      if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
-        this.isSeparatable = true;
-        this.separateAt = index;
-      }
+      this.checkSeparator(element,index);
     });
-
+    this.splitEls()
     this.theForm = f;
     this.updateForm();
 
-    //console.log(this.form, f);
     this.sub = this.theForm.statusChanges.subscribe(() => {
       this.onValidationChange.emit(this.theForm.valid);
     });
@@ -220,6 +219,14 @@ export class FormView {
         this.buildSections();
       });
     }, 150);
+  }
+
+
+  private checkSeparator(element,index){
+    if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){
+      this.isSeparatable = true;
+      this.separateAt = index;
+    }
   }
 
 
@@ -300,7 +307,7 @@ export class FormView {
 
   //MARK: Private
 
-  private composeErrorMessage() {
+  private composeErrorMessage() : {text : string,param:string} {
     let invalidControls = [];
     for (let key in this.theForm.controls) {
       if (this.theForm.controls[key].invalid) {
@@ -308,7 +315,7 @@ export class FormView {
         invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
-    return invalidControls.length > 0 ? ("Please check the following fields: " + invalidControls.join(', ')) : "";
+    return invalidControls.length > 0 ? {text:'form-capture.check-fields-msg',param : invalidControls.join(', ')} : {text:'',param:''};
   }
 
   private getNameForElementWithId(id) {
@@ -367,8 +374,13 @@ export class FormView {
     }
   }
 
-   splitEls(first) : FormElement[]{
-    return first ? this.form.elements.slice(0,this.separateAt) : this.form.elements.slice(this.separateAt+1)
+   splitEls() {
+     this.form.elements = this.util.sortBy(this.form.elements,1,'position');
+     if(this.isSeparatable) this.elements = [
+      this.form.elements.slice(0,this.separateAt),
+      this.form.elements.slice(this.separateAt+1)
+     ]
+    else this.elements = [this.form.elements]
   }
 
   private isValueMatched(ruleValue: [any], value) {
@@ -421,11 +433,21 @@ export class FormView {
   }
 
   private shouldElementBeDisplayed(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
+    }
+    else{
     return element.isMatchingRules && !element.parent_element_id;
+  }
   }
 
   private shouldElementBeDisplayedInsideSection(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && element.available_in_activations;
+    }
+    else{
     return element.isMatchingRules;
+    }
   }
 
   resetField(element) {
@@ -469,7 +491,6 @@ export class FormView {
   }
 
   onProcessing(event) {
-    console.log('Form view on processing : '+event);
     this.onProcessingEvent.emit(event);
   }
 
@@ -498,7 +519,7 @@ export class FormView {
   }
 
   show(el){
-    console.log(el);
+    // console.log(el);
   }
 
   // used by the *ngFor
