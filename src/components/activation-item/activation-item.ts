@@ -6,7 +6,7 @@ import { ActivationViewPage } from '../../pages/activation-view/activation-view'
 import { FormCapture } from '../../views/form-capture';
 import { Popup } from './../../providers/popup/popup';
 import { BussinessClient } from '../../services/business-service';
-import { ActivationReviewPage } from '../../views/activation-review';
+import { ActivationReviewPage } from '../../views/activation-review/activation-review';
 
 /**
  * Generated class for the ActivationItemComponent component.

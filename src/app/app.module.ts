@@ -121,7 +121,7 @@ import { LocalizationsPage } from '../views/localizations/localizations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { ActivationReviewPage } from '../views/activation-review'
+import { ActivationReviewPage } from '../views/activation-review/activation-review'
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
