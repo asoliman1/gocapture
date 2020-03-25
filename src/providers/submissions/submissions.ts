@@ -488,7 +488,7 @@ export class SubmissionsProvider {
     }
 
     this.rest.submitForm(submission).subscribe((d) => {
-      console.log("response from submissions", d);
+      //console.log("response from submissions", d);
       if(isActivation){
         submission.prospect_id = d.submission.prospect_id;
       }

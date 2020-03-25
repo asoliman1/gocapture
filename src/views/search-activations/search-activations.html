@@ -9,7 +9,6 @@
 
   <ion-label> {{'activations.search.event' | translate}}</ion-label>
   <ion-item (click)="showOptions()">
-    <ion-label class="element-name" stacked >{{'general.select' | translate}}</ion-label>
     <ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="formName" (ionChange)="getFormName()">
       <ion-option *ngFor="let form of forms" [value]="form.name" >{{form.name}}</ion-option>
     </ion-select>

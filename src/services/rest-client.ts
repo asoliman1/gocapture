@@ -30,6 +30,7 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { Activation } from '../model/activation';
 import { ActivationSubmission } from '../model/activation-submission';
 import { DBClient } from './db-client';
+import { ActivationSubmissionsReview } from '../model/activation-submissions-review';
 
 @Injectable()
 export class RESTClient {
@@ -200,6 +201,51 @@ export class RESTClient {
 			return resp;
 		});
 
+	}
+
+	public getActivationSub(params: any): any{
+		let opts: any = {
+			...params
+		};
+		return this.getAll<{ records: ActivationSubmissionsReview[] }>("/activation/submissions.json", opts).map(resp => {
+			return resp;
+		});
+
+	}
+
+	public getActivationSubmissions(params: any ): any{
+		let opts: any = {
+			...params
+		};
+		return this.getActSubResponse<{ records: any}>("/activation/submissions.json", opts).map(resp => {
+			return resp;
+		});
+	}
+
+	private getActSubResponse<T>(relativeUrl: string, content: any): Observable<T> {
+		let response = new Observable<T>((obs: Observer<T>) => {
+			var result: T[] = [];
+			let handler = (data: RecordsResponse<T>) => {
+				var records:any;
+				if (!data.records) {
+
+				}  else {
+					records = data;
+				}
+
+				result.push.apply(result, records);
+				obs.next(records);
+				
+					obs.complete();
+			};
+			let doTheCall = () => {
+	
+				this.call<RecordsResponse<T>>("GET", relativeUrl, content).subscribe(handler, (err) => obs.error(err));
+			};
+			doTheCall();
+
+		});
+		return response;
 	}
 
 	public getFormActivations(form: Form, params: any, lastSyncDate?: Date): Observable<Activation[]> {

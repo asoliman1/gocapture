@@ -7,7 +7,7 @@ import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Util } from './../../util/util';
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, ContentChild } from '@angular/core';
 
 import {
   AlertController,
@@ -56,6 +56,7 @@ import { SubmissionsProvider } from '../../providers/submissions/submissions';
 import { FormMapEntry } from '../../services/sync-client';
 import { concatStatic } from 'rxjs/operator/concat';
 import { transition } from '@angular/core/src/animation/dsl';
+import { Badge } from '../../components/form-view/elements/badge';
 
 
 
@@ -77,7 +78,7 @@ export class FormCapture implements AfterViewInit {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
-
+  @ViewChild(Badge) badge: Badge;
   @ViewChild("formTitle") formTitle: ElementRef;
 
 
@@ -122,6 +123,7 @@ export class FormCapture implements AfterViewInit {
   captureBg: string;
 
   activation: Activation = this.navParams.get("activation");
+  openBadgeScan = false;
 
 
   constructor(private navCtrl: NavController,
@@ -785,7 +787,10 @@ export class FormCapture implements AfterViewInit {
     else {
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-
+        // if(this.openBadgeScan){
+        //   this.badge.scan();
+        //   this.badge.isScanning = false;
+        // }
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();
@@ -805,6 +810,7 @@ export class FormCapture implements AfterViewInit {
 
 
   submitActivation() {
+    this.openBadgeScan = false;
     this.isActivationProcessing = true;
     this.submission.updateFields(this.form);
     let map: { [key: number]: FormMapEntry } = {};
@@ -977,10 +983,20 @@ export class FormCapture implements AfterViewInit {
   }
 
   onProcessing(event) {
+    console.log("onProcessing", JSON.parse(event))
     this.isProcessing = JSON.parse(event);
     this.isActivationProcessing = JSON.parse(event);
     if (this.isProcessing || this.isActivationProcessing) this.stopIdleMode();
     else this.setupIdleMode()
+  }
+
+  canSubmitForm(event){
+    console.log("canSubmitForm", JSON.parse(event))
+    let isSubmit = JSON.parse(event);
+    if(isSubmit){
+      this.openBadgeScan = isSubmit;
+      this.doSave();
+    }
   }
 
   searchProspect() {
