@@ -15,6 +15,7 @@ export class BaseElement implements OnChanges, ControlValueAccessor {
   readonly: boolean = false;
 
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() doSubmit = new EventEmitter();
 
   actionSubscription: Subscription;
 

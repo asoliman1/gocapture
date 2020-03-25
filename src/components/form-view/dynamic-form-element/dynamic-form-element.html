@@ -1,15 +1,15 @@
-<div [formGroup]="theForm" class="dynamic-form-element" #dynamicForm >
+<div [formGroup]="theForm" class="dynamic-form-element" #dynamicForm>
 
   <div [ngSwitch]="element.type" class="{{form?.event_style?.element_background_mode || ''}}">
 
     <!--EMAIL-->
     <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden"
-              [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--PAGE BREAK-->
@@ -20,38 +20,41 @@
 
     <!--URL-->
     <ion-item *ngSwitchCase="'url'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--TEXT-->
-    <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode" [class.hidden]="element.is_hidden"
-              [class.invalid]="isControlInvalid()">
+    <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode"
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--DROPDOWN-->
     <dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm"
-              [formControlName]="element.identifier" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [formControlName]="element.identifier" [class.from-barcode]="element.is_filled_from_barcode"
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
     </dropdown>
 
     <!--RADIO-->
     <ion-item *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [formControlName]="element.identifier"></radios>
+      <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm"
+        [formControlName]="element.identifier"></radios>
     </ion-item>
 
     <!--SIMPLE NAME-->
     <simple-name *ngSwitchCase="'simple_name'" [class.from-barcode]="element.is_filled_from_barcode" [element]="element"
-                 [rootGroup]="theForm" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [rootGroup]="theForm" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
     </simple-name>
 
     <!--TEXTAREA-->
     <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
 
       <!-- A.S GOC-316 -->
@@ -61,71 +64,78 @@
     <!--TIME-->
     <ion-item *ngSwitchCase="'time'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm A"  [attr.name]="element.id"
-                    [formControlName]="element.identifier">
+      <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm A" [attr.name]="element.id"
+        [formControlName]="element.identifier">
       </ion-datetime>
     </ion-item>
 
     <!--ADDRESS-->
     <ion-item *ngSwitchCase="'address'">
-      <address  [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
-               [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"></address>
+      <address [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm"
+        [readonly]="readOnly" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"></address>
     </ion-item>
 
 
     <!--MONEY-->
     <ion-item *ngSwitchCase="'money'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency></ion-input>
+      <ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency>
+      </ion-input>
     </ion-item>
 
     <!--NUMBER-->
     <ion-item *ngSwitchCase="'number'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.invalid]="isControlInvalid()" [class.hidden]="element.is_hidden">
+      [class.invalid]="isControlInvalid()" [class.hidden]="element.is_hidden">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--DATE-->
     <ion-item *ngSwitchCase="'date'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
-                    [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
+        [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
       </ion-datetime>
     </ion-item>
 
     <!--PHONE-->
     <ion-item *ngSwitchCase="'phone'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--SIMPLE PHONE-->
     <ion-item *ngSwitchCase="'simple_phone'" [class.from-barcode]="element.is_filled_from_barcode"
-              [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
+      <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
+        [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--CHECKBOX-->
     <ion-item *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></checkboxes>
+      <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+        [formControlName]="element.identifier"></checkboxes>
     </ion-item>
 
     <!--IMAGE-->
     <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
-      <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [formControlName]="element.identifier"></image-item>
+      <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+        [formControlName]="element.identifier"></image-item>
     </ion-item>
 
     <!--BUSINESS CARD-->
     <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
-                     [formControlName]="element.identifier" [form]="form" [submission]="submission" (onProcessingEvent)="onProcessing($event)">
+        [formControlName]="element.identifier" [form]="form" [submission]="submission"
+        (onProcessingEvent)="onProcessing($event)">
       </business-card>
     </ion-item>
 
@@ -133,40 +143,34 @@
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <signature [readonly]="readOnly" [isEditing]="isEditing" item-content [element]="element" [formGroup]="theForm"
-                 [formControlName]="element.identifier">
+        [formControlName]="element.identifier">
       </signature>
     </ion-item>
 
     <!--BADGE-->
     <badge padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
-              [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
-              [activation]="activation" [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
+      [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
+      [activation]="activation" [class.hidden]="element.is_hidden"
+      (onProcessingEvent)="onProcessing($event)" (doSubmit)="canSubmitForm($event)">
     </badge>
 
     <!--HTML-BLOCK-->
-    <html-block *ngSwitchCase="'section'" [element]="element" [rootGroup]="theForm" [readonly]="readOnly"
-             [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <html-block *ngSwitchCase="'section'" [element]=" element" [rootGroup]="theForm" [readonly]="readOnly"
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
     </html-block>
 
     <!--AUDIO-->
-    <goc-audio  *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element"
-           [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
-           [class.hidden]="element.is_hidden" (onProcessingEvent)="onProcessing($event)">
+    <goc-audio *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+      [formControlName]="element.identifier" [form]="form" [submission]="submission" [class.hidden]="element.is_hidden"
+      (onProcessingEvent)="onProcessing($event)">
     </goc-audio>
 
     <!-- DOCUMENTS -->
     <!-- <ion-item > -->
-      <document
-      *ngSwitchCase="'documents'" margin-top [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"
-        [form]="form"
-        [readonly]="readOnly"
-        [formControlName]="element.identifier"
-        [formGroup]="theForm"
-        [element]="element"
-        [shareMode]="0"
-        [isEditing]="isEditing"
-        [submission]="submission">
-      </document>
+    <document *ngSwitchCase="'documents'" margin-top [class.hidden]="element.is_hidden"
+      [class.invalid]="isControlInvalid()" [form]="form" [readonly]="readOnly" [formControlName]="element.identifier"
+      [formGroup]="theForm" [element]="element" [shareMode]="0" [isEditing]="isEditing" [submission]="submission">
+    </document>
     <!-- </ion-item> -->
 
 

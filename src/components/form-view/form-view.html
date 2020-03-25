@@ -21,7 +21,8 @@
                   [form]="form"
                   [submission]="submission"
                   [activation]="activation"
-                  (onProcessingEvent)="onProcessing($event)">
+                  (onProcessingEvent)="onProcessing($event)"
+                  (doSubmit)="canSubmitForm($event)">
                 </dynamic-form-element>
               </ng-container>
             </section-block>
@@ -36,7 +37,8 @@
               [form]="form"
               [submission]="submission"
               [activation]="activation"
-              (onProcessingEvent)="onProcessing($event)">
+              (onProcessingEvent)="onProcessing($event)"
+              (doSubmit)="canSubmitForm($event)">
             </dynamic-form-element>
           </ion-row>
 

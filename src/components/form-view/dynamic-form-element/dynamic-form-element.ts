@@ -19,8 +19,8 @@ export class DynamicFormElementComponent {
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() activation : boolean;
-
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() doSubmit = new EventEmitter();
   @ViewChild('dynamicForm') el:ElementRef;
 
   minYear = "0";
@@ -32,6 +32,11 @@ export class DynamicFormElementComponent {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+
+  canSubmitForm(event){
+    this.doSubmit.emit(event);
+    console.log("dynamic form element",JSON.parse(event))
   }
 
   ngOnInit(){

@@ -70,6 +70,7 @@
           [isEditing]="isEditing"
           [submitAttempt]="submitAttempt"
           (onProcessingEvent)="onProcessing($event)"
+          (doSubmit)="canSubmitForm($event)"
           >
         </form-view>
       </ion-col>

@@ -30,6 +30,7 @@ import { Platform } from 'ionic-angular/platform/platform';
 import { Activation } from '../model/activation';
 import { ActivationSubmission } from '../model/activation-submission';
 import { DBClient } from './db-client';
+import { ActivationSubmissionsReview } from '../model/activation-submissions-review';
 
 @Injectable()
 export class RESTClient {
@@ -202,22 +203,26 @@ export class RESTClient {
 
 	}
 
+	public getActivationSub(params: any): any{
+		let opts: any = {
+			...params
+		};
+		return this.getAll<{ records: ActivationSubmissionsReview[] }>("/activation/submissions.json", opts).map(resp => {
+			return resp;
+		});
+
+	}
+
 	public getActivationSubmissions(params: any ): any{
 		let opts: any = {
 			...params
 		};
-		// let param = Object.assign({}, opts);
-		// return this.call<RecordsResponse<any>>("GET", "/activation/submissions.json", param).subscribe((resp)=>{
-		// 	console.log(resp);
-		// 	return resp;
-		// });
-		return this.getA<{ records: any}>("/activation/submissions.json", opts).map(resp => {
-			console.log(resp);
+		return this.getActSubResponse<{ records: any}>("/activation/submissions.json", opts).map(resp => {
 			return resp;
 		});
 	}
 
-	private getA<T>(relativeUrl: string, content: any): Observable<T> {
+	private getActSubResponse<T>(relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((obs: Observer<T>) => {
 			var result: T[] = [];
 			let handler = (data: RecordsResponse<T>) => {
