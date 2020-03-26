@@ -303,14 +303,16 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log(this.form);
+    console.log(this.form,this.submission);
     //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
-    this.submission = this.navParams.get("submission");
+    this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
 
     this.dispatch = this.navParams.get("dispatch");
     this.submitAttempt = false;
+
+    // this.isProcessing = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
@@ -326,6 +328,12 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
+    if(this.openBadgeScan) {
+      // here timeout because initialization of badge element may take time to subscribe to the observable
+      setTimeout(() => {
+       this.formViewService.pushEvent(`rescan_barcode`);
+      }, 1000);
+    } 
   }
 
   private convertCaptureImageSrc() {
@@ -770,16 +778,13 @@ export class FormCapture implements AfterViewInit {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
           this.isActivationProcessing = false;
+        } else { 
+          this.goToSubmit(shouldSyncData); 
         }
-        else { this.goToSubmit(shouldSyncData); }
       })
-    }
-
-    else {
+    } else {
       this.goToSubmit(shouldSyncData);
     }
-
-
   }
 
   goToSubmit(shouldSyncData) {
@@ -993,7 +998,6 @@ export class FormCapture implements AfterViewInit {
   }
 
   canSubmitForm(event){
-    console.log("canSubmitForm", JSON.parse(event))
     let isSubmit = JSON.parse(event);
     if(isSubmit){
       this.openBadgeScan = isSubmit;
