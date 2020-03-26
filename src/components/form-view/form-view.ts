@@ -437,7 +437,7 @@ export class FormView {
       return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules && !element.parent_element_id;
+    return element.isMatchingRules && !element.parent_element_id && element.available_in_event_form;
   }
   }
 
@@ -446,7 +446,7 @@ export class FormView {
       return element.isMatchingRules && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules;
+    return element.isMatchingRules && element.available_in_event_form;
     }
   }
 

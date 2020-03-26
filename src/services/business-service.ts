@@ -274,7 +274,6 @@ export class BussinessClient {
   }
 
   private onAuthSuccess(reply: User, update: boolean, obs: Observer<any>) {
-    console.log("reply from authentication", reply)
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;

@@ -191,7 +191,19 @@ export class Form extends BaseForm {
 
 	public getHiddenElementsPerVisibilityRulesForActivation(): string[]{
 		let hiddenElements = this.elements.filter(element => {
-			return !element["available_in_activations"];
+			return !element.available_in_activations;
+		});
+
+		let elementsIds = [];
+		for (let element of hiddenElements) {
+			elementsIds = elementsIds.concat(`element_${element["id"]}`);
+		}
+		return elementsIds;
+	}
+
+	public getHiddenElementsPerVisibilityRulesForForm(): string[]{
+		let hiddenElements = this.elements.filter(element => {
+			return !element.available_in_event_form;
 		});
 
 		let elementsIds = [];

@@ -878,7 +878,9 @@ export class FormCapture implements AfterViewInit {
       return hiddenElements;
     }
     else {
-      let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+      let hidden = this.form.getHiddenElementsPerVisibilityRules().concat(this.form.getHiddenElementsPerVisibilityRulesForForm());
+      let hiddenSet = new Set(hidden);
+      let hiddenElements = Array.from(hiddenSet);
       return hiddenElements;
     }
 

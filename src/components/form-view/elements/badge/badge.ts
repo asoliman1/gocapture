@@ -119,12 +119,15 @@ export class Badge extends BaseElement implements OnInit {
     this.utils.setPluginPrefs()
     
     this.scanner.scan(false).then((response) => {
-      this.scanCounter +=1;
+      this.scanCounter = 1;
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
       this.onProcessingEvent.emit('false');
 
-      if (response.isCancelled) return;
+      if (response.isCancelled) {
+        this.scanCounter = 0;
+        return
+      };
     
 
       this.onChange(response.scannedId);
@@ -175,11 +178,13 @@ export class Badge extends BaseElement implements OnInit {
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
+        this.scanCounter = 1;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);
       }
     }, (err) => {
+      this.scanCounter = 0;
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       this.popup.dismiss('loading');
