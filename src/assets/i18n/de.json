@@ -85,7 +85,9 @@
     "business-card" : "Visitenkarte ",
     "badge-scan" : "Badge scannen",
     "error-msg" : "Name oder Email erforderlich",
-    "check-fields-msg" :"überprüfen Sie bitte folgende Felder {{fields}}"
+    "check-fields-msg" :"überprüfen Sie bitte folgende Felder {{fields}}", 
+    "scan-prompt-message":"Sie haben den aktuellen Scan nicht gesendet. Wenn Sie erneut scannen, gehen alle übermittelten Daten verloren. Sind Sie sicher, dass Sie fortfahren wollen?",
+    "submit-lead": "Lead einreichen"
   },
  "logs": {
     "title": "Protokolle",

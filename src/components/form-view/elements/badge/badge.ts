@@ -79,9 +79,8 @@ export class Badge extends BaseElement implements OnInit {
     if(this.scanCounter > 0 ){
       const buttons = [
         {
-          text: 'Submit Lead',
+          text: 'form-capture.submit-lead',
           handler: () => {
-            console.log("submit Current")
             this.doSubmit.emit('true');
           }
         },
@@ -100,7 +99,7 @@ export class Badge extends BaseElement implements OnInit {
       ];
 
 
-      this.popup.showAlert('Warning',{ text: 'You have not submitted the current scan. If you scan again you will lose all submitted data. Are you sure you want to continue?' },buttons);
+      this.popup.showAlert('Warning',{ text: 'form-capture.scan-prompt-message' },buttons);
     }
 
     else{
@@ -170,16 +169,17 @@ export class Badge extends BaseElement implements OnInit {
       let barcodeData = data.info;
 
       if (!barcodeData || barcodeData.length == 0) {
+        this.scanCounter = 0;
         // this.onProcessingEvent.emit('false');
         return;
       }
 
       //manage duplicate submissions
       if (data["action"] && data["action"] == "edit_submission") {
+        this.scanCounter = 0;
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
-        this.scanCounter = 1;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);

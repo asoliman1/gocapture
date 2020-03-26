@@ -56,7 +56,6 @@ import { SubmissionsProvider } from '../../providers/submissions/submissions';
 import { FormMapEntry } from '../../services/sync-client';
 import { concatStatic } from 'rxjs/operator/concat';
 import { transition } from '@angular/core/src/animation/dsl';
-import { Badge } from '../../components/form-view/elements/badge';
 
 
 
@@ -78,7 +77,6 @@ export class FormCapture implements AfterViewInit {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
-  @ViewChild(Badge) badge: Badge;
   @ViewChild("formTitle") formTitle: ElementRef;
 
 
@@ -328,8 +326,9 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
-    if(this.openBadgeScan) {
+    if(this.openBadgeScan && !this.activation) {
       // here timeout because initialization of badge element may take time to subscribe to the observable
+      this.openBadgeScan = false;
       setTimeout(() => {
        this.formViewService.pushEvent(`rescan_barcode`);
       }, 1000);
@@ -764,11 +763,9 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
+    console.log("submission type hhhhhhhh",this.submission.submission_type)
     // A.S
     this.submission.location = this.location;
-
-    console.log("this.form.show_reject_prompt", this.form.show_reject_prompt)
-
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
@@ -792,10 +789,6 @@ export class FormCapture implements AfterViewInit {
     else {
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-        // if(this.openBadgeScan){
-        //   this.badge.scan();
-        //   this.badge.isScanning = false;
-        // }
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();

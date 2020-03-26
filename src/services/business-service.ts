@@ -313,6 +313,7 @@ export class BussinessClient {
   }
 
  async updateIntercom(){
+   console.log("Registration ID",this.registration.id)
     this.intercom.updateUser({
       user_id: this.registration.id,
       email: this.registration.email,
