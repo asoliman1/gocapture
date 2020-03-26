@@ -6,6 +6,7 @@ import { ActivationViewPage } from '../../pages/activation-view/activation-view'
 import { FormCapture } from '../../views/form-capture';
 import { Popup } from './../../providers/popup/popup';
 import { BussinessClient } from '../../services/business-service';
+import { ActivationReviewPage } from '../../views/activation-review/activation-review';
 
 /**
  * Generated class for the ActivationItemComponent component.
@@ -40,6 +41,14 @@ export class ActivationItemComponent {
         }
       }
     ]
+
+    buttons.push({
+      text: 'Submissions',
+      icon: "eye",
+      handler: () => {
+        this.navCtrl.push(ActivationReviewPage,{activation:act});
+      }
+    });
 
     buttons.push({
       text: 'general.cancel',

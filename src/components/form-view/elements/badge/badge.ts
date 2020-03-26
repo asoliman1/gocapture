@@ -17,6 +17,8 @@ import { Scanner, ScannerType } from './Scanners/Scanner';
 import { DuplicateLeadsService } from "../../../../services/duplicate-leads-service";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { Popup } from '../../../../providers/popup/popup';
+import { FormCapture } from '../../../../views/form-capture/form-capture';
+
 
 @Component({
   selector: 'badge',
@@ -33,25 +35,24 @@ export class Badge extends BaseElement implements OnInit {
   @Input() submission: FormSubmission;
   @Input() readonly: boolean = false;
   @Input() activation: boolean = false;
-
   scanner: Scanner;
-  isScanning: boolean = false;
+  public isScanning: boolean = false;
   ButtonBar : Subscription;
+  scanCounter = 0;
   
   constructor(
-    private client: RESTClient,
-    private popup: Popup,
-    private barcodeScanner: BarcodeScanner,
-    private utils: Util,
-    private platform: Platform,
-    private nfc: NFC,
-    private ndef: Ndef,
-    private duplicateLeadsService: DuplicateLeadsService,
-    private appPreferences: AppPreferences,
-    private formViewService:formViewService,
+  public client: RESTClient,
+  public popup: Popup,
+  public barcodeScanner: BarcodeScanner,
+  public utils: Util,
+  public platform: Platform,
+  public nfc: NFC,
+  public ndef: Ndef,
+  public duplicateLeadsService: DuplicateLeadsService,
+  public appPreferences: AppPreferences,
+  public formViewService:formViewService,
     ) {
     super();
-
   }
 
   ionViewDidLeave(){
@@ -61,10 +62,10 @@ export class Badge extends BaseElement implements OnInit {
   ngOnInit(): void {
     this.scanner = this.getScanner();
     this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-       if(data === 'scan_barcode') this.scan();
+       if(data == 'scan_barcode') this.scan();
+       else if(data == 'rescan_barcode') this.scanBadge();
      })
   }
-
   
   ngOnDestroy(){
     this.ButtonBar.unsubscribe();
@@ -74,24 +75,59 @@ export class Badge extends BaseElement implements OnInit {
     return this.scanner ? this.scanner.statusMessage : "";
   }
 
-  private scan() {
+  public scan(){
+    if(this.scanCounter > 0 ){
+      const buttons = [
+        {
+          text: 'form-capture.submit-lead',
+          handler: () => {
+            this.doSubmit.emit('true');
+          }
+        },
+        {
+          text: 'login.continue-button',
+          handler: () => {
+           this.scanBadge();
+          }
+        }, 
+        {
+          text: 'general.cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        }
+      ];
+
+
+      this.popup.showAlert('Warning',{ text: 'form-capture.scan-prompt-message' },buttons);
+    }
+
+    else{
+      this.scanBadge();
+    }
+  }
+  public scanBadge() {
+    console.log("numb of scan", this.scanCounter);
     if (this.readonly) return;
 
     this.isScanning = true;
 
-    if(this.element.badge_type !== ScannerType.Nfc)
+    if(this.element.badge_type !== "nfc")
     this.onProcessingEvent.emit('true');
 
     console.log("Badge scan started");
     this.utils.setPluginPrefs()
     
     this.scanner.scan(false).then((response) => {
-
+      this.scanCounter = 1;
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
       this.onProcessingEvent.emit('false');
 
-      if (response.isCancelled) return;
+      if (response.isCancelled) {
+        this.scanCounter = 0;
+        return
+      };
     
 
       this.onChange(response.scannedId);
@@ -110,17 +146,18 @@ export class Badge extends BaseElement implements OnInit {
       this.processData(response.scannedId);
 
     }, (error) => {
+      this.scanCounter = 0;
       this.onProcessingEvent.emit('false');
       this.isScanning = false;
       console.error("Could not scan badge: " + (typeof error == "string" ? error : JSON.stringify(error)));
     }).catch((error)=>{
+      this.scanCounter = 0;
       alert(error)
       this.onProcessingEvent.emit('false');
       this.isScanning = false;
     });
   }
-
-  private processData(scannedId: string) {
+  public processData(scannedId: string) {
     this.onProcessingEvent.emit('true');
     // A.S GOC-312
     this.popup.showLoading({text:'alerts.loading.one-moment'});
@@ -132,12 +169,14 @@ export class Badge extends BaseElement implements OnInit {
       let barcodeData = data.info;
 
       if (!barcodeData || barcodeData.length == 0) {
+        this.scanCounter = 0;
         // this.onProcessingEvent.emit('false');
         return;
       }
 
       //manage duplicate submissions
       if (data["action"] && data["action"] == "edit_submission") {
+        this.scanCounter = 0;
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
@@ -146,6 +185,7 @@ export class Badge extends BaseElement implements OnInit {
         this.fillElementsWithFetchedData(barcodeData);
       }
     }, (err) => {
+      this.scanCounter = 0;
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       this.popup.dismiss('loading');
@@ -167,8 +207,7 @@ export class Badge extends BaseElement implements OnInit {
       }
     });
   }
-
-  private handleAcceptingInvalidBadgeData(err) {
+  public handleAcceptingInvalidBadgeData(err) {
     if (this.element.accept_invalid_barcode && err.status == 400) {
       this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
       this.form["barcode_processed"] = BarcodeStatus.Processed;
@@ -179,8 +218,7 @@ export class Badge extends BaseElement implements OnInit {
       this.submission && (this.submission.barcode_processed = BarcodeStatus.Queued);
     }
   }
-
-  private fillElementsWithFetchedData(data) {
+  public fillElementsWithFetchedData(data) {
 
     let vals = [];
     data.forEach(entry => {
@@ -210,9 +248,8 @@ export class Badge extends BaseElement implements OnInit {
 
     Form.fillFormGroupData(vals, this.formGroup);
   }
-
-  private getScanner(): Scanner {
-    if (this.element.badge_type && this.element.badge_type == ScannerType.Nfc) {
+  public getScanner(): Scanner {
+    if (this.element.badge_type && this.element.badge_type == "nfc") {
       return new GOCNFCScanner(this.nfc, this.ndef, this.platform);
     }
     return new GOCBarcodeScanner(this.barcodeScanner, this.element.barcode_type, this.platform, this.appPreferences, this.activation);

@@ -29,11 +29,11 @@ export class FormView {
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() doSubmit = new EventEmitter();
   @Output() ButtonEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
-
   @Input() submitAttempt: boolean = false;
   @Input() activation : boolean;
 
@@ -437,7 +437,7 @@ export class FormView {
       return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules && !element.parent_element_id;
+    return element.isMatchingRules && !element.parent_element_id && element.available_in_event_form;
   }
   }
 
@@ -446,7 +446,7 @@ export class FormView {
       return element.isMatchingRules && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules;
+    return element.isMatchingRules && element.available_in_event_form;
     }
   }
 
@@ -492,6 +492,11 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+  
+  canSubmitForm(event){
+    this.doSubmit.emit(event);
+    console.log("Form view",JSON.parse(event))
   }
 
   onButtonEvent(event){

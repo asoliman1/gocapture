@@ -7,7 +7,7 @@ import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Util } from './../../util/util';
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, ContentChild } from '@angular/core';
 
 import {
   AlertController,
@@ -77,7 +77,6 @@ export class FormCapture implements AfterViewInit {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
-
   @ViewChild("formTitle") formTitle: ElementRef;
 
 
@@ -122,6 +121,7 @@ export class FormCapture implements AfterViewInit {
   captureBg: string;
 
   activation: Activation = this.navParams.get("activation");
+  openBadgeScan = false;
 
 
   constructor(private navCtrl: NavController,
@@ -301,14 +301,16 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log(this.form);
+    console.log(this.form,this.submission);
     //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
-    this.submission = this.navParams.get("submission");
+    this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
 
     this.dispatch = this.navParams.get("dispatch");
     this.submitAttempt = false;
+
+    // this.isProcessing = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
@@ -324,6 +326,13 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
+    if(this.openBadgeScan && !this.activation) {
+      // here timeout because initialization of badge element may take time to subscribe to the observable
+      this.openBadgeScan = false;
+      setTimeout(() => {
+       this.formViewService.pushEvent(`rescan_barcode`);
+      }, 1000);
+    } 
   }
 
   private convertCaptureImageSrc() {
@@ -754,11 +763,9 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
+    console.log("submission type hhhhhhhh",this.submission.submission_type)
     // A.S
     this.submission.location = this.location;
-
-    console.log("this.form.show_reject_prompt", this.form.show_reject_prompt)
-
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
@@ -768,16 +775,13 @@ export class FormCapture implements AfterViewInit {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
           this.isActivationProcessing = false;
+        } else { 
+          this.goToSubmit(shouldSyncData); 
         }
-        else { this.goToSubmit(shouldSyncData); }
       })
-    }
-
-    else {
+    } else {
       this.goToSubmit(shouldSyncData);
     }
-
-
   }
 
   goToSubmit(shouldSyncData) {
@@ -785,7 +789,6 @@ export class FormCapture implements AfterViewInit {
     else {
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();
@@ -805,6 +808,7 @@ export class FormCapture implements AfterViewInit {
 
 
   submitActivation() {
+    this.openBadgeScan = false;
     this.isActivationProcessing = true;
     this.submission.updateFields(this.form);
     let map: { [key: number]: FormMapEntry } = {};
@@ -872,7 +876,9 @@ export class FormCapture implements AfterViewInit {
       return hiddenElements;
     }
     else {
-      let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+      let hidden = this.form.getHiddenElementsPerVisibilityRules().concat(this.form.getHiddenElementsPerVisibilityRulesForForm());
+      let hiddenSet = new Set(hidden);
+      let hiddenElements = Array.from(hiddenSet);
       return hiddenElements;
     }
 
@@ -977,10 +983,19 @@ export class FormCapture implements AfterViewInit {
   }
 
   onProcessing(event) {
+    console.log("onProcessing", JSON.parse(event))
     this.isProcessing = JSON.parse(event);
     this.isActivationProcessing = JSON.parse(event);
     if (this.isProcessing || this.isActivationProcessing) this.stopIdleMode();
     else this.setupIdleMode()
+  }
+
+  canSubmitForm(event){
+    let isSubmit = JSON.parse(event);
+    if(isSubmit){
+      this.openBadgeScan = isSubmit;
+      this.doSave();
+    }
   }
 
   searchProspect() {

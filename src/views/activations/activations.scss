@@ -9,16 +9,16 @@ page-activations {
   
     .popover-content {
       overflow: hidden;
+      width: max-content;
       top: 50% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
     }
   
     .popover-viewport {
-      height: 60vh;
-  
+      height: 45vh;
       .scroll-content {
-        height: calc(100% - 80px);
+        height: calc(100% - 40px);
         padding: 0px;
       }
     }
