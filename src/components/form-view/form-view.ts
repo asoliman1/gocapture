@@ -496,7 +496,6 @@ export class FormView {
   
   canSubmitForm(event){
     this.doSubmit.emit(event);
-    console.log("Form view",JSON.parse(event))
   }
 
   onButtonEvent(event){

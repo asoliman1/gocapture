@@ -4,3 +4,21 @@ badge {
     line-height: 60px;
   }
 }
+
+.custom-alert  {
+
+  .alert-button-group .button-inner {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  
+  .alert-button-group-vertical {
+    -webkit-flex-direction: row;
+    -ms-flex-direction: column;
+    flex-direction: column ;
+  }
+}
+
+
