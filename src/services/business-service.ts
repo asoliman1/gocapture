@@ -302,8 +302,9 @@ export class BussinessClient {
 
 
  async registerIntercom(){
+   if(this.registration.email)
     this.intercom.registerIdentifiedUser({
-      user_id: this.registration.id,
+      ll_user_id: this.registration.id,
       email: this.registration.email,
     }).then((data)=>{
       console.log('Intercome register : ' + JSON.stringify(data));
@@ -315,7 +316,7 @@ export class BussinessClient {
  async updateIntercom(){
    console.log("Registration ID",this.registration.id)
     this.intercom.updateUser({
-      user_id: this.registration.id,
+      ll_user_id: this.registration.id,
       email: this.registration.email,
       name: `${this.registration.first_name} ${this.registration.last_name}`,
       customer_id: this.registration.customerID,
