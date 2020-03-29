@@ -124,7 +124,7 @@ export class FormCapture implements AfterViewInit {
 
   activation: Activation = this.navParams.get("activation");
   openBadgeScan = false;
-
+  noTranscriptable : boolean;
 
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
@@ -303,7 +303,6 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log(this.form,this.submission);
     //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
@@ -334,6 +333,9 @@ export class FormCapture implements AfterViewInit {
        this.formViewService.pushEvent(`rescan_barcode`);
       }, 1000);
     } 
+
+    this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+
   }
 
   private convertCaptureImageSrc() {
@@ -731,15 +733,22 @@ export class FormCapture implements AfterViewInit {
      */
 
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
-    let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+    this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-    if (isNotScanned && noTranscriptable) {
+    if (isNotScanned && this.noTranscriptable) {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage.text = "form-capture.error-msg";
         this.content.resize();
         return;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+        this.errorMessage = this.formView.getError();
+        this.content.resize();
+        return;
+      }
+    }else {
+      // here validate only non transcriptable fields
+      if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
         return;
@@ -767,13 +776,10 @@ export class FormCapture implements AfterViewInit {
     // A.S
     this.submission.location = this.location;
 
-    console.log("this.form.show_reject_prompt", this.form.show_reject_prompt)
-
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
         let submitEmail = data.filter((d) => d.email == this.submission.email);
-        console.log(submitEmail)
         if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
@@ -792,10 +798,6 @@ export class FormCapture implements AfterViewInit {
     else {
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
-        // if(this.openBadgeScan){
-        //   this.badge.scan();
-        //   this.badge.isScanning = false;
-        // }
         if (this.isEditing) {
           if (this.form.is_mobile_kiosk_mode) {
             this.navCtrl.pop();
@@ -855,20 +857,16 @@ export class FormCapture implements AfterViewInit {
         activation: this.activation,
         activityId: submission.activity_id,
       }).then(() => {
-        console.log("removing capture")
         this.navCtrl.remove(currentIndex);
       });
     }
     else if (this.navParams.get("isNext") || !this.navParams.get('activationResult')) {
-      // if (this.navCtrl.getPrevious().component == ActivationViewPage) this.navCtrl.pop();
-      // else
       let currentIndex = this.navCtrl.getActive().index;
       this.navCtrl.push(ActivationViewPage, {
         activation: this.activation,
         activityId: submission.activity_id,
         prospectId: submission.prospect_id
       }).then(() => {
-        console.log("removing capture")
         this.navCtrl.remove(currentIndex);
       });
     }
@@ -906,21 +904,13 @@ export class FormCapture implements AfterViewInit {
    */
   shouldIgnoreFormInvalidStatus() {
     let invalidControls = this.invalidControls();
-
     let requiredElements = this.requiredElements(invalidControls);
-
-    if (requiredElements.length == 0) {
-      return false;
-    }
-
+    if (requiredElements.length == 0) return false;
     let hiddenElements = this.getHiddenElements();
-
     for (let requiredElement of requiredElements) {
-      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) {
+      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) 
         return false;
-      }
     }
-
     return true;
   }
 

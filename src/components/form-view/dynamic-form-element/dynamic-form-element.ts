@@ -1,3 +1,4 @@
+import { TRANSCRIPTION_FIELDS_IDS } from './../../../constants/transcription-fields';
 import { ElementRef, ViewChild } from '@angular/core';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormGroup} from "@angular/forms";
@@ -16,6 +17,7 @@ export class DynamicFormElementComponent {
   @Input() submitAttempt: boolean = false;
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
+  @Input() noTranscriptable: boolean;
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() activation : boolean;
@@ -36,7 +38,6 @@ export class DynamicFormElementComponent {
 
   canSubmitForm(event){
     this.doSubmit.emit(event);
-    console.log("dynamic form element",JSON.parse(event))
   }
 
   ngOnInit(){
@@ -51,7 +52,12 @@ export class DynamicFormElementComponent {
   }
 
   isControlInvalid() {
+    if(this.isTranscriptionField() && !this.noTranscriptable) this.theForm.controls[this.element.identifier].clearValidators() ;
     return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
+  }
+
+  isTranscriptionField(){
+   return TRANSCRIPTION_FIELDS_IDS.filter(e=> this.element.mapping.find((m)=> m.ll_field_id == e)).length;
   }
 
   setHour(event) {
