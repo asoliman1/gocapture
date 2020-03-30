@@ -736,10 +736,13 @@ export class FormCapture implements AfterViewInit {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage.text = "form-capture.error-msg";
+        if(this.activation) this.popup.showToast({ text: this.errorMessage.text }, "bottom");
         this.content.resize();
         return;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
+        if(this.activation){ 
+          this.popup.showToast({ text: this.errorMessage.text, params: {fields:(this.errorMessage.param)}} , "bottom");}
         this.content.resize();
         return;
       }
@@ -763,7 +766,6 @@ export class FormCapture implements AfterViewInit {
     }
 
     this.setSubmissionType();
-    console.log("submission type hhhhhhhh",this.submission.submission_type)
     // A.S
     this.submission.location = this.location;
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
@@ -835,6 +837,8 @@ export class FormCapture implements AfterViewInit {
 
     }, (err) => {
       this.submission.prospect_id = null;
+      this.submission.hold_submission = 0;
+      this.submission.hold_submission_reason = "";
       this.isActivationProcessing = false;
       console.log(err);
     })
