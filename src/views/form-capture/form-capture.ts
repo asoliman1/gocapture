@@ -736,13 +736,13 @@ export class FormCapture implements AfterViewInit {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage.text = "form-capture.error-msg";
-        if(this.activation) this.popup.showToast({ text: this.errorMessage.text }, "bottom");
+        if(this.activation) this.popup.showToast({ text: this.errorMessage.text }, "middle");
         this.content.resize();
         return;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         if(this.activation){ 
-          this.popup.showToast({ text: this.errorMessage.text, params: {fields:(this.errorMessage.param)}} , "bottom");}
+          this.popup.showToast({ text: this.errorMessage.text, params: {fields:(this.errorMessage.param)}} , "middle");}
         this.content.resize();
         return;
       }
