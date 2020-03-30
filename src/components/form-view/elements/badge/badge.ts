@@ -180,6 +180,7 @@ export class Badge extends BaseElement implements OnInit {
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
         this.scanCounter = 1;
+        this.submission.barcodeID = scannedId;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);

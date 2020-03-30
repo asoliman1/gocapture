@@ -260,5 +260,10 @@ export const VERSIONS = {
                 "alter table forms add column duplicate_action text",
             ]
         },
+        32: {
+            queries: [
+                "alter table submissions add column barcodeID text",
+            ]
+        }
     }
 };
