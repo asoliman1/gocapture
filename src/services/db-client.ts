@@ -431,12 +431,14 @@ export class DBClient {
 		form.last_sync_date = dbForm.last_sync_date;
 		form.hold_submission = dbForm.hold_submission;
 		form.hold_submission_reason = dbForm.hold_submission_reason;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.hidden_elements = dbForm.hidden_elements != "undefined" ? JSON.parse(dbForm.hidden_elements) : [];
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
 		form.captured_by_user_name = dbForm.captured_by_user_name;
 		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
+		// console.log(form);
 		return form;
 	}
 

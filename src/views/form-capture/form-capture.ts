@@ -1,3 +1,4 @@
+import { FormElement } from './../../model/form-element';
 import { RESTClient } from './../../services/rest-client';
 import { ActivationViewPage } from './../../pages/activation-view/activation-view';
 import { ACTIVATIONS_DISPLAY_FORM } from './../../constants/activations-display';
@@ -7,17 +8,23 @@ import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Util } from './../../util/util';
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild, ContentChild } from '@angular/core';
-
 import {
-  AlertController,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  NgZone,
+  ViewChild
+} from '@angular/core';
+import {
   Content,
   MenuController,
   ModalController,
   Navbar,
   NavController,
   NavParams,
-  Platform, Popover, PopoverController, Modal, Thumbnail
+  Platform,
+  Popover,
+  Modal
 } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import {
@@ -27,7 +34,6 @@ import {
   Form,
   FormSubmission, FormSubmissionType,
   SubmissionStatus,
-  SyncStatus
 } from "../../model";
 
 import { FormView } from "../../components/form-view";
@@ -50,22 +56,16 @@ import { Insomnia } from '@ionic-native/insomnia';
 import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
 import { Intercom } from '@ionic-native/intercom';
-import { ActivationsProvider } from '../../providers/activations/activations';
-import { ActivationsPage } from '../activations/activations';
 import { SubmissionsProvider } from '../../providers/submissions/submissions';
 import { FormMapEntry } from '../../services/sync-client';
-import { concatStatic } from 'rxjs/operator/concat';
-import { transition } from '@angular/core/src/animation/dsl';
 import { Badge } from '../../components/form-view/elements/badge';
-
-
+import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
+import { FormGroup, AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
 })
-
-
 
 export class FormCapture implements AfterViewInit {
 
@@ -124,7 +124,7 @@ export class FormCapture implements AfterViewInit {
 
   activation: Activation = this.navParams.get("activation");
   openBadgeScan = false;
-  noTranscriptable : boolean;
+  noTranscriptable: boolean;
 
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
@@ -303,15 +303,11 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
-
     this.dispatch = this.navParams.get("dispatch");
     this.submitAttempt = false;
-
-    // this.isProcessing = false;
     if (this.dispatch) {
       this.form = this.dispatch.form;
     }
@@ -327,14 +323,14 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
-    if(this.openBadgeScan) {
+    if (this.openBadgeScan) {
       // here timeout because initialization of badge element may take time to subscribe to the observable
       setTimeout(() => {
-       this.formViewService.pushEvent(`rescan_barcode`);
+        this.formViewService.pushEvent(`rescan_barcode`);
       }, 1000);
-    } 
+    }
 
-    this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+    // this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
   }
 
@@ -746,9 +742,10 @@ export class FormCapture implements AfterViewInit {
         this.content.resize();
         return;
       }
-    }else {
+    } else {
+      this.ignoreTranscriptionFields();
       // here validate only non transcriptable fields
-      if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+      if (!this.formView.theForm.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
         return;
@@ -784,12 +781,37 @@ export class FormCapture implements AfterViewInit {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
           this.isActivationProcessing = false;
-        } else { 
-          this.goToSubmit(shouldSyncData); 
+        } else {
+          this.goToSubmit(shouldSyncData);
         }
       })
     } else {
       this.goToSubmit(shouldSyncData);
+    }
+  }
+
+  getTranscriptionControls(name : string,control : AbstractControl) {
+    let id = name.split('_')[1] , 
+    el = this.form.elements.find((e)=> e.identifier == name) ,
+    subCtrls = control['controls'] ;
+
+    if(el) el.mapping.forEach((e,i)=>{
+     if(TRANSCRIPTION_FIELDS_IDS.includes(e.ll_field_id))
+       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
+    })
+
+    if(TRANSCRIPTION_FIELDS_IDS.includes(id)) this.clearControlValidators(control)
+  }
+
+  clearControlValidators(control : AbstractControl){
+    control.clearValidators();
+    control.updateValueAndValidity();
+  }
+
+  ignoreTranscriptionFields() {
+    const controls = this.formView.theForm.controls;
+    for (const name in controls) {
+      this.getTranscriptionControls(name,controls[name])
     }
   }
 
@@ -908,7 +930,7 @@ export class FormCapture implements AfterViewInit {
     if (requiredElements.length == 0) return false;
     let hiddenElements = this.getHiddenElements();
     for (let requiredElement of requiredElements) {
-      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0) 
+      if (hiddenElements.filter(hiddenElement => hiddenElement === requiredElement).length == 0)
         return false;
     }
     return true;
@@ -968,6 +990,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   onValidationChange(valid: boolean) {
+    console.log('validation event value :'+valid);
     this.valid = valid;
     setTimeout(() => {
       this.errorMessage.text = '';
@@ -985,9 +1008,9 @@ export class FormCapture implements AfterViewInit {
     else this.setupIdleMode()
   }
 
-  canSubmitForm(event){
+  canSubmitForm(event) {
     let isSubmit = JSON.parse(event);
-    if(isSubmit){
+    if (isSubmit) {
       this.openBadgeScan = isSubmit;
       this.doSave();
     }
@@ -1091,6 +1114,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private isBusinessCardAdded() {
+    if (!this.formView) return false;
 
     let fields = this.formView.getValues();
     let businessCardEl = this.getElementForType("business_card");
