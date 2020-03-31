@@ -86,8 +86,8 @@
     "badge-scan" : "badge scannen",
     "error-msg" : "Naam of E-mail is verplicht",
     "check-fields-msg" :"controleer de volgende velden {{fields}}" , 
-    "scan-prompt-message":"U heeft de huidige scan niet ingediend. Als u opnieuw scant, verliest u alle ingediende gegevens. Weet je zeker dat je door wilt gaan?",
-    "submit-lead": "Lead indienen"
+    "scan-prompt-message":"U heeft de huidige lead niet ingediend. Als u opnieuw scant, verliest u alle ingediende gegevens. Weet je zeker dat je door wilt gaan?",
+    "submit-lead": "Huidige lead indienen"
   },
  "logs": {
     "title": "Logboeken",
