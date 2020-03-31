@@ -18,6 +18,7 @@ import { DuplicateLeadsService } from "../../../../services/duplicate-leads-serv
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { Popup } from '../../../../providers/popup/popup';
 import { FormCapture } from '../../../../views/form-capture/form-capture';
+import { ThemeProvider } from '../../../../providers/theme/theme';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class Badge extends BaseElement implements OnInit {
   public isScanning: boolean = false;
   ButtonBar : Subscription;
   scanCounter = 0;
+  private selectedTheme;
   
   constructor(
   public client: RESTClient,
@@ -51,8 +53,10 @@ export class Badge extends BaseElement implements OnInit {
   public duplicateLeadsService: DuplicateLeadsService,
   public appPreferences: AppPreferences,
   public formViewService:formViewService,
+  private themeProvider: ThemeProvider,
     ) {
     super();
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ionViewDidLeave(){
@@ -99,7 +103,7 @@ export class Badge extends BaseElement implements OnInit {
       ];
 
 
-      this.popup.showAlert('Warning',{ text: 'form-capture.scan-prompt-message' },buttons);
+      this.popup.showAlert('Warning',{ text: 'form-capture.scan-prompt-message' },buttons, this.selectedTheme+ ' custom-alert');
     }
 
     else{
@@ -119,20 +123,17 @@ export class Badge extends BaseElement implements OnInit {
     this.utils.setPluginPrefs()
     
     this.scanner.scan(false).then((response) => {
-      this.scanCounter = 1;
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
       this.onProcessingEvent.emit('false');
 
-      if (response.isCancelled) {
-        this.scanCounter = 0;
-        return
-      };
+      if (response.isCancelled) return;
     
 
       this.onChange(response.scannedId);
 
       if (this.element.post_show_reconciliation) {
+        this.scanCounter = 1;
         this.scanner.restart();
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";
@@ -169,17 +170,16 @@ export class Badge extends BaseElement implements OnInit {
       let barcodeData = data.info;
 
       if (!barcodeData || barcodeData.length == 0) {
-        this.scanCounter = 0;
         // this.onProcessingEvent.emit('false');
         return;
       }
 
       //manage duplicate submissions
-      if (data["action"] && data["action"] == "edit_submission") {
-        this.scanCounter = 0;
+      if (data["action"] && data["action"] == "edit_submission" && !this.activation) {
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
+        this.scanCounter = 1;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);

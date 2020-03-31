@@ -108,11 +108,9 @@ export class ActivationsPage {
     this.filteredActivations = [];
     this.loading = true;
     if (!form && !actName) {
-      console.log("!form && !actName")
       this.getAllActivations()
     }
     else if (form && actName){
-    console.log("form && actName")
       this.restClient.getFormActivations(form, { activation_name: actName }).subscribe((activations) => {
         console.log(activations)
         this.activations.push({ activations, form });
@@ -125,7 +123,6 @@ export class ActivationsPage {
     }
 
     else if (form && !actName) {
-      console.log("form && !actName")
       this.getFormActivations(form);
     }
 

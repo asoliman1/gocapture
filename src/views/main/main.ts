@@ -74,7 +74,6 @@ export class Main {
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{
-			console.log("useer", user);
 			this.setUser(user);
 		})
 		this.dbClient.getRegistration().subscribe((user)=>{

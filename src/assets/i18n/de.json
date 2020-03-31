@@ -86,8 +86,8 @@
     "badge-scan" : "Badge scannen",
     "error-msg" : "Name oder Email erforderlich",
     "check-fields-msg" :"überprüfen Sie bitte folgende Felder {{fields}}", 
-    "scan-prompt-message":"Sie haben den aktuellen Scan nicht gesendet. Wenn Sie erneut scannen, gehen alle übermittelten Daten verloren. Sind Sie sicher, dass Sie fortfahren wollen?",
-    "submit-lead": "Lead einreichen"
+    "scan-prompt-message":"Sie haben den aktuellen Lead nicht übermittelt. Wenn Sie erneut scannen, gehen alle übermittelten Daten verloren. Bist du dir sicher, dass du weitermachen willst?",
+    "submit-lead": "Aktuellen Lead senden"
   },
  "logs": {
     "title": "Protokolle",

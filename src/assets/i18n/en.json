@@ -86,8 +86,8 @@
     "badge-scan": "Badge Scan",
     "error-msg": "Email or name is required",
     "check-fields-msg": "Please check the following fields : {{fields}}", 
-    "scan-prompt-message":"You have not submitted the current scan. If you scan again you will lose all submitted data. Are you sure you want to continue?",
-    "submit-lead": "Submit Lead"
+    "scan-prompt-message":"You have not submitted the current lead. If you scan again you will lose all submitted data. Are you sure you want to continue?",
+    "submit-lead": "Submit Current Lead"
   },
   "logs": {
     "title": "Logs",

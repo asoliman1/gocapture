@@ -36,7 +36,6 @@ export class DynamicFormElementComponent {
 
   canSubmitForm(event){
     this.doSubmit.emit(event);
-    console.log("dynamic form element",JSON.parse(event))
   }
 
   ngOnInit(){
