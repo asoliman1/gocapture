@@ -422,6 +422,7 @@ export class DBClient {
 		form.first_name = dbForm.firstName;
 		form.last_name = dbForm.lastName;
 		form.full_name = dbForm.fullName;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.email = dbForm.email;
 		form.invalid_fields = dbForm.invalid_fields;
 		form.activity_id = dbForm.activityId;

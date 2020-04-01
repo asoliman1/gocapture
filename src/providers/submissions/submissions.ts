@@ -486,7 +486,6 @@ export class SubmissionsProvider {
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
-
     this.rest.submitForm(submission).subscribe((d) => {
       console.log("response from submissions", d);
       if (isActivation) {
@@ -532,7 +531,6 @@ export class SubmissionsProvider {
           obs.complete();
           return;
         }
-
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;

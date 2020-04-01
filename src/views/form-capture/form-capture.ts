@@ -156,7 +156,6 @@ export class FormCapture implements AfterViewInit {
     if (this.activation) {
       this.statusBar.hide();
     }
-    console.log(this.activation);
 
   }
 
@@ -301,8 +300,6 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log(this.form,this.submission);
-    //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
@@ -497,6 +494,7 @@ export class FormCapture implements AfterViewInit {
   isAllowedToEdit(submission: FormSubmission): boolean {
     return submission &&
       (submission.status == SubmissionStatus.Submitted ||
+        submission.status == SubmissionStatus.OnHold ||
         submission.status == SubmissionStatus.Submitting)
   }
 
