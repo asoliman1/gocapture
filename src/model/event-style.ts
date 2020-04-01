@@ -23,4 +23,5 @@ export class EventStyle {
     element_background_color : string;
     element_background_opacity : number;
     element_background_mode : string;
+    theme:string;
 }

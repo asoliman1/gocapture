@@ -54,11 +54,9 @@ export class FormsProvider {
         remoteForms.forms = this.checkFormData(this.filterArchivedForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
         this.loaded = true;
-        // this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
         },(err)=>{
-          // this.setFormsSyncStatus(false);
           obs.error(err);
         },()=>obs.complete())
 

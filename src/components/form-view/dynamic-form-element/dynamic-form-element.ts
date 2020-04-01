@@ -1,4 +1,3 @@
-import { TRANSCRIPTION_FIELDS_IDS } from './../../../constants/transcription-fields';
 import { ElementRef, ViewChild } from '@angular/core';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormGroup} from "@angular/forms";
@@ -51,14 +50,9 @@ export class DynamicFormElementComponent {
   }
 
   isControlInvalid() {
-    // if(this.isTranscriptionField() && !this.noTranscriptable) this.theForm.controls[this.element.identifier].clearValidators() ;
     return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
   
-
-  isTranscriptionField(){
-   return TRANSCRIPTION_FIELDS_IDS.filter(e=> this.element.mapping.find((m)=> m.ll_field_id == e)).length;
-  }
 
   setHour(event) {
 

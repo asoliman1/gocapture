@@ -49,7 +49,6 @@ export class MyApp {
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
   ) {
-    this.subscribeThemeChanges();
     this.initializeApp();
   }
 
@@ -101,6 +100,8 @@ export class MyApp {
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
       if (user) {
+        this.subscribeThemeChanges();
+        this.setTheme(user);
         this.setLogging();
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
@@ -110,6 +111,11 @@ export class MyApp {
       }
     });
   }
+
+  setTheme(user){
+		let theme = user ? user.theme : 'default';
+		this.themeProvider.setActiveTheme(theme + '-theme'); // 
+	}
 
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)

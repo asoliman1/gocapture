@@ -75,7 +75,6 @@ export class Main {
 		this.checkUnsentBadges();
 		this.client.getUpdates().subscribe(()=>{},(err)=>{},()=>{});
 		this.client.userUpdates.subscribe((user: User)=>{
-			console.log("useer", user);
 			this.setUser(user);
 		})
 		this.dbClient.getRegistration().subscribe((user)=>{
@@ -93,13 +92,8 @@ export class Main {
 		this.ngZone.run(()=>{
 			this.user = user;
 			this.setPages();
-			this.setTheme();
 		})
 	}
 
-	setTheme(){
-		let theme = this.user.theme ? this.user.theme : 'default';
-		this.themeProvider.setActiveTheme(theme + '-theme'); // 
-	}
 
 }

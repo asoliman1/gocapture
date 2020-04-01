@@ -796,11 +796,11 @@ export class FormCapture implements AfterViewInit {
     subCtrls = control['controls'] ;
 
     if(el) el.mapping.forEach((e,i)=>{
-     if(TRANSCRIPTION_FIELDS_IDS.includes(e.ll_field_id))
+     if(<any> TRANSCRIPTION_FIELDS_IDS.includes(e.ll_field_id))
        if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
     })
 
-    if(TRANSCRIPTION_FIELDS_IDS.includes(id)) this.clearControlValidators(control)
+    if(<any> TRANSCRIPTION_FIELDS_IDS.includes(id)) this.clearControlValidators(control)
   }
 
   clearControlValidators(control : AbstractControl){
@@ -1130,7 +1130,7 @@ export class FormCapture implements AfterViewInit {
     return false;
   }
 
-  private submissionDate() {
+  submissionDate() {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
   }
 
