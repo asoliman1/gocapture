@@ -1,0 +1,292 @@
+{
+  "login": {
+    "header": "Contatta l'amministratore di rete della tua azienda per ricevere il Codice di Accesso. Inserisci il codice di accesso in basso.",
+    "email-placeholder": "Inserisci Indirizzo Email",
+    "auth-placeholder": "Inserisci Codice di Autenticazione",
+    "auth-button": "Autentica",
+    "continue-button": "Continua",
+    "connection-mode": {
+      "title": "Modalità di connessione",
+      "normal": "Normale",
+      "demo": "Demo"
+    }
+  },
+  "sideMenu": {
+    "events": "Evento",
+    "support": "Assistenza",
+    "settings": "Impostazioni",
+    "hi": "Ciao",
+    "welcome-back": "Bentornato",
+    "activations" : "Activations"
+  },
+  "general": {
+    "syncing": "Sincronizzazione...",
+    "cancel": "Annulla",
+    "select-badge-type": "Scegli un tipo di simbolo",
+    "remind-about-leads": "Ricordami dei contatti",
+    "important": "importante",
+    "share": "condividi",
+    "done": "Done",
+    "ok": "Ok",
+    "unauthenticate": "Deautenticare",
+    "back": "indietro",
+    "close": "chiudi",
+    "select": "seleziona",
+    "send": "invia",
+    "search": "cerca",
+    "select-items": "seleziona articoli",
+    "front": "Davanti"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "organization": {
+      "header": "Organizzazione",
+      "name": "Nome",
+      "key": "Chiave",
+      "operator": "Operatore",
+      "deviceId": "ID dispositivo"
+    },
+    "application": {
+      "header": "Versione app",
+      "label": "Lingua"
+    },
+    "operations": {
+      "header": "Operazioni",
+      "automatic-upload": "Caricamento automatico",
+      "save-business-cards": "Salva i biglietti da visita sul dispositivo",
+      "reminder-for-unsubmitted-leads": "Promemoria per i contatti non inseriti",
+      "auto-crop": "Ritaglio automatico"
+    },
+    "dropdown": {
+      "header": "A comparsa",
+      "label": "Selezione con tocco singolo"
+    },
+    "kiosk-mode": {
+      "header": "Modalità Chiosco",
+      "label": "Codice di accesso"
+    },
+    "diagnostics": {
+      "header": "Diagnostics",
+      "app-version": "Versione app",
+      "enable-logging": "Attiva il logging",
+      "view-log-button": "Visualizza Log",
+      "test-badge-scan": "Scansione simbolo di prova"
+    },
+    "unauth-device-btn": "Deautentica il dispositivo"
+  },
+  "form-capture": {
+    "submit-btn": "Invia",
+    "edit-btn": "Modifica",
+    "update-btn": "Aggiorna",
+    "date-info": "Acquisito su",
+    "search-list": "Cerca Lista",
+    "unsubmitted-data-msg": "Hai dati su questo modulo che non sono stati caricati. Se torni indietro, l'invio non sarà salvato. Se desideri salvare questo invio, tocca il tasto Invia.",
+    "scan-mode": "modalità scansione",
+    "business-card": "biglietto da visita ",
+    "badge-scan": "Scansione del simbolo",
+    "error-msg": "Nome o email richiesti",
+    "check-fields-msg": "controlla i seguenti campi : {{fields}}", 
+    "scan-prompt-message":"Non hai caricato il contatto attuale. Se ripeti la scansione perderai tutti i dati caricati. Sei sicuro di voler continuare?",
+    "submit-lead": "Invia contatto attuale"
+  },
+  "logs": {
+    "title": "Logs",
+    "show-more": "Mostra di più"
+  },
+  "alerts": {
+    "warning": "Avviso",
+    "error": "Error",
+    "info": "Info",
+    "ok": "OK",
+    "badge-id": "ID simbolo",
+    "choose-from": "scegli da",
+    "cancel": "cancella",
+    "remove": "rimuovi",
+    "loading": {
+      "one-moment": "attendi, caricamento in corso",
+      "loading": "caricamento",
+      "loading-scanner": "caricamento scanner",
+      "authenticating": "autenticazione...",
+      "unauthenticating": "deautenticazione...",
+      "processing": "elaborazione..."
+    },
+    "business-card": {
+      "message": "Il biglietto da visita è stato salvato nella Libreria delle Foto!",
+      "save-to-library": "salva nella libreria",
+      "retake": "rifare",
+      "view-image": "vedi immagine",
+      "choose-from-library": "scegli dalla libreria",
+      "saved-image": "Il biglietto da visita è stato salvato nella Libreria delle Foto!"
+    },
+    "image": {
+      "use-camera": "usa la fotocamera",
+      "choose-from-album": "scegli dall'album"
+    },
+    "rapid-scan": {
+      "process": "elabora",
+      "badges-reminder": "Hai stemmi scansionati rapidamente per {{formName}} salvati sulla memoria di questo dispositivo che non sono stati caricati. Vuoi caricarli o cancellarli?"
+    },
+    "duplicate-lead": {
+      "title": "Contatto già esistente",
+      "message": "Questo contatto è stato già aggiunto il {{date}} vuoi modificarlo?",
+      "remove-msg": "Contatto doppio rimosso con successo.",
+      "already-scanned": "Contatto già scansionato il {{date}}. Modifica il contatto se necessario."
+    },
+    "kiosk-mode": {
+      "message": "Password per Chiosco non impostata!",
+      "set-password": "Kiosk Passwort festlegen",
+      "enter-passcode": "Codice di Accesso Modalità Chiosco",
+      "placeholder": "Inserisci codice di accesso"
+    },
+    "audio-recording": {
+      "cant-start": "Non posso iniziare la registrazione",
+      "delete-recording": "Vuoi cancellare la registrazione?",
+      "downloading": "Scaricamento registrazione..."
+    },
+    "settings": {
+      "select-barcode": "scegli tipo di codice a barre ",
+      "unauthenticate": {
+        "title": "Deautenticare?",
+        "message": "Sei sicuro di voler deautenticare questo dispositivo?"
+      }
+    },
+    "activation":{
+      "message":"Sei sicuro di voler tornare indietro?",
+      "retry": "riprova"
+    }
+  },
+  "toast": {
+    "no-internet-connection": "Connessione ad internet non disponibile.",
+    "scanned-successfully": "{{badgeName}} scansionato con successo ",
+    "uploading-leads": "Aggiornamento contatti... tieni l'app aperta fino a completamento del processo.",
+    "submission-successfull": "caricamento completato",
+    "syncing-submissions-error": "Si è verificato un errore durante la sincronizzazione degli elementi",
+    "auth-err": "Credenziali non valide",
+    "auth-failed": "Autorizzazione fallita. Richiedi un nuovo Codice di Accesso",
+    "duplicate-submission": "Elemento doppio"
+  },
+  "forms": {
+    "submitted": "Inviato",
+    "pending": "In sospeso",
+    "unsubmitted": "Non inviato",
+    "capture": "Acquisisci",
+    "review-submissions": "Riesamina gli inserimenti",
+    "rapid-scan": "Scansione Rapida",
+    "documents": "Documenti",
+    "instructions": "Istruzioni",
+    "title": "Eventi",
+    "activations" : "Attivazione"
+  },
+  "form-review": {
+    "clear": "cancella",
+    "filter": {
+      "filter": "filtro",
+      "all": {
+        "title": "Tutto",
+        "description": "Tocca un elemento per modificare/esaminare."
+      },
+      "complete": {
+        "title": "Completa",
+        "description": "Elementi caricati. Tocca per esaminare."
+      },
+      "pending": {
+        "title": "In sospeso",
+        "description": "Elementi in attesa di trascrizione/validazione.Tocca per esaminare"
+      },
+      "ready": {
+        "title": "Pronto",
+        "description": "Elementi pronti per il caricamento. Tocca per modificare, tocca il cerchio blu per bloccare, o scorri a sinistra per cancellare."
+      },
+      "blocked": {
+        "title": "Bloccato",
+        "description": "Elementi bloccati dal caricamento. Tocca per modificare, tocca il cerchio rosso per sbloccare, o scorri a sinistra per cancellare."
+      }
+    }
+  },
+  "filters-view": {
+    "select-search-criteria": "Scegli i criteri di ricerca",
+    "titles": {
+      "name": "Nome",
+      "email": "Email",
+      "capture-method": "Metodo di acquisizione",
+      "capture-date": "Data di acquisizione",
+      "captured-by": "Acquisito da"
+    },
+    "modifiers": {
+      "equals": "Uguale a",
+      "doesnt-equal": "Non uguale a",
+      "contains": "Contiene",
+      "does-not-contain": "Non contiene"
+    },
+    "capture-type": {
+      "normal": "Normale",
+      "badge-scan": "Scansione del simbolo",
+      "list": "Lista",
+      "transcription": "Trascrizione"
+    }
+  },
+  "support": {
+    "header": "Assistenza",
+    "title": "Il tuo successo è la nostra missione. Come possiamo esserti d'aiuto?",
+    "doc-button": "Documentazione",
+    "ticket-button": "Apri un ticket",
+    "conversation-button": "Inizia una Conversazione"
+  },
+  "signature": {
+    "title": "firma",
+    "sign-above": "firma sopra"
+  },
+  "notifications": {
+    "submit-reminder": "Hai contatti che non sono stati caricati. Apri l'app e caricali."
+  },
+  "documents": {
+    "open-error": "Si è verificato un problema durante l'apertura dei tuoi documenti. Riprova.",
+    "empty-set": "Il gruppo di documenti selezionato non contiene documenti",
+    "syncing-error": "I documenti sono ancora in fase di sincronizzazione. Riprova più tardi.",
+    "share-error": "Si è verificato un problema durante la condivisione del tuo documento(i). Riprova.",
+    "how-to-send": "Come desideri inviare i documenti?",
+    "edit-error": "Non puoi modificare gli elementi in modalità anteprima. Clicca modifica prima di fare dei cambiamenti.",
+    "long-press": "Tieni premuto per visualizzare il documento.",
+    "tap-to-select": "Tocca per selezionare i documenti. Tieni premuto per visualizzare.",
+    "empty-set-msg": "Questo gruppo di documenti è vuoto.",
+    "select-category" : "seleziona una Categoria per i Documenti"
+  },
+  "prospect-view": {
+    "title": "seleziona contatto"
+  },
+  "stations-view": {
+    "title": "Seleziona stazione",
+    "visited-stations": "Stazioni visitate",
+    "stations": "Stazioni "
+  },
+  "localizations-view": {
+    "title": "Scegli lingua"
+  },
+  "submission-status": {
+    "submitted": "contatto aggiornato con successo.",
+    "to-submit": "Prospetto pronto per il caricamento. Tocca il cloud nell'angolo in alto a destra dello schermo per caricarlo. Tocca l'icona blu accanto all'invio per impedirne il caricamento.",
+    "on-hold": "Prospettiva in attesa di trascrizione. Si prega di attendere.",
+    "blocked": "Prospetto bloccato dal caricamento. Tocca il cerchio rosso per sbloccarlo."
+  },
+  "badge-scanner": {
+    "scan": "scansiona un simbolo",
+    "scanning": "scansione un simbolo",
+    "couldnt-scan": "Impossibile scansionare il badge",
+    "nfc-msg": "pronto per la scansione, tieni il dispositivo vicino al simbolo",
+    "scan-nfc": "scansiona simbolo NFC",
+    "scanning-nfc": "Scanning NFC badge",
+    "couldnt-scan-nfc": "Impossibile scansionare il badge NFC",
+    "rescan": "riscansiona simbolo",
+    "rescan-nfc": "riscansiona simbolo NFC"
+  },
+  "activations":{
+    "title":"Attivazione",
+    "launch":"Avvia",
+    "search":{
+      "event": "Evento",
+      "activation": "Attivazione",
+      "all-events": "Tutti gli eventi",
+      "activation-name": "Nome Attivazione"
+    }
+  }
+}
