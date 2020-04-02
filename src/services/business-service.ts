@@ -182,8 +182,8 @@ export class BussinessClient {
           this.registration = user;
           this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
-          this.formsProvider.setForms();
           this.rest.token = user.access_token;
+          this.formsProvider.initForms();
         }
         obs.next(user);
         obs.complete();

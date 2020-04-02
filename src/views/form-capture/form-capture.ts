@@ -226,36 +226,32 @@ export class FormCapture implements AfterViewInit {
   }
 
   private handleIdleMode() {
-    if (this.form.event_style.screensaver_media_items.length)
+    let screensaverData = this.activation ? this.activation.activation_style : this.form.event_style;
+    if (screensaverData.is_enable_screensaver && !this.isRapidScanMode && screensaverData.screensaver_media_items.length)
       this.idle
         .whenNotInteractive()
-        .within(this.form.event_style.screensaver_rotation_period, 1000)
+        .within(screensaverData.screensaver_rotation_period, 1000)
         .do(() => {
-          this.showScreenSaver()
+          this.showScreenSaver(screensaverData)
           console.log('idle mode started')
         })
         .start();
   }
 
   // A.S
-  private async showScreenSaver() {
+  private async showScreenSaver(data : any) {
     // get updated data of form
     this.form.event_style = this.getFormStyle();
-    let active =
-      this.navCtrl.last().instance instanceof FormCapture &&
-      this.form.event_style.is_enable_screensaver &&
-      !this.isRapidScanMode;
+    let active = this.navCtrl.last().instance instanceof FormCapture ;
 
-    if (this.imagesDownloaded()) {
+    if (this.imagesDownloaded(data)) {
       if (!this._modal && active) {
-        this.handleScreenSaverRandomize()
-        this._modal = this.modal.create(ScreenSaverPage, { event_style: this.form.event_style }, { cssClass: 'screensaver' });
+        this.handleScreenSaverRandomize(data)
+        this._modal = this.modal.create(ScreenSaverPage, { event_style: data }, { cssClass: 'screensaver' });
         await this._modal.present();
-        console.log('Screen saver started.')
         this._modal.onDidDismiss(() => {
           this._modal = null
           this.idle.restart();
-          console.log('Screen saver dismissed.')
         })
       }
     } else {
@@ -264,21 +260,19 @@ export class FormCapture implements AfterViewInit {
   }
 
   // A.S
-  private handleScreenSaverRandomize() {
-    if (this.form.event_style.is_randomize)
-      this.form.event_style.screensaver_media_items = this.utils.shuffle(this.form.event_style.screensaver_media_items)
+  private handleScreenSaverRandomize(data : any) {
+    if (data.is_randomize) data.screensaver_media_items = this.utils.shuffle(data.screensaver_media_items);
   }
 
   // A.S
-  private imagesDownloaded() {
-    this.form.event_style.screensaver_media_items = this.form.event_style.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
-    return this.form.event_style.screensaver_media_items.length;
+  private imagesDownloaded(data : any) {
+      data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
+      return data.screensaver_media_items.length;
   }
 
   // A.S
   private stopIdleMode() {
     this.idle.stop()
-    // console.log('idle mode stopped');
   }
 
   // return updated object data of form
@@ -655,7 +649,6 @@ export class FormCapture implements AfterViewInit {
             handler: () => {
               let currentIndex = this.navCtrl.getActive().index;
               this.navCtrl.push(ActivationViewPage, { activation: { ...this.activation } }).then(() => {
-                console.log("removing capture")
                 this.navCtrl.remove(currentIndex);
 
               });
@@ -676,7 +669,6 @@ export class FormCapture implements AfterViewInit {
     }
   }
   private internalBack() {
-    console.log("we entered internalBack")
     if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
       this.doBackWithCheckingActivation();
       return;
@@ -717,17 +709,11 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
-  public doSave(shouldSyncData = true) {
-
-    this.isActivationProcessing = true;
-
-    this.submitAttempt = true;
-
-    /*
+  private handleValidations(){
+     /*
      When transcription is enabled, the app is still requiring name and email.
      If there is a business card attached and transcription is turned on, we should not require either of these fields.
      */
-
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
@@ -751,8 +737,9 @@ export class FormCapture implements AfterViewInit {
         return;
       }
     }
+  }
 
-
+  private handleSubmitParams(){
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
@@ -772,7 +759,13 @@ export class FormCapture implements AfterViewInit {
     this.setSubmissionType();
     // A.S
     this.submission.location = this.location;
+  }
 
+  public doSave(shouldSyncData = true) {
+    this.isActivationProcessing = true;
+    this.submitAttempt = true;
+    this.handleValidations();
+    this.handleSubmitParams();
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
@@ -794,13 +787,11 @@ export class FormCapture implements AfterViewInit {
     let id = name.split('_')[1] , 
     el = this.form.elements.find((e)=> e.identifier == name) ,
     subCtrls = control['controls'] ;
-
     if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.includes(e.ll_field_id))
+     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id=> id == e.ll_field_id ))
        if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
     })
-
-    if(<any> TRANSCRIPTION_FIELDS_IDS.includes(id)) this.clearControlValidators(control)
+    if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
   }
 
   clearControlValidators(control : AbstractControl){
@@ -1164,7 +1155,7 @@ export class FormCapture implements AfterViewInit {
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
-      }, false, this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
+      }, false, null ,this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
     } else {
       this.initiateRapidScanMode();
     }

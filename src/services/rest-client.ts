@@ -256,7 +256,6 @@ export class RESTClient {
 		};
 		return this.getAll<{ records: Activation[] }>("/activations.json", opts).map(resp => {
 			let acs = Activation.parseActivations(resp, form);
-			console.log("response", acs)
 			return acs;
 		});
 	}
