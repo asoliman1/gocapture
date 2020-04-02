@@ -315,12 +315,12 @@ export class BussinessClient {
 
  async updateIntercom(){
     this.intercom.updateUser({
-      ll_user_id: this.registration.id,
       email: this.registration.email,
       name: `${this.registration.first_name} ${this.registration.last_name}`,
-      customer_id: this.registration.customerID,
       custom_attributes: {
+        ll_user_id: this.registration.id,
         mobile_app_name: this.registration.app_name,
+        customer_id: this.registration.customerID,
       },
       instance: this.registration.customer_name,
       avatar: {
