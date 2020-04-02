@@ -156,7 +156,6 @@ export class FormCapture implements AfterViewInit {
     if (this.activation) {
       this.statusBar.hide();
     }
-    console.log(this.activation);
 
   }
 
@@ -301,8 +300,6 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log(this.form,this.submission);
-    //if(this.activation) this.form.elements = this.form.elements.filter((e)=> e.available_in_activations) ;
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
@@ -656,7 +653,6 @@ export class FormCapture implements AfterViewInit {
             handler: () => {
               let currentIndex = this.navCtrl.getActive().index;
               this.navCtrl.push(ActivationViewPage, { activation: { ...this.activation } }).then(() => {
-                console.log("removing capture")
                 this.navCtrl.remove(currentIndex);
 
               });
@@ -677,7 +673,6 @@ export class FormCapture implements AfterViewInit {
     }
   }
   private internalBack() {
-    console.log("we entered internalBack")
     if (!this.formView.hasChanges() || this.isReadOnly(this.submission)) {
       this.doBackWithCheckingActivation();
       return;
@@ -772,7 +767,6 @@ export class FormCapture implements AfterViewInit {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
         let submitEmail = data.filter((d) => d.email == this.submission.email);
-        console.log(submitEmail)
         if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
@@ -852,7 +846,6 @@ export class FormCapture implements AfterViewInit {
         activation: this.activation,
         activityId: submission.activity_id,
       }).then(() => {
-        console.log("removing capture")
         this.navCtrl.remove(currentIndex);
       });
     }
@@ -865,7 +858,6 @@ export class FormCapture implements AfterViewInit {
         activityId: submission.activity_id,
         prospectId: submission.prospect_id
       }).then(() => {
-        console.log("removing capture")
         this.navCtrl.remove(currentIndex);
       });
     }
