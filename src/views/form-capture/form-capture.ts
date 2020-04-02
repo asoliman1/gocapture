@@ -303,7 +303,6 @@ export class FormCapture implements AfterViewInit {
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
-
     this.dispatch = this.navParams.get("dispatch");
     this.submitAttempt = false;
 
@@ -323,13 +322,13 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
-    if(this.openBadgeScan && !this.activation) {
+    if (this.openBadgeScan && !this.activation) {
       // here timeout because initialization of badge element may take time to subscribe to the observable
       this.openBadgeScan = false;
       setTimeout(() => {
-       this.formViewService.pushEvent(`rescan_barcode`);
+        this.formViewService.pushEvent(`rescan_barcode`);
       }, 1000);
-    } 
+    }
   }
 
   private convertCaptureImageSrc() {
@@ -494,6 +493,7 @@ export class FormCapture implements AfterViewInit {
   isAllowedToEdit(submission: FormSubmission): boolean {
     return submission &&
       (submission.status == SubmissionStatus.Submitted ||
+        submission.status == SubmissionStatus.OnHold ||
         submission.status == SubmissionStatus.Submitting)
   }
 
@@ -750,6 +750,12 @@ export class FormCapture implements AfterViewInit {
       this.submission.id = new Date().getTime();
     }
 
+    if(this.submission.status == SubmissionStatus.Submitted && 
+      this.submission.hold_request_id && 
+      this.submission.hold_request_id>0){
+        this.submission.hold_request_id = null;
+    }
+
     if (this.submission.status != SubmissionStatus.Blocked) {
       this.submission.status = SubmissionStatus.ToSubmit;
     }
@@ -771,8 +777,8 @@ export class FormCapture implements AfterViewInit {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
           this.isActivationProcessing = false;
-        } else { 
-          this.goToSubmit(shouldSyncData); 
+        } else {
+          this.goToSubmit(shouldSyncData);
         }
       })
     } else {
@@ -986,9 +992,9 @@ export class FormCapture implements AfterViewInit {
     else this.setupIdleMode()
   }
 
-  canSubmitForm(event){
+  canSubmitForm(event) {
     let isSubmit = JSON.parse(event);
-    if(isSubmit){
+    if (isSubmit) {
       this.openBadgeScan = isSubmit;
       this.doSave();
     }
