@@ -62,7 +62,7 @@ export const TABLES : Table[] = [
             "deleteByHoldId": "DELETE from submissions where id in (select id from submissions where hold_request_id = ? limit 1)",
             "updateById": "UPDATE submissions set id=?, status=?, activityId=?, hold_request_id=?, invalid_fields=? where id=?",
             "updateWithStatus": "UPDATE submissions set status=?, last_sync_date=? where id=?",
-            "updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=?, location=? where hold_request_id=?",
+            "updateByHoldId": "UPDATE submissions set id=?, status=?, activityId=?, data=?, firstName=?, lastName=?, fullName=?, email=?, isDispatch=?, dispatchId=?, location=?, station_id=? where hold_request_id=?",
             "deleteAll": "delete from submissions"
         }
     },
