@@ -486,7 +486,6 @@ export class BussinessClient {
         this.db.getFormsByIds(formIds).subscribe(forms => {
 
           let filteredSubmissions = submissions.filter((submission) => {
-            console.log("doaaaa", submission.status, "hhh", submission.hold_request_id);
             return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
