@@ -315,11 +315,11 @@ export class BussinessClient {
 
  async updateIntercom(){
     this.intercom.updateUser({
-      ll_user_id: this.registration.id,
       email: this.registration.email,
       name: `${this.registration.first_name} ${this.registration.last_name}`,
-      customer_id: this.registration.customerID,
       custom_attributes: {
+        ll_user_id: this.registration.id,
+        customer_id: this.registration.customerID,
         mobile_app_name: this.registration.app_name,
       },
       instance: this.registration.customer_name,
@@ -486,6 +486,7 @@ export class BussinessClient {
         this.db.getFormsByIds(formIds).subscribe(forms => {
 
           let filteredSubmissions = submissions.filter((submission) => {
+            console.log("doaaaa", submission.status, "hhh", submission.hold_request_id);
             return this.isSubmissionNeedToBeSubmitted(submission)
           });
 
