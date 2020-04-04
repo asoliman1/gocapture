@@ -1,7 +1,6 @@
+import { FormMapEntry } from './../../model/form-map-entry';
 import { Util } from './../../util/util';
 import { RESTClient } from './../../services/rest-client';
-import { FormMapEntry } from './../../services/sync-client';
-import { DBClient } from './../../services/db-client';
 import { Observable, Observer, BehaviorSubject, Subject } from 'rxjs';
 import { FormSubmission, BarcodeStatus, SubmissionStatus } from './../../model/form-submission';
 import { Injectable } from '@angular/core';
@@ -24,44 +23,16 @@ export class SubmissionsProvider {
   duplicateLead: Observable<any>;
 
 
-  private downloadingSubmissions: any[] = [];
-  private uploadingSubmissions: any[] = [];
-
-  private hasNewData: boolean;
-
   constructor(
-    private dbClient: DBClient,
     private rest: RESTClient,
     private file: File,
     private util: Util,
     private popup: Popup
-    ) {
+  ) {
     this.duplicateLeadSource = new BehaviorSubject<any>(null);
     this.duplicateLead = this.duplicateLeadSource.asObservable();
 
   }
-
-
-  private setSubmissionSyncStatus(submissionId: number) {
-    let sub = this.submissions.find((submission) => submission.id == submissionId);
-    if (sub) {
-      sub.isDownloading = this.checkSubmissionByType(submissionId, 'downloading')
-      sub.isUploading = this.checkSubmissionByType(submissionId, 'uploading')
-    }
-  }
-
-  setSubmissionAs(id, type: 'uploading' | 'downloading') {
-    this[type + 'Submissions'].push(id);
-  }
-
-  rmSubmissionFrom(id, type: 'uploading' | 'downloading') {
-    this[type + 'Submissions'] = this[type + 'Submissions'].filter((e) => e.id != id);
-  }
-
-  private checkSubmissionByType(id: number, type: 'uploading' | 'downloading') {
-    return this[type + 'Submissions'].find((e) => e.id == id) ? true : false
-  }
-
 
   public sync(submissions: FormSubmission[], forms: Form[]): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>(obs => {
@@ -112,7 +83,7 @@ export class SubmissionsProvider {
   }
 
 
-  doSubmitAll(data: FormMapEntry,isActivation = false): Observable<FormSubmission[]> {
+  doSubmitAll(data: FormMapEntry, isActivation = false): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
@@ -125,11 +96,9 @@ export class SubmissionsProvider {
           return;
         }
 
-        this.setSubmissionsUploading(data.submissions);
-        this.doSubmit(data, index,isActivation).subscribe((submission) => {
+        this.doSubmit(data, index, isActivation).subscribe((submission) => {
           console.log(submission)
           // A.S
-          this.rmSubmissionFrom(submission.id, 'uploading')
           setTimeout(() => {
             result.push(submission);
             index++;
@@ -147,7 +116,7 @@ export class SubmissionsProvider {
   }
 
 
-  private doSubmit(data: FormMapEntry, index: number , isActivation = false): Observable<FormSubmission> {
+  private doSubmit(data: FormMapEntry, index: number, isActivation = false): Observable<FormSubmission> {
 
     return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
       let submission = data.submissions[index];
@@ -179,20 +148,16 @@ export class SubmissionsProvider {
 
         this.updateSubmissionFields(submission, data, urlMap);
 
-        this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          console.log("Updated submission fields :");
-          console.log(submission)
-          if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs,isActivation);
-          } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs,isActivation);
-          } else {
-            this.actuallySubmitForm(data.form, submission, obs,isActivation);
-          }
-        }, (err) => {
-          console.log(err);
-          obs.error("Could not save updated submission for form " + data.form.name);
-        });
+        console.log("Updated submission fields :");
+        console.log(submission)
+        if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
+          this.processBarcode(data, submission, obs, isActivation);
+        } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
+          this.processBarcode(data, submission, obs, isActivation);
+        } else {
+          this.actuallySubmitForm(data.form, submission, obs, isActivation);
+        }
+
 
       }, (err) => {
         console.log(err);
@@ -261,17 +226,13 @@ export class SubmissionsProvider {
           submission.fields[id] = entry.value;
         });
 
-        this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          if(isActivation){
+        if (isActivation) {
           this.actuallySubmitForm(data.form, submission, obs, true, JSON.stringify(barcodeData));
-          }
-          else{
-            this.actuallySubmitForm(data.form, submission, obs, false, JSON.stringify(barcodeData));
-          }
-        }, (err) => {
-          console.log(err);
-          obs.error("Could not save updated barcode info into the submission for form " + data.form.name);
-        });
+        }
+        else {
+          this.actuallySubmitForm(data.form, submission, obs, false, JSON.stringify(barcodeData));
+        }
+
       }, (err) => {
         console.error(err);
 
@@ -281,14 +242,12 @@ export class SubmissionsProvider {
           submission.hold_submission = 1;
           submission.hold_submission_reason = err.message ? err.message : "";
           submission.barcode_processed = BarcodeStatus.Processed;
-          this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-            if(isActivation){
-              this.actuallySubmitForm(data.form, submission, obs, true);
-              }
-              else{
-                this.actuallySubmitForm(data.form, submission, obs);
-              }
-          });
+          if (isActivation) {
+            this.actuallySubmitForm(data.form, submission, obs, true);
+          }
+          else {
+            this.actuallySubmitForm(data.form, submission, obs);
+          }
         } else {
           console.log(err);
           obs.error("Could not process submission for form " + data.form.name + ": barcode processing failed");
@@ -296,7 +255,7 @@ export class SubmissionsProvider {
       });
   }
 
-  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false,barcodeData?: string) {
+  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false, barcodeData?: string) {
 
     console.log("Submit form to api: " + JSON.stringify(submission));
     if (barcodeData) {
@@ -305,57 +264,51 @@ export class SubmissionsProvider {
 
     this.rest.submitForm(submission).subscribe((d) => {
       //console.log("response from submissions", d);
-      if(isActivation){
+      if (isActivation) {
         submission.prospect_id = d.submission.prospect_id;
       }
-  
 
-        if (d.response_status != "200" && d.duplicate_action == "edit") {
-          d.id = submission.id;
-          d.form_id = submission.form_id;
 
-          obs.complete();
-          this.duplicateLeadSource.next(d);
-          this.duplicateLeadSource.next(null);
-          return;
-        }
-        if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
-          submission.invalid_fields = 1;
-          submission.hold_request_id = 0;
-          submission.status = SubmissionStatus.InvalidFields;
-          this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
-            if(isActivation){
-              this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
-              obs.error("invalid submission");
-            }
-          }, err => {
-            console.log(err);
-            obs.error("Could not process submission for form \"" + form.name + "\": " + d.message);
-          });
-          return;
+      if (d.response_status != "200" && d.duplicate_action == "edit") {
+        d.id = submission.id;
+        d.form_id = submission.form_id;
+
+        obs.complete();
+        this.duplicateLeadSource.next(d);
+        this.duplicateLeadSource.next(null);
+        return;
+      }
+      if (((!d.id || d.id < 0) && (!d.hold_request_id || d.hold_request_id < 0)) || d.response_status != "200") {
+        submission.invalid_fields = 1;
+        submission.hold_request_id = 0;
+        submission.status = SubmissionStatus.InvalidFields;
+        if (isActivation) {
+          this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
+          obs.error("invalid submission");
         }
 
-        if (d.is_new_submission == false) {
-          this.dbClient.deleteSubmission(submission).subscribe();
-          obs.complete();
-          return;
-        }
+        return;
+      }
 
-        if (d.id > 0) {
-          submission.activity_id = d.id;
-          submission.status = SubmissionStatus.Submitted;
-        } else {
-          submission.hold_request_id = d.hold_request_id;
-          submission.status = SubmissionStatus.OnHold;
-        }
+      if (d.is_new_submission == false) {
+        obs.complete();
+        return;
+      }
 
-        this.updateSubmissionStatus(submission.id, submission.status)
- 
+      if (d.id > 0) {
+        submission.activity_id = d.id;
+        submission.status = SubmissionStatus.Submitted;
+      } else {
+        submission.hold_request_id = d.hold_request_id;
+        submission.status = SubmissionStatus.OnHold;
+      }
+
+
     }, err => {
       console.log(err);
       obs.error("Could not process submission for form " + form.name);
-      if(isActivation){
-      this.popup.showToast({text:'toast.no-internet-connection'}, "top");
+      if (isActivation) {
+        this.popup.showToast({ text: 'toast.no-internet-connection' }, "top");
       }
     });
 
@@ -422,11 +375,7 @@ export class SubmissionsProvider {
     });
   }
 
-  private setSubmissionsUploading(submissions: FormSubmission[]) {
-    submissions.forEach((e) => {
-      this.setSubmissionAs(e.id, 'uploading')
-    })
-  }
+
 
   private buildUrlMap(submission: FormSubmission, urlFields: string[], urlMap: { [key: string]: string }): boolean {
     let hasUrls = false;
@@ -452,17 +401,6 @@ export class SubmissionsProvider {
       }
     }
     return hasUrls;
-  }
-
-  updateSubmissionStatus(submissionId: number, status: SubmissionStatus) {
-    let sub = this.submissions.find((e) => e.id == submissionId)
-    if (sub) sub.status = status;
-  }
-
-  removeSubmission(submission) {
-    this.dbClient.deleteSubmission(submission).subscribe(() => {
-      this.submissions = this.submissions.filter((e) => e.id == submission.id);
-    })
   }
 
 

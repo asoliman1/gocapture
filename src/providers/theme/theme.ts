@@ -13,7 +13,7 @@ export class ThemeProvider {
 
 
   setActiveTheme(val?) {
-    this.defaultTheme = val ? val : 'default-theme';
+    this.defaultTheme = val ? `${val}-theme` : 'default-theme';
     this.theme.next(this.defaultTheme);
   }
 

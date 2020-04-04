@@ -1,4 +1,3 @@
-import { DocumentsService } from './../../services/documents-service';
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {ThemeProvider} from "../../providers/theme/theme";
 import {IDocument} from "../../model";
@@ -21,7 +20,6 @@ export class Document implements OnChanges {
 
   constructor(
     private platform: Platform,
-    private documentsService : DocumentsService,
     private ThemeProvider : ThemeProvider
   ) {
     this.ThemeProvider.getActiveTheme().subscribe((data)=>{
@@ -66,9 +64,5 @@ export class Document implements OnChanges {
     this.onOpen.emit(null);
   }
 
-  checkLoadingDoc(){
-   if(this.documentsService.currentDownloadingDocs.find((e)=> e == this.document.id)) return true;
-   return false;
-  }
 
 }

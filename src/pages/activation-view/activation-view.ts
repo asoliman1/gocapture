@@ -1,7 +1,7 @@
 import { RESTClient } from './../../services/rest-client';
 import { GameResult } from './../../model/game-result';
 import { ACTIVATIONS_ACTIONS } from './../../constants/activations-actions';
-import { Subscription, BehaviorSubject, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FormCapture } from './../../views/form-capture/form-capture';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Activation } from './../../model/activation';
@@ -9,11 +9,8 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, Platform } from 'ionic-angular';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Popup } from "../../providers/popup/popup";
-import { ActivationsPage } from '../../views/activations/activations';
 import { BussinessClient } from '../../services/business-service';
-import { concatStatic } from 'rxjs/operator/concat';
 import { Network } from '@ionic-native/network';
-import { IfObservable } from 'rxjs/observable/IfObservable';
 
 
 @Component({
@@ -42,7 +39,6 @@ export class ActivationViewPage {
     private popup: Popup,
     private platform: Platform,
     private client: BussinessClient,
-    private net: Network
   ) {
   }
 
@@ -58,7 +54,6 @@ export class ActivationViewPage {
     this.prepareActivationUrl();
   }
   ionViewDidEnter() {
-    console.log(this.activation)
     this.reloadGame();
     this.listenToGameEvents();
     this.initNetwork();
@@ -111,7 +106,6 @@ export class ActivationViewPage {
   }
 
   ionViewWillLeave() {
-    console.log("activationurl", this.activationUrl)
     if (this.backUnregister) {
       this.backUnregister();
     }
@@ -222,13 +216,10 @@ export class ActivationViewPage {
   }
   goBack(activationResult: any) {
     if (this.activation.activation_capture_form_after) {
-      console.log("activationFirst")
       this.goBackIfActivationFirst();
     }
 
     else {
-      console.log(this.navParams.get('prospectId'))
-      console.log("activationSecond")
       const buttons = [
         {
           text: 'general.cancel',
@@ -249,7 +240,6 @@ export class ActivationViewPage {
   }
 
   goToForm(activationResult: any, isNext: boolean = false) {
-      console.log("Go to Form")
       let currentIndex = this.navCtrl.getActive().index;
       if(!this.activation.activation_capture_form_after){
       this.navCtrl.push(FormCapture,

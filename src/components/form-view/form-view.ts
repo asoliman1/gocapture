@@ -81,7 +81,6 @@ export class FormView {
   }
 
   ngAfterViewInit() {
-    console.log("Activation fron form-view",this.activation)
     setTimeout(() => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
       var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
@@ -495,7 +494,6 @@ export class FormView {
   
   canSubmitForm(event){
     this.doSubmit.emit(event);
-    console.log("Form view",JSON.parse(event))
   }
 
   onButtonEvent(event){

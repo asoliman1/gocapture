@@ -1,12 +1,10 @@
+import { ViewController, NavParams } from 'ionic-angular';
 import { Component, NgZone } from '@angular/core';
 import { Form } from "../../model";
 import { BussinessClient } from "../../services/business-service";
-import { ViewController } from 'ionic-angular/navigation/view-controller';
-import { NavParams } from 'ionic-angular/navigation/nav-params';
-import {OptionItem} from "../../model/option-item";
-import {SearchPage} from "../search/search";
-import {ThemeProvider} from "../../providers/theme/theme";
-import {SettingsService} from "../../services/settings-service";
+import { OptionItem } from "../../model/option-item";
+import { SearchPage } from "../search/search";
+import { ThemeProvider } from "../../providers/theme/theme";
 
 @Component({
   selector: 'prospect-search',
@@ -25,8 +23,8 @@ export class ProspectSearch extends SearchPage {
     public client: BussinessClient,
     public zone: NgZone,
     public themeProvider: ThemeProvider,
-    public settingsService: SettingsService) {
-    super(navParams, viewCtrl, themeProvider, settingsService);
+  ) {
+    super(navParams, viewCtrl, themeProvider);
   }
 
   ionViewDidEnter() {
@@ -34,12 +32,12 @@ export class ProspectSearch extends SearchPage {
     this.loading = true;
     this.client.getContacts(this.form)
       .subscribe(contacts => {
-        this.zone.run(()=>{
+        this.zone.run(() => {
           let sortedItems = [];
           contacts.forEach((contact, index) => {
             let optionItem = new OptionItem({
               id: index.toString(),
-              title: this.getTitle(contact.fields.FirstName,contact.fields.LastName),
+              title: this.getTitle(contact.fields.FirstName, contact.fields.LastName),
               subtitle: contact.fields.Email,
               search: contact['search'],
               value: contact
@@ -55,14 +53,14 @@ export class ProspectSearch extends SearchPage {
 
           this.items = sortedItems;
           this.content.resize();
-          ProspectSearch.formId = this.form.form_id+"";
-          this.onInput({target: {value: ""}})
+          ProspectSearch.formId = this.form.form_id + "";
+          this.onInput({ target: { value: "" } })
           this.loading = false;
         });
       });
   }
 
-  getTitle(firstName : string,LastName : string){
+  getTitle(firstName: string, LastName: string) {
     return LastName ? `${firstName} ${LastName}` : firstName;
   }
 

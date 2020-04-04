@@ -3,7 +3,6 @@ import { Platform } from "ionic-angular/platform/platform";
 import { Injectable } from "@angular/core";
 import { File } from '@ionic-native/file';
 import { Observable, Observer } from "rxjs";
-import { LocalStorageProvider } from "../providers/local-storage/local-storage";
 
 /**
  * Jquery clone
@@ -34,7 +33,7 @@ export class Util {
 
   constructor(private platform: Platform,
     private file: File,
-    private localStorage: LocalStorageProvider) {
+    ) {
     //
   }
 
@@ -272,19 +271,19 @@ export class Util {
   // A.S this is a setter fn for android when using plugins app start syncing as on app resume fn works
   public setPluginPrefs(plugin = 'android-plugin') {
     if (this.platform.is('android'))
-      this.localStorage.set(plugin, true);
+      localStorage.set(plugin, true);
     else
-      this.localStorage.set(plugin, false);
+      localStorage.set(plugin, false);
   }
 
   // A.S this is fn to delete after returning from plugin
   public rmPluginPrefs(plugin = 'android-plugin') {
-    this.localStorage.remove(plugin)
+    localStorage.remove(plugin)
   }
 
   // A.S check the if any plugin is used or not
   public getPluginPrefs(plugin = 'android-plugin') {
-    return this.localStorage.get(plugin)
+    return localStorage.get(plugin)
   }
 
   // A.S randomize an array

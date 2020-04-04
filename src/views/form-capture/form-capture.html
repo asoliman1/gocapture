@@ -1,61 +1,29 @@
 <ion-header *ngIf="!isThereActivation()">
-	<ion-navbar color="primary" #navbar>
 
     <ion-title>
-      <div #formTitle (click)="onOpenStations()">
+      <div #formTitle (click)="openStations($event)">
         <!-- A.S GOC-321 -->
-        {{form ? form.name + ' (' + getFormSubmissions() + ')' : ''}}
+        {{form ? form.name : ''}}
         <br *ngIf="form?.event_stations?.length" >
         <span *ngIf="selectedStation" >{{selectedStation.name}} <ion-icon class="info-icon" name="ios-information-circle-outline"></ion-icon></span>
         <br>
       </div>
     </ion-title>
-
-    <ion-buttons end>
-			<button ion-button  (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isProcessing">
-				{{'form-capture.submit-btn' | translate}}
-			</button>
-
-      <button ion-button *ngIf="isAllowedToEdit(submission) && !isEditing" (click)="doEdit()">
-        {{'form-capture.edit-btn' | translate}}
-      </button>
-
-      <button ion-button *ngIf="isAllowedToEdit(submission) && isEditing" (click)="doSave()">
-        {{'form-capture.update-btn' | translate}}
-      </button>
-
-		</ion-buttons>
-	</ion-navbar>
-
-  <ion-toolbar *ngIf="isReadOnly(submission)">
-    <div class="info-box">
-      <div class="description-info">
-        {{submission | submissionStatusPipe | translate}}
-      </div>
-      <div class="date-info">
-        {{'form-capture.date-info' | translate}} {{submissionDate()}}
-      </div>
-    </div>
-  </ion-toolbar>
-
-  <ion-toolbar *ngIf="errorMessage.text">
-    <div class="error-message" >{{errorMessage.text | translate : {fields:(errorMessage.param)} }}</div>
-  </ion-toolbar>
+    
+    <ion-toolbar *ngIf="errorMessage.text">
+      <div class="error-message" >{{errorMessage.text | translate : {fields:(errorMessage.param)} }}</div>
+    </ion-toolbar>
 </ion-header>
+
 
 <!-- A.S GOC-353 -->
 <ion-content [ngStyle]="{
   'background-color':form?.event_style?.capture_background_color,
-  'background-image':'url('+captureBg+')',
+  'background-image':'url('+form?.event_style?.capture_background_image+')',
   'background-size':'cover',
   'background-position':'center'}" class="form-summary">
-  <ion-grid style="height: 100%;"
+  <ion-grid 
   [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
-		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
-			<ion-col>
-      <button ion-button block color="light" [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
-			</ion-col>
-		</ion-row>
 
 		<ion-row style="height: inherit;">
       <ion-col style="order:1; height: inherit; overflow-y: scroll;" >
@@ -66,7 +34,7 @@
           [prospect]="prospect"
           [submission]="submission"
           (onValidationChange)="onValidationChange($event)"
-          [readOnly]="isReadOnly(submission) && !isEditing"
+          [readOnly]="false"
           [isEditing]="isEditing"
           [submitAttempt]="submitAttempt"
           (onProcessingEvent)="onProcessing($event)"
@@ -81,14 +49,15 @@
       </ion-col>
     </ion-row>
 
-	</ion-grid>
+  </ion-grid> 
+  <button ion-button full block large (click)="doSave()" [disabled]="!valid" >SUBMIT</button>
 </ion-content>
-<button-bar
+<!-- <button-bar
 *ngIf="form && !activation" 
 [show]="!isReadOnly(submission) || isEditing" 
 [disabled]="isProcessing" 
 [form]="form" >
-</button-bar>
+</button-bar> -->
 
 <ion-footer [ngStyle]="{'background-color': 'white'}" no-border  *ngIf="isThereActivation()">
   
@@ -98,7 +67,7 @@
     </button>
 
     <button ion-button full [ngStyle]="{'background-color':activation.submit_button_background_color,'color':activation.submit_button_text_color}"
-    (click)="doSave()" *ngIf="!isReadOnly(submission) && !isEditing" [disabled]="isActivationProcessing">
+    (click)="doSave()" [disabled]="isActivationProcessing">
       <span *ngIf="!isActivationProcessing" >{{activation.submit_button_text}}</span>
       <ion-spinner *ngIf="isActivationProcessing" ></ion-spinner>
     </button>

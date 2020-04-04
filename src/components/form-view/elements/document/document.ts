@@ -1,13 +1,11 @@
 import { ModalController } from "ionic-angular";
 import { DocumentShareMode } from "../../../../views/documents/documents";
 import { Component, forwardRef, Input } from "@angular/core";
-import { DocumentsService } from "../../../../services/documents-service";
 import { Form, FormElement, FormSubmission, SubmissionStatus } from "../../../../model";
 import { BaseElement } from "../base-element";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { ThemeProvider } from "../../../../providers/theme/theme";
 import { Popup } from "../../../../providers/popup/popup";
-import { formViewService } from "../../form-view-service";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -28,34 +26,16 @@ export class Document extends BaseElement {
   @Input() submission?: FormSubmission;
 
   selectedThemeColor: string;
-  ButtonBar : Subscription;
+  ButtonBar: Subscription;
 
   constructor(
     private modalCtrl: ModalController,
-    private documentsService: DocumentsService,
     private themeService: ThemeProvider,
     private popup: Popup,
-    private formViewService : formViewService
   ) {
     super();
     this.themeService.getActiveTheme().subscribe((theme: string) => this.selectedThemeColor = theme.split('-')[0]);
   }
-
-
-  ionViewDidLeave(){
-    this.ButtonBar.unsubscribe();
-   } 
- 
-   ngOnInit(): void {
-     this.ButtonBar = this.formViewService.onButtonEmit.subscribe((data)=>{
-        if(data === 'reset') this.element.documents_set.selectedDocumentIdsForSubmission = [];
-      })
-   }
- 
-   
-   ngOnDestroy(){
-     this.ButtonBar.unsubscribe();
-   }
 
   isReadOnlyMode() {
     return !this.isEditing && this.submission &&
@@ -63,45 +43,37 @@ export class Document extends BaseElement {
   }
 
   ngOnChanges() {
-    // console.log(this.element);
   }
 
   openDocuments() {
-    if (!this.element.documents_set) {
-      return this.documentsService.showNoDocumentsToast();
+    let documents = this.element.documents_set.documents
+
+    if (documents && documents.length) {
+      this.element.documents_set.documents = documents;
     }
 
-    this.documentsService.getDocumentsByIds(this.element.documents_set.documents.map((d) => d.id))
-      .subscribe((documents) => {
-        if (documents && documents.length) {
-          this.element.documents_set.documents = documents;
-        }
+    this.prepareSelectedDocuments();
 
-        this.prepareSelectedDocuments();
-
-        const modal = this.modalCtrl
-          .create("Documents", {
-            documentSet: this.element.documents_set,
-            shareMode: this.shareMode,
-            readOnly: this.isReadOnlyMode()
-          });
-
-        modal.onDidDismiss((data: number[]) => {
-          console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
-          if (data && Array.isArray(data)) {
-            this.element.documents_set.selectedDocumentIdsForSubmission = data;
-
-            if (this.shareMode === DocumentShareMode.SUBMISSION) {
-              data.length ? this.onChange(data) : this.onChange(null);
-            }
-          }
-        });
-
-        modal.present();
-
-      }, (error) => {
-        this.popup.showToast({text:`documents.open-problem`});
+    const modal = this.modalCtrl
+      .create("Documents", {
+        documentSet: this.element.documents_set,
+        shareMode: this.shareMode,
+        readOnly: this.isReadOnlyMode()
       });
+
+    modal.onDidDismiss((data: number[]) => {
+      console.log('Getting back data form the document', data ? JSON.stringify(data) : data);
+      if (data && Array.isArray(data)) {
+        this.element.documents_set.selectedDocumentIdsForSubmission = data;
+
+        if (this.shareMode === DocumentShareMode.SUBMISSION) {
+          data.length ? this.onChange(data) : this.onChange(null);
+        }
+      }
+    });
+
+    modal.present();
+
   }
 
   prepareSelectedDocuments() {

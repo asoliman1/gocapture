@@ -1,14 +1,7 @@
-import {Component} from '@angular/core';
-import {
-  NavController,
-  NavParams,
-
-} from 'ionic-angular';
-import {Form} from "../../model";
-import {ViewController} from "ionic-angular/navigation/view-controller";
-import {LocalStorageProvider} from "../../providers/local-storage/local-storage";
-import {ThemeProvider} from "../../providers/theme/theme";
-
+import { Component } from '@angular/core';
+import { NavParams,ViewController } from 'ionic-angular';
+import { Form } from "../../model";
+import { ThemeProvider } from "../../providers/theme/theme";
 
 @Component({
   selector: 'form-instructions',
@@ -20,13 +13,15 @@ export class FormInstructions {
   isModal: boolean = false;
   selectedTheme: String;
 
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private viewCtrl: ViewController,
-              public themeProvider: ThemeProvider) {
+  constructor(
+    private navParams: NavParams,
+    private viewCtrl: ViewController,
+    public themeProvider: ThemeProvider) {
+
     this.form = this.navParams.get("form");
     this.isModal = this.navParams.get("isModal");
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+
   }
 
   onDismiss() {

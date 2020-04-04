@@ -10,8 +10,6 @@ import { ThemeProvider } from "../../providers/theme/theme";
 import { IDocument, IDocumentSet } from "../../model";
 import { File } from '@ionic-native/file';
 import { FileOpener } from "@ionic-native/file-opener";
-import { ShareService } from "../../services/share-service";
-import { DocumentsSyncClient } from "../../services/documents-sync-client";
 import { Popup } from '../../providers/popup/popup';
 
 export enum DocumentShareMode {
@@ -41,8 +39,6 @@ export class Documents implements AfterViewInit {
     private file: File,
     private fileOpener: FileOpener,
     private popup: Popup,
-    private documentsSyncClient: DocumentsSyncClient,
-    private shareService: ShareService,
     public  viewCtrl: ViewController,
   ) {
     this.documentSet = this.navParams.get('documentSet');
@@ -68,9 +64,7 @@ export class Documents implements AfterViewInit {
   }
 
   async openDocument(document: IDocument) {
-    if (!document.file_path) {
-      return this.documentsSyncClient.showSyncingToast();
-    }
+  
     this.util.setPluginPrefs()
     // open the PDF viewer
     let filename = document.file_path.split('/').pop();
@@ -96,45 +90,45 @@ export class Documents implements AfterViewInit {
   }
 
   shareDocuments() {
-    const links = this.prepareDocumentLinks();
+    // const links = this.prepareDocumentLinks();
 
-    const buttons: any = [
-      {
-        text: 'Email',
-        icon: "mail",
-        handler: async () => {
-          console.log('email clicked');
-          const emailLinks = this.prepareDocumentLinks('\n');
-          await this.shareService.shareViaEmail(emailLinks, this.documentSet.name, null);
-        }
-      },
-      {
-        text: 'SMS',
-        icon: "chatbubbles",
-        handler: async () => {
-          console.log('sms clicked');
-          await this.shareService.shareViaSMS(links, null);
-        }
-      },
-      {
-        text: 'WhatsApp',
-        icon: "logo-whatsapp",
-        handler: async () => {
-          console.log('WhatsApp clicked');
-          await this.shareService.shareViaWhatsApp(links);
-        }
-      },
-      {
-        text: 'Cancel',
-        role: 'cancel',
-      }
-    ];
+    // const buttons: any = [
+    //   {
+    //     text: 'Email',
+    //     icon: "mail",
+    //     handler: async () => {
+    //       console.log('email clicked');
+    //       const emailLinks = this.prepareDocumentLinks('\n');
+    //       await this.shareService.shareViaEmail(emailLinks, this.documentSet.name, null);
+    //     }
+    //   },
+    //   {
+    //     text: 'SMS',
+    //     icon: "chatbubbles",
+    //     handler: async () => {
+    //       console.log('sms clicked');
+    //       await this.shareService.shareViaSMS(links, null);
+    //     }
+    //   },
+    //   {
+    //     text: 'WhatsApp',
+    //     icon: "logo-whatsapp",
+    //     handler: async () => {
+    //       console.log('WhatsApp clicked');
+    //       await this.shareService.shareViaWhatsApp(links);
+    //     }
+    //   },
+    //   {
+    //     text: 'Cancel',
+    //     role: 'cancel',
+    //   }
+    // ];
 
-    this.popup.showActionSheet(
-      'documents.how-to-send',
-      buttons,
-      this.selectedTheme.toString()
-    );
+    // this.popup.showActionSheet(
+    //   'documents.how-to-send',
+    //   buttons,
+    //   this.selectedTheme.toString()
+    // );
 
   }
 

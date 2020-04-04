@@ -124,35 +124,35 @@
     </ion-item>
 
     <!--IMAGE-->
-    <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <!-- <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier"></image-item>
-    </ion-item>
+    </ion-item> -->
 
     <!--BUSINESS CARD-->
-    <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <!-- <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier" [form]="form" [submission]="submission"
         (onProcessingEvent)="onProcessing($event)">
       </business-card>
-    </ion-item>
+    </ion-item> -->
 
     <!--SIGNATURE-->
-    <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+    <!-- <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
       <signature [readonly]="readOnly" [isEditing]="isEditing" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier">
       </signature>
-    </ion-item>
+    </ion-item> -->
 
     <!--BADGE-->
-    <badge padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
+    <!-- <badge padding *ngSwitchCase="'barcode'" [readonly]="readOnly" item-content [element]="element"
       [formGroup]="theForm" [formControlName]="element.identifier" [form]="form" [submission]="submission"
       [activation]="activation" [class.hidden]="element.is_hidden"
       (onProcessingEvent)="onProcessing($event)" (doSubmit)="canSubmitForm($event)">
-    </badge>
+    </badge> -->
 
     <!--HTML-BLOCK-->
     <html-block *ngSwitchCase="'section'" [element]=" element" [rootGroup]="theForm" [readonly]="readOnly"
@@ -160,10 +160,10 @@
     </html-block>
 
     <!--AUDIO-->
-    <goc-audio *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+    <!-- <goc-audio *ngSwitchCase="'audio'" [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
       [formControlName]="element.identifier" [form]="form" [submission]="submission" [class.hidden]="element.is_hidden"
       (onProcessingEvent)="onProcessing($event)">
-    </goc-audio>
+    </goc-audio> -->
 
     <!-- DOCUMENTS -->
     <!-- <ion-item > -->
@@ -174,9 +174,9 @@
     <!-- </ion-item> -->
 
 
-    <!-- <ion-item *ngSwitchDefault>
+    <!-- <div *ngSwitchDefault>
       <ion-label>Coming soon! A component for {{element.type}}</ion-label>
-    </ion-item> -->
+    </div> -->
 
   </div>
 </div>

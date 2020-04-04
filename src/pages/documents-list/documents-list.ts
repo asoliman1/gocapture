@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {IonicPage, ModalController, NavController, NavParams} from 'ionic-angular';
 import {Form, IDocumentSet} from "../../model";
-import {DocumentsService} from "../../services/documents-service";
 import {ThemeProvider} from "../../providers/theme/theme";
 import {unionBy} from 'lodash';
 import { Popup } from '../../providers/popup/popup';
@@ -23,7 +22,6 @@ export class DocumentsListPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private modal: ModalController,
-    private documentsService: DocumentsService,
     private popup: Popup,
     private themeService: ThemeProvider
   ) {
@@ -48,18 +46,18 @@ export class DocumentsListPage {
   }
 
   openDocuments(documentSet: IDocumentSet) {
-    this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
-      if (documents && documents.length) { 
-        documentSet.documents = unionBy(documents, documentSet, 'id');
-      }
+    // this.documentsService.getDocumentsByIds(documentSet.documents.map((d) => d.id)).subscribe((documents) => {
+    //   if (documents && documents.length) { 
+    //     documentSet.documents = unionBy(documents, documentSet, 'id');
+    //   }
 
-      this.modal.create("Documents", { documentSet }).present();
-    }, (error) => {
-      console.log('SOMETHING WENT WRONG OPENING THE DOCUMENT SET');
-      console.log(JSON.stringify(error));
+    //   this.modal.create("Documents", { documentSet }).present();
+    // }, (error) => {
+    //   console.log('SOMETHING WENT WRONG OPENING THE DOCUMENT SET');
+    //   console.log(JSON.stringify(error));
 
-     this.popup.showToast({text : `documents.open-problem`})
-    });
+    //  this.popup.showToast({text : `documents.open-problem`})
+    // });
   }
 
 }

@@ -1,4 +1,4 @@
-import { SyncClient } from './../services/sync-client';
+import { FormCapture } from './../views/form-capture/form-capture';
 import { IonicStorageModule } from '@ionic/storage';
 import { ActivationViewPage } from './../pages/activation-view/activation-view';
 import { Keyboard } from '@ionic-native/keyboard';
@@ -6,7 +6,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MyApp } from './app.component';
-import { Main } from "../views/main";
 import { FormSummary } from "../views/form-summary";
 import { FormInstructions } from "../views/form-instructions";
 import { RESTClient } from "../services/rest-client";
@@ -32,7 +31,6 @@ import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
-import { SearchActivationsPage } from '../views/search-activations/search-activations';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -41,9 +39,7 @@ import { Util } from "../util/util";
 import { HTTP } from "@ionic-native/http";
 import { ThemeProvider } from '../providers/theme/theme';
 import { PipesModule } from '../pipes/pipes.module';
-import { LocalStorageProvider } from '../providers/local-storage/local-storage';
 import { Ndef, NFC } from "@ionic-native/nfc";
-import { AudioCaptureService } from "../services/audio-capture-service";
 import { Media } from "@ionic-native/media";
 import { PhotoLibrary } from "@ionic-native/photo-library";
 import { LocalNotifications } from '@ionic-native/local-notifications';
@@ -52,26 +48,21 @@ import { Vibration } from "@ionic-native/vibration";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { DocumentViewer } from "@ionic-native/document-viewer";
 import { FileOpener } from "@ionic-native/file-opener";
-import { DocumentsService } from "../services/documents-service";
 import { SocialSharing } from "@ionic-native/social-sharing";
 import { SubmissionMapper } from "../services/submission-mapper";
 import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
 import { formViewService } from '../components/form-view/form-view-service';
-import { ComponentsModule } from "../components/components.module";
-import { NgSelectModule } from "@ng-select/ng-select";
-import { FormsModule } from "@angular/forms";
 import { FormsProvider } from '../providers/forms/forms';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
-import { ContactsProvider } from '../providers/contacts/contacts';
 import { Intercom } from '@ionic-native/intercom';
-import { ActivationsPage } from '../views/activations/activations';
 import { ActivationsProvider } from '../providers/activations/activations';
 import { TranslateConfigService } from '../services/translate/translateConfigService';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { FormComponentsModule } from '../components/form-view/form-components.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -79,16 +70,14 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp,
-    Main,
+    FormCapture,
     FormSummary,
     FormInstructions,
     ProspectSearch,
     MyCurrencyDirective,
     StationsPage,
     ScreenSaverPage,
-    ActivationsPage,
     ActivationViewPage,
-    SearchActivationsPage,
   ],
   imports: [
     BrowserModule,
@@ -101,9 +90,7 @@ export function createTranslateLoader(http: HttpClient) {
     TextMaskModule,
     PipesModule,
     IonicImageLoader.forRoot(),
-    ComponentsModule,
-    NgSelectModule,
-    FormsModule,
+    FormComponentsModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -117,15 +104,13 @@ export function createTranslateLoader(http: HttpClient) {
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    Main,
+    FormCapture,
     FormSummary,
     FormInstructions,
     ProspectSearch,
     StationsPage,
     ScreenSaverPage,
-    ActivationsPage,
     ActivationViewPage,
-    SearchActivationsPage,
   ],
   exports: [],
   providers: [
@@ -156,8 +141,6 @@ export function createTranslateLoader(http: HttpClient) {
     Popup,
     Util,
     ThemeProvider,
-    LocalStorageProvider,
-    AudioCaptureService,
     Media,
     PhotoViewer,
     PhotoLibrary,
@@ -168,19 +151,15 @@ export function createTranslateLoader(http: HttpClient) {
     AppPreferences,
     DocumentViewer,
     FileOpener,
-    DocumentsService,
     SocialSharing,
     SubmissionMapper,
     Insomnia,
     SubmissionsProvider,
     formViewService,
     Keyboard,
-    ContactsProvider,
     Intercom,
     ActivationsProvider,
     TranslateConfigService,
-    SyncClient
-
   ]
 })
 export class AppModule { }

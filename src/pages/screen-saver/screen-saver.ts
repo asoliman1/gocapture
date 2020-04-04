@@ -1,4 +1,3 @@
-import { StatusBar } from '@ionic-native/status-bar';
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ViewController, Slides } from 'ionic-angular';
 
@@ -20,7 +19,7 @@ export class ScreenSaverPage {
   constructor(public navCtrl: NavController, 
     public navParams: NavParams, 
     private viewCtrl: ViewController,
-    private StatusBar: StatusBar) {
+  ) {
     this.eventStyle = this.navParams.data.event_style;
   }
 
@@ -35,14 +34,5 @@ export class ScreenSaverPage {
   slideChanged() {
     this.currentIndex = this.slides.getActiveIndex();
   }
-
-  ionViewWillEnter() {
-    this.StatusBar.hide()
-  }
-
-  ionViewWillLeave() {
-    this.StatusBar.show()
-  }
-
 
 }

@@ -201,5 +201,13 @@ export class Form extends BaseForm {
 		return elementsIds;
 	}
 
+	public static parse(data : any) : Form{
+		let f = new Form();
+		Object.keys(data).forEach(key => {
+			f[key] = data[key];
+		});
+		f.computeIdentifiers();
+		return f;
+	}
 
 }

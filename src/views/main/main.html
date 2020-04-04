@@ -1,25 +1,4 @@
-<ion-menu [content]="content" >
-  <ion-content class="sidemenu">
-    <div class="profile">
-      <ion-item>
-        <ion-avatar item-left>
-          <img-loader [src]="user?.user_profile_picture" *ngIf="user?.user_profile_picture" useImg></img-loader>
-          <div *ngIf="!user?.user_profile_picture"> {{user?.first_name | firstLetter}}{{user?.last_name | firstLetter}} </div>
-        </ion-avatar>
-        <h1>{{'sideMenu.hi' | translate}}, {{user?.first_name}}</h1>
-        <h3>{{'sideMenu.welcome-back' | translate}}</h3>
-      </ion-item>
-    </div>
-    <ion-list color="dark">
-      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
-        <ion-icon  item-left [name]="p.icon"></ion-icon>
-        {{p.title | translate}}
-      </button>
-    </ion-list>
-  </ion-content>
-
-</ion-menu>
-
-<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
-<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+<ion-content class="bg" text-center>
+  <small *ngIf="loading" >Loading...</small>
+</ion-content>
 
