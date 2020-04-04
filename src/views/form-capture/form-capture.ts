@@ -1,10 +1,8 @@
-import { FormElement } from './../../model/form-element';
 import { RESTClient } from './../../services/rest-client';
 import { ActivationViewPage } from './../../pages/activation-view/activation-view';
 import { ACTIVATIONS_DISPLAY_FORM } from './../../constants/activations-display';
 import { Activation } from './../../model/activation';
 import { FormsProvider } from './../../providers/forms/forms';
-import { SettingsService } from './../../services/settings-service';
 import { formViewService } from './../../components/form-view/form-view-service';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Util } from './../../util/util';
@@ -24,7 +22,8 @@ import {
   NavParams,
   Platform,
   Popover,
-  Modal
+  Modal,
+  IonicPage
 } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import {
@@ -36,7 +35,6 @@ import {
   SubmissionStatus,
 } from "../../model";
 
-import { FormView } from "../../components/form-view";
 import { ProspectSearch } from "../prospect-search";
 import { Popup } from "../../providers/popup/popup";
 
@@ -45,7 +43,6 @@ import { ThemeProvider } from "../../providers/theme/theme";
 import { FormInstructions } from "../form-instructions";
 import { LocalStorageProvider } from "../../providers/local-storage/local-storage";
 import { Vibration } from "@ionic-native/vibration";
-import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { ScannerType } from "../../components/form-view/elements/badge/Scanners/Scanner";
 import { Observable, Subscription } from "rxjs";
 import { AppPreferences } from "@ionic-native/app-preferences";
@@ -57,11 +54,15 @@ import { Station } from '../../model/station';
 import { settingsKeys } from '../../constants/constants';
 import { Intercom } from '@ionic-native/intercom';
 import { SubmissionsProvider } from '../../providers/submissions/submissions';
-import { FormMapEntry } from '../../services/sync-client';
 import { Badge } from '../../components/form-view/elements/badge';
 import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
-import { FormGroup, AbstractControl } from '@angular/forms';
-
+import { AbstractControl } from '@angular/forms';
+import { FormView } from '../../components/form-view/form-view';
+import { FormMapEntry } from '../../services/sync-client';
+@IonicPage({
+  name: 'FormCapture',
+  segment: 'form/:id'
+})
 @Component({
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
@@ -136,18 +137,11 @@ export class FormCapture implements AfterViewInit {
     private popup: Popup,
     private themeProvider: ThemeProvider,
     private localStorage: LocalStorageProvider,
-    private vibration: Vibration,
-    private rapidCaptureService: RapidCaptureService,
-    private appPreferences: AppPreferences,
     private utils: Util,
     private formViewService: formViewService,
     private formsProvider: FormsProvider,
-    private settingsService: SettingsService,
     private restClient: RESTClient,
-    private intercom: Intercom,
-    private insomnia: Insomnia,
     private submissionsProvider: SubmissionsProvider,
-    private statusBar: StatusBar
   ) {
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     // A.S
@@ -155,18 +149,14 @@ export class FormCapture implements AfterViewInit {
     this.getSavedLocation()
     this.setupForm();
     this.convertCaptureImageSrc();
-    if (this.activation) {
-      this.statusBar.hide();
-    }
-    console.log(this.activation);
 
   }
 
 
   getSavedLocation() {
-    this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data) => {
-      if (data) this.location = JSON.parse(data);
-    })
+    // this.settingsService.getSetting(settingsKeys.LOCATION).subscribe((data) => {
+    //   if (data) this.location = JSON.parse(data);
+    // })
   }
 
 
@@ -215,13 +205,7 @@ export class FormCapture implements AfterViewInit {
 
   private setupIdleMode() {
     if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode && !this.activation) {
-      this.insomnia.keepAwake()
-        .then(() => this.handleIdleMode()
-        ).catch((err) => {
-          console.log(err)
-          this.handleIdleMode()
-        }
-        )
+        this.handleIdleMode()
     }
   }
 
@@ -330,7 +314,8 @@ export class FormCapture implements AfterViewInit {
 
   private convertCaptureImageSrc() {
     let win: any = window;
-    this.captureBg = win.Ionic.WebView.convertFileSrc(this.form.event_style.capture_background_image.path);
+    // if(this.platform.is('mobile'))
+    this.captureBg = this.form.event_style.capture_background_image.path || this.form.event_style.capture_background_image.url;
   }
 
   private setStation(submission) {
@@ -339,88 +324,6 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  private initiateRapidScanMode() {
-    if (this.isRapidScanMode) {
-      this.handleRapidScanModeSources();
-    }
-  }
-
-  //Rapid scan
-  private handleRapidScanModeSources() {
-    if (this.isReadOnly(this.submission)) {
-      return;
-    }
-    this.scanSources = this.getScanSources();
-
-    this.openRapidScanMode();
-  }
-
-  private async startRapidScanModeForSource(source: string) {
-    this.selectedScanSource = source;
-
-    this.popup.showLoading({ text: 'alerts.loading.loading-scanner' });
-
-    let element = this.getElementForId(this.selectedScanSource);
-    this.startRapidScan(element);
-  }
-
-  private startRapidScan(element) {
-    //save form id for which we have rapidscan
-    this.appPreferences.store("rapidScan", "formId", this.form.form_id);
-    if (this.selectedStation) {
-      this.appPreferences.store("rapidScan-" + this.form.form_id, "stationId", this.selectedStation.id);
-    }
-    this.utils.setPluginPrefs('rapid-scan');
-    this.appPreferences.store("rapidScan-" + this.form.form_id, "elementId", element.id);
-    this.rapidCaptureService.start(element, this.form.form_id + "").then((items) => {
-      this.popup.dismiss('loading');
-      setTimeout(() => {
-        this.utils.rmPluginPrefs('rapid-scan');
-      }, 500);
-      if (items.length)
-        this.processRapidScanResult(items, element);
-    }).catch((err) => {
-      this.popup.dismiss('loading');
-      setTimeout(() => {
-        this.utils.rmPluginPrefs('rapid-scan');
-      }, 500);
-    });
-
-    this.appPreferences.store("rapidScan-" + this.form.form_id, "captureType", this.rapidCaptureService.getType());
-  }
-
-
-  private processRapidScanResult(items, element) {
-    // A.S GOC-322
-    this.popup.showToast({ text: 'toast.uploading-leads' }, "bottom", "success");
-
-    let submissions = [];
-
-    let i = 100;
-    let timestamp = new Date().getTime();
-    for (let item of items) {
-      let submId = parseInt(timestamp + "" + i);
-      let saveSubmObservable = this.saveSubmissionWithData(item, element, submId);
-      i++;
-      submissions.push(saveSubmObservable);
-    }
-
-    Observable.zip(...submissions).subscribe(() => {
-      //barcodes are saved to the database so we can clear the defaults
-      this.rapidCaptureService.removeDefaults(this.form.form_id);
-      this.formsProvider.updateFormSubmissions(this.form.form_id);
-      this.navCtrl.pop().then(() => {
-        this.client.doSync(this.form.form_id).subscribe(() => {
-          console.log('rapid scan synced items');
-        }, (error) => {
-          console.error(error);
-        });
-      });
-    }, (error) => {
-      console.error(error);
-      this.navCtrl.pop();
-    })
-  }
 
   //saving subm from rapid scan mode
   private saveSubmissionWithData(data, element, submId) {
@@ -494,8 +397,6 @@ export class FormCapture implements AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.intercom.setInAppMessageVisibility('GONE');
-    this.intercom.setLauncherVisibility('GONE');
 
     this.backUnregister = this.platform.registerBackButtonAction(() => {
       this.doBack();
@@ -548,15 +449,6 @@ export class FormCapture implements AfterViewInit {
 
 
   ionViewWillLeave() {
-    this.intercom.setInAppMessageVisibility('VISIBLE');
-
-    if (this.backUnregister) {
-      this.backUnregister();
-    }
-    if (!this.activation) {
-      this.navbar.backButtonClick = this["oldClick"];
-    }
-
     if (this.stationsPopover) {
       this.stationsPopover.dismiss();
     }
@@ -565,9 +457,6 @@ export class FormCapture implements AfterViewInit {
 
   ionViewDidLeave() {
     this.menuCtrl.enable(true);
-    this.insomnia.allowSleepAgain()
-      .then(() => { })
-      .catch((err) => console.log(err));
     this.buttonBar.unsubscribe();
   }
 
@@ -659,12 +548,10 @@ export class FormCapture implements AfterViewInit {
         this.popup.showAlert('Warning', { text: 'alerts.activation.message' }, buttons);
       }
       else {
-        this.statusBar.show();
         this.navCtrl.pop();
       }
     }
     else {
-      this.statusBar.show();
       this.navCtrl.pop();
     }
   }
@@ -690,8 +577,6 @@ export class FormCapture implements AfterViewInit {
         }
       }
     ];
-
-    this.vibration.vibrate(500);
 
     this.popup.showAlert("alerts.warning", { text: 'form-capture.unsubmitted-data-msg' }, buttons);
   }
@@ -767,17 +652,7 @@ export class FormCapture implements AfterViewInit {
     this.handleValidations();
     this.handleSubmitParams();
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
-      this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
-        this.submission.updateFields(this.form);
-        let submitEmail = data.filter((d) => d.email == this.submission.email);
-        if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
-          if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
-          else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
-          this.isActivationProcessing = false;
-        } else {
-          this.goToSubmit(shouldSyncData);
-        }
-      })
+    
     } else {
       this.goToSubmit(shouldSyncData);
     }
@@ -820,7 +695,6 @@ export class FormCapture implements AfterViewInit {
           return;
         }
 
-        this.formsProvider.updateFormSubmissions(this.form.form_id);
         this.kioskModeCallback();
       }, (err) => {
         console.error(err);
@@ -981,7 +855,6 @@ export class FormCapture implements AfterViewInit {
   }
 
   onValidationChange(valid: boolean) {
-    console.log('validation event value :'+valid);
     this.valid = valid;
     setTimeout(() => {
       this.errorMessage.text = '';
@@ -992,7 +865,6 @@ export class FormCapture implements AfterViewInit {
   }
 
   onProcessing(event) {
-    console.log("onProcessing", JSON.parse(event))
     this.isProcessing = JSON.parse(event);
     this.isActivationProcessing = JSON.parse(event);
     if (this.isProcessing || this.isActivationProcessing) this.stopIdleMode();
@@ -1155,10 +1027,8 @@ export class FormCapture implements AfterViewInit {
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
-      }, false, null ,this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
-    } else {
-      this.initiateRapidScanMode();
-    }
+      }, false, null).onDidDismiss((data) => this.onStationDismiss(data))
+    } 
   }
 
   private onStationDismiss(data) {
@@ -1168,7 +1038,6 @@ export class FormCapture implements AfterViewInit {
       }
     } else {
       this.selectedStation = data.station;
-      this.initiateRapidScanMode();
     }
   }
 
@@ -1179,7 +1048,6 @@ export class FormCapture implements AfterViewInit {
   }
 
   tryClearDocumentsSelection() {
-    console.log("tryClearDocumentsSelection")
     this.form.elements
       .filter((d) => d.type === 'documents')
       .forEach((element) => {
@@ -1187,53 +1055,6 @@ export class FormCapture implements AfterViewInit {
           element.documents_set.selectedDocumentIdsForSubmission = [];
         }
       });
-  }
-
-  openRapidScanMode() {
-    if (this.isReadOnly(this.submission)) {
-      return;
-    }
-
-    if (this.isRapidScanMode && this.scanSources) {
-      if (this.scanSources.length == 1) {
-        this.startRapidScanModeForSource(this.scanSources[0].id);
-      } else if (this.scanSources.length > 1) {
-        this.popup.showAlert(
-          'form-capture.scan-mode',
-          { text: '' },
-          [
-            {
-              text: 'general.cancel',
-              role: 'cancel',
-              handler: () => {
-                this.navCtrl.pop()
-              }
-            },
-            {
-              text: 'general.ok',
-              handler: (scanSource) => {
-                if (!scanSource) {
-                  return false;
-                }
-                this.selectedScanSource = scanSource;
-                this.startRapidScanModeForSource(this.selectedScanSource);
-              },
-            },
-
-          ],
-          this.selectedTheme + ' gc-alert',
-          this.scanSources.map((e) => {
-            return {
-              label: e.name,
-              value: e.id,
-              type: 'radio',
-              checked: this.selectedStation && e.id == this.selectedStation.id
-            }
-          })
-        );
-
-      }
-    }
   }
 
   // A.S

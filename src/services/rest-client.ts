@@ -16,15 +16,12 @@ import {
 	FileUploadResponse,
 	FormSubmitResponse,
 	RecordsResponse,
-	SubmissionResponse,
 	FileDownloadResponse
 } from "../model/protocol";
 import { Device } from "@ionic-native/device";
 import { StatusResponse } from "../model/protocol/status-response";
 import { isProductionEnvironment } from "../app/config";
 import { retry } from "rxjs/operators/retry";
-import { SubmissionsRepository } from "./submissions-repository";
-import { SubmissionMapper } from "./submission-mapper";
 import { AppVersion } from '@ionic-native/app-version';
 import { Platform } from 'ionic-angular/platform/platform';
 import { Activation } from '../model/activation';
@@ -48,8 +45,6 @@ export class RESTClient {
 	private bundleId: string;
 
 	constructor(private http: Http,
-		private submissionsRepository: SubmissionsRepository,
-		private submissionMapper: SubmissionMapper,
 		private appVersion: AppVersion,
 		private platform: Platform,
 		private translateConfigService: TranslateConfigService,
@@ -75,66 +70,6 @@ export class RESTClient {
 				console.error(error);
 			})
 		})
-	}
-	/**
-	 *
-	 * @returns Observable
-	 */
-	public authenticate(req: AuthenticationRequest): Observable<User> {
-		req.device_platform = <any>this.device.platform;
-		req.device_model = this.device.model;
-		req.device_manufacture = this.device.manufacturer;
-		req.device_os_version = this.device.version;
-		req.device_uuid = this.device.uuid;
-		req.bundle_id = this.bundleId;
-		req.localization = this.translateConfigService.defaultLanguage();
-		return this.call<DataResponse<User>>("POST", "/authenticate.json", req)
-			.map(resp => {
-				if (resp.status != "200") {
-					this.errorSource.next(resp);
-				}
-				this.token = resp.data.access_token;
-				return resp.data;
-			});
-	}
-	/**
-	 *
-	 * @returns Observable
-	 */
-	public getForms(offset: number = 0, name?: string, updatedAt?: Date, createdAt?: Date): Observable<RecordsResponse<Form>> {
-		var opts: any = {
-			form_type: "device",
-			mode: "device_sync"
-		};
-		if (name) {
-			opts.name = name;
-		}
-		if (updatedAt) {
-			opts.updated_at = updatedAt.toISOString().split(".")[0] + "+00:00";
-		}
-		if (createdAt) {
-			opts.created_at = createdAt.toISOString().split(".")[0] + "+00:00";
-		}
-		if (offset > 0) {
-			opts.offset = offset;
-		}
-
-		return this.call<RecordsResponse<Form>>("GET", "/forms.json", opts).map(resp => {
-			if (resp.status != "200") {
-				this.errorSource.next(resp);
-			}
-			let result: Form[] = [];
-			resp.records.forEach(record => {
-				let f = new Form();
-				Object.keys(record).forEach(key => {
-					f[key] = record[key];
-				});
-				f.computeIdentifiers();
-				result.push(f);
-			});
-			resp.records = result;
-			return resp;
-		});
 	}
 
 	public getAllActivations(forms: Form[], params: any) {
@@ -187,8 +122,6 @@ export class RESTClient {
 					 })
 				 }
 			 });
-			
-
 		});
 	}
 
@@ -203,50 +136,6 @@ export class RESTClient {
 
 	}
 
-	public getActivationSub(params: any): any{
-		let opts: any = {
-			...params
-		};
-		return this.getAll<{ records: ActivationSubmissionsReview[] }>("/activation/submissions.json", opts).map(resp => {
-			return resp;
-		});
-
-	}
-
-	public getActivationSubmissions(params: any ): any{
-		let opts: any = {
-			...params
-		};
-		return this.getActSubResponse<{ records: any}>("/activation/submissions.json", opts).map(resp => {
-			return resp;
-		});
-	}
-
-	private getActSubResponse<T>(relativeUrl: string, content: any): Observable<T> {
-		let response = new Observable<T>((obs: Observer<T>) => {
-			var result: T[] = [];
-			let handler = (data: RecordsResponse<T>) => {
-				var records:any;
-				if (!data.records) {
-
-				}  else {
-					records = data;
-				}
-
-				result.push.apply(result, records);
-				obs.next(records);
-				
-					obs.complete();
-			};
-			let doTheCall = () => {
-	
-				this.call<RecordsResponse<T>>("GET", relativeUrl, content).subscribe(handler, (err) => obs.error(err));
-			};
-			doTheCall();
-
-		});
-		return response;
-	}
 
 	public getFormActivations(form: Form, params: any, lastSyncDate?: Date): Observable<Activation[]> {
 		let opts: any = {
@@ -260,40 +149,6 @@ export class RESTClient {
 		});
 	}
 
-	public updateAccountSettings(settings: {}): Observable<User> {
-		return this.call<DataResponse<User>>("POST", "/device/settings.json", settings)
-			.map(resp => {
-				if (resp.status != "200") {
-					this.errorSource.next(resp);
-				}
-				return resp.data;
-			});
-	}
-
-	public getAllForms(lastSyncDate: Date): Observable<{ forms: Form[], availableForms: number[] }> {
-		let opts: any = {
-			form_type: "device",
-			mode: "device_sync",
-		};
-		if (lastSyncDate) {
-			opts.updated_at = lastSyncDate.toISOString().split(".")[0] + "+00:00";
-		}
-		return this.getAll<{ records: Form[], available_forms: number[] }>("/forms.json", opts).map(resp => {
-			let result: { forms: Form[], availableForms: number[] } = { forms: [], availableForms: resp[0].available_forms };
-			resp.forEach(record => {
-				record.records.forEach(form => {
-					let f = new Form();
-					Object.keys(form).forEach(key => {
-						f[key] = form[key];
-					});
-					result.forms.push(f);
-					f.computeIdentifiers();
-				})
-			});
-			return result;
-		});
-	}
-
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {
 		return this.call<BadgeResponse>("GET", "/barcode/scan.json",
 			{ barcode_id: barcodeId, provider_id: providerId, is_rapid_scan: isRapidScan, form_id: formId })
@@ -302,106 +157,12 @@ export class RESTClient {
 			});
 	}
 
-	public getSubmissions(form: Form, lastSyncDate: Date): Observable<FormSubmission[]> {
-		let opts: any = {
-			form_id: form.id,
-			form_type: "device"
-		};
-		if (lastSyncDate) {
-			opts.date_from = lastSyncDate.toISOString().split(".")[0] + "+00:00";
-		}
-		return this.getAllItems<SubmissionResponse>("/forms/submissions.json", opts)
-			.map(resp => {
-				if (resp.deletedItems) {
-					this.submissionsRepository.handleDeletedSubmissions(resp.deletedItems).subscribe(() => {
-						console.log('Removed deleted submissions - DONE');
-					});
-				}
-
-				if (resp.deletedHoldItems) {
-					this.submissionsRepository.handleDeletedHoldSubmissions(resp.deletedHoldItems).subscribe(() => {
-						console.log('Removed deleted HOLD submissions - DONE');
-					});
-				}
-				return this.handleSubmissionsResponse(form, resp.items);
-			});
-	}
-
-	private handleSubmissionsResponse(form, items) {
-		let data: FormSubmission[] = [];
-		items.forEach((item: SubmissionResponse) => {
-			let formSubmmission = this.submissionMapper.map(form, item);
-
-			data.push(formSubmmission);
-		});
-		return data;
-	}
-
-
-	public getAllSubmissions(forms: Form[]): Observable<{ submissions: FormSubmission[], form: Form }> {
-		return new Observable<{ submissions: FormSubmission[], form: Form }>((obs: Observer<{ submissions: FormSubmission[], form: Form }>) => {
-			var result: { submissions: FormSubmission[], form: Form } = { submissions: [], form: null };
-			if (!forms || forms.length == 0) {
-				setTimeout(() => {
-					obs.next(result);
-					obs.complete();
-				});
-				return;
-			}
-			var index = 0;
-			let syncDate = forms[index].lastSync && forms[index].lastSync.submissions ?
-				new Date(forms[index].lastSync.submissions) : null;
-			let handler = (data: FormSubmission[]) => {
-				result.submissions = data;
-				result.form = forms[index];
-				obs.next(result)
-				index++;
-				if (index < forms.length) {
-					syncDate = forms[index].lastSync && forms[index].lastSync.submissions ?
-						new Date(forms[index].lastSync.submissions) : null;
-					this.getSubmissions(forms[index], syncDate).subscribe(handler);
-				} else {
-					obs.complete();
-				}
-			};
-			this.getSubmissions(forms[index], syncDate).subscribe(handler);
-		});
-	}
+	
 
 
 	public getDocumentInfo(documentId: number): Observable<RecordsResponse<FileDownloadResponse>> {
 		return this.call<RecordsResponse<FileDownloadResponse>>('GET', '/files.json', { id: documentId })
 			.map((res) => res);
-	}
-
-	/**
-	 *
-	 * @returns Observable
-	 */
-	public registerDeviceToPush(device_token: string, receiveNotifications: boolean = true): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/register_to_notifications.json', {
-			device_token: device_token,
-			is_allow_to_receive_notification: receiveNotifications,
-			is_dev: !isProductionEnvironment
-		})
-			.map((resp: BaseResponse) => {
-				if (resp.status == "200") {
-					return true;
-				}
-				this.errorSource.next(resp);
-				return false;
-			});
-	}
-
-	public unauthenticate(token: string): Observable<boolean> {
-		return this.call<BaseResponse>("POST", '/devices/unauthorize.json', { "": "" })
-			.map((resp: BaseResponse) => {
-				if (resp.status == "200") {
-					return true;
-				}
-				this.errorSource.next(resp);
-				return false;
-			});
 	}
 
 	public validateAccessToken(access_token: string): Observable<StatusResponse<string>> {
@@ -483,7 +244,6 @@ export class RESTClient {
 	}
 
 	public submitActivation(data: ActivationSubmission): Observable<boolean> {
-		console.log("we are here in submit activation")
 		return this.call<BaseResponse>("POST", "/activations/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
 				console.log("response", resp)

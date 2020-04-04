@@ -1,6 +1,5 @@
 import { Util } from './../../util/util';
 import { formViewService } from './form-view-service';
-import { OcrSelector } from '../ocr-selector';
 import { Component, NgZone, Input, SimpleChange, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import {
   Form,
@@ -15,7 +14,6 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import { ModalController, Platform } from "ionic-angular";
-import { Activation } from '../../model/activation';
 
 @Component({
   selector: 'form-view',
@@ -78,8 +76,8 @@ export class FormView {
   }
 
   showSelection() {
-    let modal = this.modal.create(OcrSelector, { imageInfo: "", form: this.form, submission: this.submission });
-    modal.present();
+    // let modal = this.modal.create(OcrSelector, { imageInfo: "", form: this.form, submission: this.submission });
+    // modal.present();
   }
 
   ngAfterViewInit() {

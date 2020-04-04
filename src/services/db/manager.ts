@@ -66,12 +66,7 @@ export class Manager {
 	private initializeDb(platform: Platform, type: string): Observable<SQLiteObject> {
 		// console.log("Initialize " + type);
 		return new Observable<SQLiteObject>((obs: Observer<SQLiteObject>) => {
-			let db: SQLite = null;
-			if (platform.is("cordova")) {
-				db = new SQLite();
-			} else {
-				db = <any>new LocalSql();
-			}
+			let db: SQLite = <any>new LocalSql();;
 			// console.log("OPen db " + this.map[type].dbName);
 			let settings = {
 				name: this.map[type].dbName,

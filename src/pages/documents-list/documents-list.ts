@@ -32,14 +32,14 @@ export class DocumentsListPage {
   }
 
   private init() {
-    this.documentSets = this.form.elements
+    this.documentSets = this.form ? this.form.elements
       .filter((el) => el.type === 'documents' && el.documents_set)
       .map((el) => {
         return {
           ...el.documents_set,
           formId: parseInt(this.form.id)
         }
-      });
+      }) : [];
 
     this.themeService.getActiveTheme().subscribe((theme: string) => {
       this.selectedTheme = theme;

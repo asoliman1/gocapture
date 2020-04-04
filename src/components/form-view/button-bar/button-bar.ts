@@ -9,7 +9,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { FormReview } from '../../../views/form-review';
 import { DBClient } from '../../../services/db-client';
-import { FormCapture } from '../../../views/form-capture';
 import { ActionSheetButton } from 'ionic-angular/components/action-sheet/action-sheet-options';
 import { FabMenuItem } from '../fab-list/fab-list'
 
@@ -164,7 +163,7 @@ export class buttonBar implements OnInit {
     goToLastSubmission(submissions: FormSubmission[]) {
         let submission = submissions.pop();
         if (!this.isNoProcessedRapidScan(submission) || submission.id != -1) {
-            this.navCtrl.push(FormCapture, { form: this.form, submission: submission });
+            this.navCtrl.push('FormCapture', { form: this.form, submission: submission });
             return;
         }
     }

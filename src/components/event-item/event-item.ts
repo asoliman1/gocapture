@@ -18,14 +18,14 @@ export class EventItemComponent {
   @Input() isSyncing : boolean;
   @Input() activation : boolean = false;
 
-  imageLoading : boolean = true;
+  imageLoading : boolean = false;
   submissionsCounter : boolean;
 
   constructor() {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes['image']) this.checkImageDownload();
+    // if(changes['image']) this.checkImageDownload();
   }
 
   ngOnInit(){
@@ -36,8 +36,8 @@ export class EventItemComponent {
   }
 
   checkImageDownload(){
-    if(this.image && !this.activation) this.imageLoading = this.image.startsWith('https://');
-    else this.imageLoading = false;
+    // if(this.image && !this.activation) this.imageLoading = this.image.startsWith('https://');
+    // else this.imageLoading = false;
   }
 
 }

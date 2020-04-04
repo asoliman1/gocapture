@@ -2,9 +2,7 @@ import { formViewService } from './../../form-view-service';
 import { Subscription } from 'rxjs/Subscription';
 import { Device } from '@ionic-native/device';
 import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy } from '@angular/core';
-import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
-import { OcrSelector } from "../../../ocr-selector";
 import { FormElement, Form, FormSubmission } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
@@ -20,7 +18,6 @@ import { Popup } from "../../../../providers/popup/popup";
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 import { PhotoLibrary } from "@ionic-native/photo-library";
 import { ImageViewer } from "./image-viewer";
-import { SettingsService } from "../../../../services/settings-service";
 import { settingsKeys } from "../../../../constants/constants";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
 
@@ -64,7 +61,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
   private selectedTheme;
 
   //only for IOS
-  private needCrop = false;
+  private needCrop = true;
 
   constructor(private actionCtrl: ActionSheetController,
     private camera: Camera,
@@ -72,14 +69,12 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     private zone: NgZone,
     private platform: Platform,
     private modalCtrl: ModalController,
-    private imageProc: ImageProcessor,
     public fileService: File,
     public util: Util,
     private themeProvider: ThemeProvider,
     private popup: Popup,
     private photoViewer: PhotoViewer,
     private photoLibrary: PhotoLibrary,
-    private settingsService: SettingsService,
     private formViewService : formViewService,
     private screen: ScreenOrientation) {
 
@@ -89,11 +84,6 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
     this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
 
-    this.settingsService.getSetting(settingsKeys.AUTO_CROP).subscribe((data) => {
-      if (data) {
-        this.needCrop = JSON.parse(data)
-      }
-    })
   }
 
   // picture options
@@ -239,7 +229,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   private async doCapture(type: number, captureType: number = 1) {
 
-    await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
+    // await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
 
     let width = Math.min(this.platform.width(), this.platform.height());
 
@@ -275,7 +265,6 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
       let shouldRecognize = this.element.is_scan_cards_and_prefill_form == 1;
 
-      this.saveData({ dataUrl: imageData }, type, shouldRecognize, captureType);
 
       this.screen.unlock();
     }, (error) => {
@@ -290,24 +279,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     }, options);
   }
 
-  private saveData(data, type, shouldRecognize, captureType) {
 
-    let newFolder = this.fileService.dataDirectory + "leadliaison/images";
-    let newName = new Date().getTime() + '.jpg';
-    let promise = this.fileService.writeFile(newFolder, newName, this.imageProc.dataURItoBlob(data.dataUrl));
-
-    promise.then((entry) => {
-      console.log('Image was saved with success');
-      this.handleImageSaving(type, newFolder, newName, data, shouldRecognize, captureType);
-    },
-      (err) => {
-        console.error(err);
-        this.zone.run(() => {
-          this.frontLoading = false;
-          this.backLoading = false;
-        });
-      });
-  }
 
   private handleImageSaving(type, folder, name, data, shouldRecognize, captureType) {
     this.zone.run(() => {
@@ -317,15 +289,11 @@ export class BusinessCard extends BaseElement implements OnDestroy {
       this.backLoading = false;
 
       if (captureType == 1) {
-        this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES).subscribe((result) => {
-          if (String(result) == "true") {
             this.saveImageToGallery(type);
-          }
-        });
+        // });
       }
 
       if (shouldRecognize && type == this.FRONT) {
-        this.recognizeText(data);
       }
     });
   }
@@ -341,47 +309,6 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     });
   }
 
-  recognizeText(info: Info) {
-    let modal = this.modalCtrl.create(OcrSelector, { imageInfo: info, form: this.form, submission: this.submission });
-    modal.onDidDismiss((changedValues) => {
-      //this.currentVal.front = this.currentVal.front + "?" + parseInt(((1 + Math.random())*1000) + "");
-      // this.screen.unlock && this.screen.unlock();
-      if (changedValues) {
-        var vals = {};
-        for (let id in this.formGroup.controls) {
-          if (this.formGroup.controls[id]["controls"]) {
-            vals[id] = {};
-            for (let subid in this.formGroup.controls[id]["controls"]) {
-              vals[id][subid] = this.formGroup.controls[id]["controls"][subid].value;
-            }
-          } else {
-            vals[id] = this.formGroup.controls[id].value;
-          }
-        }
-        let ctrl: AbstractControl = null;
-        for (var id in changedValues) {
-          let match = /(\w+\_\d+)\_\d+/g.exec(id);
-          if (match && match.length > 0) {
-            if (!vals[match[1]]) {
-              vals[match[1]] = {};
-            }
-            vals[match[1]][id] = changedValues[id];
-            ctrl = this.formGroup.get(match[1]).get(id);
-            ctrl.markAsTouched();
-            ctrl.markAsDirty();
-          } else {
-            vals[id] = changedValues[id];
-            ctrl = this.formGroup.get(id);
-            ctrl.markAsTouched();
-            ctrl.markAsDirty();
-          }
-        }
-        this.formGroup.setValue(vals);
-      }
-    });
-    modal.present();
-    //screen.orientation.lock && screen.orientation.lock("landscape");
-  }
 
   setValue(type, newPath) {
     if (type == this.FRONT) {
@@ -412,30 +339,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     }
   }
 
-  flip(type) {
-    let image = "";
-    if (type == this.FRONT) {
-      image = this.currentVal.front;
-    } else {
-      image = this.currentVal.back;
-    }
-    let z = this.zone;
-    let t = this;
-    this.imageProc.flip(this.normalizeURL(image)).subscribe(info => {
-      let name = image.substr(image.lastIndexOf("/") + 1).replace(/\?.*/, "");
-      let folder = image.substr(0, image.lastIndexOf("/"));
-      this.fileService.writeFile(folder, name, this.imageProc.dataURItoBlob(info.dataUrl), { replace: true }).then((entry) => {
-        z.run(() => {
-          t.setValue(type, folder + "/" + name);
-          if (type == this.FRONT) {
-            this.theVal.front = this.adjustImagePath(this.currentVal.front);
-          } else {
-            this.theVal.back = this.adjustImagePath(this.currentVal.back);
-          }
-        });
-      });
-    });
-  }
+
 
   writeValue(obj: any): void {
     if (!obj) {
@@ -483,7 +387,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
 
   public async startCamera(type: number) {
 
-    await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
+    // await this.screen.lock(this.screen.ORIENTATIONS.PORTRAIT);
 
     let width = Math.min(screen.width, screen.height);
     let height = Math.max(screen.width, screen.height);
@@ -524,23 +428,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
           height: cameraPreviewOpts.width / 1.75
         };
 
-        self.imageProc.crop(imageData, crop).subscribe(data => {
 
-          let shouldRecognize = self.element.is_scan_cards_and_prefill_form == 1;
-
-          let newFolder = self.file.dataDirectory + "leadliaison/images";
-          let newName = new Date().getTime() + '.jpg';
-
-          let blob = self.imageProc.dataURItoBlob(data.dataUrl);
-          self.file.writeFile(newFolder, newName, blob).then((entry) => {
-            console.log(JSON.stringify(entry));
-
-            self.handleImageSaving(type, newFolder, newName, data, shouldRecognize, 1);
-          },
-            (err) => {
-              console.error(err);
-            });
-        });
       } else if (result["cameraBack"]) {
         self.frontLoading = false;
         self.backLoading = false;

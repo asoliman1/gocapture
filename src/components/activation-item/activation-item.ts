@@ -3,7 +3,6 @@ import { Component, Input } from '@angular/core';
 import { Form } from '../../model/form';
 import { NavController } from 'ionic-angular';
 import { ActivationViewPage } from '../../pages/activation-view/activation-view';
-import { FormCapture } from '../../views/form-capture';
 import { Popup } from './../../providers/popup/popup';
 import { BussinessClient } from '../../services/business-service';
 import { ActivationReviewPage } from '../../views/activation-review/activation-review';
@@ -37,7 +36,7 @@ export class ActivationItemComponent {
             if(this.client.isOnline()) this.navCtrl.push(ActivationViewPage,{activation:{...act}});
             else this.popup.showToast({text:'toast.no-internet-connection'}, "bottom");
           }
-          else this.navCtrl.push(FormCapture,{activation:act,form:this.form});
+          else this.navCtrl.push('FormCapture',{activation:act,form:this.form});
         }
       }
     ]

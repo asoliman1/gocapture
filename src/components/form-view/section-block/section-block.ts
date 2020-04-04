@@ -1,8 +1,8 @@
-import { FormElement } from './../../model/form-element';
-import { BaseElement } from './../form-view/elements/base-element';
-import { Colors } from '../../constants/colors';
+import { FormElement } from '../../../model/form-element';
+import { BaseElement } from '../elements/base-element';
+import { Colors } from '../../../constants/colors';
 import { Component, Input, ViewChild, Renderer2, OnChanges, forwardRef } from '@angular/core';
-import { ThemeProvider } from '../../providers/theme/theme';
+import { ThemeProvider } from '../../../providers/theme/theme';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({

@@ -1,10 +1,8 @@
 import { FormsProvider } from './../forms/forms';
 import { DBClient } from './../../services/db-client';
 import { Injectable } from '@angular/core';
-import { DownloadData, formSyncStatus } from '../../services/sync-client';
 import { Observable } from 'rxjs';
 import { RESTClient } from '../../services/rest-client';
-import { Form } from '../../model';
 
 /*
   Generated class for the ContactsProvider provider.
@@ -22,11 +20,11 @@ export class ContactsProvider {
   ) {
   }
 
-  public downloadContacts(currentSyncingForms: formSyncStatus[]): Observable<any> {
+  public downloadContacts(): Observable<any> {
     console.log('Getting latest contacts...')
     return new Observable<any>(obs => {
       this.rest
-        .getAllDeviceFormMemberships(this.formsHaveContacts(currentSyncingForms))
+        .getAllDeviceFormMemberships(this.formsHaveContacts())
         .mergeMap(
           (data) => this.db
             .saveMemberships(data.contacts)
@@ -34,7 +32,6 @@ export class ContactsProvider {
         )
         .subscribe((data) => {
           if (data && data.form.form_id && data.saved && data.all) {
-            this.formsProvider.updateFormLastSync(data.form.form_id, 'contacts');
             obs.next(data.form.form_id);
           }
         }, (err) => {
@@ -46,13 +43,9 @@ export class ContactsProvider {
 
   }
 
-  private addToFormSyncItems(currentSyncForms: formSyncStatus[], formId: number) {
-    currentSyncForms.find((e) => e.formId == formId).addToitems();
-  }
 
-  private formsHaveContacts(currentSyncingForms: formSyncStatus[]) {
+  private formsHaveContacts() {
     let forms = this.formsProvider.forms.filter((form) => form.list_id > 0);
-    forms.forEach((e) => this.addToFormSyncItems(currentSyncingForms, e.form_id));
     return forms;
   }
 

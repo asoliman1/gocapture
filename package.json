@@ -10,6 +10,7 @@
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve"
   },
+  "main": "index.js",
   "dependencies": {
     "@angular/animations": "5.0.3",
     "@angular/common": "5.0.3",
@@ -65,6 +66,7 @@
     "com-sarriaroman-photoviewer": "1.1.18",
     "cordova-android": "^8.1.0",
     "cordova-android-support-gradle-release": "^3.0.1",
+    "cordova-browser": "6.0.0",
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
     "cordova-ios": "^5.1.1",
@@ -166,9 +168,7 @@
       "cordova-plugin-insomnia": {},
       "cordova-plugin-document-viewer": {},
       "cordova-sqlite-storage": {},
-      "phonegap-plugin-barcodescanner": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
+      "phonegap-plugin-barcodescanner": {},
       "cordova-fabric-plugin": {
         "FABRIC_API_KEY": "87c5f596ba1288e89c53293ff749dca7b2f1ec1a",
         "FABRIC_API_SECRET": "1047de0b03738463a18c36ca7e9783c21e5bd79c073daf56740e319223753ec7"
@@ -210,5 +210,11 @@
   },
   "config": {
     "ionic_webpack": "./webpack.config.js"
-  }
+  },
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://aelsayed96@bitbucket.org/leadliaison/gocapture.git"
+  },
+  "license": "ISC"
 }

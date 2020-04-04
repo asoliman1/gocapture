@@ -437,7 +437,7 @@ export class DBClient {
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
 		form.captured_by_user_name = dbForm.captured_by_user_name;
-		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
+		form.location = dbForm.location != "undefined" ? JSON.parse(dbForm.location) : null;
 		// console.log(form);
 		return form;
 	}
