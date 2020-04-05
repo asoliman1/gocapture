@@ -87,7 +87,6 @@ export class SubmissionsProvider {
 
   downloadSubmissions(currentSyncingForms: formSyncStatus[]): Observable<any> {
     console.log('Getting latest submissions...')
-    // this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => {
