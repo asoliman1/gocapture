@@ -15,6 +15,7 @@ import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
 import { ActivationsPage } from '../activations/activations';
 import { DBClient } from '../../services/db-client';
+import { ThemeProvider } from '../../providers/theme/theme';
 
 @Component({
   selector: 'forms',
@@ -43,7 +44,8 @@ export class Forms {
     public formsProvider: FormsProvider,
     private zone: NgZone,
     private Keyboard: Keyboard, 
-    private dbClient : DBClient
+    private dbClient : DBClient,
+    private themeProvider:ThemeProvider
     ) {
     this.getForms();
   }
@@ -112,6 +114,7 @@ export class Forms {
           //console.log('capture clicked');
           this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
           this.navCtrl.push(FormCapture, { form: form });
+          this.setFormTheme(form);
         }
       }];
 
@@ -122,6 +125,8 @@ export class Forms {
         handler: () => {
           //console.log('review clicked');
           this.navCtrl.push(FormCapture, { form: form, isRapidScanMode: true });
+          this.setFormTheme(form);
+
         }
       })
     }
@@ -132,6 +137,8 @@ export class Forms {
       handler: () => {
         //console.log('review clicked');
         this.navCtrl.push(FormReview, { form: form, isDispatch: false });
+        this.setFormTheme(form);
+
       }
     });
 
@@ -157,6 +164,8 @@ export class Forms {
           } else {
             this.navCtrl.push("DocumentsListPage", { form });
           }
+          this.setFormTheme(form);
+
         }
       })
       // }
@@ -169,6 +178,8 @@ export class Forms {
         handler: () => {
           //console.log('review clicked');
           this.navCtrl.push(FormInstructions, { form: form });
+          this.setFormTheme(form);
+
         }
       })
     }
@@ -179,6 +190,7 @@ export class Forms {
       'icon': 'game-controller-b',
       handler : () => {
         this.navCtrl.push(ActivationsPage, { form: form });
+        this.setFormTheme(form);
       }
     })
 
@@ -193,10 +205,19 @@ export class Forms {
       this.popup.showActionSheet(form.name,buttons);
   }
 
+  setFormTheme(form : Form){
+    if (form.event_style.theme)
+    this.themeProvider.setTempTheme(form.event_style.theme);
+  }
+
   ionViewDidEnter() {
     // A.S
     this.Keyboard.setResizeMode("ionic");
     this.forms = this.formsProvider.forms;
+  }
+
+  ionViewWillEnter(){
+   this.themeProvider.setDefaultTheme();
   }
 
   ionViewDidLeave() {

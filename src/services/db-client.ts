@@ -422,6 +422,7 @@ export class DBClient {
 		form.first_name = dbForm.firstName;
 		form.last_name = dbForm.lastName;
 		form.full_name = dbForm.fullName;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.email = dbForm.email;
 		form.invalid_fields = dbForm.invalid_fields;
 		form.activity_id = dbForm.activityId;
@@ -431,12 +432,14 @@ export class DBClient {
 		form.last_sync_date = dbForm.last_sync_date;
 		form.hold_submission = dbForm.hold_submission;
 		form.hold_submission_reason = dbForm.hold_submission_reason;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.hidden_elements = dbForm.hidden_elements != "undefined" ? JSON.parse(dbForm.hidden_elements) : [];
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
 		form.captured_by_user_name = dbForm.captured_by_user_name;
 		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
+		// console.log(form);
 		return form;
 	}
 
@@ -447,7 +450,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location), form.station_id ,form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -458,7 +461,7 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.station_id, form.hold_request_id])
 										.then((data) => {
 											obs.next(true);
 											obs.complete();

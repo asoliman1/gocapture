@@ -182,8 +182,8 @@ export class BussinessClient {
           this.registration = user;
           this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
-          this.formsProvider.setForms();
           this.rest.token = user.access_token;
+          this.formsProvider.initForms();
         }
         obs.next(user);
         obs.complete();
@@ -315,11 +315,11 @@ export class BussinessClient {
 
  async updateIntercom(){
     this.intercom.updateUser({
-      ll_user_id: this.registration.id,
       email: this.registration.email,
       name: `${this.registration.first_name} ${this.registration.last_name}`,
-      customer_id: this.registration.customerID,
       custom_attributes: {
+        ll_user_id: this.registration.id,
+        customer_id: this.registration.customerID,
         mobile_app_name: this.registration.app_name,
       },
       instance: this.registration.customer_name,
@@ -536,7 +536,7 @@ export class BussinessClient {
 
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
     let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
-
+   
     return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 

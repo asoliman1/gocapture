@@ -87,7 +87,6 @@ export class SubmissionsProvider {
 
   downloadSubmissions(currentSyncingForms: formSyncStatus[]): Observable<any> {
     console.log('Getting latest submissions...')
-    // this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => {
@@ -486,7 +485,6 @@ export class SubmissionsProvider {
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
-
     this.rest.submitForm(submission).subscribe((d) => {
       console.log("response from submissions", d);
       if (isActivation) {
@@ -532,7 +530,6 @@ export class SubmissionsProvider {
           obs.complete();
           return;
         }
-
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;
