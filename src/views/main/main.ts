@@ -40,7 +40,6 @@ export class Main {
 
 	private async getactivation(id: string) {
 		let act = await this.activationProvider.getActivation(id).toPromise();
-		console.log(act)
 		if (act.activation_capture_form_after) this.navCtrl.push(ActivationViewPage, { act });
 		else this.navCtrl.push(FormCapture, { form: act.event, act });
 	}

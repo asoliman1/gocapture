@@ -53,46 +53,11 @@ export class ActivationViewPage {
     }
     this.prepareActivationUrl();
   }
+  
   ionViewDidEnter() {
     this.reloadGame();
     this.listenToGameEvents();
-    this.initNetwork();
-    this.backUnregister = this.platform.registerBackButtonAction(() => {
-      this.goBack(this.actvationResultFromSubmit);
-    }, Number.MAX_VALUE);
-
-    if (this.activation.activation_capture_form_after) {
-      this.client.hasKioskPassword().subscribe(hasPwd => {
-
-        if (!hasPwd) {
-
-          const inputs = [{
-            name: 'passcode',
-            placeholder: 'alerts.kiosk-mode.placeholder',
-            value: ""
-          }];
-
-          const buttons = [
-            {
-              text: 'general.cancel',
-              role: 'cancel',
-              handler: () => {
-              }
-            },
-            {
-              text: 'general.ok',
-              handler: (data) => {
-                let password = data.passcode;
-                this.client.setKioskPassword(password).subscribe((valid) => {
-
-                });
-              }
-            }];
-
-          this.popup.showPrompt({ text: 'alerts.kiosk-mode.set-password' }, { text: '' }, inputs, buttons);
-        }
-      })
-    }
+    // this.initNetwork();
   }
 
   prepareActivationUrl() {
@@ -105,12 +70,6 @@ export class ActivationViewPage {
     }
   }
 
-  ionViewWillLeave() {
-    if (this.backUnregister) {
-      this.backUnregister();
-    }
-    this.networkSubs.unsubscribe();
-  }
 
   reloadGame() {
     this.reload = true
@@ -165,54 +124,7 @@ export class ActivationViewPage {
   }
 
   goBackIfActivationFirst() {
-    this.client.hasKioskPassword().subscribe((hasPas) => {
-      if (hasPas) {
-
-        const buttons = [
-          {
-            text: 'general.cancel',
-            role: 'cancel',
-            handler: () => {
-            }
-          },
-          {
-            text: 'general.ok',
-            handler: (data) => {
-              let password = data.passcode;
-              this.client.validateKioskPassword(password).subscribe((valid) => {
-                if (valid) {
-                  setTimeout(() => {
-                    this.statusBar.show();
-                    this.navCtrl.pop();
-                  }, 500);
-                } else {
-                  return false;
-                }
-              });
-            }
-          }];
-
-        const inputs = [{
-          name: 'passcode',
-          placeholder: 'alerts.kiosk-mode.placeholder',
-          value: ""
-        }];
-
-        this.popup.showPrompt({ text: 'alerts.kiosk-mode.enter-passcode' }, { text: '' }, inputs, buttons);
-
-      } else {
-        const buttons = [
-          {
-            text: 'general.ok',
-            handler: () => {
-              this.statusBar.show();
-              this.navCtrl.pop();
-            }
-          }];
-
-        this.popup.showAlert('Info', { text: 'alerts.kiosk-mode.message' }, buttons);
-      }
-    });
+    this.navCtrl.pop();
   }
   goBack(activationResult: any) {
     if (this.activation.activation_capture_form_after) {
@@ -366,11 +278,9 @@ export class ActivationViewPage {
         text: 'alerts.activation.retry',
         handler: () => {
         if (this.isOnline()){
-          console.log("if online")
           this.reloadGame()
         }
         else{
-          console.log("if not online")
           this.retryToRefreshActivation()
         }
         }

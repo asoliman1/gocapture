@@ -13,7 +13,6 @@ import { DBClient } from "../services/db-client";
 import { BussinessClient } from "../services/business-service";
 
 import { Insomnia } from '@ionic-native/insomnia';
-import { ProspectSearch } from "../views/prospect-search";
 import { TextMaskModule } from 'angular2-text-mask';
 import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { HttpService } from '../util/http';
@@ -49,7 +48,6 @@ import { AppPreferences } from "@ionic-native/app-preferences";
 import { DocumentViewer } from "@ionic-native/document-viewer";
 import { FileOpener } from "@ionic-native/file-opener";
 import { SocialSharing } from "@ionic-native/social-sharing";
-import { SubmissionMapper } from "../services/submission-mapper";
 import { StationsPage } from "../views/stations/stations";
 import { IonicImageLoader } from "ionic-image-loader";
 import { ScreenSaverPage } from '../pages/screen-saver/screen-saver';
@@ -73,7 +71,6 @@ export function createTranslateLoader(http: HttpClient) {
     FormCapture,
     FormSummary,
     FormInstructions,
-    ProspectSearch,
     MyCurrencyDirective,
     StationsPage,
     ScreenSaverPage,
@@ -107,7 +104,6 @@ export function createTranslateLoader(http: HttpClient) {
     FormCapture,
     FormSummary,
     FormInstructions,
-    ProspectSearch,
     StationsPage,
     ScreenSaverPage,
     ActivationViewPage,
@@ -152,7 +148,6 @@ export function createTranslateLoader(http: HttpClient) {
     DocumentViewer,
     FileOpener,
     SocialSharing,
-    SubmissionMapper,
     Insomnia,
     SubmissionsProvider,
     formViewService,

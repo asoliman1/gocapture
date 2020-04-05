@@ -16,7 +16,6 @@ import {
   Navbar,
   NavController,
   NavParams,
-  Platform,
   Popover,
   Modal,
 } from 'ionic-angular';
@@ -30,7 +29,6 @@ import {
   SubmissionStatus,
 } from "../../model";
 
-import { ProspectSearch } from "../prospect-search";
 import { Popup } from "../../providers/popup/popup";
 
 import moment from "moment";
@@ -40,11 +38,7 @@ import { StationsPage } from "../stations/stations";
 import { Idle } from 'idlejs/dist';
 import { ScreenSaverPage } from '../../pages/screen-saver/screen-saver';
 import { Station } from '../../model/station';
-import { SubmissionsProvider } from '../../providers/submissions/submissions';
-import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
-import { AbstractControl } from '@angular/forms';
 import { FormView } from '../../components/form-view/form-view';
-import { FormMapEntry } from '../../model/form-map-entry';
 @Component({
   selector: 'form-capture',
   templateUrl: 'form-capture.html'
@@ -106,19 +100,18 @@ export class FormCapture implements AfterViewInit {
     private themeProvider: ThemeProvider,
     private utils: Util,
     private restClient: RESTClient,
-    private submissionsProvider: SubmissionsProvider,
   ) {
     this.idle = new Idle();
     this.getSavedLocation()
     this.setupForm();
   }
 
-  setTheme(){
+  setTheme() {
     this.themeProvider.setActiveTheme(this.form.event_style.theme);
   }
 
   async getSavedLocation() {
-   this.location = await this.client.getLocation();
+    this.location = await this.client.getLocation();
   }
 
   ngAfterViewInit() {
@@ -132,7 +125,7 @@ export class FormCapture implements AfterViewInit {
 
     if (shouldShowInstruction) {
       this.openInstructions(formsInstructions);
-    } 
+    }
   }
 
   private openInstructions(formsInstructions) {
@@ -152,38 +145,38 @@ export class FormCapture implements AfterViewInit {
 
   private handleIdleMode() {
     let screensaverData = this.activation ? this.activation.activation_style : this.form.event_style;
-    if (screensaverData.is_enable_screensaver && screensaverData.screensaver_media_items.length){
+    if (screensaverData.is_enable_screensaver && screensaverData.screensaver_media_items.length) {
       this.idle
-      .whenNotInteractive()
-      .within(screensaverData.screensaver_rotation_period, 1000)
-      .do(() => {
-        this.showScreenSaver(screensaverData)
-        console.log('idle mode started')
-      })
-      .start();
-    }
-    
-  }
-
-  // A.S
-  private async showScreenSaver(data : any) {
-    // get updated data of form
-    let active = this.navCtrl.last().instance instanceof FormCapture ;
-
-      if (!this._modal && active) {
-        this.handleScreenSaverRandomize(data)
-        this._modal = this.modal.create(ScreenSaverPage, { event_style: data }, { cssClass: 'screensaver' });
-        await this._modal.present();
-        this._modal.onDidDismiss(() => {
-          this._modal = null
-          this.idle.restart();
+        .whenNotInteractive()
+        .within(screensaverData.screensaver_rotation_period, 1000)
+        .do(() => {
+          this.showScreenSaver(screensaverData)
+          console.log('idle mode started')
         })
-      }
-  
+        .start();
+    }
+
   }
 
   // A.S
-  private handleScreenSaverRandomize(data : any) {
+  private async showScreenSaver(data: any) {
+    // get updated data of form
+    let active = this.navCtrl.last().instance instanceof FormCapture;
+
+    if (!this._modal && active) {
+      this.handleScreenSaverRandomize(data)
+      this._modal = this.modal.create(ScreenSaverPage, { event_style: data }, { cssClass: 'screensaver' });
+      await this._modal.present();
+      this._modal.onDidDismiss(() => {
+        this._modal = null
+        this.idle.restart();
+      })
+    }
+
+  }
+
+  // A.S
+  private handleScreenSaverRandomize(data: any) {
     if (data.is_randomize) data.screensaver_media_items = this.utils.shuffle(data.screensaver_media_items);
   }
 
@@ -202,14 +195,15 @@ export class FormCapture implements AfterViewInit {
   }
 
   private async setupForm() {
-      this.submission = new FormSubmission();
-      this.form = Object.assign(new Form(),this.navParams.get('form'));
-      this.submission.form_id = this.form.form_id;
-      this.submitAttempt = false;
-      this.setTheme();
-      this.handleIdleMode();
-      this.checkInstructions();
-      this.openStations();
+    this.submission = new FormSubmission();
+    this.form = Object.assign(new Form(), this.navParams.get('form'));
+    this.captureBg = this.form.event_style.capture_background_image;
+    this.activation = this.navParams.get('act');
+    this.submission.form_id = this.form.form_id;
+    this.setTheme();
+    this.handleIdleMode();
+    this.checkInstructions();
+    this.openStations();
   }
 
 
@@ -259,40 +253,23 @@ export class FormCapture implements AfterViewInit {
     this.formView.clear();
   }
 
-  private handleValidations(){
-     /*
-     When transcription is enabled, the app is still requiring name and email.
-     If there is a business card attached and transcription is turned on, we should not require either of these fields.
-     */
-    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
-    this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-
-    if (isNotScanned && this.noTranscriptable) {
-      this.isActivationProcessing = false;
-      if (!this.isEmailOrNameInputted()) {
-        this.errorMessage.text = "form-capture.error-msg";
-        this.content.resize();
-        return;
-      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.errorMessage = this.formView.getError();
-        this.content.resize();
-        return;
-      }
-    } else {
-      this.ignoreTranscriptionFields();
-      // here validate only non transcriptable fields
-      if (!this.formView.theForm.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.errorMessage = this.formView.getError();
-        this.content.resize();
-        return;
-      }
+  private handleValidations() {
+    if (!this.isEmailOrNameInputted()) {
+      this.errorMessage.text = "form-capture.error-msg";
+      this.content.resize();
+      return false;
+    } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+      this.errorMessage = this.formView.getError();
+      this.content.resize();
+      return false;
     }
+    return true;
   }
 
-  private handleSubmitParams(){
+  private handleSubmitParams() {
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
     if (!this.submission.id) this.submission.id = new Date().getTime();
-    if (this.submission.status != SubmissionStatus.Blocked) 
+    if (this.submission.status != SubmissionStatus.Blocked)
       this.submission.status = SubmissionStatus.ToSubmit;
     this.submission.hidden_elements = this.getHiddenElements();
     if (this.selectedStation) this.submission.station_id = this.selectedStation.id;
@@ -302,66 +279,42 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave() {
-    this.isActivationProcessing = true;
-    this.submitAttempt = true;
-    this.handleValidations();
-    this.handleSubmitParams();
-    this.goToSubmit();
-  }
-
-  getTranscriptionControls(name : string,control : AbstractControl) {
-    let id = name.split('_')[1] , 
-    el = this.form.elements.find((e)=> e.identifier == name) ,
-    subCtrls = control['controls'] ;
-    if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id=> id == e.ll_field_id ))
-       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
-    })
-    if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
-  }
-
-  clearControlValidators(control : AbstractControl){
-    control.clearValidators();
-    control.updateValueAndValidity();
-  }
-
-  ignoreTranscriptionFields() {
-    const controls = this.formView.theForm.controls;
-    for (const name in controls) {
-      this.getTranscriptionControls(name,controls[name])
+    if (this.handleValidations()) {
+      this.handleSubmitParams();
+      this.goToSubmit();
     }
   }
 
   goToSubmit() {
     if (this.activation) this.submitActivation();
-    else  this.submitForm();
+    else this.submitForm();
   }
 
 
   submitActivation() {
     this.openBadgeScan = false;
     this.isActivationProcessing = true;
-    this.submission.updateFields(this.form);
-    let map: { [key: number]: FormMapEntry } = {};
-    map[this.form.form_id + ""] = {
-      form: this.form,
-      urlFields: this.form.getUrlFields(),
-      submissions: [this.submission]
-    }
 
-    this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true).subscribe(async (sub) => {
+    this.restClient.submitForm(this.submission).subscribe(async (sub) => {
+   
       this.tryClearDocumentsSelection();
-      if (sub[0].prospect_id) {
-        if (this.navParams.get('activationResult')) {
-          if (Object.keys(this.navParams.get('activationResult')).length > 0)
-            await this.restClient.submitActivation({
-              activation_id: this.activation.id,
-              activation_result: this.navParams.get('activationResult'),
-              activity_id: sub[0].activity_id,
-              prospect_id: sub[0].prospect_id
-            }).toPromise();
+      this.isActivationProcessing = false;
+
+      if (sub.submission.prospect_id) {
+        if (this.navParams.get('activationResult') && Object.keys(this.navParams.get('activationResult')).length > 0) {
+          this.isActivationProcessing = true;
+
+          await this.restClient.submitActivation({
+            activation_id: this.activation.id,
+            activation_result: this.navParams.get('activationResult'),
+            activity_id: sub.submission.activity_id,
+            prospect_id: sub.submission.prospect_id
+          }).toPromise();
+          this.isActivationProcessing = false;
+
         }
-        this.goToGame(sub[0]);
+
+        this.goToGame(sub.submission);
       }
 
     }, (err) => {
@@ -450,15 +403,19 @@ export class FormCapture implements AfterViewInit {
   }
 
   submitForm() {
+    this.submitAttempt = true;
     this.restClient.submitForm(this.submission).subscribe((d) => {
       this.popup.showToast(
         { text: 'toast.submission-successfull' },
         'bottom',
         'success',
-         1500,
+        1500,
       );
-      this.resetForm();
       this.tryClearDocumentsSelection();
+      this.resetForm();
+      this.submitAttempt = false;
+    }, err => {
+      this.submitAttempt = false;
     })
   }
 
@@ -483,8 +440,6 @@ export class FormCapture implements AfterViewInit {
       this.submission.submission_type = FormSubmissionType.barcode;
     } else if (this.submission.prospect_id) {
       this.submission.submission_type = FormSubmissionType.list;
-    } else if (this.isTranscriptionEnabled() && this.isBusinessCardAdded()) {
-      this.submission.submission_type = FormSubmissionType.transcription;
     }
   }
 
@@ -513,56 +468,7 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  searchProspect() {
-    let search = this.modal.create(ProspectSearch, { form: this.form });
-    search.onDidDismiss((data: DeviceFormMembership) => {
-      if (data) {
-        data.fields["Email"] = data.fields["Email"].trim();
-        this.submission.is_filled_from_list = true;
-        this.prospect = data;
-        this.submission.prospect_id = data.prospect_id;
-        this.submission.email = data.fields["Email"];
-        this.submission.first_name = data.fields["FirstName"];
-        this.submission.last_name = data.fields["LastName"];
-        let id = null;
-        let vals = [];
-        for (let field in data.fields) {
-          id = this.form.getIdByUniqueFieldName(field);
-          if (id) {
-
-            //skip prefilling if audio element
-            let audioRecorderEl = this.getElementForType("audio");
-
-            let isAudio = audioRecorderEl.identifier == id;
-            let value =
-              isAudio && data.fields[field] && data.fields[field].startsWith('http') ?
-                data.fields[field] :
-                data.fields[field] || this.formView.getFormGroup().value[id];
-
-            this.submission.fields[id] = value;
-
-            let identifier = id.replace("element_", "");
-
-            let index = identifier.indexOf("_");
-            let parentId = identifier.substring(0, index);
-
-            if (!parentId) {
-              parentId = identifier;
-            }
-
-
-            let element = this.getElementForId(parentId);
-            element.is_filled_from_list = true;
-
-            vals.push({ id, value });
-          }
-        }
-        Form.fillFormGroupData(vals, this.formView.getFormGroup());
-      }
-    });
-    search.present();
-  }
-
+ 
 
   isEmailOrNameInputted() {
     let firstName = "";
@@ -605,27 +511,6 @@ export class FormCapture implements AfterViewInit {
     return null;
   }
 
-  private isTranscriptionEnabled() {
-    let businessCardEl = this.getElementForType("business_card");
-    return businessCardEl && businessCardEl['is_enable_transcription'] == 1;
-  }
-
-  private isBusinessCardAdded() {
-    if (!this.formView) return false;
-
-    let fields = this.formView.getValues();
-    let businessCardEl = this.getElementForType("business_card");
-    let businessCard = <any>fields[businessCardEl["identifier"]] || "";
-
-    if (businessCard) {
-      let front = businessCard.front && businessCard.front.length > 0;
-      let back = businessCard.back && businessCard.back.length > 0;
-
-      return front || back;
-    }
-
-    return false;
-  }
 
   submissionDate() {
     return moment(this.submission.sub_date).format('MMM DD[th], YYYY [at] hh:mm A');
@@ -646,14 +531,14 @@ export class FormCapture implements AfterViewInit {
   }
 
   openStations(ev?) {
-    if (this.form.event_stations && this.form.event_stations.length > 0 && !this.isThereActivation()) {
+    if (this.form.event_stations.length && !this.selectedStation && !this.isThereActivation()) {
       this.popup.showPopover(StationsPage, {
         stations: this.form.event_stations,
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: false
       }, false, ev).onDidDismiss((data) => this.onStationDismiss(data))
-    } 
+    }
   }
 
   private onStationDismiss(data) {
@@ -680,14 +565,6 @@ export class FormCapture implements AfterViewInit {
           element.documents_set.selectedDocumentIdsForSubmission = [];
         }
       });
-  }
-
-  // A.S
-  getStationById(stationId) {
-    for (let station of this.form.event_stations)
-      if (station.id == stationId) return station;
-
-    return null;
   }
 
   isThereActivation() {

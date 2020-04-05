@@ -52,7 +52,7 @@ export class RESTClient {
 	}
 
 	public getActivationById(id: string | number) {
-		return this.call("GET", "/activations.json", { activation_id: id })
+		return this.call("GET", "/activations.json", { activation_id: id , activation_name:"before whack it" }).map((e:any)=> Activation.parseActivation(e.records[0],e.records[0].event.form_id))
 	}
 
 	public fetchBadgeData(barcodeId: string, providerId: string, isRapidScan: number = 0, formId?: string, ): Observable<any> {

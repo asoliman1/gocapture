@@ -10,7 +10,10 @@ form-capture {
       margin-right: 10px;
     }
   }
-
+  .submit-btn{
+    position:absolute;
+    bottom:0;
+  }
 }
 
 ion-content {
@@ -84,5 +87,6 @@ ion-content {
     background-color: inherit;
   }
   
+
 }
 

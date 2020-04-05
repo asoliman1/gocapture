@@ -19,11 +19,11 @@
 <!-- A.S GOC-353 -->
 <ion-content [ngStyle]="{
   'background-color':form?.event_style?.capture_background_color,
-  'background-image':'url('+form?.event_style?.capture_background_image+')',
+  'background-image':'url('+captureBg+')',
   'background-size':'cover',
   'background-position':'center'}" class="form-summary">
   <ion-grid 
-  [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
+  [ngStyle]="{'padding':isThereActivation()? '0px': '5px','height':'100%'}">
 
 		<ion-row style="height: inherit;">
       <ion-col style="order:1; height: inherit; overflow-y: scroll;" >
@@ -50,14 +50,12 @@
     </ion-row>
 
   </ion-grid> 
-  <button ion-button full block large (click)="doSave()" [disabled]="!valid" >SUBMIT</button>
+  <button class="submit-btn" ion-button full block large *ngIf="!activation" (click)="doSave()" [disabled]="!valid || submitAttempt" >
+    <span *ngIf="!submitAttempt" >{{"form-capture.submit-btn" | translate}}</span>
+    <ion-spinner *ngIf="submitAttempt" ></ion-spinner>
+  </button>
 </ion-content>
-<!-- <button-bar
-*ngIf="form && !activation" 
-[show]="!isReadOnly(submission) || isEditing" 
-[disabled]="isProcessing" 
-[form]="form" >
-</button-bar> -->
+
 
 <ion-footer [ngStyle]="{'background-color': 'white'}" no-border  *ngIf="isThereActivation()">
   

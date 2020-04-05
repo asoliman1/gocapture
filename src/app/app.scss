@@ -108,3 +108,21 @@ ion-content[scroll=false] div.scroll-content{
     align-items: center;
     padding: 0 20px;
   }
+  ion-toast .toast-container{
+    text-align: center;
+    .toast-message{
+      font-size: 1.1em;
+    }
+  }
+  
+  ion-toast.error .toast-container{
+    background-color: red;
+  }
+  
+  ion-toast.success .toast-container{
+    background-color: darkgreen;
+  }
+  
+  ion-toast.warning .toast-container{
+    background-color: orange;
+  }
