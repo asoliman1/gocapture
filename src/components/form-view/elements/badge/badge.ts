@@ -111,7 +111,6 @@ export class Badge extends BaseElement implements OnInit {
     }
   }
   public scanBadge() {
-    console.log("numb of scan", this.scanCounter);
     if (this.readonly) return;
 
     this.isScanning = true;
@@ -175,12 +174,13 @@ export class Badge extends BaseElement implements OnInit {
       }
 
       //manage duplicate submissions
-      if (data["action"] && data["action"] == "edit_submission") {
+      if (data["action"] && data["action"] == "edit_submission" && !this.activation) {
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
         this.scanCounter = 1;
         this.submission.barcodeID = scannedId;
+        console.log("scanned id from badge", this.submission.barcodeID)
         this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);
