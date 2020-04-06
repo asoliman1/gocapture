@@ -148,6 +148,9 @@ export class DBClient {
 		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
 		form.show_reject_prompt = dbForm.show_reject_prompt == 1;
 		form.duplicate_action = dbForm.duplicate_action;
+		form.unique_identifier_barcode = dbForm.unique_identifier_barcode == 1;
+		form.unique_identifier_name = dbForm.unique_identifier_name == 1;
+		form.unique_identifier_email = dbForm.unique_identifier_email == 1;
 		form.computeIdentifiers();
 		return form;
 	}
@@ -197,7 +200,7 @@ export class DBClient {
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
 		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
-		 form.duplicate_action]);
+		 form.duplicate_action, form.unique_identifier_barcode ? 1 : 0, form.unique_identifier_name ? 1 : 0, form.unique_identifier_email ? 1 : 0]);
 	}
 
 	public saveActivation(activation: Activation): Observable<boolean> {

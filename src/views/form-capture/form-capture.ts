@@ -779,6 +779,7 @@ export class FormCapture implements AfterViewInit {
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
+        //let submitEmail = this.filterSubmissionsByUniqueIdentifier(data);
         let submitEmail = data.filter((d) => d.email == this.submission.email);
         if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
@@ -791,6 +792,22 @@ export class FormCapture implements AfterViewInit {
     } else {
       this.goToSubmit(shouldSyncData);
     }
+  }
+
+  filterSubmissionsByUniqueIdentifier(data: any) : FormSubmission{
+    console.log("filterSubmissionsByUniqueIdentifier");
+    let result : FormSubmission ; 
+    if(this.form.unique_identifier_barcode && this.submission.barcodeID != null){
+      result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
+    }
+    else if(this.form.unique_identifier_email){
+      result = data.filter((d) => d.email == this.submission.email);
+    }
+
+    else {
+      result = data.filter((d) => d.full_name == this.submission.full_name);
+    }
+    return result ;
   }
 
   getTranscriptionControls(name : string,control : AbstractControl) {

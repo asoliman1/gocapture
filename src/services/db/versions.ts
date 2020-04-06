@@ -264,6 +264,13 @@ export const VERSIONS = {
             queries: [
                 "alter table submissions add column barcodeID text",
             ]
+        },
+        33: {
+            queries: [
+                "alter table forms add column unique_identifier_barcode integer default 0",
+                "alter table forms add column unique_identifier_name integer default 0",
+                "alter table forms add column unique_identifier_email integer default 0"
+            ]
         }
     }
 };

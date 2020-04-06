@@ -36,8 +36,11 @@ export class Form extends BaseForm {
 	}
 	search_list_background_color : string;
 	search_list_text_color : string;
-	show_reject_prompt:boolean;
-	duplicate_action:string;
+	show_reject_prompt: boolean;
+	duplicate_action: string;
+	unique_identifier_barcode: boolean;
+	unique_identifier_name: boolean;
+	unique_identifier_email: boolean;
 
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;
