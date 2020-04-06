@@ -43,46 +43,47 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- A.S GOC-353 -->
-<ion-content [ngStyle]="{
-  'background-color':form?.event_style?.capture_background_color,
-  'background-image':'url('+captureBg+')',
-  'background-size':'cover',
-  'background-position':'center'}" class="form-summary">
-  <ion-grid style="height: 100%;"
-  [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
-		<ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
-			<ion-col>
-      <button ion-button block color="light" [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
-			</ion-col>
-		</ion-row>
 
-		<ion-row style="height: inherit;">
-      <ion-col style="order:1; height: inherit; overflow-y: scroll;" >
-        <form-view
-          *ngIf="form"
-          [form]="form"
-          [activation]="isThereActivation()"
-          [prospect]="prospect"
-          [submission]="submission"
-          (onValidationChange)="onValidationChange($event)"
-          [readOnly]="isReadOnly(submission) && !isEditing"
-          [isEditing]="isEditing"
-          [submitAttempt]="submitAttempt"
-          (onProcessingEvent)="onProcessing($event)"
-          (doSubmit)="canSubmitForm($event)"
-          >
-        </form-view>
-      </ion-col>
-      <ion-col style="height: inherit;"
-      no-padding
-      *ngIf="activation && activation.display_capture_form != 1" [style.order]="getCaptureScreenUrlOrder(activation.display_capture_form)" >
-        <iframe [src]="activation.capture_screen_url | safeUrl" width="100%" height="100%" frameborder="0" ></iframe>
-      </ion-col>
-    </ion-row>
+  <ion-split-pane>
 
-	</ion-grid>
+    <ion-content [ngStyle]="{
+      'background-color':form?.event_style?.capture_background_color,
+      'background-image':'url('+captureBg+')',
+      'background-size':'cover',
+      'background-position':'center'}" class="form-summary">
+    <ion-grid style="height: 100%;"
+    [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
+      <ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
+        <ion-col>
+        <button ion-button block color="light" [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}" (click)="searchProspect()"><ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}</button>
+        </ion-col>
+      </ion-row>
+  
+      <ion-row style="height: inherit;">
+        <ion-col style="order:1; height: inherit;" >
+          <form-view
+            *ngIf="form"
+            [form]="form"
+            [activation]="isThereActivation()"
+            [prospect]="prospect"
+            [submission]="submission"
+            (onValidationChange)="onValidationChange($event)"
+            [readOnly]="isReadOnly(submission) && !isEditing"
+            [isEditing]="isEditing"
+            [submitAttempt]="submitAttempt"
+            (onProcessingEvent)="onProcessing($event)"
+            (doSubmit)="canSubmitForm($event)"
+            >
+          </form-view>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 </ion-content>
+
+  <iframe *ngIf="activation && activation.display_capture_form != 1" [style.order]="getCaptureScreenUrlOrder(activation.display_capture_form)" [src]="activation.capture_screen_url | safeUrl" width="50%" height="100%" frameborder="0" ></iframe>
+
+</ion-split-pane>
+
 <button-bar
 *ngIf="form && !activation" 
 [show]="!isReadOnly(submission) || isEditing" 

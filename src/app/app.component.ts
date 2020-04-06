@@ -30,7 +30,7 @@ import { TranslateConfigService } from '../services/translate/translateConfigSer
 export class MyApp {
 
   rootPage: any;
-  selectedTheme: string;
+  selectedTheme: string = this.themeProvider.defaultTheme;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -72,6 +72,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.subscribeThemeChanges();
       this.checkUserAuth();
       this.handleApiErrors();
       this.handleClientErrors();
@@ -100,7 +101,6 @@ export class MyApp {
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
       if (user) {
-        this.subscribeThemeChanges();
         this.setTheme(user);
         this.setLogging();
         this.setAutoSave();
@@ -113,8 +113,8 @@ export class MyApp {
   }
 
   setTheme(user){
-		let theme = user ? user.theme : 'default';
-		this.themeProvider.setActiveTheme(theme + '-theme'); // 
+    let theme = user ? user.theme : 'default';
+		this.themeProvider.setDefaultTheme(theme);
 	}
 
   private setAutoSave() {

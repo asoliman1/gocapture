@@ -716,17 +716,17 @@ export class FormCapture implements AfterViewInit {
      */
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-
+    
     if (isNotScanned && this.noTranscriptable) {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage.text = "form-capture.error-msg";
         this.content.resize();
-        return;
+        return false;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
-        return;
+        return false;
       }
     } else {
       this.ignoreTranscriptionFields();
@@ -734,9 +734,11 @@ export class FormCapture implements AfterViewInit {
       if (!this.formView.theForm.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
-        return;
+        return false;
       }
     }
+
+    return true;
   }
 
   private handleSubmitParams(){
@@ -762,9 +764,9 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
-    this.isActivationProcessing = true;
+   if( !this.handleValidations() ) return;
     this.submitAttempt = true;
-    this.handleValidations();
+    this.isActivationProcessing = true;
     this.handleSubmitParams();
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
@@ -788,8 +790,10 @@ export class FormCapture implements AfterViewInit {
     el = this.form.elements.find((e)=> e.identifier == name) ,
     subCtrls = control['controls'] ;
     if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id=> id == e.ll_field_id ))
-       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
+     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
+      if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
+      else this.clearControlValidators(control);
+     }
     })
     if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
   }
