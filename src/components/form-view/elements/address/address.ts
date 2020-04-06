@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormControl } from "@angular/forms";
 import { BaseGroupElement} from "../base-group-element";
-import {ISearch} from "../../../../views/search/search";
 import {Countries} from "../../../../constants/constants";
 import {OptionItem} from "../../../../model/option-item";
 import {ModalController} from "ionic-angular";
@@ -10,7 +9,7 @@ import {ModalController} from "ionic-angular";
 	selector: 'address',
 	templateUrl: 'address.html'
 })
-export class Address extends BaseGroupElement implements ISearch {
+export class Address extends BaseGroupElement {
 
   country: string;
   countries: any[];

@@ -5,7 +5,6 @@ import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import {ModalController} from "ionic-angular";
 import {OptionItem} from "../../../../model/option-item";
-import {ISearch} from "../../../../views/search/search";
 import {Util} from "../../../../util/util";
 
 @Component({
@@ -15,7 +14,7 @@ import {Util} from "../../../../util/util";
 		{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => Dropdown), multi: true }
 	]
 })
-export class Dropdown extends BaseElement implements ISearch {
+export class Dropdown extends BaseElement  {
 
 	@Input() element: FormElement = <any>{};
 	@Input() formGroup: FormGroup;

@@ -8,7 +8,7 @@ export const Config: {
 	devServerUrl: "",
 	serverUrl: "",
 	androidGcmId: "",
-	isProd: true,
+	isProd: false,
 	getServerUrl: function(){
 		let url =  this.isProd ? this.serverUrl : this.devServerUrl;
 		return url;
