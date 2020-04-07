@@ -774,19 +774,59 @@ export class FormCapture implements AfterViewInit {
   public doSave(shouldSyncData = true) {
     this.isActivationProcessing = true;
     this.submitAttempt = true;
-    this.handleValidations();
-    this.handleSubmitParams();
+    //this.handleValidations();
+    //this.handleSubmitParams();
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+    let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+
+    if (isNotScanned && noTranscriptable) {
+      this.isActivationProcessing = false;
+      if (!this.isEmailOrNameInputted()) {
+        this.errorMessage.text = "form-capture.error-msg";
+        if(this.activation) this.popup.showToast({ text: this.errorMessage.text }, "middle");
+        this.content.resize();
+        return;
+      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+        this.errorMessage = this.formView.getError();
+        if(this.activation){ 
+          this.popup.showToast({ text: this.errorMessage.text, params: {fields:(this.errorMessage.param)}} , "middle");}
+        this.content.resize();
+        return;
+      }
+    }
+
+
+    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
+
+    if (!this.submission.id) {
+      this.submission.id = new Date().getTime();
+    }
+
+    if(this.submission.status == SubmissionStatus.Submitted && 
+      this.submission.hold_request_id && 
+      this.submission.hold_request_id>0){
+        this.submission.hold_request_id = null;
+    }
+
+    this.submission.hidden_elements = this.getHiddenElements();
+
+    if (this.selectedStation) {
+      this.submission.station_id = this.selectedStation.id;
+    }
+
+    this.setSubmissionType();
+    // A.S
+    this.submission.location = this.location;
+
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
-        console.log("hereeee", this.form);
-        console.log("unique_identifier_barcode", this.form.unique_identifier_barcode)
-        //let submitEmail = this.filterSubmissionsByUniqueIdentifier(data);
-        let submitEmail = data.filter((d) => d.email == this.submission.email);
-        if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
+        let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
+        if (filteredSubmission && filteredSubmission.id != this.submission.id) {
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
-          else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
-          this.isActivationProcessing = false;
+          else {
+            this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
+          }
         } else {
           this.goToSubmit(shouldSyncData);
         }
@@ -797,19 +837,21 @@ export class FormCapture implements AfterViewInit {
   }
 
   filterSubmissionsByUniqueIdentifier(data: any) : FormSubmission{
-    console.log("filterSubmissionsByUniqueIdentifier");
-    let result : FormSubmission ; 
+    let result : FormSubmission [] ; 
     if(this.form.unique_identifier_barcode && this.submission.barcodeID != null){
       result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
+      if(result.length) return result[0];
     }
-    else if(this.form.unique_identifier_email){
+    if(this.form.unique_identifier_email && this.submission.email){
       result = data.filter((d) => d.email == this.submission.email);
+      if(result.length) return result[0];
     }
 
-    else {
+    if(this.form.unique_identifier_name && this.submission.first_name) {
       result = data.filter((d) => d.full_name == this.submission.full_name);
+      if(result.length) return result[0];
     }
-    return result ;
+    return null ;
   }
 
   getTranscriptionControls(name : string,control : AbstractControl) {
@@ -838,6 +880,9 @@ export class FormCapture implements AfterViewInit {
   goToSubmit(shouldSyncData) {
     if (this.activation) this.submitActivation();
     else {
+      if (this.submission.status != SubmissionStatus.Blocked) {
+        this.submission.status = SubmissionStatus.ToSubmit;
+      }
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
         if (this.isEditing) {

@@ -509,7 +509,6 @@ export class RESTClient {
 		submission?: FormSubmission,
 		is_new_submission: boolean
 	}> {
-		console.log("status", data.status)
 		let method = data.hold_request_id && data.hold_request_id > 0 ? "PATCH" : "POST"
 		return this.call<BaseResponse>(method, "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {

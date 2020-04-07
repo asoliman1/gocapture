@@ -498,9 +498,9 @@ export class SubmissionsProvider {
         }
       }
       this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
-        const autoUpload = String(setting) == "true";
-
-        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
+        if(String(setting)=="") setting= "true";
+        const autoUpload = String(setting) == "true" ;
+        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit" && !isActivation) {
           d.id = submission.id;
           d.form_id = submission.form_id;
 
