@@ -5,28 +5,30 @@ import { BehaviorSubject } from "rxjs";
 export class ThemeProvider {
 
   private theme: BehaviorSubject<String>;
-  defaultTheme : string;
+  defaultTheme : string ;
 
   constructor() {
     this.theme = new BehaviorSubject('default-theme');
   }
 
 
-  setActiveTheme(val?) {
-    this.defaultTheme = val ? val : 'default-theme';
+  setTempTheme(theme : string){
+    theme += '-theme';
+    this.theme.next(theme);
+  }
+
+  setDefaultTheme(val ?: string){
+    this.defaultTheme = val ? `${val}-theme` : this.defaultTheme;
     this.theme.next(this.defaultTheme);
   }
 
-  setTempTheme(theme : string){
-    this.theme.next(theme);
+  rmTheme(){
+    this.theme.next('default-theme');
   }
 
   getActiveTheme() {
     return this.theme.asObservable();
   }
 
-  setDefaultTheme(){
-    this.setActiveTheme(this.defaultTheme);
-  }
 
 }

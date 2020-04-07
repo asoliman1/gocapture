@@ -206,6 +206,7 @@ export class Forms {
   }
 
   setFormTheme(form : Form){
+    console.log(form.event_style.theme)
     if (form.event_style.theme)
     this.themeProvider.setTempTheme(form.event_style.theme);
   }

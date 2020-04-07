@@ -716,21 +716,21 @@ export class FormCapture implements AfterViewInit {
      */
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-
+    
     if (isNotScanned && this.noTranscriptable) {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.errorMessage.text = "form-capture.error-msg";
         if (this.activation) this.popup.showToast({ text: this.errorMessage.text }, "bottom");
         this.content.resize();
-        return;
+        return false;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         if (this.activation) {
           this.popup.showToast({ text: this.errorMessage.text, params: { fields: (this.errorMessage.param) } }, "bottom");
         }
         this.content.resize();
-        return;
+        return false;
       }
     } else {
       this.ignoreTranscriptionFields();
@@ -738,9 +738,11 @@ export class FormCapture implements AfterViewInit {
       if (!this.formView.theForm.valid && !this.shouldIgnoreFormInvalidStatus()) {
         this.errorMessage = this.formView.getError();
         this.content.resize();
-        return;
+        return false;
       }
     }
+
+    return true;
   }
 
   private handleSubmitParams(){
@@ -756,10 +758,6 @@ export class FormCapture implements AfterViewInit {
         this.submission.hold_request_id = null;
     }
 
-    if (this.submission.status != SubmissionStatus.Blocked) {
-      this.submission.status = SubmissionStatus.ToSubmit;
-    }
-
     this.submission.hidden_elements = this.getHiddenElements();
 
     if (this.selectedStation) {
@@ -772,52 +770,10 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
-    this.isActivationProcessing = true;
+   if( !this.handleValidations() ) return;
     this.submitAttempt = true;
-    //this.handleValidations();
-    //this.handleSubmitParams();
-    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
-    let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-
-    if (isNotScanned && noTranscriptable) {
-      this.isActivationProcessing = false;
-      if (!this.isEmailOrNameInputted()) {
-        this.errorMessage.text = "form-capture.error-msg";
-        if(this.activation) this.popup.showToast({ text: this.errorMessage.text }, "middle");
-        this.content.resize();
-        return;
-      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.errorMessage = this.formView.getError();
-        if(this.activation){ 
-          this.popup.showToast({ text: this.errorMessage.text, params: {fields:(this.errorMessage.param)}} , "middle");}
-        this.content.resize();
-        return;
-      }
-    }
-
-
-    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
-
-    if (!this.submission.id) {
-      this.submission.id = new Date().getTime();
-    }
-
-    if(this.submission.status == SubmissionStatus.Submitted && 
-      this.submission.hold_request_id && 
-      this.submission.hold_request_id>0){
-        this.submission.hold_request_id = null;
-    }
-
-    this.submission.hidden_elements = this.getHiddenElements();
-
-    if (this.selectedStation) {
-      this.submission.station_id = this.selectedStation.id;
-    }
-
-    this.setSubmissionType();
-    // A.S
-    this.submission.location = this.location;
-
+    this.isActivationProcessing = true;
+    this.handleSubmitParams();
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
@@ -859,8 +815,10 @@ export class FormCapture implements AfterViewInit {
     el = this.form.elements.find((e)=> e.identifier == name) ,
     subCtrls = control['controls'] ;
     if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id=> id == e.ll_field_id ))
-       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
+     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
+      if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
+      else this.clearControlValidators(control);
+     }
     })
     if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
   }

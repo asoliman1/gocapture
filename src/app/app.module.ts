@@ -180,7 +180,10 @@ export function createTranslateLoader(http: HttpClient) {
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {
+      scrollPadding: true,
+      scrollAssist: true
+    }),
     BrowserAnimationsModule,
     TextMaskModule,
     PipesModule,

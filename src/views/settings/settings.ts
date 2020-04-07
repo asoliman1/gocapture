@@ -285,7 +285,7 @@ export class Settings {
             this.popup.showLoading({text:'alerts.loading.unauthenticating'})
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
-              this.themeProvider.setActiveTheme();
+              this.themeProvider.rmTheme();
               setTimeout(() => {
                 this.app.getRootNav().setRoot(Login, { unauthenticated: true });
               }, 300);
