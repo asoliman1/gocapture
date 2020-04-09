@@ -237,10 +237,10 @@ export class FormCapture implements AfterViewInit {
   }
 
   // A.S
-  private async showScreenSaver(data : any) {
+  private async showScreenSaver(data: any) {
     // get updated data of form
     this.form.event_style = this.getFormStyle();
-    let active = this.navCtrl.last().instance instanceof FormCapture ;
+    let active = this.navCtrl.last().instance instanceof FormCapture;
 
     if (this.imagesDownloaded(data)) {
       if (!this._modal && active) {
@@ -258,14 +258,14 @@ export class FormCapture implements AfterViewInit {
   }
 
   // A.S
-  private handleScreenSaverRandomize(data : any) {
+  private handleScreenSaverRandomize(data: any) {
     if (data.is_randomize) data.screensaver_media_items = this.utils.shuffle(data.screensaver_media_items);
   }
 
   // A.S
-  private imagesDownloaded(data : any) {
-      data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
-      return data.screensaver_media_items.length;
+  private imagesDownloaded(data: any) {
+    data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
+    return data.screensaver_media_items.length;
   }
 
   // A.S
@@ -709,14 +709,14 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
-  private handleValidations(){
-     /*
-     When transcription is enabled, the app is still requiring name and email.
-     If there is a business card attached and transcription is turned on, we should not require either of these fields.
-     */
+  private handleValidations() {
+    /*
+    When transcription is enabled, the app is still requiring name and email.
+    If there is a business card attached and transcription is turned on, we should not require either of these fields.
+    */
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-    
+
     if (isNotScanned && this.noTranscriptable) {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
@@ -745,17 +745,17 @@ export class FormCapture implements AfterViewInit {
     return true;
   }
 
-  private handleSubmitParams(){
+  private handleSubmitParams() {
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
       this.submission.id = new Date().getTime();
     }
 
-    if(this.submission.status == SubmissionStatus.Submitted && 
-      this.submission.hold_request_id && 
-      this.submission.hold_request_id>0){
-        this.submission.hold_request_id = null;
+    if (this.submission.status == SubmissionStatus.Submitted &&
+      this.submission.hold_request_id &&
+      this.submission.hold_request_id > 0) {
+      this.submission.hold_request_id = null;
     }
 
     this.submission.hidden_elements = this.getHiddenElements();
@@ -770,10 +770,49 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
-   if( !this.handleValidations() ) return;
     this.submitAttempt = true;
     this.isActivationProcessing = true;
-    this.handleSubmitParams();
+    /*
+      When transcription is enabled, the app is still requiring name and email.
+      If there is a business card attached and transcription is turned on, we should not require either of these fields.
+      */
+
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+    let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+
+    if (isNotScanned && noTranscriptable) {
+      this.isActivationProcessing = false;
+      if (!this.isEmailOrNameInputted()) {
+        this.errorMessage.text = "form-capture.error-msg";
+        this.content.resize();
+        return;
+      } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+        this.errorMessage = this.formView.getError();
+        this.content.resize();
+        return;
+      }
+    }
+
+    this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
+
+    if (!this.submission.id) {
+      this.submission.id = new Date().getTime();
+    }
+
+    if (this.submission.status == SubmissionStatus.Submitted &&
+      this.submission.hold_request_id &&
+      this.submission.hold_request_id > 0) {
+      this.submission.hold_request_id = null;
+    }
+    this.submission.hidden_elements = this.getHiddenElements();
+
+    if (this.selectedStation) {
+      this.submission.station_id = this.selectedStation.id;
+    }
+
+    this.setSubmissionType();
+    // A.S
+    this.submission.location = this.location;
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
@@ -792,38 +831,38 @@ export class FormCapture implements AfterViewInit {
     }
   }
 
-  filterSubmissionsByUniqueIdentifier(data: any) : FormSubmission{
-    let result : FormSubmission [] ; 
-    if(this.form.unique_identifier_barcode && this.submission.barcodeID != null){
+  filterSubmissionsByUniqueIdentifier(data: any): FormSubmission {
+    let result: FormSubmission[];
+    if (this.form.unique_identifier_barcode && this.submission.barcodeID != null) {
       result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
-      if(result.length) return result[0];
+      if (result.length) return result[0];
     }
-    if(this.form.unique_identifier_email && this.submission.email){
+    if (this.form.unique_identifier_email && this.submission.email) {
       result = data.filter((d) => d.email == this.submission.email);
-      if(result.length) return result[0];
+      if (result.length) return result[0];
     }
 
-    if(this.form.unique_identifier_name && this.submission.first_name) {
+    if (this.form.unique_identifier_name && this.submission.first_name) {
       result = data.filter((d) => d.full_name == this.submission.full_name);
-      if(result.length) return result[0];
+      if (result.length) return result[0];
     }
-    return null ;
+    return null;
   }
 
-  getTranscriptionControls(name : string,control : AbstractControl) {
-    let id = name.split('_')[1] , 
-    el = this.form.elements.find((e)=> e.identifier == name) ,
-    subCtrls = control['controls'] ;
-    if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
-      if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
-      else this.clearControlValidators(control);
-     }
+  getTranscriptionControls(name: string, control: AbstractControl) {
+    let id = name.split('_')[1],
+      el = this.form.elements.find((e) => e.identifier == name),
+      subCtrls = control['controls'];
+    if (el) el.mapping.forEach((e, i) => {
+      if (<any>TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id)) {
+        if (subCtrls) this.clearControlValidators(subCtrls[`${name}_${i + 1}`]);
+        else this.clearControlValidators(control);
+      }
     })
-    if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
+    if (<any>TRANSCRIPTION_FIELDS_IDS.find(e => e == id)) this.clearControlValidators(control)
   }
 
-  clearControlValidators(control : AbstractControl){
+  clearControlValidators(control: AbstractControl) {
     control.clearValidators();
     control.updateValueAndValidity();
   }
@@ -831,7 +870,7 @@ export class FormCapture implements AfterViewInit {
   ignoreTranscriptionFields() {
     const controls = this.formView.theForm.controls;
     for (const name in controls) {
-      this.getTranscriptionControls(name,controls[name])
+      this.getTranscriptionControls(name, controls[name])
     }
   }
 
@@ -872,7 +911,7 @@ export class FormCapture implements AfterViewInit {
       submissions: [this.submission]
     }
 
-    this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true).subscribe(async (sub) => {
+    this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true, this.activation.id).subscribe(async (sub) => {
       this.tryClearDocumentsSelection();
       if (sub[0].prospect_id) {
         if (this.navParams.get('activationResult')) {
@@ -1017,7 +1056,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   onValidationChange(valid: boolean) {
-    console.log('validation event value :'+valid);
+    console.log('validation event value :' + valid);
     this.valid = valid;
     setTimeout(() => {
       this.errorMessage.text = '';
@@ -1191,7 +1230,7 @@ export class FormCapture implements AfterViewInit {
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
-      }, false, null ,this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
+      }, false, null, this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
     } else {
       this.initiateRapidScanMode();
     }

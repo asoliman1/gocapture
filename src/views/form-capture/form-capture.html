@@ -44,7 +44,7 @@
 </ion-header>
 
 
-  <ion-split-pane>
+  <ion-split-pane [ngStyle]="{'margin-top':!isThereActivation()? '50px': '0px'}">
 
     <ion-content [ngStyle]="{
       'background-color':form?.event_style?.capture_background_color,
