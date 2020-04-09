@@ -160,7 +160,9 @@ export class Forms {
               documents = documentSets[0].documents;
             }
 
-            this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
+           let modal = this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } })
+           modal.present();
+            modal.onWillDismiss(()=> this.themeProvider.setDefaultTheme())
           } else {
             this.navCtrl.push("DocumentsListPage", { form });
           }

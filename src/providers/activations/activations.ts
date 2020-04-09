@@ -79,14 +79,16 @@ export class ActivationsProvider {
   }
 
   private async checkSSfiles(act: Activation) {
-    let data = await this.getStorage(`${SCREEN_SAVERS_KEY}-${act.id}`),
-      oldSS: Image[] = data ? data.screen_savers : [],
+    let data = await this.getStorage(`${SCREEN_SAVERS_KEY}-${act.id}`);
+    console.log(data);
+    let  oldSS: Image[] = data ? data.screen_savers : [],
       newSS = act.activation_style.screensaver_media_items;
     if (oldSS.length != newSS.length) return false;
     for (let index = 0; index < newSS.length; index++) {
       const element = newSS[index];
       if (!oldSS.find((e) => e.url == element.url && e.path != '')) return false;
     }
+    act.activation_style.screensaver_media_items = data.screen_savers;
     return true;
   }
 

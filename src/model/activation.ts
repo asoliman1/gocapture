@@ -67,14 +67,14 @@ class activationStyle {
     transition_effect: string;
 
     constructor(data : any){
-        this.is_enable_screensaver = true;
-        this.is_event_screensaver = false;
-        this.is_randomize = true;
-        this.switch_frequency = 500;
-        this.transition_effect = "slide" ||data.transition_effect;
-        this.screensaver_rotation_period = 500 ||data.screensaver_rotation_period;
-        this.screensaver_media_items = [1].map((e)=>{
-            return {path:'',url:'https://www.bestsadstatus.com/wp-content/uploads/2020/01/whatsapp-status-23-1.jpg'}
+        this.is_enable_screensaver = data.is_enable_screensaver;
+        this.is_event_screensaver = data.is_event_screensaver;
+        this.is_randomize = data.is_randomize;
+        this.switch_frequency = data.switch_frequency;
+        this.transition_effect = data.transition_effect;
+        this.screensaver_rotation_period = data.screensaver_rotation_period;
+        this.screensaver_media_items = data.screensaver_media_items.map((e)=>{
+            return {path:'',url:e}
         })
     }
 }
