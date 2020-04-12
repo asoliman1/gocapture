@@ -815,13 +815,8 @@ export class FormCapture implements AfterViewInit {
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
       this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
         this.submission.updateFields(this.form);
-<<<<<<< HEAD
-        let submitEmail = data.filter((d) => d.email == this.submission.email);
-        if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
-=======
         let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
         if (filteredSubmission && filteredSubmission.id != this.submission.id) {
->>>>>>> 29cd0116a0ad0cf7f78a2ece8961fefbecb5fb8d
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else {
             this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");

@@ -32,7 +32,6 @@ export class Login {
 		private popoverCtrl: PopoverController,
 		public app: App,
     private themeProvider: ThemeProvider) {
-    this.themeProvider.setActiveTheme();
 	}
 
 	ngOnInit() {
