@@ -911,7 +911,7 @@ export class FormCapture implements AfterViewInit {
       submissions: [this.submission]
     }
 
-    this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true, this.activation.id).subscribe(async (sub) => {
+    this.submissionsProvider.doSubmitAll(map[this.form.form_id + ""], true).subscribe(async (sub) => {
       this.tryClearDocumentsSelection();
       if (sub[0].prospect_id) {
         if (this.navParams.get('activationResult')) {
