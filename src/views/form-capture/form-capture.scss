@@ -14,6 +14,9 @@ form-capture {
 }
 
 ion-content {
+  ::-webkit-scrollbar {
+    display: none;
+  }
   div{
   padding-bottom: 0px !important;
 }

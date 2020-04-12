@@ -904,6 +904,7 @@ export class FormCapture implements AfterViewInit {
     this.openBadgeScan = false;
     this.isActivationProcessing = true;
     this.submission.updateFields(this.form);
+    this.submission.activation_id = this.activation.id;
     let map: { [key: number]: FormMapEntry } = {};
     map[this.form.form_id + ""] = {
       form: this.form,
