@@ -293,7 +293,7 @@ export class SubmissionsProvider {
   }
 
 
-  doSubmitAll(data: FormMapEntry, isActivation = false, activation?): Observable<FormSubmission[]> {
+  doSubmitAll(data: FormMapEntry, isActivation = false): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
@@ -307,7 +307,7 @@ export class SubmissionsProvider {
         }
 
         this.setSubmissionsUploading(data.submissions);
-        this.doSubmit(data, index, isActivation, activation).subscribe((submission) => {
+        this.doSubmit(data, index, isActivation).subscribe((submission) => {
           this.downloadSubmissionsData(data.form, [submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')
@@ -329,7 +329,7 @@ export class SubmissionsProvider {
   }
 
 
-  private doSubmit(data: FormMapEntry, index: number, isActivation = false, activation?): Observable<FormSubmission> {
+  private doSubmit(data: FormMapEntry, index: number, isActivation = false): Observable<FormSubmission> {
 
     return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
       let submission = data.submissions[index];
@@ -365,11 +365,11 @@ export class SubmissionsProvider {
           console.log("Updated submission fields :");
           console.log(submission)
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs, isActivation, activation);
+            this.processBarcode(data, submission, obs, isActivation);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
             this.processBarcode(data, submission, obs, isActivation);
           } else {
-            this.actuallySubmitForm(data.form, submission, obs, isActivation, activation);
+            this.actuallySubmitForm(data.form, submission, obs, isActivation);
           }
         }, (err) => {
           console.log(err);
@@ -419,7 +419,7 @@ export class SubmissionsProvider {
     }
   }
 
-  private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>, isActivation: boolean = false, activation?) {
+  private processBarcode(data: FormMapEntry, submission, obs: Observer<FormSubmission>, isActivation: boolean = false) {
     let identifier = data.form.getIdByFieldType(FormElementType.barcode);
     let form = data.form.getFieldByIdentifier(identifier);
     this.rest.fetchBadgeData(<any>submission.fields[identifier], form.barcode_provider_id, submission.is_rapid_scan, data.form.form_id + '')
@@ -445,10 +445,10 @@ export class SubmissionsProvider {
 
         this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
           if (isActivation) {
-            this.actuallySubmitForm(data.form, submission, obs, true, activation, JSON.stringify(barcodeData));
+            this.actuallySubmitForm(data.form, submission, obs, true, JSON.stringify(barcodeData));
           }
           else {
-            this.actuallySubmitForm(data.form, submission, obs, false, activation, JSON.stringify(barcodeData));
+            this.actuallySubmitForm(data.form, submission, obs, false, JSON.stringify(barcodeData));
           }
         }, (err) => {
           console.log(err);
@@ -478,13 +478,13 @@ export class SubmissionsProvider {
       });
   }
 
-  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false, activation?, barcodeData?: string) {
+  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false, barcodeData?: string) {
 
     console.log("Submit form to api: " + JSON.stringify(submission));
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
-    this.rest.submitForm(submission, activation).subscribe((d) => {
+    this.rest.submitForm(submission).subscribe((d) => {
       console.log("response from submissions", d);
       if (isActivation) {
         if (!d.submission) {
