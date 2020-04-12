@@ -26,6 +26,7 @@ export class FormView {
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() prospect: DeviceFormMembership;
+  
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
@@ -432,7 +433,7 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element: FormElement) {
+   shouldElementBeDisplayed(element: FormElement) {
     if(this.activation){
       return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
     }
@@ -441,7 +442,7 @@ export class FormView {
   }
   }
 
-  private shouldElementBeDisplayedInsideSection(element: FormElement) {
+   shouldElementBeDisplayedInsideSection(element: FormElement) {
     if(this.activation){
       return element.isMatchingRules && element.available_in_activations;
     }

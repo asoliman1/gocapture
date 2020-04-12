@@ -30,6 +30,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
+import { ThemeProvider } from '../providers/theme/theme';
 
 declare var cordova;
 @Injectable()
@@ -82,6 +83,7 @@ export class BussinessClient {
     private geolocation: Geolocation,
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
+    private themeProvider : ThemeProvider,
     private popup: Popup) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -182,8 +184,8 @@ export class BussinessClient {
           this.registration = user;
           this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
-          this.formsProvider.setForms();
           this.rest.token = user.access_token;
+          this.formsProvider.initForms();
         }
         obs.next(user);
         obs.complete();
@@ -277,6 +279,7 @@ export class BussinessClient {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
+    this.themeProvider.setDefaultTheme(reply.theme);
     this.translateConfigService.setLanguage(this.registration.localization);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {

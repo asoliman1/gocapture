@@ -148,6 +148,9 @@ export class DBClient {
 		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
 		form.show_reject_prompt = dbForm.show_reject_prompt == 1;
 		form.duplicate_action = dbForm.duplicate_action;
+		form.unique_identifier_barcode = dbForm.unique_identifier_barcode == 1;
+		form.unique_identifier_name = dbForm.unique_identifier_name == 1;
+		form.unique_identifier_email = dbForm.unique_identifier_email == 1;
 		form.computeIdentifiers();
 		return form;
 	}
@@ -197,7 +200,7 @@ export class DBClient {
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
 		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
-		 form.duplicate_action]);
+		 form.duplicate_action, form.unique_identifier_barcode ? 1 : 0, form.unique_identifier_name ? 1 : 0, form.unique_identifier_email ? 1 : 0]);
 	}
 
 	public saveActivation(activation: Activation): Observable<boolean> {
@@ -422,7 +425,6 @@ export class DBClient {
 		form.first_name = dbForm.firstName;
 		form.last_name = dbForm.lastName;
 		form.full_name = dbForm.fullName;
-		form.hold_request_id = dbForm.hold_request_id;
 		form.email = dbForm.email;
 		form.invalid_fields = dbForm.invalid_fields;
 		form.activity_id = dbForm.activityId;
@@ -432,12 +434,15 @@ export class DBClient {
 		form.last_sync_date = dbForm.last_sync_date;
 		form.hold_submission = dbForm.hold_submission;
 		form.hold_submission_reason = dbForm.hold_submission_reason;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.hidden_elements = dbForm.hidden_elements != "undefined" ? JSON.parse(dbForm.hidden_elements) : [];
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
 		form.captured_by_user_name = dbForm.captured_by_user_name;
 		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
+		form.barcodeID = dbForm.barcodeID;
+		// console.log(form);
 		return form;
 	}
 
@@ -448,7 +453,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location), form.station_id ,form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location), form.station_id, form.barcodeID, form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -459,7 +464,7 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.station_id, form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.station_id, form.barcodeID, form.hold_request_id])
 										.then((data) => {
 											obs.next(true);
 											obs.complete();
@@ -519,7 +524,8 @@ export class DBClient {
 			form.is_rapid_scan,
 			JSON.stringify(form.stations),
 			form.captured_by_user_name,
-			JSON.stringify(form.location)
+			JSON.stringify(form.location),
+			form.barcodeID
 		];
 	}
 
@@ -533,8 +539,10 @@ export class DBClient {
 	}
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
+		console.log("updateSubmissionFields")
+		console.log(sub.barcodeID);
 		sub.updateFields(form);
-		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
+		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason,sub.barcodeID, sub.id]);
 	}
 
 	public getDocumentsByIds(ids: number[]) {

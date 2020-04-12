@@ -12,6 +12,7 @@ export class SubmissionResponse {
 	stations: [Station];
 	captured_by_user_name: string;
 	submission_type: FormSubmissionType;
+	barcodeID: string;
 }
 
 export class SubmissionDataResponse {

@@ -256,7 +256,6 @@ export class RESTClient {
 		};
 		return this.getAll<{ records: Activation[] }>("/activations.json", opts).map(resp => {
 			let acs = Activation.parseActivations(resp, form);
-			console.log("response", acs)
 			return acs;
 		});
 	}
@@ -500,7 +499,7 @@ export class RESTClient {
 	 *
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<{
+	public submitForm(data, activation_id?: number): Observable<{
 		id: number,
 		message: string,
 		hold_request_id: number,
@@ -510,7 +509,8 @@ export class RESTClient {
 		submission?: FormSubmission,
 		is_new_submission: boolean
 	}> {
-		console.log("status", data.status)
+		data.activation_id = activation_id;
+		console.log("daataaa", data);
 		let method = data.hold_request_id && data.hold_request_id > 0 ? "PATCH" : "POST"
 		return this.call<BaseResponse>(method, "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
