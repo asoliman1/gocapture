@@ -45,14 +45,13 @@
 </ion-header>
 
 
-<ion-split-pane [ngStyle]="{'margin-top':!isThereActivation()? '60px': '0px'}">
-
+<ion-split-pane [ngClass]="{'split-panel-style':!isThereActivation()}">
   <ion-content no-bounce [ngStyle]="{
       'background-color':form?.event_style?.capture_background_color,
       'background-image':'url('+captureBg+')',
       'background-size':'cover',
       'background-position':'center',
-      'margin-top':isReadOnly(submission)? '50px': '0px'}" class="form-summary">
+      'margin-top':isReadOnly(submission)? '42px': '0px'}" class="form-summary">
     <ion-grid style="height: 100%;" [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
       <ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
         <ion-col>
