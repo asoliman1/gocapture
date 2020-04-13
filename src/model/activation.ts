@@ -4,23 +4,23 @@ import { Image } from "./image";
 
 export class Activation {
 
-    id : number;
+    id: number;
     name: string;
-    create_date : string;
-    modified_date : string;
+    create_date: string;
+    modified_date: string;
     background_image: string;
-    event : Form;
+    event: Form;
     is_active: boolean;
-    activation_capture_form_after : boolean;
-    display_capture_form : number;
-    url : string;
-    capture_screen_url : string;
+    activation_capture_form_after: boolean;
+    display_capture_form: number;
+    url: string;
+    capture_screen_url: string;
     submit_button_background_color: string;
     submit_button_text_color: string;
     submit_button_text: string;
-    activation_style : activationStyle;
+    activation_style: activationStyle;
 
-    public static parseActivation(dbActivation: any, form : Form) {
+    public static parseActivation(dbActivation: any, form: Form) {
         let act = new Activation();
         act.id = dbActivation.id;
         act.background_image = dbActivation.background_image;
@@ -40,8 +40,8 @@ export class Activation {
         return act;
     }
 
-    public static parseActivations(dbActivations: any[] , form :Form) {
-        return dbActivations.map((e) => this.parseActivation(e,form));
+    public static parseActivations(dbActivations: any[], form: Form) {
+        return dbActivations.map((e) => this.parseActivation(e, form));
     }
 
     public static encodeActivation(activation: Activation) {
@@ -66,15 +66,16 @@ class activationStyle {
     switch_frequency: number;
     transition_effect: string;
 
-    constructor(data : any){
-        this.is_enable_screensaver = true;
-        this.is_event_screensaver = false;
-        this.is_randomize = true;
-        this.switch_frequency = 500;
-        this.transition_effect = "slide" ||data.transition_effect;
-        this.screensaver_rotation_period = 500 ||data.screensaver_rotation_period;
-        this.screensaver_media_items = [1].map((e)=>{
-            return {path:'',url:'https://www.bestsadstatus.com/wp-content/uploads/2020/01/whatsapp-status-23-1.jpg'}
+    constructor(data: any) {
+        this.is_enable_screensaver = data.is_enable_screensaver;
+        this.is_event_screensaver = data.is_event_screensaver;
+        this.is_randomize = data.is_randomize;
+        this.switch_frequency = data.switch_frequency;
+        this.transition_effect = data.transition_effect;
+        this.screensaver_rotation_period = data.screensaver_rotation_period;
+        this.screensaver_media_items = data.screensaver_media_items.map((e) => {
+            return { path: '', url: e }
+
         })
     }
 }

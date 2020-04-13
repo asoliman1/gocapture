@@ -61,6 +61,7 @@ import { FormMapEntry } from '../../services/sync-client';
 import { Badge } from '../../components/form-view/elements/badge';
 import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
 import { FormGroup, AbstractControl } from '@angular/forms';
+import { EventStyle } from '../../model/event-style';
 
 @Component({
   selector: 'form-capture',
@@ -212,7 +213,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private setupIdleMode() {
-    if (this.form.event_style.is_enable_screensaver && !this.isRapidScanMode && !this.activation) {
+    if (!this.isRapidScanMode) {
       this.insomnia.keepAwake()
         .then(() => this.handleIdleMode()
         ).catch((err) => {
@@ -224,8 +225,11 @@ export class FormCapture implements AfterViewInit {
   }
 
   private handleIdleMode() {
-    let screensaverData = this.activation ? this.activation.activation_style : this.form.event_style;
-    if (screensaverData.is_enable_screensaver && !this.isRapidScanMode && screensaverData.screensaver_media_items.length)
+    let screensaverData: any = this.activation ? this.activation.activation_style : this.form.event_style;
+    if (this.activation && this.activation.activation_style.is_event_screensaver)
+      screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
+
+    if (screensaverData.is_enable_screensaver && !this.isRapidScanMode && screensaverData.screensaver_media_items.length) {
       this.idle
         .whenNotInteractive()
         .within(screensaverData.screensaver_rotation_period, 1000)
@@ -234,6 +238,7 @@ export class FormCapture implements AfterViewInit {
           console.log('idle mode started')
         })
         .start();
+    }
   }
 
   // A.S
@@ -817,6 +822,7 @@ export class FormCapture implements AfterViewInit {
         this.submission.updateFields(this.form);
         let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
         if (filteredSubmission && filteredSubmission.id != this.submission.id) {
+          this.isActivationProcessing = false;
           if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
           else {
             this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");

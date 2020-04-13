@@ -165,7 +165,7 @@ export class GOCAudio extends BaseElement {
 		let filePath = this.currentVal;
 	
 		if (filePath.startsWith('https://')) {
-			this.popup.showLoading({text:"audio-recording.downloading"});
+			this.popup.showLoading({text:"alerts.audio-recording.downloading"});
 			await this.audioCaptureService.downloadRecord(filePath);
 			this.popup.dismiss('loading');
 		}

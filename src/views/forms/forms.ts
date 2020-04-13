@@ -33,8 +33,8 @@ export class Forms {
 
   forms: Form[] = [];
 
-  syncDisabled : boolean;
-  
+  syncDisabled: boolean;
+
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
     private popup: Popup,
@@ -43,21 +43,21 @@ export class Forms {
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
-    private Keyboard: Keyboard, 
-    private dbClient : DBClient,
-    private themeProvider:ThemeProvider
-    ) {
+    private Keyboard: Keyboard,
+    private dbClient: DBClient,
+    private themeProvider: ThemeProvider
+  ) {
     this.getForms();
   }
 
   ngOnInit() {
-		this.client.userUpdates.subscribe((user: User)=>{
-			this.user=user
-		})
-		this.dbClient.getRegistration().subscribe((user)=>{
-			this.user=user;
-		})
-	}
+    this.client.userUpdates.subscribe((user: User) => {
+      this.user = user
+    })
+    this.dbClient.getRegistration().subscribe((user) => {
+      this.user = user;
+    })
+  }
 
   getForms() {
     this.formsProvider.formsObs.subscribe((val) => {
@@ -160,7 +160,9 @@ export class Forms {
               documents = documentSets[0].documents;
             }
 
-            this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
+            let modal = this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } })
+            modal.present();
+            modal.onWillDismiss(() => this.themeProvider.setDefaultTheme())
           } else {
             this.navCtrl.push("DocumentsListPage", { form });
           }
@@ -184,15 +186,15 @@ export class Forms {
       })
     }
 
-    if(form.activations.length && this.user.activations)
-    buttons.push({
-      'text': 'forms.activations',
-      'icon': 'game-controller-b',
-      handler : () => {
-        this.navCtrl.push(ActivationsPage, { form: form });
-        this.setFormTheme(form);
-      }
-    })
+    if (form.activations.length && this.user.activations)
+      buttons.push({
+        'text': 'forms.activations',
+        'icon': 'game-controller-b',
+        handler: () => {
+          this.navCtrl.push(ActivationsPage, { form: form });
+          this.setFormTheme(form);
+        }
+      })
 
     buttons.push({
       text: 'general.cancel',
@@ -202,13 +204,13 @@ export class Forms {
       }
     });
 
-      this.popup.showActionSheet(form.name,buttons);
+    this.popup.showActionSheet(form.name, buttons);
   }
 
-  setFormTheme(form : Form){
+  setFormTheme(form: Form) {
     console.log(form.event_style.theme)
     if (form.event_style.theme)
-    this.themeProvider.setTempTheme(form.event_style.theme);
+      this.themeProvider.setTempTheme(form.event_style.theme);
   }
 
   ionViewDidEnter() {
@@ -217,8 +219,8 @@ export class Forms {
     this.forms = this.formsProvider.forms;
   }
 
-  ionViewWillEnter(){
-   this.themeProvider.setDefaultTheme();
+  ionViewWillEnter() {
+    this.themeProvider.setDefaultTheme();
   }
 
   ionViewDidLeave() {

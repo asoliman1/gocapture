@@ -11,7 +11,14 @@ form-capture {
     }
   }
 
+  .split-panel-style {
+    padding-top: 42px;
+    margin-top: constant(safe-area-inset-top);
+    margin-top: env(safe-area-inset-top);
+  }
+
 }
+
 
 ion-content {
   ::-webkit-scrollbar {
