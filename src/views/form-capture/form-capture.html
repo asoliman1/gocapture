@@ -45,25 +45,26 @@
 </ion-header>
 
 
-<ion-split-pane [ngClass]="{'split-panel-style':!isThereActivation()}">
+<ion-split-pane
+[ngClass]="{'split-panel-style':!isThereActivation()}">
   <ion-content no-bounce [ngStyle]="{
       'background-color':form?.event_style?.capture_background_color,
       'background-image':'url('+captureBg+')',
       'background-size':'cover',
-      'background-position':'center',
-      'margin-top':isReadOnly(submission)? '42px': '0px'}" class="form-summary">
-    <ion-grid style="height: 100%;" [ngStyle]="{'padding':isThereActivation()? '0px': '5px' }">
+      'background-position':'center'}" class="form-summary">
+    <ion-grid style="height: 100%;" [ngStyle]="{'padding':isThereActivation()? '0px': '5px'}">
       <ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
         <ion-col>
           <button ion-button block color="light"
-            [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color}"
+            [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color, 'margin-top': '20px'}"
             (click)="searchProspect()">
             <ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}
           </button>
         </ion-col>
       </ion-row>
 
-      <ion-row style="height: inherit;">
+      <ion-row style="height: inherit;"
+      [ngStyle]="{'padding-top':isReadOnly(submission)? '60px': '0px'}">
         <ion-col style="order:1; height: inherit;"  >
           <form-view *ngIf="form" [form]="form" [activation]="isThereActivation()" [prospect]="prospect"
             [submission]="submission" (onValidationChange)="onValidationChange($event)"
