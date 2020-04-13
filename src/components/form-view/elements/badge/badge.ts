@@ -190,7 +190,7 @@ export class Badge extends BaseElement implements OnInit {
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       this.popup.dismiss('loading');
-
+      this.submission.barcodeID = scannedId;
       console.error("Could not fetch badge data: " + (typeof err == "string" ? err : JSON.stringify(err)));
 
       this.fillInElementsWithPlaceholderValue("Scanned");
