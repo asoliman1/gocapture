@@ -313,7 +313,7 @@ export class FormView {
     for (let key in this.theForm.controls) {
       if (this.theForm.controls[key].invalid) {
         let controlId = key.split('_')[1];
-        invalidControls.push(this.getNameForElementWithId(controlId));
+        if (this.getNameForElementWithId(controlId)) invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
     return invalidControls.length > 0 ? {text:'form-capture.check-fields-msg',param : invalidControls.join(', ')} : {text:'',param:''};
@@ -322,8 +322,9 @@ export class FormView {
   private getNameForElementWithId(id) {
     for (let i = 0; i < this.displayForm.elements.length; i++) {
       let element = this.displayForm.elements[i];
-      if (element.id == id) {
-        return element.title;
+      if (element.id == id ) {
+        if(this.activation && element.available_in_activations) return element.title;
+        if(!this.activation && element.available_in_event_form) return element.title;
       }
     }
   }

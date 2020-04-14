@@ -5,13 +5,14 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, Searchbar } from 'ionic-angular';
 import { Popup } from '../../providers/popup/popup';
 import { SearchActivationsPage } from '../search-activations/search-activations';
+import { ThemeProvider } from '../../providers/theme/theme';
 
 @Component({
   selector: 'page-activations',
   templateUrl: 'activations.html',
 })
 export class ActivationsPage {
-
+  private selectedTheme;
   searchMode = false;
   searchTrigger = "hidden";
   @ViewChild("search") searchbar: Searchbar;
@@ -26,7 +27,9 @@ export class ActivationsPage {
     public navParams: NavParams,
     public activationsProvider: ActivationsProvider,
     private popup: Popup,
+    private themeProvider: ThemeProvider,
   ) {
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
     this.getData(this.navParams.get("form"));
   }
 
@@ -74,7 +77,7 @@ export class ActivationsPage {
     this.popup.showPopover(SearchActivationsPage, {
       formName: this.searchEventName,
       activationName: this.searchActivationName
-    }, false, ev).onDidDismiss((data) => {
+    }, false, ev, this.selectedTheme + ' gc-popoverActivation').onDidDismiss((data) => {
       this.searchEventName = data.eventName;
       this.searchActivationName = data.activationName;
       if (!data.isCancel) this.onSearchDismiss(data.eventForm, data.activationName)

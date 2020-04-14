@@ -67,8 +67,7 @@ ion-content {
   }
 
   .popover-viewport {
-    height: auto;
-
+    height: 70vh;
     .scroll-content {
       height: calc(100% - 80px);
     }
