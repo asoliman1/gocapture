@@ -72,7 +72,7 @@ class activationStyle {
         this.is_randomize = data.is_randomize;
         this.switch_frequency = data.switch_frequency;
         this.transition_effect = data.transition_effect;
-        this.screensaver_rotation_period = data.screensaver_rotation_period;
+        this.screensaver_rotation_period = data.rotation_period;
         this.screensaver_media_items = data.screensaver_media_items.map((e) => {
             return { path: '', url: e }
 

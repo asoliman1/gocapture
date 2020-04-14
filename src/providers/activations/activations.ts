@@ -71,7 +71,10 @@ export class ActivationsProvider {
 
   private downloadActivationsData(activations: Activation[]) {
     activations.forEach(async (act: Activation) => {
-      if (act.activation_style.is_event_screensaver) act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
+      if (act.activation_style.is_event_screensaver) {act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
+        act.activation_style.screensaver_rotation_period = act.event.event_style.screensaver_rotation_period;
+        act.activation_style.switch_frequency = act.event.event_style.switch_frequency;
+      }
       else if (! await this.checkSSfiles(act)) {
         this.downloadActivationData(act);
       }

@@ -246,7 +246,6 @@ export class FormCapture implements AfterViewInit {
     // get updated data of form
     this.form.event_style = this.getFormStyle();
     let active = this.navCtrl.last().instance instanceof FormCapture;
-
     if (this.imagesDownloaded(data)) {
       if (!this._modal && active) {
         this.handleScreenSaverRandomize(data)
