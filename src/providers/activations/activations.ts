@@ -50,7 +50,9 @@ export class ActivationsProvider {
         activation_name: actName
       }
     ).pipe(
-      tap((e) => this.downloadActivationsData(e))
+      tap((e) => {
+        console.log("form activations", e);
+        this.downloadActivationsData(e)})
     );
   }
 
@@ -74,9 +76,11 @@ export class ActivationsProvider {
       if (act.activation_style.is_event_screensaver) {act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
         act.activation_style.screensaver_rotation_period = act.event.event_style.screensaver_rotation_period;
         act.activation_style.switch_frequency = act.event.event_style.switch_frequency;
+        act.activation_style.is_randomize = act.event.event_style.is_randomize;
+        act.activation_style.transition_effect = act.event.event_style.transition_effect;
       }
-      else if (! await this.checkSSfiles(act)) {
-        this.downloadActivationData(act);
+      else  {
+       act.activation_style.screensaver_media_items.forEach((e) => e.path = e.url);
       }
     })
   }

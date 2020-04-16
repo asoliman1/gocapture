@@ -271,6 +271,11 @@ export const VERSIONS = {
                 "alter table forms add column unique_identifier_name integer default 0",
                 "alter table forms add column unique_identifier_email integer default 0"
             ]
+        },
+        34 :  {
+            queries: [
+                "alter table forms add column ignore_submissions_from_activations integer default 0",
+            ]
         }
     }
 };

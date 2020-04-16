@@ -47,7 +47,7 @@ import { LocalStorageProvider } from "../../providers/local-storage/local-storag
 import { Vibration } from "@ionic-native/vibration";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { ScannerType } from "../../components/form-view/elements/badge/Scanners/Scanner";
-import { Observable, Subscription } from "rxjs";
+import { Observable, Subscription, VirtualTimeScheduler } from "rxjs";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { StationsPage } from "../stations/stations";
 import { Idle } from 'idlejs/dist';
@@ -226,6 +226,7 @@ export class FormCapture implements AfterViewInit {
 
   private handleIdleMode() {
     let screensaverData: any = this.activation ? this.activation.activation_style : this.form.event_style;
+    console.log("screensaverData", screensaverData);
     if (this.activation && this.activation.activation_style.is_event_screensaver)
       screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
 
@@ -266,8 +267,8 @@ export class FormCapture implements AfterViewInit {
     if (data.is_randomize) data.screensaver_media_items = this.utils.shuffle(data.screensaver_media_items);
   }
 
-  // A.S
   private imagesDownloaded(data: any) {
+    if(this.activation) return true;
     data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
     return data.screensaver_media_items.length;
   }
@@ -784,7 +785,7 @@ export class FormCapture implements AfterViewInit {
     let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     let noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
-   
+
     if (isNotScanned && noTranscriptable) {
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
@@ -822,20 +823,32 @@ export class FormCapture implements AfterViewInit {
     this.setSubmissionType();
     // A.S
     this.submission.location = this.location;
+    this.handleDuplicateSubmissions(shouldSyncData);
+
+  }
+
+  handleDuplicateSubmissions(shouldSyncData) {
     if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
-      this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
-        this.submission.updateFields(this.form);
-        let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
-        if (filteredSubmission && filteredSubmission.id != this.submission.id) {
-          this.isActivationProcessing = false;
-          if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
-          else {
-            this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
+      if (this.activation && this.form.ignore_submissions_from_activations) this.submitActivation();
+      else {
+        this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
+          this.submission.updateFields(this.form);
+          let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
+          if (filteredSubmission && filteredSubmission.id != this.submission.id) {
+            if (!this.activation && this.form.ignore_submissions_from_activations &&
+              filteredSubmission.submission_type == FormSubmissionType.activation) this.goToSubmit(shouldSyncData);
+            else {
+              this.isActivationProcessing = false;
+              if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
+              else {
+                this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
+              }
+            }
+          } else {
+            this.goToSubmit(shouldSyncData);
           }
-        } else {
-          this.goToSubmit(shouldSyncData);
-        }
-      })
+        })
+      }
     } else {
       this.goToSubmit(shouldSyncData);
     }
@@ -845,15 +858,18 @@ export class FormCapture implements AfterViewInit {
     let result: FormSubmission[];
     if (this.form.unique_identifier_barcode && this.submission.barcodeID != null) {
       result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
+      console.log("barcode resullllt", result);
       if (result.length) return result[0];
     }
     if (this.form.unique_identifier_email && this.submission.email) {
       result = data.filter((d) => d.email == this.submission.email);
+      console.log("email resullllt", result);
       if (result.length) return result[0];
     }
 
     if (this.form.unique_identifier_name && this.submission.first_name) {
       result = data.filter((d) => d.full_name == this.submission.full_name);
+      console.log("name resullllt", result);
       if (result.length) return result[0];
     }
     return null;
