@@ -50,9 +50,7 @@ export class ActivationsProvider {
         activation_name: actName
       }
     ).pipe(
-      tap((e) => {
-        console.log("form activations", e);
-        this.downloadActivationsData(e)})
+      tap((e) => this.downloadActivationsData(e))
     );
   }
 

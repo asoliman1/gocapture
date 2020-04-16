@@ -226,7 +226,7 @@ export class FormCapture implements AfterViewInit {
 
   private handleIdleMode() {
     let screensaverData: any = this.activation ? this.activation.activation_style : this.form.event_style;
-    console.log("screensaverData", screensaverData);
+    
     if (this.activation && this.activation.activation_style.is_event_screensaver)
       screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
 
@@ -858,19 +858,16 @@ export class FormCapture implements AfterViewInit {
     let result: FormSubmission[];
     if (this.form.unique_identifier_barcode && this.submission.barcodeID != null) {
       result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
-      console.log("barcode resullllt", result);
-      if (result.length) return result[0];
+      if (result.length) return result[result.length-1];
     }
     if (this.form.unique_identifier_email && this.submission.email) {
       result = data.filter((d) => d.email == this.submission.email);
-      console.log("email resullllt", result);
-      if (result.length) return result[0];
+      if (result.length) return result[result.length-1];
     }
 
     if (this.form.unique_identifier_name && this.submission.first_name) {
       result = data.filter((d) => d.full_name == this.submission.full_name);
-      console.log("name resullllt", result);
-      if (result.length) return result[0];
+      if (result.length) return result[result.length-1];
     }
     return null;
   }
