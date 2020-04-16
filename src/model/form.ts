@@ -41,6 +41,7 @@ export class Form extends BaseForm {
 	unique_identifier_barcode: boolean;
 	unique_identifier_name: boolean;
 	unique_identifier_email: boolean;
+	ignore_submissions_from_activations: boolean;
 
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;

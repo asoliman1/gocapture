@@ -16,6 +16,14 @@ form-capture {
     margin-top: constant(safe-area-inset-top);
     margin-top: env(safe-area-inset-top);
   }
+  .scroll_frame {
+    overflow: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling:touch;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e0e0e0;
+}
 
 }
 
