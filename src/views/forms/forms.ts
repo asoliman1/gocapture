@@ -15,6 +15,7 @@ import { DocumentsService } from "../../services/documents-service";
 import { unionBy } from 'lodash';
 import { ActivationsPage } from '../activations/activations';
 import { DBClient } from '../../services/db-client';
+import { ThemeProvider } from '../../providers/theme/theme';
 
 @Component({
   selector: 'forms',
@@ -32,8 +33,8 @@ export class Forms {
 
   forms: Form[] = [];
 
-  syncDisabled : boolean;
-  
+  syncDisabled: boolean;
+
   constructor(private navCtrl: NavController,
     private client: BussinessClient,
     private popup: Popup,
@@ -42,20 +43,21 @@ export class Forms {
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
-    private Keyboard: Keyboard, 
-    private dbClient : DBClient
-    ) {
+    private Keyboard: Keyboard,
+    private dbClient: DBClient,
+    private themeProvider: ThemeProvider
+  ) {
     this.getForms();
   }
 
   ngOnInit() {
-		this.client.userUpdates.subscribe((user: User)=>{
-			this.user=user
-		})
-		this.dbClient.getRegistration().subscribe((user)=>{
-			this.user=user;
-		})
-	}
+    this.client.userUpdates.subscribe((user: User) => {
+      this.user = user
+    })
+    this.dbClient.getRegistration().subscribe((user) => {
+      this.user = user;
+    })
+  }
 
   getForms() {
     this.formsProvider.formsObs.subscribe((val) => {
@@ -112,6 +114,7 @@ export class Forms {
           //console.log('capture clicked');
           this.duplicateLeadsService.registerDuplicateLeadHandler(this.forms);
           this.navCtrl.push(FormCapture, { form: form });
+          this.setFormTheme(form);
         }
       }];
 
@@ -122,6 +125,8 @@ export class Forms {
         handler: () => {
           //console.log('review clicked');
           this.navCtrl.push(FormCapture, { form: form, isRapidScanMode: true });
+          this.setFormTheme(form);
+
         }
       })
     }
@@ -132,6 +137,8 @@ export class Forms {
       handler: () => {
         //console.log('review clicked');
         this.navCtrl.push(FormReview, { form: form, isDispatch: false });
+        this.setFormTheme(form);
+
       }
     });
 
@@ -153,10 +160,14 @@ export class Forms {
               documents = documentSets[0].documents;
             }
 
-            this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } }).present();
+            let modal = this.modalCtrl.create('Documents', { documentSet: { ...documentSets[0], documents } })
+            modal.present();
+            modal.onWillDismiss(() => this.themeProvider.setDefaultTheme())
           } else {
             this.navCtrl.push("DocumentsListPage", { form });
           }
+          this.setFormTheme(form);
+
         }
       })
       // }
@@ -169,18 +180,21 @@ export class Forms {
         handler: () => {
           //console.log('review clicked');
           this.navCtrl.push(FormInstructions, { form: form });
+          this.setFormTheme(form);
+
         }
       })
     }
 
-    if(form.activations.length && this.user.activations)
-    buttons.push({
-      'text': 'forms.activations',
-      'icon': 'game-controller-b',
-      handler : () => {
-        this.navCtrl.push(ActivationsPage, { form: form });
-      }
-    })
+    if (form.activations.length && this.user.activations)
+      buttons.push({
+        'text': 'forms.activations',
+        'icon': 'game-controller-b',
+        handler: () => {
+          this.navCtrl.push(ActivationsPage, { form: form });
+          this.setFormTheme(form);
+        }
+      })
 
     buttons.push({
       text: 'general.cancel',
@@ -190,13 +204,23 @@ export class Forms {
       }
     });
 
-      this.popup.showActionSheet(form.name,buttons);
+    this.popup.showActionSheet(form.name, buttons);
+  }
+
+  setFormTheme(form: Form) {
+    console.log(form.event_style.theme)
+    if (form.event_style.theme)
+      this.themeProvider.setTempTheme(form.event_style.theme);
   }
 
   ionViewDidEnter() {
     // A.S
     this.Keyboard.setResizeMode("ionic");
     this.forms = this.formsProvider.forms;
+  }
+
+  ionViewWillEnter() {
+    this.themeProvider.setDefaultTheme();
   }
 
   ionViewDidLeave() {

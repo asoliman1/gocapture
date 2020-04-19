@@ -1,93 +1,126 @@
 import { Image } from './../../model/image';
 import { Activation } from './../../model/activation';
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { DBClient } from '../../services/db-client';
 import { Util } from '../../util/util';
 import { HTTP } from '@ionic-native/http';
 import { RESTClient } from '../../services/rest-client';
 import { Form } from '../../model';
 import { Entry } from '@ionic-native/file';
+import { ACTIVATIONS_PARAMS } from '../../constants/activations-params';
+import { tap } from 'rxjs/operators';
+import { Storage } from '@ionic/storage';
+
+const storageKey = 'activations';
+const SCREEN_SAVERS_KEY = 'screensavers';
+
 @Injectable()
 export class ActivationsProvider {
 
-  public activations : Activation[] = [];
-  loaded: boolean = false;
-  activationsObs : Subject<any> = new Subject();
-  hasNewData : boolean;
+  hasNewData: boolean;
+  sortBy = ACTIVATIONS_PARAMS.SORT_BY.UPDATE_DATE;
+  sortOrder = ACTIVATIONS_PARAMS.SORT_ORDER.DESC;
+  isThereNoActivations: boolean = false;
 
-  constructor( 
-    private dbClient: DBClient,
-    private util : Util, 
-    private http : HTTP,
-    private rest : RESTClient) {
+  constructor(
+    private util: Util,
+    private http: HTTP,
+    private storage: Storage,
+    private restClient: RESTClient) {
   }
 
-  // setActivations() {
-  //   if (!this.loaded && this.dbClient.isWorkDbInited()){
-  //     this.loaded = true;
-  //     this.dbClient.getActivations().subscribe((activations) => {
-  //       this.activations = activations;
-  //       this.pushUpdates();
-  //     })
-  //   }
-  // }
-
-  pushUpdates(){
-    this.activationsObs.next(true);
+  getAllActivations(actName: string = '') {
+    return this.restClient.getAllFormsWithActivations(
+      {
+        activation_name: actName,
+        sort_by: this.sortBy,
+        sort_order: this.sortOrder,
+        group_by: 'event'
+      }
+    ).pipe(
+      tap((e) => this.downloadActivationsData(e.activations))
+    );
   }
 
-  // downloadActivations(forms: Form[],params): Observable<Activation[]> {
-  //   console.log('Getting latest Activations...')
-  //   return new Observable<any>(obs => {
-  //     this.rest.getAllActivations(forms,params)
-  //     .subscribe((remoteActivations) => {
-  //       // remoteActivations.activations = this.checkActivationData(remoteActivations.activations , []);
-  //       this.saveNewActivations(remoteActivations.activations);
-  //       if (this.hasNewData) this.downloadActivationsData(remoteActivations.activations); // A.S check if form has data to be downloaded - A.S GOC-326
-  //         obs.next(remoteActivations.activations);
-  //       },(err)=>{
-  //         obs.error(err);
-  //       },()=>obs.complete())
 
-  //   })
-  // }
+  getFormActivations(form: Form, actName: string = '') {
+    return this.restClient.getFormActivations(form,
+      {
+        sort_by: this.sortBy,
+        sort_order: this.sortOrder,
+        activation_name: actName
+      }
+    ).pipe(
+      tap((e) => this.downloadActivationsData(e))
+    );
+  }
 
-  // private async downloadActivationsData(activations: Activation[]) {
-  //   console.log('Downloading activations data...');
-  //   await Promise.all(activations.map(async (act: Activation) => {
-  //     await this.downloadActivationData(act);
-  //   }))
-  //   this.hasNewData = false;
-  //   console.log('Downloading forms data finished');
-  // }
+  saveStorage(data: any, key?: string) {
+    key = key ? '-' + key : '';
+    return this.storage.set(`${storageKey}${key}`, data);
+  }
 
-  // private async downloadActivationData(act: Activation) {
-  //   await this.downloadActivationBackground(act);
-  // }
+  getStorage(key?: string) {
+    key = key ? '-' + key : '';
+    return this.storage.get(`${storageKey}${key}`);
+  }
+
+  clearStorage(key?: string) {
+    key = key ? '-' + key : '';
+    return this.saveStorage([], `${storageKey}${key}`);
+  }
+
+  private downloadActivationsData(activations: Activation[]) {
+    activations.forEach(async (act: Activation) => {
+      if (act.activation_style.is_event_screensaver) {act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
+        act.activation_style.screensaver_rotation_period = act.event.event_style.screensaver_rotation_period;
+        act.activation_style.switch_frequency = act.event.event_style.switch_frequency;
+        act.activation_style.is_randomize = act.event.event_style.is_randomize;
+        act.activation_style.transition_effect = act.event.event_style.transition_effect;
+      }
+      else  {
+       act.activation_style.screensaver_media_items.forEach((e) => e.path = e.url);
+      }
+    })
+  }
+
+  private async checkSSfiles(act: Activation) {
+    let data = await this.getStorage(`${SCREEN_SAVERS_KEY}-${act.id}`);
+    console.log(data);
+    let oldSS: Image[] = data ? data.screen_savers : [],
+      newSS = act.activation_style.screensaver_media_items;
+    if (oldSS.length != newSS.length) return false;
+    for (let index = 0; index < newSS.length; index++) {
+      const element = newSS[index];
+      if (!oldSS.find((e) => e.url == element.url && e.path != '')) return false;
+    }
+    act.activation_style.screensaver_media_items = data.screen_savers;
+    return true;
+  }
+
+  private downloadActivationData(act: Activation) {
+    console.log(`Downloading activation ${act.id} data...`);
+    this.downloadActivationSs(act);
+  }
 
 
-  // private async downloadActivationBackground(act: Activation) {
-  //   if (act.activation_identifier.background_image.url != '' && act.activation_identifier.background_image.path.startsWith('https://')) {
-  //     let entry: Entry;
-  //     // this.updateFormSyncStatus(form.form_id, true)
-  //     try {
-  //       let file = this.util.getFilePath(act.activation_identifier.background_image.url, `activation_${act.id}_`);
-  //       entry = await this.http.downloadFile(file.pathToDownload,{},{}, file.path);
-  //       act.activation_identifier.background_image = { path: entry.nativeURL, url: act.activation_identifier.background_image.url };
-  //     } catch (error) {
-  //       console.log('Error downloading a form background image', error)
-  //     }
-  //     this.updateActivationBackground(act.id, act.activation_identifier.background_image);
-  //     // this.updateFormSyncStatus(form.form_id, false)
-  //   }
-  // }
+  private async downloadActivationSs(act: Activation) {
+    act.activation_style.screensaver_media_items = await Promise.all(act.activation_style.screensaver_media_items.map(async (e, i) => {
+      if (e.path == '' && e.url.startsWith('https://')) {
+        let entry: Entry;
+        try {
+          let file = this.util.getFilePath(e.url, `activation_${act.id}_ss_${i}`);
+          entry = await this.http.downloadFile(file.pathToDownload, {}, {}, file.path);
+          e = { path: entry.nativeURL, url: e.url };
+        } catch (error) {
+          console.log('Error downloading an activation ss image', error)
+        }
+        return e;
+      }
+    }));
 
-  // updateActivationBackground(id: any, background: Image) {
-  //   let index = this.activations.findIndex((e) => e.id === (id * 1));
-  //   this.activations[index].activation_identifier.background_image = background;
-  //   this.saveActivationDb(this.activations[index])
-  // }
+    await this.saveStorage({ activation_id: act.id, screen_savers: act.activation_style.screensaver_media_items }, SCREEN_SAVERS_KEY + '-' + act.id);
+  }
+
 
   // A.S GOC-326 check file if downloaded
   checkFile(newUrl: string, oldUrl: Image, id: string) {
@@ -114,48 +147,5 @@ export class ActivationsProvider {
   }
 
 
-  // A.S GOC-384 check Activation data if downloaded
-  // private checkActivationData(newActs: any[], oldActs: Activation[]) {
-  //   return newActs.map((act) => {
-  //     let oldAct = oldActs.find(f => f.id == act.id);
-  //     // check activation background image
-  //     let actBg = act.activation_identifier.background_image;
-  //     act.activation_identifier.background_image = { path: this.checkFile(actBg, oldAct && oldAct.activation_identifier ? oldAct.activation_identifier.background_image : null, `activation_${act.id}_`), url: actBg };
-
-  //     return act;
-  //   })
-  // }
-
-
-  getActivations(): Activation[] {
-    return this.activations;
-  }
-
-  saveNewActivation(activation: Activation) {
-    this.activations.push(activation);
-    this.pushUpdates();
-  }
-
-  saveActivationDb(activation: Activation) {
-    this.dbClient.saveActivation(activation).subscribe();
-  }
-
-  saveNewActivations(activations: Activation[]) {
-    activations.forEach((e : Activation)=> {
-      let act = this.activations.find((f)=>f.id == e.id);
-      if(act) act = Object.assign(act,e);
-      else this.activations.push(e);
-    });
-    // this.activations.forEach((e)=>{
-    //   if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteActivation(e);
-    // })
-    this.dbClient.saveActivations(activations).subscribe();
-    this.pushUpdates();
-  }
-
-  deleteActivation(activation: Activation) {
-    this.activations = this.activations.filter((e) => e.id !== activation.id);
-    this.dbClient.deleteActivation(activation).subscribe();
-  }
 
 }

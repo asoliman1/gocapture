@@ -1,5 +1,5 @@
 import { TranslateConfigService } from './translate/translateConfigService';
-import { BadgeResponse } from '../model';
+import { BadgeResponse, SubmissionStatus } from '../model';
 import { Injectable } from "@angular/core";
 import { Headers, Http, Response, URLSearchParams } from "@angular/http";
 import { Config } from "../config";
@@ -256,7 +256,6 @@ export class RESTClient {
 		};
 		return this.getAll<{ records: Activation[] }>("/activations.json", opts).map(resp => {
 			let acs = Activation.parseActivations(resp, form);
-			console.log("response", acs)
 			return acs;
 		});
 	}
@@ -500,7 +499,7 @@ export class RESTClient {
 	 *
 	 * @returns Observable
 	 */
-	public submitForm(data: FormSubmission): Observable<{
+	public submitForm(data): Observable<{
 		id: number,
 		message: string,
 		hold_request_id: number,
@@ -510,8 +509,10 @@ export class RESTClient {
 		submission?: FormSubmission,
 		is_new_submission: boolean
 	}> {
-		return this.call<BaseResponse>("POST", "/forms/submit.json", data)
+		let method = data.hold_request_id && data.hold_request_id > 0 ? "PATCH" : "POST"
+		return this.call<BaseResponse>(method, "/forms/submit.json", data)
 			.map((resp: FormSubmitResponse) => {
+				console.log("resp", resp)
 				if (resp.status == "200") {
 					return {
 						id: resp.activity_id,

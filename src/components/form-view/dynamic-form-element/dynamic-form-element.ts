@@ -52,6 +52,7 @@ export class DynamicFormElementComponent {
   isControlInvalid() {
     return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
+  
 
   setHour(event) {
 
@@ -76,7 +77,7 @@ export class DynamicFormElementComponent {
   setYearsRange() {
     var d = new Date();
     var year = d.getFullYear();
-    this.minYear = (year - 10) + '';
-    this.maxYear = (year + 10) + '';
+    this.minYear = (year - 100) + '';
+    this.maxYear = (year + 100) + '';
   }
 }

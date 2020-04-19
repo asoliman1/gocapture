@@ -148,6 +148,10 @@ export class DBClient {
 		form.activations = dbForm.activations ? JSON.parse(dbForm.activations) : [];
 		form.show_reject_prompt = dbForm.show_reject_prompt == 1;
 		form.duplicate_action = dbForm.duplicate_action;
+		form.unique_identifier_barcode = dbForm.unique_identifier_barcode == 1;
+		form.unique_identifier_name = dbForm.unique_identifier_name == 1;
+		form.unique_identifier_email = dbForm.unique_identifier_email == 1;
+		form.ignore_submissions_from_activations = dbForm.ignore_submissions_from_activations == 1;
 		form.computeIdentifiers();
 		return form;
 	}
@@ -196,12 +200,12 @@ export class DBClient {
 		form.members_last_sync_date ? form.members_last_sync_date : "", form.is_mobile_quick_capture_mode ? 1 : 0,
 		form.instructions_content, form.is_enforce_instructions_initially ? 1 : 0, JSON.stringify(form.event_stations),
 		form.is_enable_rapid_scan_mode ? 1 : 0, JSON.stringify(form.available_for_users),
-		JSON.stringify(form.event_address), JSON.stringify(form.event_style),JSON.stringify(form.lastSync),JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
-		 form.duplicate_action]);
+		JSON.stringify(form.event_address), JSON.stringify(form.event_style), JSON.stringify(form.lastSync), JSON.stringify(form.activations), form.show_reject_prompt ? 1 : 0,
+		form.duplicate_action, form.unique_identifier_barcode ? 1 : 0, form.unique_identifier_name ? 1 : 0, form.unique_identifier_email ? 1 : 0, form.ignore_submissions_from_activations ? 1 : 0]);
 	}
 
 	public saveActivation(activation: Activation): Observable<boolean> {
-		return this.save(WORK, "activations", Object.keys(Activation.encodeActivation(activation)).map((e)=>activation[e]));
+		return this.save(WORK, "activations", Object.keys(Activation.encodeActivation(activation)).map((e) => activation[e]));
 	}
 
 	public saveForms(forms: Form[]): Observable<boolean> {
@@ -253,7 +257,7 @@ export class DBClient {
 			});
 	}
 
-	private mapUser(data : any) : User {
+	private mapUser(data: any): User {
 		if (data) {
 			let user = new User();
 			user.access_token = data.token;
@@ -282,7 +286,7 @@ export class DBClient {
 			user.activations = data.activations;
 			this.registration = user;
 			return user;
-		}else return null;
+		} else return null;
 	}
 
 
@@ -431,12 +435,15 @@ export class DBClient {
 		form.last_sync_date = dbForm.last_sync_date;
 		form.hold_submission = dbForm.hold_submission;
 		form.hold_submission_reason = dbForm.hold_submission_reason;
+		form.hold_request_id = dbForm.hold_request_id;
 		form.hidden_elements = dbForm.hidden_elements != "undefined" ? JSON.parse(dbForm.hidden_elements) : [];
 		form.station_id = dbForm.station_id ? parseInt(dbForm.station_id) + '' : '';
 		form.is_rapid_scan = dbForm.is_rapid_scan;
 		form.stations = dbForm.stations != "undefined" ? JSON.parse(dbForm.stations) : dbForm.stations;
 		form.captured_by_user_name = dbForm.captured_by_user_name;
 		form.location = dbForm.location ? JSON.parse(dbForm.location) : null;
+		form.barcodeID = dbForm.barcodeID;
+		// console.log(form);
 		return form;
 	}
 
@@ -447,7 +454,7 @@ export class DBClient {
 				this.manager.db(WORK).subscribe((db) => {
 					db.executeSql(this.getQuery('submissions', "selectByHoldId"), [form.hold_request_id]).then((data) => {
 						if (data.rows.length == 1) {
-							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location) ,form.hold_request_id])
+							db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location), form.station_id, form.barcodeID, form.hold_request_id])
 								.then((data) => {
 									obs.next(true);
 									obs.complete();
@@ -458,7 +465,7 @@ export class DBClient {
 						} else if (data.rows.length > 1) {
 							db.executeSql(this.getQuery("submissions", "deleteByHoldId"), [form.hold_request_id])
 								.then((data) => {
-									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null,JSON.stringify(form.location), form.hold_request_id])
+									db.executeSql(this.getQuery('submissions', "updateByHoldId"), [form.id, form.status, form.activity_id, JSON.stringify(form.fields), form.first_name, form.last_name, form.full_name, form.email, false, null, JSON.stringify(form.location), form.station_id, form.barcodeID, form.hold_request_id])
 										.then((data) => {
 											obs.next(true);
 											obs.complete();
@@ -518,7 +525,8 @@ export class DBClient {
 			form.is_rapid_scan,
 			JSON.stringify(form.stations),
 			form.captured_by_user_name,
-			JSON.stringify(form.location)
+			JSON.stringify(form.location),
+			form.barcodeID
 		];
 	}
 
@@ -532,8 +540,10 @@ export class DBClient {
 	}
 
 	public updateSubmissionFields(form: Form, sub: FormSubmission): Observable<boolean> {
+		console.log("updateSubmissionFields")
+		console.log(sub.barcodeID);
 		sub.updateFields(form);
-		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.id]);
+		return this.doUpdate(WORK, "updateFields", "submissions", [JSON.stringify(sub.fields), sub.email, sub.first_name, sub.last_name, sub.full_name, sub.barcode_processed, sub.hold_submission, sub.hold_submission_reason, sub.barcodeID, sub.id]);
 	}
 
 	public getDocumentsByIds(ids: number[]) {
@@ -804,7 +814,7 @@ export class DBClient {
 			let page = pageSize > 0 ? pageSize : this.saveAllPageSize;
 			let handler = (resp: boolean, stopExec?: boolean) => {
 				index++;
-				if (index + 1 % page == 0) {  
+				if (index + 1 % page == 0) {
 					exec(index == items.length);
 					if (index == items.length) {
 						return;
@@ -825,9 +835,9 @@ export class DBClient {
 		return new Observable<boolean>((responseObserver: Observer<boolean>) => {
 			if (this.saveAllEnabled) {
 				this.saveAllData.push({ query: this.getQuery(table, "update"), type: type, parameters: parameters });
-					responseObserver.next(true);
-					responseObserver.complete();
-				    return;
+				responseObserver.next(true);
+				responseObserver.complete();
+				return;
 			}
 			this.doUpdate(type, "update", table, parameters).subscribe((value) => {
 				responseObserver.next(value);

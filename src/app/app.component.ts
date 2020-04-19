@@ -30,7 +30,7 @@ import { TranslateConfigService } from '../services/translate/translateConfigSer
 export class MyApp {
 
   rootPage: any;
-  selectedTheme: string;
+  selectedTheme: string = this.themeProvider.defaultTheme;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -49,7 +49,6 @@ export class MyApp {
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
   ) {
-    this.subscribeThemeChanges();
     this.initializeApp();
   }
 
@@ -73,6 +72,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.subscribeThemeChanges();
       this.checkUserAuth();
       this.handleApiErrors();
       this.handleClientErrors();
@@ -101,6 +101,7 @@ export class MyApp {
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
       if (user) {
+        this.setTheme(user);
         this.setLogging();
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
@@ -110,6 +111,11 @@ export class MyApp {
       }
     });
   }
+
+  setTheme(user){
+    let theme = user ? user.theme : 'default';
+		this.themeProvider.setDefaultTheme(theme);
+	}
 
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)

@@ -87,7 +87,6 @@ export class SubmissionsProvider {
 
   downloadSubmissions(currentSyncingForms: formSyncStatus[]): Observable<any> {
     console.log('Getting latest submissions...')
-    // this.formsProvider.setFormsSyncStatus(true);
     return new Observable<any>(obs => {
       this.rest.getAllSubmissions(this.formsProvider.forms).pipe(
         mergeMap(async (e) => {
@@ -309,7 +308,6 @@ export class SubmissionsProvider {
 
         this.setSubmissionsUploading(data.submissions);
         this.doSubmit(data, index, isActivation).subscribe((submission) => {
-          console.log(submission)
           this.downloadSubmissionsData(data.form, [submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')
@@ -486,7 +484,6 @@ export class SubmissionsProvider {
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
-
     this.rest.submitForm(submission).subscribe((d) => {
       console.log("response from submissions", d);
       if (isActivation) {
@@ -500,9 +497,9 @@ export class SubmissionsProvider {
         }
       }
       this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
-        const autoUpload = String(setting) == "true";
-
-        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
+        if(String(setting)=="") setting= "true";
+        const autoUpload = String(setting) == "true" ;
+        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit" && !isActivation) {
           d.id = submission.id;
           d.form_id = submission.form_id;
 
@@ -532,7 +529,6 @@ export class SubmissionsProvider {
           obs.complete();
           return;
         }
-
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;

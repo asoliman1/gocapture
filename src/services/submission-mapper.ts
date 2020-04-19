@@ -24,6 +24,7 @@ export class SubmissionMapper {
     entry.stations = item.stations;
     entry.captured_by_user_name = item.captured_by_user_name;
     entry.submission_type = item.submission_type;
+    entry.barcodeID = item.barcodeID;
 
     item.data.forEach((dataItem) => {
       if (!dataItem.value) {

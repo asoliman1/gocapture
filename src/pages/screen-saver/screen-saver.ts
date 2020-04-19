@@ -1,8 +1,6 @@
 import { StatusBar } from '@ionic-native/status-bar';
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ViewController, Slides } from 'ionic-angular';
-import { EventStyle } from '../../model/event-style';
-import { ThemeProvider } from '../../providers/theme/theme';
 
 
 @Component({
@@ -13,17 +11,17 @@ import { ThemeProvider } from '../../providers/theme/theme';
 // A.S GOC-333
 
 export class ScreenSaverPage {
- 
 
-
-  eventStyle: EventStyle;
+  eventStyle: any;
   @ViewChild(Slides) slides: Slides;
   currentIndex: number;
-  themeColor: string;
   loading : boolean;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private viewCtrl: ViewController, private themeProvider: ThemeProvider, private StatusBar: StatusBar) {
+
+  constructor(public navCtrl: NavController, 
+    public navParams: NavParams, 
+    private viewCtrl: ViewController,
+    private StatusBar: StatusBar) {
     this.eventStyle = this.navParams.data.event_style;
-    this.themeProvider.getActiveTheme().subscribe(val => this.themeColor = val.replace('-theme', ''));
   }
 
 

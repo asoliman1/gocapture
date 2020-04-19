@@ -1,3 +1,4 @@
+import { Storage, IonicStorageModule } from '@ionic/storage';
 import { ActivationViewPage } from './../pages/activation-view/activation-view';
 import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
 import { buttonBar } from './../components/form-view/button-bar/button-bar';
@@ -179,10 +180,7 @@ export function createTranslateLoader(http: HttpClient) {
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp, {
-      scrollPadding: false,
-      scrollAssist: false
-    }),
+    IonicModule.forRoot(MyApp),
     BrowserAnimationsModule,
     TextMaskModule,
     PipesModule,
@@ -202,6 +200,7 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [

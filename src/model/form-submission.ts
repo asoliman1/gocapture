@@ -32,6 +32,8 @@ export class FormSubmission {
 	location : Geoposition;
 	isDownloading : boolean;
 	isUploading : boolean;
+	barcodeID: string;
+	activation_id: number;
 	
 	public isSubmitted(): boolean {
 		return this.status == SubmissionStatus.Submitted;

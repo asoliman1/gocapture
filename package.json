@@ -41,6 +41,7 @@
     "@ionic-native/keyboard": "^4.20.0",
     "@ionic-native/local-notifications": "^4.20.0",
     "@ionic-native/media": "^4.20.0",
+    "@ionic-native/native-storage": "^4.20.0",
     "@ionic-native/network": "^4.5.3",
     "@ionic-native/nfc": "^4.20.0",
     "@ionic-native/photo-library": "^4.20.0",
@@ -64,6 +65,7 @@
     "com-sarriaroman-photoviewer": "1.1.18",
     "cordova-android": "^8.1.0",
     "cordova-android-support-gradle-release": "^3.0.1",
+    "cordova-browser": "^6.0.0",
     "cordova-clipboard": "^1.2.1",
     "cordova-fabric-plugin": "git+https://github.com/RSMNYS/FabricPlugin.git",
     "cordova-ios": "^5.1.1",
@@ -90,6 +92,7 @@
     "cordova-plugin-local-notification": "^0.9.0-beta.2",
     "cordova-plugin-local-notifications": "^1.0.0",
     "cordova-plugin-media": "^5.0.3",
+    "cordova-plugin-nativestorage": "^2.3.2",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-photo-library": "^2.2.1",
     "cordova-plugin-screen-orientation": "^3.0.1",
@@ -198,7 +201,8 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
-      "cordova-plugin-app-preferences": {}
+      "cordova-plugin-app-preferences": {},
+      "cordova-plugin-nativestorage": {}
     },
     "platforms": [
       "android",
