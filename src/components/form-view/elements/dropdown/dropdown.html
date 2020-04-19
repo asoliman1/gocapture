@@ -1,5 +1,9 @@
 <ion-item (click)="showOptions()">
-	<ion-label class="element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+	<ion-label *ngIf="isLabelVisible(element)" class="address-label element-name" stacked [class.required]="element.is_required">
+        {{element.title}}
+      </ion-label>
+      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
+      </ion-label>
 	<ion-select class="gc-select"  [disabled]="true" color="primary" [attr.name]="element.id" (ionChange)="onChange($event)"
                [ngModel]="currentVal">
 		<ion-option *ngFor="let option of element.options" [value]="this.itemValue(option)">{{this.itemValue(option)}}</ion-option>

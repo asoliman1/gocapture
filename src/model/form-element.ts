@@ -39,6 +39,7 @@ export class FormElement {
 	style : ElementStyle
 	available_in_activations : boolean;
 	available_in_event_form: boolean;
+	is_label_visible: boolean;
 }
 
 class ElementStyle{

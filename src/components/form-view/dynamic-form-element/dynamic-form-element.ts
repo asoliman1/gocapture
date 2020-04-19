@@ -80,4 +80,9 @@ export class DynamicFormElementComponent {
     this.minYear = (year - 100) + '';
     this.maxYear = (year + 100) + '';
   }
+
+  isLabelVisible(element: FormElement){
+    if (element.is_label_visible) return true;
+    else return false;
+  }
 }

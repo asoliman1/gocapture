@@ -71,4 +71,9 @@ export class Address extends BaseGroupElement implements ISearch {
     });
     return items;
   }
+
+  isLabelVisible(element: any){
+    if (element.is_label_visible) return true;
+    else return false;
+  }
 }

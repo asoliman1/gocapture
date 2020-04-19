@@ -56,7 +56,7 @@
       <ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
         <ion-col>
           <button ion-button block color="light"
-            [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color, 'margin-top': '20px'}"
+            [ngStyle]="{'background-color':form.event_style.search_list_background_color,'color':form.event_style.search_list_text_color, 'margin-top': '20px'}"
             (click)="searchProspect()">
             <ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}
           </button>

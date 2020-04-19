@@ -24,4 +24,6 @@ export class EventStyle {
     element_background_opacity : number;
     element_background_mode : string;
     theme:string;
+    search_list_background_color: string;
+    search_list_text_color: string;
 }

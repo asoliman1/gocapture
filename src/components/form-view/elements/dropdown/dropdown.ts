@@ -72,4 +72,9 @@ export class Dropdown extends BaseElement implements ISearch {
   itemValue(item) {
 	  return item.option_label || item.option;
   }
+
+  isLabelVisible(element: FormElement){
+    if (element.is_label_visible) return true;
+    else return false;
+  }
 }
