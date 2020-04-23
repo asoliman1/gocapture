@@ -4,12 +4,14 @@ import { User } from "../../model";
 import { Main } from "../main";
 import { UrlChoose } from "./url-choose";
 import { Config } from "../../config";
-import { 
+import {
 	App,
 	PopoverController,
 	NavController,
-	NavParams } from "ionic-angular";
+	NavParams
+} from "ionic-angular";
 import { Popup } from '../../providers/popup/popup';
+import { Keychain } from '@ionic-native/keychain';
 
 @Component({
 	selector: 'login',
@@ -29,9 +31,21 @@ export class Login {
 		private client: BussinessClient,
 		private popup: Popup,
 		private popoverCtrl: PopoverController,
+		private keychain: Keychain,
 		public app: App) {
-	}
 
+		this.getDataFormKeyChain();
+	}
+	getDataFormKeyChain() {
+		this.keychain.get('email').then(data => {
+			console.log(data);
+			this.email = data;
+		})
+		this.keychain.get('authCode').then(data => {
+			console.log(data);
+			this.authCode = data;
+		})
+	}
 	ngOnInit() {
 
 		if (this.navParams.get("unauthenticated") == true) {
@@ -46,7 +60,7 @@ export class Login {
 			if (!errorMessage) {
 				errorMessage = "toast.auth-failed";
 			}
-			this.popup.showToast({text:errorMessage});
+			this.popup.showToast({ text: errorMessage });
 			return;
 		}
 		this.client.getRegistration()
@@ -60,8 +74,8 @@ export class Login {
 			});
 	}
 
-	changeInputType(){
-		if(this.codeInputType == 'password') this.codeInputType = 'text';
+	changeInputType() {
+		if (this.codeInputType == 'password') this.codeInputType = 'text';
 		else this.codeInputType = 'password';
 	}
 
@@ -70,15 +84,17 @@ export class Login {
 			if (!this.authCode || !this.email) {
 				return;
 			}
-			this.popup.showLoading({text:'alerts.loading.authenticating'});
+			this.keychain.set('email', this.email, false);
+			this.keychain.set('authCode', this.authCode, false);
+			this.popup.showLoading({ text: 'alerts.loading.authenticating' });
 			Config.isProd = this.useProd;
 			this.client.authenticate(this.email, this.authCode)
 				.subscribe(data => {
-					this.popup.setLoadingContent({text:data.message});
+					this.popup.setLoadingContent({ text: data.message });
 					// this.themeProvider.setActiveTheme()
 				}, err => {
 					this.popup.dismiss('loading');
-					this.popup.showToast({text:err});
+					this.popup.showToast({ text: err });
 				}, () => {
 					this.popup.dismiss('loading');
 					this.navCtrl.setRoot(Main);

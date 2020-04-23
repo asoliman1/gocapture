@@ -1,3 +1,7 @@
 radios, .radios{
 	width: 100%;
+	.option-label {
+		white-space: normal;
+		width: max-content;
+	  }
 }

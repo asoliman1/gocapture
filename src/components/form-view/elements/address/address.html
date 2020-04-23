@@ -2,8 +2,6 @@
 	<ion-label *ngIf="isLabelVisible(element)" class="address-label element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
 	<ion-grid>
 		<ion-row responsive-sm>
 			<ion-col>

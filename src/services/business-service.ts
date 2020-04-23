@@ -31,6 +31,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
 import { ThemeProvider } from '../providers/theme/theme';
+import { Keychain } from '@ionic-native/keychain';
 
 declare var cordova;
 @Injectable()
@@ -84,7 +85,8 @@ export class BussinessClient {
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
     private themeProvider : ThemeProvider,
-    private popup: Popup) {
+    private popup: Popup, 	
+    private keychain: Keychain) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
     this.errorSource = new BehaviorSubject<any>(null);

@@ -163,36 +163,36 @@ export class RESTClient {
 		});
 	}
 
-	public getAllFormsWithActivations(params: any){
+	public getAllFormsWithActivations(params: any) {
 		return new Observable<{ activations: Activation[], form: Form }>((obs: Observer<{ activations: Activation[], form: Form }>) => {
-			 this.getActivationResponse(params).subscribe((resp)=>{
-				 var result: { activations: Activation[], form: Form } = { activations: [], form: null };
-				 if (!resp || resp.length == 0) {
-					 setTimeout(() => {
-						 obs.next(result);
-						 obs.complete();
-					 });
-					 return;
-				 }
+			this.getActivationResponse(params).subscribe((resp) => {
+				var result: { activations: Activation[], form: Form } = { activations: [], form: null };
+				if (!resp || resp.length == 0) {
+					setTimeout(() => {
+						obs.next(result);
+						obs.complete();
+					});
+					return;
+				}
 
-				 for(let i=0; i<resp.length; i++){
-					 this.dbClient.getFormsByIds([resp[i].form_id]).subscribe((forms) => {
-						 let acs = Activation.parseActivations(resp[i].activations, forms[0]);
-						 result.activations = acs;
-						 result.form = forms[0];
-						 obs.next({ ...result })
-						 if (i == (resp.length -1)){
+				for (let i = 0; i < resp.length; i++) {
+					this.dbClient.getFormsByIds([resp[i].form_id]).subscribe((forms) => {
+						let acs = Activation.parseActivations(resp[i].activations, forms[0]);
+						result.activations = acs;
+						result.form = forms[0];
+						obs.next({ ...result })
+						if (i == (resp.length - 1)) {
 							obs.complete();
 						}
-					 })
-				 }
-			 });
-			
+					})
+				}
+			});
+
 
 		});
 	}
 
-	public getActivationResponse(params: any): any{
+	public getActivationResponse(params: any): any {
 		let opts: any = {
 			include_inactive: 0,
 			...params
@@ -203,7 +203,7 @@ export class RESTClient {
 
 	}
 
-	public getActivationSub(params: any): any{
+	public getActivationSub(params: any): any {
 		let opts: any = {
 			...params
 		};
@@ -213,33 +213,37 @@ export class RESTClient {
 
 	}
 
-	public getActivationSubmissions(params: any ): any{
+	public getActivationSubmissions(params: any): any {
 		let opts: any = {
 			...params
 		};
-		return this.getActSubResponse<{ records: any}>("/activation/submissions.json", opts).map(resp => {
+		return this.getActSubResponse<{ records: any }>("/activation/submissions.json", opts).map(resp => {
 			return resp;
 		});
+	}
+
+	public getCompanies(companyName: string) {
+		return this.http.get(`http://autocomplete.clearbit.com/v1/companies/suggest?query=${companyName}`);
 	}
 
 	private getActSubResponse<T>(relativeUrl: string, content: any): Observable<T> {
 		let response = new Observable<T>((obs: Observer<T>) => {
 			var result: T[] = [];
 			let handler = (data: RecordsResponse<T>) => {
-				var records:any;
+				var records: any;
 				if (!data.records) {
 
-				}  else {
+				} else {
 					records = data;
 				}
 
 				result.push.apply(result, records);
 				obs.next(records);
-				
-					obs.complete();
+
+				obs.complete();
 			};
 			let doTheCall = () => {
-	
+
 				this.call<RecordsResponse<T>>("GET", relativeUrl, content).subscribe(handler, (err) => obs.error(err));
 			};
 			doTheCall();

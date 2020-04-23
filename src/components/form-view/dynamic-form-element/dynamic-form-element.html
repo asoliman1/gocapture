@@ -8,8 +8,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"
         [placeholder]="element.placeholder"></ion-input>
     </ion-item>
@@ -26,22 +24,19 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"
         [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--TEXT-->
+  
     <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
-      <ion-input type="text" [attr.name]="element.id" [formControlName]="element.identifier"
-        [placeholder]="element.placeholder"></ion-input>
+      <ion-input type="text"
+        [attr.name]="element.id" [formControlName]="element.identifier" [placeholder]="element.placeholder"></ion-input>
     </ion-item>
 
     <!--DROPDOWN-->
@@ -54,8 +49,6 @@
     <ion-item *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
-      </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
       </ion-label>
       <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm"
         [formControlName]="element.identifier"></radios>
@@ -72,8 +65,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
 
       <!-- A.S GOC-316 -->
       <ion-textarea autocorrect="on" [attr.name]="element.id" [formControlName]="element.identifier"></ion-textarea>
@@ -81,11 +72,11 @@
 
     <!--TIME-->
     <ion-item *ngSwitchCase="'time'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-        <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
-          {{element.title}}
-        </ion-label>
-        <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-        </ion-label>
+      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+        {{element.title}}
+      </ion-label>
+      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
+      </ion-label>
       <ion-datetime (click)="setHour($event)" displayFormat="hh:mm A" pickerFormat="hh:mm A" [attr.name]="element.id"
         [formControlName]="element.identifier">
       </ion-datetime>
@@ -103,8 +94,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency>
       </ion-input>
     </ion-item>
@@ -115,8 +104,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"
         [placeholder]="element.placeholder"></ion-input>
     </ion-item>
@@ -126,8 +113,6 @@
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
-      </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
       </ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
         [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
@@ -140,8 +125,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
         [placeholder]="element.placeholder"></ion-input>
     </ion-item>
@@ -152,8 +135,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
         [placeholder]="element.placeholder"></ion-input>
     </ion-item>
@@ -162,8 +143,6 @@
     <ion-item *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
-      </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
       </ion-label>
       <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier"></checkboxes>
@@ -174,8 +153,6 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
-      </ion-label>
       <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier"></image-item>
     </ion-item>
@@ -184,8 +161,6 @@
     <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
-      </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
       </ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier" [form]="form" [submission]="submission"
@@ -197,8 +172,6 @@
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
-      </ion-label>
-      <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
       </ion-label>
       <signature [readonly]="readOnly" [isEditing]="isEditing" item-content [element]="element" [formGroup]="theForm"
         [formControlName]="element.identifier">

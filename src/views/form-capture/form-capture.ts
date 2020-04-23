@@ -61,7 +61,7 @@ import { FormMapEntry } from '../../services/sync-client';
 import { Badge } from '../../components/form-view/elements/badge';
 import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
 import { FormGroup, AbstractControl } from '@angular/forms';
-import { EventStyle } from '../../model/event-style';
+import { Colors } from '../../constants/colors';
 
 @Component({
   selector: 'form-capture',
@@ -125,6 +125,7 @@ export class FormCapture implements AfterViewInit {
   activation: Activation = this.navParams.get("activation");
   openBadgeScan = false;
   noTranscriptable: boolean;
+  selectedThemeColor: string;
 
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
@@ -149,7 +150,10 @@ export class FormCapture implements AfterViewInit {
     private submissionsProvider: SubmissionsProvider,
     private statusBar: StatusBar
   ) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+    this.themeProvider.getActiveTheme().subscribe(val => {
+      this.selectedThemeColor = Colors[val.split('-')[0]];
+      this.selectedTheme = val
+    });
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
@@ -226,7 +230,7 @@ export class FormCapture implements AfterViewInit {
 
   private handleIdleMode() {
     let screensaverData: any = this.activation ? this.activation.activation_style : this.form.event_style;
-    
+
     if (this.activation && this.activation.activation_style.is_event_screensaver)
       screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
 
@@ -268,7 +272,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   private imagesDownloaded(data: any) {
-    if(this.activation) return true;
+    if (this.activation) return true;
     data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
     return data.screensaver_media_items.length;
   }
@@ -300,6 +304,8 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
+    console.log("the form", this.form);
+    this.setupSearchListTheme();
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
@@ -330,6 +336,13 @@ export class FormCapture implements AfterViewInit {
 
     // this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
+  }
+
+  setupSearchListTheme() {
+    if (!this.form.event_style.search_list_background_color) {
+      this.form.event_style.search_list_background_color = this.selectedThemeColor;
+      this.form.event_style.search_list_text_color = this.form.event_style.event_text_color;
+    }
   }
 
   private convertCaptureImageSrc() {
@@ -828,13 +841,13 @@ export class FormCapture implements AfterViewInit {
   }
 
   handleDuplicateSubmissions(shouldSyncData) {
-    if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
+    if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt && !this.isEditing) {
       if (this.activation && this.form.ignore_submissions_from_activations) this.submitActivation();
       else {
         this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
           this.submission.updateFields(this.form);
           let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
-          if (filteredSubmission && filteredSubmission.id != this.submission.id) {
+          if (filteredSubmission) {
             if (!this.activation && this.form.ignore_submissions_from_activations &&
               filteredSubmission.submission_type == FormSubmissionType.activation) this.goToSubmit(shouldSyncData);
             else {
@@ -858,18 +871,26 @@ export class FormCapture implements AfterViewInit {
     let result: FormSubmission[];
     if (this.form.unique_identifier_barcode && this.submission.barcodeID != null) {
       result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
-      if (result.length) return result[result.length-1];
+      return this.testFilteredsubmissionsByUniqueId(result);
     }
     if (this.form.unique_identifier_email && this.submission.email) {
       result = data.filter((d) => d.email == this.submission.email);
-      if (result.length) return result[result.length-1];
+      return this.testFilteredsubmissionsByUniqueId(result);
     }
 
     if (this.form.unique_identifier_name && this.submission.first_name) {
       result = data.filter((d) => d.full_name == this.submission.full_name);
-      if (result.length) return result[result.length-1];
+      return this.testFilteredsubmissionsByUniqueId(result);
     }
     return null;
+  }
+
+  testFilteredsubmissionsByUniqueId(subs: FormSubmission[]): FormSubmission {
+    let result: FormSubmission[];
+    result = subs.filter((d) => d.submission_type != FormSubmissionType.activation);
+    if (result.length) return result[0];
+    else if(subs.length) return subs[0];
+
   }
 
   getTranscriptionControls(name: string, control: AbstractControl) {
