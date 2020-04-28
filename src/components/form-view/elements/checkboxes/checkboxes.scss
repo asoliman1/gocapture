@@ -1,8 +1,26 @@
-checkboxes, .checkboxes{
-	width: 100%;
+checkboxes,
+.checkboxes {
+  :root {
+    --label_color : black;
+    }
+  width: 100%;
 
   .option-label {
     white-space: normal;
+    padding-left: 40px;
+    color:var(--label_color) !important;
+  }
+
+  .option-label2 {
+    white-space: normal;
+    color:var(--label_color) !important;
+  }
+  
+  .full-width-label {
     width: max-content;
   }
+  .italic-label {
+    font-style: italic;
+  }
+
 }

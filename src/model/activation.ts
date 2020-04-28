@@ -19,6 +19,8 @@ export class Activation {
     submit_button_text_color: string;
     submit_button_text: string;
     activation_style: activationStyle;
+    instructions_content: string;
+    instructions_mobile_mode: number;
 
     public static parseActivation(dbActivation: any, form: Form) {
         let act = new Activation();
@@ -37,6 +39,8 @@ export class Activation {
         act.submit_button_text = dbActivation.submit_button_text;
         act.submit_button_text_color = dbActivation.submit_button_text_color;
         act.activation_style = new activationStyle(dbActivation.activation_style);
+        act.instructions_content = dbActivation.instructions_content;
+        act.instructions_mobile_mode =dbActivation.instructions_mobile_mode;
         return act;
     }
 

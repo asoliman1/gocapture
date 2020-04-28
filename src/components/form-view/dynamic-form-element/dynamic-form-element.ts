@@ -91,7 +91,6 @@ export class DynamicFormElementComponent {
   }
 
   getCompanies(event) {
-    // [(ngModel)]="input" (ionChange)="getCompanies($event)"
     return this.rest.getCompanies(this.input).subscribe((resp: any) => {
       let comps = JSON.parse(resp['_body']);
       return comps.filter((c) => c['name'] )

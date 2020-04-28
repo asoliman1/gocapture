@@ -1,7 +1,24 @@
-radios, .radios{
+radios,
+.radios {
+	:root {
+		--radio-label_color : black;
+		--radio-label-padding : -40px;
+		}
 	width: 100%;
 	.option-label {
+		padding-right: 20px;
 		white-space: normal;
+		color:var(--radio-label_color) !important;
+	}
+	.full-width-label {
 		width: max-content;
+	}
+	.italic-label {
+		font-style: italic;
+	}
+	.pad-label{
+		padding-left: 40px;
 	  }
+
+	  
 }

@@ -30,7 +30,7 @@
 
     <!--TEXT-->
   
-    <ion-item *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode"
+    <ion-item  *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
@@ -50,7 +50,7 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm"
+      <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [form]="form"
         [formControlName]="element.identifier"></radios>
     </ion-item>
 
@@ -61,7 +61,7 @@
 
     <!--TEXTAREA-->
     <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode"
-      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()" >
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
@@ -144,7 +144,7 @@
       <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
+      <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [form]="form"
         [formControlName]="element.identifier"></checkboxes>
     </ion-item>
 

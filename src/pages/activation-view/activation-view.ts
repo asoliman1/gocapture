@@ -58,7 +58,6 @@ export class ActivationViewPage {
     this.prepareActivationUrl();
   }
   ionViewDidEnter() {
-    console.log(this.activation)
     this.reloadGame();
     this.listenToGameEvents();
     this.initNetwork();
@@ -111,7 +110,6 @@ export class ActivationViewPage {
   }
 
   ionViewWillLeave() {
-    console.log("activationurl", this.activationUrl)
     if (this.backUnregister) {
       this.backUnregister();
     }
@@ -222,13 +220,10 @@ export class ActivationViewPage {
   }
   goBack(activationResult: any) {
     if (this.activation.activation_capture_form_after) {
-      console.log("activationFirst")
       this.goBackIfActivationFirst();
     }
 
     else {
-      console.log(this.navParams.get('prospectId'))
-      console.log("activationSecond")
       const buttons = [
         {
           text: 'general.cancel',
@@ -249,7 +244,6 @@ export class ActivationViewPage {
   }
 
   goToForm(activationResult: any, isNext: boolean = false) {
-      console.log("Go to Form")
       let currentIndex = this.navCtrl.getActive().index;
       if(!this.activation.activation_capture_form_after){
       this.navCtrl.push(FormCapture,
@@ -258,7 +252,6 @@ export class ActivationViewPage {
           form: this.activation.event,
           isNext
         }).then(() => {
-          console.log("removing game")
           this.navCtrl.remove(currentIndex);
         });
       }
@@ -270,7 +263,6 @@ export class ActivationViewPage {
           activationResult,
           isNext
         }).then(() => {
-          console.log("removing game")
           this.navCtrl.remove(currentIndex);
         });
       }
@@ -283,8 +275,6 @@ export class ActivationViewPage {
       prospectId = this.navParams.get('prospectId');
 
     if (activityId && prospectId) {
-      console.log("we have data from the capture")
-      console.log(this.navParams.get('activityId'), this.navParams.get('prospectId'))
       this.restClient.submitActivation({
         activation_id: this.activation.id,
         activation_result: activationResult,
@@ -292,9 +282,6 @@ export class ActivationViewPage {
         prospect_id: prospectId,
       }).subscribe((data) => {
         if (data) {
-          console.log(data);
-          console.log(isNext)
-          console.log(activationResult)
           if (isNext) this.goToForm(activationResult, true);
         }
       }, (err) => {
@@ -304,14 +291,10 @@ export class ActivationViewPage {
     }
 
     else {
-      console.log("we do not have data from the capture");
-      console.log(resultAction);
       if(resultAction == ACTIVATIONS_ACTIONS.SUBMIT_NEXT){
-        console.log(resultAction);
         this.goToForm(activationResult, true)
       }
       else{
-        console.log(resultAction);
       this.actvationResultFromSubmit = activationResult;
       }
     }
@@ -376,11 +359,9 @@ export class ActivationViewPage {
         text: 'alerts.activation.retry',
         handler: () => {
         if (this.isOnline()){
-          console.log("if online")
           this.reloadGame()
         }
         else{
-          console.log("if not online")
           this.retryToRefreshActivation()
         }
         }

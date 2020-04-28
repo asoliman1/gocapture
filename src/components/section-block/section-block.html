@@ -13,7 +13,7 @@
     </ion-list>
   </ion-card-header>
 
-  <ion-card-content class="content" [ngStyle]="{'border':'0.55px solid ' + (element?.style?.background_color || selectedThemeColor)} " #content>
+  <ion-card-content class="card-content" [ngStyle]="{'border':'0.55px solid ' + (element?.style?.background_color || selectedThemeColor)} " #content>
     <ng-content></ng-content>
   </ion-card-content>
 

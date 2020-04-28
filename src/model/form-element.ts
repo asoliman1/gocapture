@@ -44,7 +44,12 @@ export class FormElement {
 
 class ElementStyle{
 	background_color : string;
-	text_color : string
+	text_color : string;
+	underline: boolean;
+	italicize: boolean;
+	full_width_text: boolean;
+	vertical_alignment: string;
+	
 }
 
 export class Option {
