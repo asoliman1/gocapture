@@ -51,25 +51,12 @@ export class Radios extends BaseElement {
 		}
 	}
 
-	isElementUnderlined() : boolean{
-		return this.element.style.underline;
-	}
-
 	isElementItalicize() : boolean{
 		return this.element.style.italicize;
 	}
 
 	isLabelFullWidth() : boolean{
-		return this.element.style.full_width_text;
+		return this.element.style.full_width_text == true || !this.element.style.full_width_text ? true : false;
 	}
 
-	isAlignmentTop() :boolean{
-		return this.element.style.vertical_alignment == "top" ? true: false;
-	}
-	isAlignmentMiddle() :boolean{
-		return this.element.style.vertical_alignment == "middle" ? true: false;
-	}
-	isAlignmentBottom() :boolean{
-		return this.element.style.vertical_alignment == "bottom" ? true: false;
-	}
 }

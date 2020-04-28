@@ -46,7 +46,7 @@
 
 
 <ion-split-pane
-[ngClass]="{'split-panel-style':!isThereActivation()}">
+[ngClass]="{'split-panel-style':!isThereActivation(), 'margin-for-titlebar': errorMessage.text && !isThereActivation()}">
   <ion-content no-bounce [ngStyle]="{
       'background-color':form?.event_style?.capture_background_color,
       'background-image':'url('+captureBg+')',

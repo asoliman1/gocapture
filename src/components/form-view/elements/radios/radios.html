@@ -5,19 +5,7 @@
 				<ion-label [ngClass]="{'option-label': true, 'full-width-label': isLabelFullWidth(), 'italic-label': isElementItalicize()}" 
 				text-wrap>{{option.option_label || option.option}}</ion-label>
 
-				<ion-radio *ngIf="isAlignmentTop()" style=" position: absolute; top: 4px; right: 5px;"
-				color="primary" [attr.name]="formControlName + index"
-				[value]="option.option"
-				[disabled]="readonly"
-				[checked]="option.is_default == 1 || option.option == currentVal"></ion-radio>
-
-				<ion-radio *ngIf="isAlignmentBottom()" style=" position: absolute; bottom: 4px; right: 5px;"
-				color="primary" [attr.name]="formControlName + index"
-				[value]="option.option"
-				[disabled]="readonly"
-				[checked]="option.is_default == 1 || option.option == currentVal"></ion-radio>
-
-				<ion-radio *ngIf="isAlignmentMiddle()" 
+				<ion-radio 
 				color="primary" [attr.name]="formControlName + index"
 				[value]="option.option"
 				[disabled]="readonly"
@@ -27,20 +15,7 @@
 			<ion-item no-lines *ngIf="!this.element.style.underline">
 				<ion-label [ngClass]="{'option-label': true, 'full-width-label': isLabelFullWidth(), 'italic-label': isElementItalicize()}" 
 				text-wrap>{{option.option_label || option.option}}</ion-label>
-
-				<ion-radio *ngIf="isAlignmentTop()" style=" position: absolute; top: 4px; right: 5px;"
-				color="primary" [attr.name]="formControlName + index"
-				[value]="option.option"
-				[disabled]="readonly"
-				[checked]="option.is_default == 1 || option.option == currentVal"></ion-radio>
-
-				<ion-radio *ngIf="isAlignmentBottom()" style=" position: absolute; bottom: 4px; right: 5px;"
-				color="primary" [attr.name]="formControlName + index"
-				[value]="option.option"
-				[disabled]="readonly"
-				[checked]="option.is_default == 1 || option.option == currentVal"></ion-radio>
-
-				<ion-radio *ngIf="isAlignmentMiddle()" 
+				<ion-radio  
 				color="primary" [attr.name]="formControlName + index"
 				[value]="option.option"
 				[disabled]="readonly"

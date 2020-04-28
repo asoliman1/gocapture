@@ -20,6 +20,7 @@ export class Checkboxes extends BaseElement {
 		super();
 	}
 	ngOnInit() {
+		console.log("elemeent", this.element);
 		this.setStyle()
 	  }
 	writeValue(obj: any): void {
@@ -68,23 +69,20 @@ export class Checkboxes extends BaseElement {
 		}).length > 0;
 	}
 
-	isElementUnderlined() : boolean{
-		return this.element.style.underline;
-	}
 
 	isElementItalicize() : boolean{
 		return this.element.style.italicize;
 	}
 
 	isLabelFullWidth() : boolean{
-		return this.element.style.full_width_text;
+		return this.element.style.full_width_text == true || !this.element.style.full_width_text ? true : false;
 	}
 
 	isAlignmentTop() :boolean{
 		return this.element.style.vertical_alignment == "top" ? true: false;
 	}
 	isAlignmentMiddle() :boolean{
-		return this.element.style.vertical_alignment == "middle" ? true: false;
+		return this.element.style.vertical_alignment == "middle" || !this.element.style.vertical_alignment ? true: false;
 	}
 	isAlignmentBottom() :boolean{
 		return this.element.style.vertical_alignment == "bottom" ? true: false;

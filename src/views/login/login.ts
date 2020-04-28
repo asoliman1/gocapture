@@ -34,7 +34,7 @@ export class Login {
 		private keychain: Keychain,
 		public app: App) {
 
-		this.getDataFormKeyChain();
+		//this.getDataFormKeyChain();
 	}
 	getDataFormKeyChain() {
 		this.keychain.get('email').then(data => {
