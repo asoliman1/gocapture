@@ -13,7 +13,7 @@ dynamic-form-element, .dynamic-form-element {
 
 
   .input_only{
-    ion-input,ion-textarea,ion-datetime,ion-select,checkboxes ion-item , .counter , .playback ion-range{
+    ion-input,ion-textarea,ion-datetime,ion-select,checkboxes ion-item ,radios ion-item, .counter , .playback ion-range{
       background: rgba(var(--elements_bg_color),var(--elements_bg_opacity)) !important;
     }
   }

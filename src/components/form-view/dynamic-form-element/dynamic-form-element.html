@@ -5,7 +5,8 @@
     <!--EMAIL-->
     <ion-item *ngSwitchCase="'email'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+       *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input type="email" [attr.name]="element.id" [formControlName]="element.identifier"
@@ -21,7 +22,8 @@
     <!--URL-->
     <ion-item *ngSwitchCase="'url'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input type="url" [attr.name]="element.id" [formControlName]="element.identifier"
@@ -32,7 +34,8 @@
   
     <ion-item  *ngSwitchCase="'text'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+       *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input type="text"
@@ -40,14 +43,15 @@
     </ion-item>
 
     <!--DROPDOWN-->
-    <dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [formGroup]="theForm"
+    <dropdown [readonly]="readOnly" *ngSwitchCase="'select'" [element]="element" [form]="form" [formGroup]="theForm"
       [formControlName]="element.identifier" [class.from-barcode]="element.is_filled_from_barcode"
-      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
+      [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()" >
     </dropdown>
 
     <!--RADIO-->
     <ion-item *ngSwitchCase="'radio'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+       *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <radios item-content [element]="element" [readonly]="readOnly" [formGroup]="theForm" [form]="form"
@@ -62,7 +66,8 @@
     <!--TEXTAREA-->
     <ion-item *ngSwitchCase="'textarea'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()" >
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
 
@@ -72,7 +77,8 @@
 
     <!--TIME-->
     <ion-item *ngSwitchCase="'time'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-label *ngIf="!isLabelVisible(element)" stacked [class.required]="element.is_required">
@@ -84,14 +90,15 @@
 
     <!--ADDRESS-->
     <ion-item *ngSwitchCase="'address'">
-      <address [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [rootGroup]="theForm"
+      <address [class.from-barcode]="element.is_filled_from_barcode" [element]="element" [form]="form" [rootGroup]="theForm"
         [readonly]="readOnly" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()"></address>
     </ion-item>
 
 
     <!--MONEY-->
     <ion-item *ngSwitchCase="'money'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input pattern="[0-9\.\$\,]*" [attr.name]="element.id" [formControlName]="element.identifier" myCurrency>
@@ -101,7 +108,8 @@
     <!--NUMBER-->
     <ion-item *ngSwitchCase="'number'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.invalid]="isControlInvalid()" [class.hidden]="element.is_hidden">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input type="number" [attr.name]="element.id" [formControlName]="element.identifier"
@@ -111,7 +119,8 @@
     <!--DATE-->
     <ion-item *ngSwitchCase="'date'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
@@ -122,7 +131,8 @@
     <!--PHONE-->
     <ion-item *ngSwitchCase="'phone'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
@@ -132,7 +142,8 @@
     <!--SIMPLE PHONE-->
     <ion-item *ngSwitchCase="'simple_phone'" [class.from-barcode]="element.is_filled_from_barcode"
       [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <ion-input [readonly]="readOnly" type="tel" [attr.name]="element.id" [formControlName]="element.identifier"
@@ -141,7 +152,8 @@
 
     <!--CHECKBOX-->
     <ion-item *ngSwitchCase="'checkbox'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <checkboxes [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm" [form]="form"
@@ -150,7 +162,8 @@
 
     <!--IMAGE-->
     <ion-item *ngSwitchCase="'image'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
@@ -159,7 +172,8 @@
 
     <!--BUSINESS CARD-->
     <ion-item *ngSwitchCase="'business_card'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <business-card [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
@@ -170,7 +184,8 @@
 
     <!--SIGNATURE-->
     <ion-item *ngSwitchCase="'signature'" [class.hidden]="element.is_hidden" [class.invalid]="isControlInvalid()">
-      <ion-label *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
+      <ion-label [style.color]="form.event_style.elements_label_color"
+      *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
       <signature [readonly]="readOnly" [isEditing]="isEditing" item-content [element]="element" [formGroup]="theForm"
