@@ -75,7 +75,7 @@ export class Checkboxes extends BaseElement {
 	}
 
 	isLabelFullWidth() : boolean{
-		return this.element.style.full_width_text == true || !this.element.style.full_width_text ? true : false;
+		return this.element.style.full_width_text == true || this.element.style.full_width_text == undefined ? true : false;
 	}
 
 	isAlignmentTop() :boolean{
