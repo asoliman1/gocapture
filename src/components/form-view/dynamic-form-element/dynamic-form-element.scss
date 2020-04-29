@@ -34,11 +34,13 @@ dynamic-form-element, .dynamic-form-element {
     }
   }
   width: 100%;
-
+.item-input{
   ion-label {
     font-size: 1em !important;
     color:var(--elements_label_color) !important;
   }
+}
+
 
   .card-label{
     color:var(--elements_label_color) !important;

@@ -1,26 +1,28 @@
-checkboxes,
-.checkboxes {
-  :root {
-    --label_color : black;
-    }
+checkboxes {
   width: 100%;
-
-  .option-label {
-    white-space: normal;
-    padding-left: 40px;
-    color:var(--label_color) !important;
+  ion-item{
+    display: flex !important;
   }
 
-  .option-label2 {
-    white-space: normal;
-    color:var(--label_color) !important;
+  ion-label{
+    white-space: normal !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
   }
-  
-  .full-width-label {
-    width: max-content;
+
+  .checkbox-checked{
+    border-color: var(--label_color) !important;
+    background-color: var(--label_color) !important;
   }
-  .italic-label {
-    font-style: italic;
-  }
+
+ 
 
 }
+
+.border-line{
+  margin-left: 20px;
+  margin-top: 3px;
+  height: 1px;
+  background: lightgrey;
+}
+

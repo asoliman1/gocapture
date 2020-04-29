@@ -20,9 +20,7 @@ export class Radios extends BaseElement {
 		super();
 	}
 
-	ngOnInit() {
-		this.setStyle()
-	  }
+	ngOnInit() {}
 
 	writeValue(obj: any): void{
 		if(isNaN(parseInt(obj))) {
@@ -42,14 +40,6 @@ export class Radios extends BaseElement {
 		super.writeValue(obj);
 	}
 
-	setStyle(){
-		if(this.element.style.text_color){
-			document.documentElement.style.setProperty(`--radio-label_color`, this.element.style.text_color);
-		}
-		else{
-			document.documentElement.style.setProperty(`--radio-label_color`, this.form.event_style.elements_label_color);
-		}
-	}
 
 	isElementItalicize() : boolean{
 		return this.element.style.italicize;

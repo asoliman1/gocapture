@@ -1,13 +1,11 @@
 radios,
 .radios {
-	:root {
-		--radio-label_color : black;
-		}
+
 	width: 100%;
 	.option-label {
 		padding-right: 20px;
 		white-space: normal;
-		color:var(--radio-label_color) !important;
+		// color:var(--radio-label_color) !important;
 	}
 	.full-width-label {
 		width: max-content;
