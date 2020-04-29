@@ -1,7 +1,28 @@
-checkboxes, .checkboxes{
-	width: 100%;
-
-  .option-label {
-    white-space: normal;
+checkboxes {
+  width: 100%;
+  ion-item{
+    display: flex !important;
   }
+
+  ion-label{
+    white-space: normal !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .checkbox-checked{
+    border-color: var(--label_color) !important;
+    background-color: var(--label_color) !important;
+  }
+
+ 
+
 }
+
+.border-line{
+  margin-left: 20px;
+  margin-top: 3px;
+  height: 1px;
+  background: lightgrey;
+}
+

@@ -16,6 +16,9 @@ form-capture {
     margin-top: constant(safe-area-inset-top);
     margin-top: env(safe-area-inset-top);
   }
+  .margin-for-titlebar{
+    padding-top: 85px;
+  }
   .scroll_frame {
     overflow: auto;
     overflow-x: hidden;

@@ -1,3 +1,12 @@
-radios, .radios{
+radios,
+.radios {
+
 	width: 100%;
+	.full-width-label {
+		width: max-content;
+	}
+	.italic-label {
+		font-style: italic;
+	}
+	  
 }

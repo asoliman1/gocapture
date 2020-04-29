@@ -39,11 +39,17 @@ export class FormElement {
 	style : ElementStyle
 	available_in_activations : boolean;
 	available_in_event_form: boolean;
+	is_label_visible: boolean;
 }
 
 class ElementStyle{
 	background_color : string;
-	text_color : string
+	text_color : string;
+	underline: boolean;
+	italicize: boolean;
+	full_width_text: boolean;
+	vertical_alignment: string;
+	
 }
 
 export class Option {

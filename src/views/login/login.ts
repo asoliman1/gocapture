@@ -4,11 +4,12 @@ import { User } from "../../model";
 import { Main } from "../main";
 import { UrlChoose } from "./url-choose";
 import { Config } from "../../config";
-import { 
+import {
 	App,
 	PopoverController,
 	NavController,
-	NavParams } from "ionic-angular";
+	NavParams
+} from "ionic-angular";
 import { Popup } from '../../providers/popup/popup';
 import {ThemeProvider} from "../../providers/theme/theme";
 
@@ -48,7 +49,7 @@ export class Login {
 			if (!errorMessage) {
 				errorMessage = "toast.auth-failed";
 			}
-			this.popup.showToast({text:errorMessage});
+			this.popup.showToast({ text: errorMessage });
 			return;
 		}
 		this.client.getRegistration()
@@ -62,8 +63,8 @@ export class Login {
 			});
 	}
 
-	changeInputType(){
-		if(this.codeInputType == 'password') this.codeInputType = 'text';
+	changeInputType() {
+		if (this.codeInputType == 'password') this.codeInputType = 'text';
 		else this.codeInputType = 'password';
 	}
 
@@ -72,15 +73,15 @@ export class Login {
 			if (!this.authCode || !this.email) {
 				return;
 			}
-			this.popup.showLoading({text:'alerts.loading.authenticating'});
+			this.popup.showLoading({ text: 'alerts.loading.authenticating' });
 			Config.isProd = this.useProd;
 			this.client.authenticate(this.email, this.authCode)
 				.subscribe(data => {
-					this.popup.setLoadingContent({text:data.message});
+					this.popup.setLoadingContent({ text: data.message });
 					// this.themeProvider.setActiveTheme()
 				}, err => {
 					this.popup.dismiss('loading');
-					this.popup.showToast({text:err});
+					this.popup.showToast({ text: err });
 				}, () => {
 					this.popup.dismiss('loading');
 					this.navCtrl.setRoot(Main);

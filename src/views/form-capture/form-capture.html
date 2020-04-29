@@ -46,7 +46,7 @@
 
 
 <ion-split-pane
-[ngClass]="{'split-panel-style':!isThereActivation()}">
+[ngClass]="{'split-panel-style':!isThereActivation(), 'margin-for-titlebar': errorMessage.text && !isThereActivation()}">
   <ion-content no-bounce [ngStyle]="{
       'background-color':form?.event_style?.capture_background_color,
       'background-image':'url('+captureBg+')',
@@ -56,7 +56,7 @@
       <ion-row *ngIf="form && form.list_id > 0 && !isReadOnly(submission) && !activation">
         <ion-col>
           <button ion-button block color="light"
-            [ngStyle]="{'background-color':form.search_list_background_color,'color':form.search_list_text_color, 'margin-top': '20px'}"
+            [ngStyle]="{'background-color':form.event_style.search_list_background_color,'color':form.event_style.search_list_text_color, 'margin-top': '20px'}"
             (click)="searchProspect()">
             <ion-icon name="search"></ion-icon>&nbsp;&nbsp;&nbsp;{{'form-capture.search-list' | translate}}
           </button>
