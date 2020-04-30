@@ -123,7 +123,6 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ActivationReviewPage } from '../views/activation-review/activation-review';
-import { Keychain } from '@ionic-native/keychain';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -318,7 +317,6 @@ export function createTranslateLoader(http: HttpClient) {
     Intercom,
     ActivationsProvider,
     TranslateConfigService,
-    Keychain
   ]
 })
 export class AppModule { }

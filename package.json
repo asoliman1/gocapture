@@ -39,7 +39,6 @@
     "@ionic-native/insomnia": "^4.20.0",
     "@ionic-native/intercom": "^4.20.0",
     "@ionic-native/keyboard": "^4.20.0",
-    "@ionic-native/keychain": "^4.20.0",
     "@ionic-native/local-notifications": "^4.20.0",
     "@ionic-native/media": "^4.20.0",
     "@ionic-native/native-storage": "^4.20.0",
