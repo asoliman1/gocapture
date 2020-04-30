@@ -184,9 +184,9 @@ export class FormCapture implements AfterViewInit {
 
   private checkInstructions() {
     let instructions = this.localStorage.get("FormInstructions");
-    console.log("activation", this.activation);
+    //console.log("activation", this.activation);
     let formsInstructions = instructions ? JSON.parse(instructions) : [];
-    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially ;
+    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1 ;
 
     if (shouldShowInstruction) {
       this.openInstructions(formsInstructions);
