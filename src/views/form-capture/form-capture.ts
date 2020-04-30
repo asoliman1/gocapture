@@ -187,7 +187,7 @@ export class FormCapture implements AfterViewInit {
       if(this.activation.instructions_mobile_mode == 1){
         let instructions = this.localStorage.get("ActivationInstructions");
         let activationInstructions = instructions ? JSON.parse(instructions) : [];
-        let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially;
+        let shouldShowInstruction = activationInstructions.indexOf(this.activation.id) == -1;
       }
       else if(this.activation.instructions_mobile_mode == 2){
 
@@ -197,7 +197,7 @@ export class FormCapture implements AfterViewInit {
     else {
       let instructions = this.localStorage.get("FormInstructions");
       let formsInstructions = instructions ? JSON.parse(instructions) : [];
-      let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially;
+      let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1 ;
 
       if (shouldShowInstruction) {
         this.openInstructions(formsInstructions);
