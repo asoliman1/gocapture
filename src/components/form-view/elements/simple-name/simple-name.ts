@@ -43,4 +43,5 @@ export class SimpleName extends BaseGroupElement {
 			this.mapping.reverse();
 		}
 	}
+
 }

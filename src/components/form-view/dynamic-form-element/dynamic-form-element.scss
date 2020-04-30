@@ -13,7 +13,7 @@ dynamic-form-element, .dynamic-form-element {
 
 
   .input_only{
-    ion-input,ion-textarea,ion-datetime,ion-select,checkboxes ion-item , .counter , .playback ion-range{
+    ion-input,ion-textarea,ion-datetime,ion-select,checkboxes ion-item ,radios ion-item, .counter , .playback ion-range{
       background: rgba(var(--elements_bg_color),var(--elements_bg_opacity)) !important;
     }
   }
@@ -34,11 +34,13 @@ dynamic-form-element, .dynamic-form-element {
     }
   }
   width: 100%;
-
+.item-input{
   ion-label {
     font-size: 1em !important;
     color:var(--elements_label_color) !important;
   }
+}
+
 
   .card-label{
     color:var(--elements_label_color) !important;

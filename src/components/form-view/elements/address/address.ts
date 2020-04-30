@@ -5,6 +5,7 @@ import {ISearch} from "../../../../views/search/search";
 import {Countries} from "../../../../constants/constants";
 import {OptionItem} from "../../../../model/option-item";
 import {ModalController} from "ionic-angular";
+import { Form } from '../../../../model';
 
 @Component({
 	selector: 'address',
@@ -18,7 +19,8 @@ export class Address extends BaseGroupElement implements ISearch {
 	@Input() element: any;
 	@Input() rootGroup: FormGroup;
 	@Input() readonly: boolean = false;
-	@Input() selection: boolean = false;
+  @Input() selection: boolean = false;
+  @Input() form: Form;
 	@Output() idSelected: EventEmitter<string>;
 
 	constructor(private modal: ModalController) {

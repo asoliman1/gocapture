@@ -1,5 +1,6 @@
 <ion-item (click)="showOptions()">
-	<ion-label *ngIf="isLabelVisible(element)" class="address-label element-name" stacked [class.required]="element.is_required">
+	<ion-label [style.color]="form.event_style.elements_label_color"
+	*ngIf="isLabelVisible(element)" class="address-label element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
 	<ion-select class="gc-select"  [disabled]="true" color="primary" [attr.name]="element.id" (ionChange)="onChange($event)"

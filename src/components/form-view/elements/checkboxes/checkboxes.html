@@ -1,38 +1,31 @@
 <ion-grid>
 	<ion-row>
 		<ion-col col-12 col-sm *ngFor="let option of element.options; let i = index">
-
-			<ion-item *ngIf="this.element.style.underline">
-				<ion-label
-				[ngClass]="{'option-label2': isAlignmentMiddle(), 'option-label': isAlignmentTop() || isAlignmentBottom(), 
-				'full-width-label': isLabelFullWidth(), 'italic-label': isElementItalicize()}" text-wrap>
-					{{option.option_label || option.option}}</ion-label>
-				<ion-checkbox *ngIf="isAlignmentTop()" style=" position: absolute; top: 4px; left: 5px;"
-					[disabled]="readonly" color="primary" [checked]="has(currentVal, option)"
-					(ionChange)="onCheckChange($event, option)"></ion-checkbox>
-				<ion-checkbox *ngIf="isAlignmentBottom()" style=" position: absolute; bottom: 4px; left: 5px;"
-					[disabled]="readonly" color="primary" [checked]="has(currentVal, option)"
-					(ionChange)="onCheckChange($event, option)"></ion-checkbox>
-				<ion-checkbox *ngIf="isAlignmentMiddle()" [disabled]="readonly" color="primary"
-					[checked]="has(currentVal, option)" (ionChange)="onCheckChange($event, option)"></ion-checkbox>
+			<ion-item *ngIf="element.style.underline">
+				<ion-label 
+				[style.color]="element.style.text_color || form.event_style.elements_label_color"
+				[ngStyle]="{'width':isLabelFullWidth(),'font-style':isElementItalicize()}" 
+				>{{option.option_label || option.option}}</ion-label>
+				<ion-checkbox 
+				[disabled]="readonly" 
+				[checked]="has(currentVal, option)" 
+				(ionChange)="onCheckChange($event, option)"></ion-checkbox>
 			</ion-item>
 
-			<ion-item no-lines *ngIf="!this.element.style.underline">
-				<ion-label
-					[ngClass]="{'option-label2': isAlignmentMiddle(), 'option-label': isAlignmentTop() || isAlignmentBottom(),
-					'full-width-label': isLabelFullWidth(), 'italic-label': isElementItalicize()}"
-					text-wrap>{{option.option_label || option.option}}
-				</ion-label>
-				<ion-checkbox *ngIf="isAlignmentTop()" style=" position: absolute; top: 4px; left: 5px;"
-					[disabled]="readonly" color="primary" [checked]="has(currentVal, option)"
-					(ionChange)="onCheckChange($event, option)"></ion-checkbox>
-				<ion-checkbox *ngIf="isAlignmentBottom()" style=" position: absolute; bottom: 4px; left: 5px;"
-					[disabled]="readonly" color="primary" [checked]="has(currentVal, option)"
-					(ionChange)="onCheckChange($event, option)"></ion-checkbox>
-				<ion-checkbox *ngIf="isAlignmentMiddle()" [disabled]="readonly" color="primary"
-					[checked]="has(currentVal, option)" (ionChange)="onCheckChange($event, option)"></ion-checkbox>
+			<ion-item no-lines *ngIf="!element.style.underline">
+				<ion-label 
+				[style.color]="element.style.text_color || form.event_style.elements_label_color"
+				[ngStyle]="{'width':isLabelFullWidth(),'font-style':isElementItalicize()}" >
+				{{option.option_label || option.option}}</ion-label>
+				<ion-checkbox 
+				[disabled]="readonly" 
+				[checked]="has(currentVal, option)" 
+				(ionChange)="onCheckChange($event, option)"></ion-checkbox>
 			</ion-item>
+			
+		<!-- <div *ngIf="element.style.underline" class="border-line" ></div> -->
 
 		</ion-col>
+
 	</ion-row>
 </ion-grid>

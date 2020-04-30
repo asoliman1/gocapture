@@ -848,7 +848,7 @@ export class FormCapture implements AfterViewInit {
         this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
           this.submission.updateFields(this.form);
           let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
-          if (filteredSubmission) {
+          if (filteredSubmission && filteredSubmission.id !== this.submission.id) {
             if (!this.activation && this.form.ignore_submissions_from_activations &&
               filteredSubmission.submission_type == FormSubmissionType.activation) this.goToSubmit(shouldSyncData);
             else {

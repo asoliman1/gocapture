@@ -19,10 +19,9 @@ export class Checkboxes extends BaseElement {
 	constructor() {
 		super();
 	}
-	ngOnInit() {
-		console.log("elemeent", this.element);
-		this.setStyle()
-	  }
+	
+	ngOnInit() {}
+
 	writeValue(obj: any): void {
 		if(!obj){
 			obj = [];
@@ -40,14 +39,6 @@ export class Checkboxes extends BaseElement {
 		this.currentVal = obj;
 	}
 
-	setStyle(){
-		if(this.element.style.text_color){
-			document.documentElement.style.setProperty(`--label_color`, this.element.style.text_color);
-		}
-		else{
-			document.documentElement.style.setProperty(`--label_color`, this.form.event_style.elements_label_color);
-		}
-	}
 
 	onCheckChange(event, option){
 		//console.log(event);
@@ -70,21 +61,25 @@ export class Checkboxes extends BaseElement {
 	}
 
 
-	isElementItalicize() : boolean{
-		return this.element.style.italicize;
+	isElementItalicize() : string{
+		return this.element.style.italicize ? 'italic' :'';
 	}
 
-	isLabelFullWidth() : boolean{
-		return this.element.style.full_width_text == true || !this.element.style.full_width_text ? true : false;
+	isLabelFullWidth() : string{
+		return this.element.style.full_width_text ? 'max-content' : '';
 	}
 
-	isAlignmentTop() :boolean{
-		return this.element.style.vertical_alignment == "top" ? true: false;
-	}
-	isAlignmentMiddle() :boolean{
-		return this.element.style.vertical_alignment == "middle" || !this.element.style.vertical_alignment ? true: false;
-	}
-	isAlignmentBottom() :boolean{
-		return this.element.style.vertical_alignment == "bottom" ? true: false;
+	getAlignment(){
+		switch (this.element.style.vertical_alignment) {
+			case "top":
+				return "flex-start"
+			case "middle":
+				return "center"
+			case "bottom":
+				return "flex-end"
+
+			default :
+			return "top";
+		}
 	}
 }
