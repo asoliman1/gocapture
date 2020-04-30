@@ -183,18 +183,31 @@ export class FormCapture implements AfterViewInit {
   }
 
   private checkInstructions() {
-    let instructions = this.localStorage.get("FormInstructions");
-    console.log("activation", this.activation);
-    let formsInstructions = instructions ? JSON.parse(instructions) : [];
-    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially ;
+    if (this.activation && !this.activation.activation_capture_form_after) {
+      if(this.activation.instructions_mobile_mode == 1){
+        let instructions = this.localStorage.get("ActivationInstructions");
+        let activationInstructions = instructions ? JSON.parse(instructions) : [];
+        let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially;
+      }
+      else if(this.activation.instructions_mobile_mode == 2){
 
-    if (shouldShowInstruction) {
-      this.openInstructions(formsInstructions);
-    } else {
-      if (!this.submission.id) {
-        this.openStations();
       }
     }
+
+    else {
+      let instructions = this.localStorage.get("FormInstructions");
+      let formsInstructions = instructions ? JSON.parse(instructions) : [];
+      let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially;
+
+      if (shouldShowInstruction) {
+        this.openInstructions(formsInstructions);
+      } else {
+        if (!this.submission.id) {
+          this.openStations();
+        }
+      }
+    }
+
   }
 
   private openInstructions(formsInstructions) {
@@ -890,7 +903,7 @@ export class FormCapture implements AfterViewInit {
     let result: FormSubmission[];
     result = subs.filter((d) => d.submission_type != FormSubmissionType.activation);
     if (result.length) return result[0];
-    else if(subs.length) return subs[0];
+    else if (subs.length) return subs[0];
 
   }
 
