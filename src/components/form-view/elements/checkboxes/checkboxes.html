@@ -1,7 +1,7 @@
 <ion-grid>
 	<ion-row>
 		<ion-col col-12 col-sm *ngFor="let option of element.options; let i = index">
-			<ion-item *ngIf="element.style.underline" [ngStyle]="{'align-items':getAlignment()}">
+			<ion-item *ngIf="element.style.underline">
 				<ion-label 
 				[style.color]="element.style.text_color || form.event_style.elements_label_color"
 				[ngStyle]="{'width':isLabelFullWidth(),'font-style':isElementItalicize()}" 
@@ -12,7 +12,7 @@
 				(ionChange)="onCheckChange($event, option)"></ion-checkbox>
 			</ion-item>
 
-			<ion-item no-lines *ngIf="!element.style.underline" [ngStyle]="{'align-items':getAlignment()}">
+			<ion-item no-lines *ngIf="!element.style.underline">
 				<ion-label 
 				[style.color]="element.style.text_color || form.event_style.elements_label_color"
 				[ngStyle]="{'width':isLabelFullWidth(),'font-style':isElementItalicize()}" >
