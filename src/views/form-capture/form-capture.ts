@@ -183,40 +183,49 @@ export class FormCapture implements AfterViewInit {
   }
 
   private checkInstructions() {
+    let instructions;
+    let getInstructions;
+    let shouldShowInstruction;
     if (this.activation && !this.activation.activation_capture_form_after) {
-      if(this.activation.instructions_mobile_mode == 1){
-        let instructions = this.localStorage.get("ActivationInstructions");
-        let activationInstructions = instructions ? JSON.parse(instructions) : [];
-        let shouldShowInstruction = activationInstructions.indexOf(this.activation.id) == -1;
+      if (this.activation.instructions_mobile_mode == 1) {
+        instructions = this.localStorage.get("activationInstructions");
+        getInstructions = instructions ? JSON.parse(instructions) : [];
+        shouldShowInstruction = getInstructions.indexOf(this.form.id) == -1;
       }
-      else if(this.activation.instructions_mobile_mode == 2){
-
+      else if (this.activation.instructions_mobile_mode == 2) {
+        shouldShowInstruction = true;
       }
     }
 
     else {
-      let instructions = this.localStorage.get("FormInstructions");
-      let formsInstructions = instructions ? JSON.parse(instructions) : [];
-      let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1 ;
-
-      if (shouldShowInstruction) {
-        this.openInstructions(formsInstructions);
-      } else {
-        if (!this.submission.id) {
-          this.openStations();
-        }
+      instructions = this.localStorage.get("FormInstructions");
+      getInstructions = instructions ? JSON.parse(instructions) : [];
+      shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && getInstructions.indexOf(this.form.id) == -1;
+    }
+    if (shouldShowInstruction) {
+      this.openInstructions(getInstructions);
+    } else {
+      if (!this.submission.id) {
+        this.openStations();
       }
     }
 
   }
 
   private openInstructions(formsInstructions) {
-
-    let instructionsModal = this.modal.create(FormInstructions, { form: this.form, isModal: true });
+    let instructionsModal;
+    if (this.activation) instructionsModal = this.modal.create(FormInstructions, { activation: this.activation, isModal: true });
+    else instructionsModal = this.modal.create(FormInstructions, { form: this.form, isModal: true });
 
     instructionsModal.present().then((result) => {
-      formsInstructions.push(this.form.id);
-      this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+      if (this.activation && formsInstructions) {
+        formsInstructions.push(this.activation.id);
+        this.localStorage.set("activationInstructions", JSON.stringify(formsInstructions));
+      }
+      else {
+        formsInstructions.push(this.form.id);
+        this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+      }
     });
 
     instructionsModal.onDidDismiss(() => {
