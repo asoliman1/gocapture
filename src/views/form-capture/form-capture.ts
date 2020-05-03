@@ -190,7 +190,7 @@ export class FormCapture implements AfterViewInit {
       if (this.activation.instructions_mobile_mode == 1) {
         instructions = this.localStorage.get("activationInstructions");
         getInstructions = instructions ? JSON.parse(instructions) : [];
-        shouldShowInstruction = getInstructions.indexOf(this.form.id) == -1;
+        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1;
       }
       else if (this.activation.instructions_mobile_mode == 2) {
         shouldShowInstruction = true;

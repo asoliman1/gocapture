@@ -6,7 +6,7 @@ import { FormCapture } from './../../views/form-capture/form-capture';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Activation } from './../../model/activation';
 import { Component } from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
+import { NavController, NavParams, Platform, ModalController } from 'ionic-angular';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Popup } from "../../providers/popup/popup";
 import { ActivationsPage } from '../../views/activations/activations';
@@ -14,6 +14,8 @@ import { BussinessClient } from '../../services/business-service';
 import { concatStatic } from 'rxjs/operator/concat';
 import { Network } from '@ionic-native/network';
 import { IfObservable } from 'rxjs/observable/IfObservable';
+import { LocalStorageProvider } from '../../providers/local-storage/local-storage';
+import { FormInstructions } from '../../views/form-instructions';
 
 
 @Component({
@@ -33,6 +35,7 @@ export class ActivationViewPage {
   private backUnregister;
   private networkSubs : Subscription;
   online: boolean = true;
+  
 
   constructor(
     public navCtrl: NavController,
@@ -42,13 +45,54 @@ export class ActivationViewPage {
     private popup: Popup,
     private platform: Platform,
     private client: BussinessClient,
-    private net: Network
+    private net: Network,
+    private localStorage: LocalStorageProvider,
+    private modal: ModalController,
   ) {
   }
 
   loaded(ev) {
     if (this.isLoading == null) this.isLoading = true;
     else this.isLoading = false;
+  }
+
+  ngAfterViewInit(){
+    this.checkInstructions()
+  }
+
+  private checkInstructions() {
+    let instructions;
+    let getInstructions;
+    let shouldShowInstruction;
+    if (this.activation.activation_capture_form_after) {
+      if (this.activation.instructions_mobile_mode == 1) {
+        instructions = this.localStorage.get("activationInstructions");
+        getInstructions = instructions ? JSON.parse(instructions) : [];
+        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1;
+      }
+      else if (this.activation.instructions_mobile_mode == 2) {
+        shouldShowInstruction = true;
+      }
+    }
+
+    if (shouldShowInstruction) {
+      this.openInstructions(getInstructions);
+    }
+
+  }
+
+  private openInstructions(formsInstructions) {
+    let instructionsModal;
+    instructionsModal = this.modal.create(FormInstructions, { activation: this.activation, isModal: true });
+
+    instructionsModal.present().then((result) => {
+      if (formsInstructions) {
+        formsInstructions.push(this.activation.id);
+        this.localStorage.set("activationInstructions", JSON.stringify(formsInstructions));
+      }
+    });
+
+    instructionsModal.onDidDismiss(() => {})
   }
 
   ionViewWillEnter() {

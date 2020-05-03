@@ -7,6 +7,7 @@ import { FormCapture } from '../../views/form-capture';
 import { Popup } from './../../providers/popup/popup';
 import { BussinessClient } from '../../services/business-service';
 import { ActivationReviewPage } from '../../views/activation-review/activation-review';
+import { FormInstructions } from '../../views/form-instructions';
 
 /**
  * Generated class for the ActivationItemComponent component.
@@ -49,6 +50,17 @@ export class ActivationItemComponent {
         this.navCtrl.push(ActivationReviewPage,{activation:act});
       }
     });
+
+    if (act.instructions_content && act.instructions_content.length > 0) {
+      buttons.push({
+        text: 'forms.instructions',
+        icon: "paper",
+        handler: () => {
+          //console.log('review clicked');
+          this.navCtrl.push(FormInstructions, { activation: act });
+        }
+      })
+    }
 
     buttons.push({
       text: 'general.cancel',
