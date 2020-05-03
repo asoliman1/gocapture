@@ -19,34 +19,34 @@ export class Checkboxes extends BaseElement {
 	constructor() {
 		super();
 	}
-	
-	ngOnInit() {}
+
+	ngOnInit() { }
 
 	writeValue(obj: any): void {
-		if(!obj){
+		if (!obj) {
 			obj = [];
-			for(let i = 0; i < this.element.options.length; i++){
-				if(this.element.options[i].is_default == 1){
+			for (let i = 0; i < this.element.options.length; i++) {
+				if (this.element.options[i].is_default == 1) {
 					obj.push(this.element.options[i].option);
 				}
 			}
 		}
 
-    if (typeof obj === 'string') {
-      obj = obj.split(';');
-    }
+		if (typeof obj === 'string') {
+			obj = obj.split(';');
+		}
 
 		this.currentVal = obj;
 	}
 
 
-	onCheckChange(event, option){
+	onCheckChange(event, option) {
 		//console.log(event);
-		if(event.checked){
+		if (event.checked) {
 			this.currentVal.push(option.option);
-		}else{
+		} else {
 			let idx = this.currentVal.indexOf(option.option);
-			if(idx > -1){
+			if (idx > -1) {
 				this.currentVal.splice(idx, 1);
 			}
 		}
@@ -55,21 +55,25 @@ export class Checkboxes extends BaseElement {
 
 	has(values: any[], option) {
 
-		return values && values.filter((val)=>{
+		return values && values.filter((val) => {
 			return val == option.option;
 		}).length > 0;
 	}
 
 
-	isElementItalicize() : string{
-		return this.element.style.italicize ? 'italic' :'';
+	isElementItalicize(): string {
+		return this.element.style.italicize ? 'italic' : '';
 	}
 
-	isLabelFullWidth() : string{
+	isLabelFullWidth(): string {
 		return this.element.style.full_width_text ? 'max-content' : '';
 	}
 
-	getAlignment(){
+	isNeedingPadding() : string{
+		return this.element.style.vertical_alignment == 'top' || this.element.style.vertical_alignment == 'bottom'? '40px' : '';
+	}
+
+	getAlignment() {
 		switch (this.element.style.vertical_alignment) {
 			case "top":
 				return "flex-start"
@@ -78,8 +82,18 @@ export class Checkboxes extends BaseElement {
 			case "bottom":
 				return "flex-end"
 
-			default :
-			return "top";
+			default:
+				return "top";
 		}
+	}
+
+	isAlignmentTop(): boolean {
+		return this.element.style.vertical_alignment == "top" ? true : false;
+	}
+	isAlignmentMiddle(): boolean {
+		return this.element.style.vertical_alignment == "middle" ? true : false;
+	}
+	isAlignmentBottom(): boolean {
+		return this.element.style.vertical_alignment == "bottom" ? true : false;
 	}
 }
