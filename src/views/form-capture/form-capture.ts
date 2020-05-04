@@ -734,17 +734,21 @@ export class FormCapture implements AfterViewInit {
         this.content.resize();
         return false;
       }
+      return true;
     } else {
       this.ignoreTranscriptionFields();
       // here validate only non transcriptable fields
-      if (!this.formView.theForm.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.errorMessage = this.formView.getError();
+      if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
+        setTimeout(() => {
+         this.errorMessage = this.formView.getError();
+          console.log(this.errorMessage)
+        }, 200);
         this.content.resize();
         return false;
       }
+      return true;
     }
 
-    return true;
   }
 
   private handleSubmitParams(){
@@ -795,6 +799,7 @@ export class FormCapture implements AfterViewInit {
     let id = name.split('_')[1] , 
     el = this.form.elements.find((e)=> e.identifier == name) ,
     subCtrls = control['controls'] ;
+    console.log(control);
     if(el) el.mapping.forEach((e,i)=>{
      if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
