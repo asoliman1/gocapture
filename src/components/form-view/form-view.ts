@@ -177,38 +177,23 @@ export class FormView {
   }
 
   private setupFormGroup() {
-
     if (this.sub) {
       this.sub.unsubscribe();
     }
-
     if (this.valueChangesSub) {
       this.valueChangesSub.unsubscribe();
     }
-
     this.data = this.getValues();
-
     if (this.submission && this.submission.fields) {
       this.data = Object.assign(Object.assign({}, this.submission.fields), this.data);
     }
-    let f = this.fb.group({});
-
-    this.form.elements.forEach((element,index) => {
-      let identifier = this.elementIdentifier(element);
-      let control = this.createFormControl(element, identifier);
-      element.placeholder = element.placeholder ? element.placeholder : "";
-      f.addControl(identifier, control);
-      // A.S GOC-319
-      this.checkSeparator(element,index);
-    });
+    this.theForm = this.fb.group({});
+    this.setElementsValidation()
     this.splitEls()
-    this.theForm = f;
     this.updateForm();
-
     this.sub = this.theForm.statusChanges.subscribe(() => {
       this.onValidationChange.emit(this.theForm.valid);
     });
-
     this.valueChangesSub = this.theForm.valueChanges.subscribe((data) => {
       this.updateForm();
 
@@ -222,6 +207,19 @@ export class FormView {
     }, 150);
   }
 
+  setElementsValidation(){
+    this.form.elements.forEach((element,index) => {
+      this.setElementValidator(element);
+      this.checkSeparator(element,index);
+    });
+  }
+
+  private setElementValidator(element:FormElement){
+    let identifier = this.elementIdentifier(element);
+    let control = this.createFormControl(element, identifier);
+    element.placeholder = element.placeholder ? element.placeholder : "";
+    this.theForm.addControl(identifier, control);
+  }
 
   private checkSeparator(element,index){
     if(element.type == FormElementType.separator && (this.platform.is('tablet') || this.platform.is('ipad'))){

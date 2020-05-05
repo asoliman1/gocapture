@@ -724,31 +724,31 @@ export class FormCapture implements AfterViewInit {
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
     
     if (isNotScanned && this.noTranscriptable) {
+      this.formView.setElementsValidation();
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
-        this.errorMessage.text = "form-capture.error-msg";
-        this.content.resize();
+        this.setErrormsg({text:"form-capture.error-msg",param:{}});
         return false;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.errorMessage = this.formView.getError();
-        this.content.resize();
+        this.setErrormsg(this.formView.getError());
         return false;
       }
       return true;
     } else {
       this.ignoreTranscriptionFields();
-      // here validate only non transcriptable fields
       if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        setTimeout(() => {
-         this.errorMessage = this.formView.getError();
-          console.log(this.errorMessage)
-        }, 200);
-        this.content.resize();
+        this.setErrormsg(this.formView.getError());
         return false;
       }
       return true;
     }
 
+  }
+
+  private setErrormsg(error : {text:string,param:any}){
+    setTimeout(() => {
+      this.errorMessage = error;
+    }, 200);
   }
 
   private handleSubmitParams(){
@@ -799,7 +799,6 @@ export class FormCapture implements AfterViewInit {
     let id = name.split('_')[1] , 
     el = this.form.elements.find((e)=> e.identifier == name) ,
     subCtrls = control['controls'] ;
-    console.log(control);
     if(el) el.mapping.forEach((e,i)=>{
      if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
