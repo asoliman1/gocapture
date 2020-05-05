@@ -81,7 +81,6 @@ export class Badge extends BaseElement implements OnInit {
         {
           text: 'Submit Lead',
           handler: () => {
-            console.log("submit Current")
             this.doSubmit.emit('true');
           }
         },
@@ -108,7 +107,6 @@ export class Badge extends BaseElement implements OnInit {
     }
   }
   public scanBadge() {
-    console.log("numb of scan", this.scanCounter);
     if (this.readonly) return;
 
     this.isScanning = true;
@@ -176,7 +174,7 @@ export class Badge extends BaseElement implements OnInit {
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
-        this.submission && (this.submission.barcode_processed = BarcodeStatus.Processed);
+        this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);
       }

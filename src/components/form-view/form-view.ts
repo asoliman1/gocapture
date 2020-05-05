@@ -212,10 +212,12 @@ export class FormView {
       this.setElementValidator(element);
       this.checkSeparator(element,index);
     });
+    console.log(this.theForm)
   }
 
   private setElementValidator(element:FormElement){
     let identifier = this.elementIdentifier(element);
+    console.log(identifier,element);
     let control = this.createFormControl(element, identifier);
     element.placeholder = element.placeholder ? element.placeholder : "";
     this.theForm.addControl(identifier, control);
@@ -250,6 +252,7 @@ export class FormView {
       });
       control.setValidators(this.makeValidators(element));
     }
+    control.updateValueAndValidity();
     return control;
   }
 

@@ -716,15 +716,11 @@ export class FormCapture implements AfterViewInit {
   }
 
   private handleValidations(){
-     /*
-     When transcription is enabled, the app is still requiring name and email.
-     If there is a business card attached and transcription is turned on, we should not require either of these fields.
-     */
-    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None ;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
-    
     if (isNotScanned && this.noTranscriptable) {
       this.formView.setElementsValidation();
+      this.formView.theForm.updateValueAndValidity();
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
         this.setErrormsg({text:"form-capture.error-msg",param:{}});
@@ -798,14 +794,15 @@ export class FormCapture implements AfterViewInit {
   getTranscriptionControls(name : string,control : AbstractControl) {
     let id = name.split('_')[1] , 
     el = this.form.elements.find((e)=> e.identifier == name) ,
-    subCtrls = control['controls'] ;
+    subCtrls = control['controls'];
     if(el) el.mapping.forEach((e,i)=>{
-     if(<any> TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
+     if(TRANSCRIPTION_FIELDS_IDS.find(id => id == e.ll_field_id )){
       if(subCtrls) this.clearControlValidators(subCtrls[`${name}_${i+1}`]);
       else this.clearControlValidators(control);
      }
     })
-    if(<any> TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) this.clearControlValidators(control)
+    // if(TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) 
+    //   this.clearControlValidators(control)
   }
 
   clearControlValidators(control : AbstractControl){
