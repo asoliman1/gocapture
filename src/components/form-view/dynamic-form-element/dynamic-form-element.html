@@ -166,8 +166,9 @@
       *ngIf="isLabelVisible(element)" class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <image-item margin-top [readonly]="readOnly" item-content [element]="element" [formGroup]="theForm"
-        [formControlName]="element.identifier"></image-item>
+      <activation-game-element margin-top [readonly]="readOnly" item-content [element]="element" 
+      [formGroup]="theForm" [form]="form"
+        [formControlName]="element.identifier"></activation-game-element>
     </ion-item>
 
     <!--BUSINESS CARD-->

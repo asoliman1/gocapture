@@ -222,7 +222,7 @@ export class FormCapture implements AfterViewInit {
         formsInstructions.push(this.activation.id);
         this.localStorage.set("activationInstructions", JSON.stringify(formsInstructions));
       }
-      else {
+      else if(!this.activation){
         formsInstructions.push(this.form.id);
         this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
       }

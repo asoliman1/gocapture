@@ -21,7 +21,8 @@
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
   .fab-md-in-list , .fab-md-in-list , .fab ,
-  .fab.activated , .s-header .title::after , .document button[full],.form-header{
+  .fab.activated , .s-header .title::after , .document button[full],.form-header, 
+  .activation-game-element button[full]{
     background-color: $theme-color;
   }
 

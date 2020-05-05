@@ -7,7 +7,7 @@ import { SkeletonLoadingComponent } from './skeleton-loading/skeleton-loading';
 @NgModule({
   declarations: [FiltersViewComponent,
     ActivationItemComponent,
-    SkeletonLoadingComponent
+    SkeletonLoadingComponent,
     ],
   imports: [
     IonicModule,
@@ -15,7 +15,7 @@ import { SkeletonLoadingComponent } from './skeleton-loading/skeleton-loading';
   ],
   exports: [FiltersViewComponent,
     ActivationItemComponent,
-    SkeletonLoadingComponent
+    SkeletonLoadingComponent,
 
     ]
 })

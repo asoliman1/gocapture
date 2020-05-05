@@ -147,6 +147,7 @@ export class ActivationViewPage {
     let prospectId = this.navParams.get('prospectId');
     if (prospectId) {
       this.activationUrl = this.activation.url + "&prospect_id=" + prospectId;
+      console.log("activationURL", this.activationUrl)
     }
     else {
       this.activationUrl = this.activation.url + "&prospect_id=" + 0;

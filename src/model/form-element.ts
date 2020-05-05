@@ -40,6 +40,7 @@ export class FormElement {
 	available_in_activations : boolean;
 	available_in_event_form: boolean;
 	is_label_visible: boolean;
+	is_allow_retry_playing_activation: boolean;
 }
 
 class ElementStyle{
