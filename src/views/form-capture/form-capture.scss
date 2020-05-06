@@ -3,6 +3,41 @@ form-capture {
     vertical-align: text-bottom;
   }
 
+  .footer-grid {
+    display: flex ;
+    padding: 0 10px;
+    button[round]{
+      margin-right: 10px;
+    }
+  }
+
+  .split-panel-style {
+    padding-top: 42px;
+    margin-top: constant(safe-area-inset-top);
+    margin-top: env(safe-area-inset-top);
+  }
+  .margin-for-titlebar{
+    padding-top: 85px;
+  }
+  .scroll_frame {
+    overflow: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling:touch;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e0e0e0;
+}
+
+}
+
+
+ion-content {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  div{
+  padding-bottom: 0px !important;
+}
 }
 
 .icon-md.capture{
@@ -32,6 +67,7 @@ form-capture {
   }
 }
 
+
 .gc-popover {
   .toolbar-background {
     background-color: white !important;
@@ -43,7 +79,6 @@ form-capture {
 
   .popover-viewport {
     height: 70vh;
-
     .scroll-content {
       height: calc(100% - 80px);
     }
@@ -52,6 +87,8 @@ form-capture {
   .toolbar-ios ion-title {
     padding: 0 40px 1px !important;
   }
+
+
 
   .bar-button {
     padding-left: 20px;
@@ -62,5 +99,10 @@ form-capture {
     min-height: 44px !important;
     padding-bottom: 4px !important;
   }
+
+  .button.btn-background {
+    background-color: inherit;
+  }
+  
 }
 

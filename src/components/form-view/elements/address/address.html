@@ -1,5 +1,8 @@
 <div class="address" [formGroup]="group">
-	<ion-label class="address-label element-name" stacked [class.required]="element.is_required">{{element.title}}</ion-label>
+	<ion-label [style.color]="form.event_style.elements_label_color"
+	*ngIf="isLabelVisible(element)" class="address-label element-name" stacked [class.required]="element.is_required">
+        {{element.title}}
+      </ion-label>
 	<ion-grid>
 		<ion-row responsive-sm>
 			<ion-col>
@@ -45,7 +48,7 @@
 			</ion-col>
 			<ion-col>
 				<ion-item (click)="showOptions()">
-					<ion-label stacked >{{element.sub_elements[5].hint}}</ion-label>
+					<ion-label [style.color]="form.event_style.elements_label_color" stacked >{{element.sub_elements[5].hint}}</ion-label>
 					<ion-select [disabled]="true" [ngModel]="country" [attr.name]="element.identifier + '_6'"
                       [formControlName]="element.identifier + '_6'">
                      <ion-option *ngFor="let country of countries" [value]="country.value">{{country.name}}</ion-option>

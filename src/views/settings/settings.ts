@@ -126,7 +126,7 @@ export class Settings {
   }
 
   setLocalization() {
-    console.log(this.user.localization,this.translateConfigService.defaultLanguage())
+    //console.log(this.user.localization,this.translateConfigService.defaultLanguage())
     if (this.user.localization && this.user.localizations) {
       this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
     } else {
@@ -285,7 +285,7 @@ export class Settings {
             this.popup.showLoading({text:'alerts.loading.unauthenticating'})
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
-              this.themeProvider.setActiveTheme();
+              this.themeProvider.rmTheme();
               setTimeout(() => {
                 this.app.getRootNav().setRoot(Login, { unauthenticated: true });
               }, 300);

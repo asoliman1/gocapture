@@ -13,10 +13,11 @@
   },
   "sideMenu": {
     "events": "Événements",
-    "support": "Support",
+    "support": "soutiens",
     "settings": "Réglages",
     "hi": "Bonjour",
-    "welcome-back": "Bienvenue à nouveau"
+    "welcome-back": "Bienvenue à nouveau",
+    "activations":"Activations"
   },
   "general": {
     "syncing": "Synchronisation...",
@@ -84,7 +85,9 @@
     "business-card" : "La carte de visite",
     "badge-scan" : "Scan du badge",
     "error-msg" : "Nom ou e-mail requis",
-    "check-fields-msg" : "veuillez vérifier les champs suivants: {{fields}}"
+    "check-fields-msg" : "veuillez vérifier les champs suivants: {{fields}}" , 
+    "scan-prompt-message":"Vous n'avez pas soumis le prospect actuel. Si vous numérisez à nouveau, vous perdrez toutes les données soumises. Es-tu sur de vouloir continuer?",
+    "submit-lead": "Soumettre le lead actuel"
    },
   "logs": {
     "title": "Registres OU Données enregistrées",
@@ -146,6 +149,10 @@
         "title": "Annuler l'authentification?",
         "message": "Voulez-vous vraiment annuler l’authentification de cet appareil ?"
       }
+    },
+    "activation":{
+      "message":"Êtes-vous sûr de vouloir revenir en arrière?",
+      "retry": "retenter"
     }
   },
   "toast": {
@@ -155,7 +162,8 @@
     "submission-successfull": "prospect téléchargé avec succès.",
     "syncing-submissions-error": "Une erreur s'est produite en synchronisant les soumissions",
     "auth-err" : "Identifiants non valides",
-    "auth-failed" : "L'autorisation a échoué. Veuillez obtenir un nouveau code d'authentification"
+    "auth-failed" : "L'autorisation a échoué. Veuillez obtenir un nouveau code d'authentification",
+    "duplicate-submission": "Soumission en double"
   },
   "forms": {
     "submitted": "Soumis",
@@ -166,7 +174,8 @@
     "rapid-scan": "Balayage rapide",
     "documents": "Documents",
     "instructions": "Instructions",
-    "title": "Événements"
+    "title": "Événements",
+    "activations":"Activations"
   },
   "form-review": {
     "clear": "effacer",
@@ -268,5 +277,15 @@
     "couldnt-scan-nfc":"Impossible de numériser le badge NFC",
     "rescan" : "re-scanner le badge",
     "rescan-nfc": "re-scanner le badge NFC"
+  },
+  "activations":{
+    "title":"Activations",
+    "launch":"lancement",
+    "search":{
+      "event": "un événement",
+      "activation": "Activation",
+      "all-events": "Tous les évènements",
+      "activation-name": "Nom d'activation"
+    }
   }
 }

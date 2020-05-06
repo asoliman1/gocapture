@@ -1,18 +1,27 @@
-@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
-  $alert-ios-button-text-color: $theme-color;
+@function set-checkbox-color($theme-color) {
+  @if (var(--label-color)) {
+    @return var(--label-color);
+  } @else {
+    @return $theme-color;
+  }
+}
+@mixin theme ($theme-color,$theme-text-color) { 
 
+  // A.S to set a text color for each theme
+  $alert-ios-button-text-color: $theme-color;
   $action-sheet-ios-button-text-color: $theme-color;
   $button-ios-background-color: $theme-color;
   $button-md-background-color: $theme-color;
   $toggle-ios-background-color-on: $theme-color;
-
+  $checkbox-color : set-checkbox-color($theme-color);
+  
   .header .toolbar-background,
   .footer .toolbar-background,
   .toolbar .toolbar-background,
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
   .fab-md-in-list , .fab-md-in-list , .fab ,
-  .fab.activated , .s-header .title::after , .document button[full]{
+  .fab.activated , .s-header .title::after , .document button[full],.form-header{
     background-color: $theme-color;
   }
 
@@ -21,6 +30,7 @@
   [aria-checked=true] .alert-radio-label, .s-header ion-icon  {
     color: $theme-color !important;
   }
+
 
   .action-sheet-destructive {
     color: #f53d3d !important;
@@ -110,4 +120,13 @@
   .info-box,ion-text{
     color: $theme-text-color // A.S to set a text color for each theme
   }
+
+  .activation-event-header{
+    color: $theme-color;
+  }
+  .btn-background {
+    background-color: $theme-color;
+  }
+
 }
+

@@ -1,33 +1,62 @@
-<div class="ctn animated fadeIn" >
-  <div class="image-loading" *ngIf="imageLoading">
-  <ion-spinner></ion-spinner>
-  </div>
-  <img
-  *ngIf="!imageLoading"
-  [src]="image | convertFileSrc"
-  class="image animated fadeIn"
-  onerror="this.src = 'assets/images/image-placeholder.jpg'"
-  />
+<div class="ctn {{activation?'activations margin':''}} animated fadeIn" *ngIf="address || name || image">
+  <img *ngIf="!imageLoading" [src]="image | convertFileSrc" class="image animated fadeIn" (load)="checkImageDownload()"
+    onerror="this.src = 'assets/images/image-placeholder.jpg'" />
   <div class="text">
-    <div class="title text-shadow-3"   [style.color]="textColor || 'white'">{{name}}</div>
+    <div class="title text-shadow-3" [style.color]="textColor || 'white'">{{name}}</div>
     <div class="address text-shadow-3" [style.color]="textColor || 'white'" *ngIf="address">
-     {{address}}
+      {{address}}
     </div>
   </div>
-  <div class="submissions">
+  <div class="submissions" *ngIf="!activation">
 
-    <ion-chip [style.color]="textColor || 'white'" >
-      <ion-icon color="secondary" ></ion-icon>  <ion-label >{{sent || 0}} {{'forms.submitted' | translate}}</ion-label>
+    <ion-chip [style.color]="textColor || 'white'">
+      <ion-icon color="secondary"></ion-icon>
+      <ion-label>{{sent || 0}}  {{'forms.submitted' | translate}}</ion-label>
     </ion-chip>
-    <ion-chip [style.color]="textColor || 'white'" >
-       <ion-icon color="orange"></ion-icon> <ion-label >{{onHold || 0}} {{'forms.pending' | translate}}</ion-label>
-      </ion-chip>
-    <ion-chip [style.color]="textColor || 'white'" >
-       <ion-icon color="danger"></ion-icon> <ion-label >{{unsent || 0}} {{'forms.unsubmitted' | translate}}</ion-label>
-      </ion-chip>
+    <ion-chip [style.color]="textColor || 'white'">
+      <ion-icon color="orange"></ion-icon>
+      <ion-label>{{onHold || 0}} {{'forms.pending' | translate}}</ion-label>
+    </ion-chip>
+    <ion-chip [style.color]="textColor || 'white'">
+      <ion-icon color="danger"></ion-icon>
+      <ion-label>{{unsent || 0}} {{'forms.unsubmitted' | translate}}</ion-label>
+    </ion-chip>
 
   </div>
-  <div *ngIf="isSyncing" class="sync-icon" >
-    <ion-icon name="sync" ></ion-icon>
+  <div *ngIf="isSyncing" class="sync-icon">
+    <ion-icon name="sync"></ion-icon>
+  </div>
+</div>
+
+<div *ngIf="!address && !name && !image" class="ctn {{activation?'margin':''}}">
+  <div class="text">
+    <div class="title">
+      <skeleton-loading [height]="'20px'" [width]="'120px'"> </skeleton-loading>
+    </div>
+    <div class="address ">
+      <skeleton-loading [height]="'20px'" [width]="'220px'"> </skeleton-loading>
+    </div>
+  </div>
+  <div class="submissions" *ngIf="!activation">
+
+    <ion-chip>
+      <ion-icon color="secondary"></ion-icon>
+      <ion-label>
+        <div style="width:55px"></div>
+      </ion-label>
+    </ion-chip>
+    <ion-chip>
+      <ion-icon color="orange"></ion-icon>
+      <ion-label>
+        <div style="width:55px"></div>
+      </ion-label>
+    </ion-chip>
+    <ion-chip>
+      <ion-icon color="danger"></ion-icon>
+      <ion-label>
+        <div style="width:55px"></div>
+      </ion-label>
+    </ion-chip>
+
   </div>
 </div>

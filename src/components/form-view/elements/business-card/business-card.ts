@@ -5,7 +5,7 @@ import { Component, Input, forwardRef, NgZone, ViewChild, OnDestroy } from '@ang
 import { ImageProcessor, Info } from "../../../../services/image-processor";
 import { BaseElement } from "../base-element";
 import { OcrSelector } from "../../../ocr-selector";
-import { FormElement, Form, FormSubmission } from "../../../../model";
+import { FormElement, Form, FormSubmission, SubmissionStatus } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR, AbstractControl } from "@angular/forms";
 import { Camera } from "@ionic-native/camera";
 
@@ -145,7 +145,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
     if ((type == this.FRONT && this.currentVal.front != this.front) ||
       (type == this.BACK && this.currentVal.back != this.back)) {
 
-      if (this.readonly) {
+      if (this.readonly || this.submission.status == SubmissionStatus.OnHold) {
         buttons = this.actionsForReadonlyCards(type);
       } else {
         buttons = this.actionsForCards(type);
@@ -181,7 +181,7 @@ export class BusinessCard extends BaseElement implements OnDestroy {
           let imageName = imageFullPath.split('/').pop();
           let imagePath = this.imagesFolder() + "/" + imageName;
 
-          this.photoLibrary.requestAuthorization().then(() => {
+          this.photoLibrary.requestAuthorization({read:true,write:true}).then(() => {
             this.photoLibrary.saveImage(imagePath, 'GoCapture BC').then(result => {
               this.popup.showAlert('alerts.info', {text:'alerts.business-card.saved-image'}, [{
                 text: 'general.ok',

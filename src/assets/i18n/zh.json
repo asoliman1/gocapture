@@ -16,7 +16,8 @@
     "support": "支持",
     "settings": "设置",
     "hi": "你好",
-    "welcome-back": "欢迎回来"
+    "welcome-back": "欢迎回来",
+    "activations":"激活"
   },
   "general": {
     "syncing": "同步",
@@ -84,7 +85,9 @@
     "business-card": "名片",
     "badge-scan": "徽章扫描",
     "error-msg": "电子邮件或姓名为必填项",
-    "check-fields-msg": "请检查以下字段： {{fields}}"
+    "check-fields-msg": "请检查以下字段： {{fields}}" , 
+    "scan-prompt-message":"您尚未提交当前线索。 如果再次扫描，将会丢失所有提交的数据。 你确定你要继续吗？",
+    "submit-lead": "提交当前线索"
   },
   "logs": {
     "title": "载入",
@@ -146,6 +149,10 @@
         "title": "未经认证？",
         "message": "您确定要取消此设备的身份验证吗？"
       }
+    },
+    "activation":{
+      "message":"确定要回去吗?",
+      "retry": "重试"
     }
   },
   "toast": {
@@ -155,7 +162,8 @@
     "submission-successfull": "提交成功",
     "syncing-submissions-error": "同步提交时出错",
     "auth-err": "无效证件",
-    "auth-failed": "授权失败。请获取新的验证码"
+    "auth-failed": "授权失败。请获取新的验证码",
+    "duplicate-submission": "重复提交"
   },
   "forms": {
     "submitted": "提交",
@@ -166,7 +174,8 @@
     "rapid-scan": "快速扫描",
     "documents": "文件",
     "instructions": "说明",
-    "title": "Events"
+    "title": "大事记",
+    "activations": "激活"
   },
   "form-review": {
     "clear": "明确",
@@ -269,5 +278,15 @@
     "couldnt-scan-nfc": "无法扫描NFC徽章",
     "rescan": "重新扫描徽章",
     "rescan-nfc": "重新扫描NFC徽章"
+  },
+  "activations":{
+    "title":"激活",
+    "launch":"发射",
+    "search":{
+      "event": "事件",
+      "activation": "激活",
+      "all-events": "所有活动",
+      "activation-name": "激活名称"
+    }
   }
 }

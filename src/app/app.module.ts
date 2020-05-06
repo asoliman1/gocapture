@@ -1,3 +1,5 @@
+import { Storage, IonicStorageModule } from '@ionic/storage';
+import { ActivationViewPage } from './../pages/activation-view/activation-view';
 import { CustomFabMenu } from './../components/form-view/fab-list/fab-list';
 import { buttonBar } from './../components/form-view/button-bar/button-bar';
 import { Keyboard } from '@ionic-native/keyboard';
@@ -59,7 +61,7 @@ import { Geolocation } from "@ionic-native/geolocation";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { PhotoViewer } from "@ionic-native/photo-viewer";
-
+import { SearchActivationsPage } from '../views/search-activations/search-activations';
 import { StatusBar } from "@ionic-native/status-bar";
 import { Popup } from '../providers/popup/popup';
 import { IonicApp } from 'ionic-angular/components/app/app-root';
@@ -113,12 +115,15 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { ContactsProvider } from '../providers/contacts/contacts';
 import { SupportPage } from '../pages/support/support';
 import { Intercom } from '@ionic-native/intercom';
-import { SkeletonLoadingComponent } from '../components/skeleton-loading/skeleton-loading';
+import { ActivationsPage } from '../views/activations/activations';
+import { ActivationsProvider } from '../providers/activations/activations';
 import { TranslateConfigService } from '../services/translate/translateConfigService';
 import { LocalizationsPage } from '../views/localizations/localizations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ActivationReviewPage } from '../views/activation-review/activation-review';
+import { Keychain } from '@ionic-native/keychain';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -167,8 +172,11 @@ export function createTranslateLoader(http: HttpClient) {
     buttonBar,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent,
-    LocalizationsPage
+    ActivationsPage,
+    ActivationViewPage,
+    LocalizationsPage,
+    SearchActivationsPage,
+    ActivationReviewPage
   ],
   imports: [
     BrowserModule,
@@ -193,6 +201,7 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    IonicStorageModule.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -233,8 +242,11 @@ export function createTranslateLoader(http: HttpClient) {
     ScreenSaverPage,
     CustomFabMenu,
     SupportPage,
-    SkeletonLoadingComponent,
-    LocalizationsPage
+    ActivationsPage,
+    ActivationViewPage,
+    LocalizationsPage,
+    SearchActivationsPage,
+    ActivationReviewPage
   ],
   exports: [
     DynamicFormElementComponent
@@ -304,7 +316,9 @@ export function createTranslateLoader(http: HttpClient) {
     Keyboard,
     ContactsProvider,
     Intercom,
-    TranslateConfigService
+    ActivationsProvider,
+    TranslateConfigService,
+    Keychain
   ]
 })
 export class AppModule { }

@@ -15,6 +15,7 @@ import { CustomValidators } from '../../util/validator';
 import { Subscription } from "rxjs/Subscription";
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 import { ModalController, Platform } from "ionic-angular";
+import { Activation } from '../../model/activation';
 
 @Component({
   selector: 'form-view',
@@ -25,15 +26,17 @@ export class FormView {
   @Input() form: Form;
   @Input() submission: FormSubmission;
   @Input() prospect: DeviceFormMembership;
+  
   @Output() onChange = new EventEmitter();
   @Output() onValidationChange = new EventEmitter();
   @Output() onProcessingEvent = new EventEmitter();
+  @Output() doSubmit = new EventEmitter();
   @Output() ButtonEvent = new EventEmitter();
 
   @Input() readOnly: boolean = false;
   @Input() isEditing: boolean = false;
-
   @Input() submitAttempt: boolean = false;
+  @Input() activation : boolean;
 
   @ViewChildren(DateTime) dateTimes: QueryList<DateTime>;
 
@@ -80,6 +83,7 @@ export class FormView {
   }
 
   ngAfterViewInit() {
+    console.log("Activation fron form-view",this.activation)
     setTimeout(() => {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
       var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
@@ -309,7 +313,7 @@ export class FormView {
     for (let key in this.theForm.controls) {
       if (this.theForm.controls[key].invalid) {
         let controlId = key.split('_')[1];
-        invalidControls.push(this.getNameForElementWithId(controlId));
+        if (this.getNameForElementWithId(controlId)) invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
     return invalidControls.length > 0 ? {text:'form-capture.check-fields-msg',param : invalidControls.join(', ')} : {text:'',param:''};
@@ -318,8 +322,9 @@ export class FormView {
   private getNameForElementWithId(id) {
     for (let i = 0; i < this.displayForm.elements.length; i++) {
       let element = this.displayForm.elements[i];
-      if (element.id == id) {
-        return element.title;
+      if (element.id == id ) {
+        if(this.activation && element.available_in_activations) return element.title;
+        if(!this.activation && element.available_in_event_form) return element.title;
       }
     }
   }
@@ -429,12 +434,22 @@ export class FormView {
 
   }
 
-  private shouldElementBeDisplayed(element: FormElement) {
-    return element.isMatchingRules && !element.parent_element_id;
+   shouldElementBeDisplayed(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
+    }
+    else{
+    return element.isMatchingRules && !element.parent_element_id && element.available_in_event_form;
+  }
   }
 
-  private shouldElementBeDisplayedInsideSection(element: FormElement) {
-    return element.isMatchingRules;
+   shouldElementBeDisplayedInsideSection(element: FormElement) {
+    if(this.activation){
+      return element.isMatchingRules && element.available_in_activations;
+    }
+    else{
+    return element.isMatchingRules && element.available_in_event_form;
+    }
   }
 
   resetField(element) {
@@ -479,6 +494,10 @@ export class FormView {
 
   onProcessing(event) {
     this.onProcessingEvent.emit(event);
+  }
+  
+  canSubmitForm(event){
+    this.doSubmit.emit(event);
   }
 
   onButtonEvent(event){

@@ -26,20 +26,29 @@ export class FormsProvider {
     private rest : RESTClient,
     private platform: Platform,
     private fileTransfer: FileTransfer
-    ) {
-    this.setForms()
+  ) {
+    this.initForms();
   }
 
-  setForms() {
+  initForms() {
     if (!this.loaded && this.dbClient.isWorkDbInited()){
       this.dbClient.getForms().subscribe((forms) => {
         forms = this.util.sortBy(forms,-1);
-        this.forms = forms;
-        this.loaded = true;
+        this.setForms(forms);
         this.pushUpdates();
+        this.loaded = true;
+      },err=>{
+        this.loaded = false;
       })
     }
+  }
 
+  setForms(newForms: Form[]){
+    newForms.forEach((e : Form)=> {
+      let form = this.forms.find((f)=>f.form_id == e.form_id);
+      if(form) form = Object.assign(form,e);
+      else this.forms.push(e);
+    });
   }
 
   setFormsSyncStatus(val : boolean){
@@ -54,27 +63,22 @@ export class FormsProvider {
     return new Observable<any>(obs => {
       this.rest.getAllForms(lastSyncDate)
       .subscribe((remoteForms) => {
-        remoteForms.forms = this.filterArchivedForms(remoteForms.forms);
-        remoteForms.forms = this.checkFormData(remoteForms.forms, this.forms);
+        remoteForms.forms = this.checkFormData(this.mapForms(remoteForms.forms), this.forms);
         this.saveNewForms(remoteForms.forms,remoteForms.availableForms);
         this.loaded = true;
-        // this.setFormsSyncStatus(false);
         if (this.hasNewData) this.downloadFormsData(remoteForms.forms); // A.S check if form has data to be downloaded - A.S GOC-326
           obs.next(remoteForms.forms);
         },(err)=>{
-          // this.setFormsSyncStatus(false);
           obs.error(err);
         },()=>obs.complete())
 
     })
   }
 
-  filterArchivedForms(forms : Form[]){
-    let current = new Date();
-    return forms.filter(form => {
+  mapForms(forms : Form[]){
+    return forms.map(form => {
       form.id = form.form_id + "";
-      if (new Date(form.archive_date) > current) return true;
-      else {console.log(`Form ${form.name} (${form.id}) is past it's expiration date. Filtering it out`); return false};
+      return form;
     });
   }
 
@@ -217,12 +221,8 @@ export class FormsProvider {
   }
 
   saveNewForms(forms: Form[],availableForms:number[]) {
-    forms.forEach((e : Form)=> {
-      let form = this.forms.find((f)=>f.form_id == e.form_id);
-      if(form) form = Object.assign(form,e);
-      else this.forms.push(e);
-    });
-    this.forms.forEach((e)=>{
+    this.setForms(forms);
+    this.forms.forEach((e)=> {
       if(availableForms.findIndex((a)=> a == e.form_id) == -1) this.deleteForm(e);
     })
     this.forms = this.util.sortBy(this.forms,-1);
@@ -267,6 +267,7 @@ export class FormsProvider {
   }
 
   updateFormSubmissions(form_id: any) {
+    // console.log("updateFormSubmissions")
     let form = this.forms.find((e) => e.form_id === (form_id * 1));
     if(form)
     this.dbClient.getSubmissions(form.form_id,false).subscribe((submissions)=>{

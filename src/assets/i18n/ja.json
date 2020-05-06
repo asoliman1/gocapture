@@ -16,7 +16,8 @@
     "support": "サポート",
     "settings": "設定",
     "hi": "こんにちは",
-    "welcome-back": "おかえりなさい"
+    "welcome-back": "おかえりなさい",
+    "activations":"アクティベーション"
   },
   "general": {
     "syncing": "同期中",
@@ -84,7 +85,9 @@
     "business-card": "名刺",
     "badge-scan": "バッジスキャン",
     "error-msg": "メールアドレスまたは名前が必要です",
-    "check-fields-msg": "次のフィールドを確認してください。 {{fields}}"
+    "check-fields-msg": "次のフィールドを確認してください。 {{fields}}" , 
+    "scan-prompt-message":"現在の見込み客を提出していません。 もう一度スキャンすると、送信されたすべてのデータが失われます。 続行してもよろしいですか？",
+    "submit-lead": "現在のリードを送信"
   },
   "logs": {
     "title": "ログ",
@@ -146,6 +149,10 @@
         "title": "不認証？",
         "message": "デバイスの認証を解除しますか"
       }
+    },
+    "activation":{
+      "message":"本当に戻りたいですか?",
+      "retry": "リトライ"
     }
   },
   "toast": {
@@ -155,7 +162,8 @@
     "submission-successfull": "提出成功",
     "syncing-submissions-error": "提出物の同期中にエラーが発生しました",
     "auth-err": "無効な資格情報",
-    "auth-failed": "認証に失敗しました。新しい認証コードを取得してください"
+    "auth-failed": "認証に失敗しました。新しい認証コードを取得してください",
+    "duplicate-submission": "重複した提出"
   },
   "forms": {
     "submitted": "提出済",
@@ -166,7 +174,8 @@
     "rapid-scan": "高速スキャン",
     "documents": "書類",
     "instructions": "説明",
-    "title": "イベント"
+    "title": "イベント",
+    "activations":"アクティベーション"
   },
   "form-review": {
     "clear": "晴れ",
@@ -269,5 +278,15 @@
     "couldnt-scan-nfc": "NFCバッジをスキャンできませんでした",
     "rescan": "バッジの再スキャン",
     "rescan-nfc": "NFCバッジの再スキャン"
+  },
+  "activations":{
+    "title":"アクティベーション",
+    "launch":"打ち上げる",
+    "search":{
+      "event": "イベント",
+      "activation": "アクティベーション",
+      "all-events": "すべてのイベント",
+      "activation-name": "アクティベーション名"
+    }
   }
 }

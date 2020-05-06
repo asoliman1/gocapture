@@ -20,6 +20,7 @@ import { Observable } from "rxjs";
 import { ImageLoaderConfig } from 'ionic-image-loader';
 import { Util } from '../util/util';
 import { Intercom } from '@ionic-native/intercom';
+import { RESTClient } from '../services/rest-client';
 import { TranslateConfigService } from '../services/translate/translateConfigService';
 
 @Component({
@@ -29,13 +30,13 @@ import { TranslateConfigService } from '../services/translate/translateConfigSer
 export class MyApp {
 
   rootPage: any;
-  selectedTheme: string;
+  selectedTheme: string = this.themeProvider.defaultTheme;
 
   @ViewChild(Nav) nav: Nav;
 
   constructor(
     public platform: Platform,
-    // private rest: RESTClient,
+    private rest: RESTClient,
     private client: BussinessClient,
     private sync: SyncClient,
     public statusBar: StatusBar,
@@ -48,7 +49,6 @@ export class MyApp {
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
   ) {
-    this.subscribeThemeChanges();
     this.initializeApp();
   }
 
@@ -72,6 +72,7 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.subscribeThemeChanges();
       this.checkUserAuth();
       this.handleApiErrors();
       this.handleClientErrors();
@@ -100,6 +101,7 @@ export class MyApp {
   private checkUserAuth() {
     this.client.getRegistration(true).subscribe((user) => {
       if (user) {
+        this.setTheme(user);
         this.setLogging();
         this.setAutoSave();
         Config.isProd = user.is_production == 1;
@@ -109,6 +111,11 @@ export class MyApp {
       }
     });
   }
+
+  setTheme(user){
+    let theme = user ? user.theme : 'default';
+		this.themeProvider.setDefaultTheme(theme);
+	}
 
   private setAutoSave() {
     this.settingsService.getSetting(settingsKeys.AUTOSAVE_BC_CAPTURES)
@@ -166,29 +173,30 @@ export class MyApp {
 
 
   private handleApiErrors() {
-    /*
+    
     this.rest.error.subscribe((resp) => {
       //token is invalid => unregister current user;
-      if (resp && resp.status == 401) {
-        this.client.getRegistration(true).subscribe((user) => {
-          if (user) {
-            this.client.unregister(user).subscribe(() => {
-              this.nav.setRoot(Login, {
-                unauthorized: true
-              });
-            });
-          }
-        });
-      }
+      // if(resp) this.popup.showToast({text:resp.message});
+      // if (resp && resp.status == 401) {
+      //   this.client.getRegistration(true).subscribe((user) => {
+      //     if (user) {
+      //       this.client.unregister(user).subscribe(() => {
+      //         this.nav.setRoot(Login, {
+      //           unauthorized: true
+      //         });
+      //       });
+      //     }
+      //   });
+      // }
 
-      if (resp && resp.status == 403) {
-        this.nav.setRoot(Login, {
-          unauthorized: true,
-          errorMessage: resp.message
-        })
-      }
+      // if (resp && resp.status == 403) {
+      //   this.nav.setRoot(Login, {
+      //     unauthorized: true,
+      //     errorMessage: resp.message
+      //   })
+      // }
     });
-     */
+     
   }
 
   private handleClientErrors() {
@@ -235,7 +243,7 @@ export class MyApp {
           handler: () => {
             // A.S
             this.popup.showLoading({text:''});
-            this.client.unregister(user).subscribe(() => {
+            this.client.unregister(user,false).subscribe(() => {
               this.nav.setRoot(Login, { unauthenticated: true });
               this.popup.dismiss('loading');
             }, err => {

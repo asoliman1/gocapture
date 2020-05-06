@@ -16,7 +16,8 @@
     "support": "Support",
     "settings": "Settings",
     "hi": "Hi",
-    "welcome-back": "Welcome back"
+    "welcome-back": "Welcome back",
+    "activations" : "Activations"
   },
   "general": {
     "syncing": "Syncing...",
@@ -84,7 +85,9 @@
     "business-card": "Business Card",
     "badge-scan": "Badge Scan",
     "error-msg": "Email or name is required",
-    "check-fields-msg": "Please check the following fields : {{fields}}"
+    "check-fields-msg": "Please check the following fields : {{fields}}", 
+    "scan-prompt-message":"You have not submitted the current lead. If you scan again you will lose all submitted data. Are you sure you want to continue?",
+    "submit-lead": "Submit Current Lead"
   },
   "logs": {
     "title": "Logs",
@@ -146,6 +149,10 @@
         "title": "Unauthenticate?",
         "message": "Are you sure you want to unauthenticate this device?"
       }
+    },
+    "activation":{
+      "message":"Are you sure you want to go back?",
+      "retry": "Retry"
     }
   },
   "toast": {
@@ -155,7 +162,8 @@
     "submission-successfull": "Submission successfull.",
     "syncing-submissions-error": "There was an error sync-ing the submissions",
     "auth-err": "Invalid credentials",
-    "auth-failed": "Authorization failed. Please obtain a new Authentication Code"
+    "auth-failed": "Authorization failed. Please obtain a new Authentication Code",
+    "duplicate-submission": "Duplicate Submission"
   },
   "forms": {
     "submitted": "Submitted",
@@ -166,7 +174,8 @@
     "rapid-scan": "Rapid Scan",
     "documents": "Documents",
     "instructions": "Instructions",
-    "title": "Events"
+    "title": "Events",
+    "activations" : "Activations"
   },
   "form-review": {
     "clear": "Clear",
@@ -261,7 +270,7 @@
   },
   "badge-scanner": {
     "scan": "Scan badge",
-    "scanning": "Scanning bagde",
+    "scanning": "Scanning badge",
     "couldnt-scan": "Couldn't scan badge",
     "nfc-msg": "Ready to scan. Hold the device near the badge.",
     "scan-nfc": "Scan NFC badge",
@@ -269,5 +278,15 @@
     "couldnt-scan-nfc": "Couldn't Scan NFC badge",
     "rescan": "Rescan Badge",
     "rescan-nfc": "Rescan NFC badge"
+  },
+  "activations":{
+    "title":"Activations",
+    "launch":"Launch",
+    "search":{
+      "event": "Event",
+      "activation": "Activation",
+      "all-events": "All Events",
+      "activation-name": "Activation name"
+    }
   }
 }

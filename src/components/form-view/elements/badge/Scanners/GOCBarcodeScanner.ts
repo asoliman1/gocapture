@@ -16,6 +16,7 @@ export class GOCBarcodeScanner implements Scanner {
     public barcodeFormat: string,
     public platform: Platform,
     public appPreferences: AppPreferences,
+    public activation: boolean
   ) {
     //
   }
@@ -34,7 +35,14 @@ export class GOCBarcodeScanner implements Scanner {
     let formats = this.getSupportedBarcodeFormat();
     console.log('Barcode formats - ' + formats);
 
-    let options: BarcodeScannerOptions = {
+    let options: BarcodeScannerOptions;
+    if(this.activation) options = {
+      formats: formats,
+      preferFrontCamera: this.activation,
+      showFlipCameraButton:true,
+    };
+
+    else options = {
       formats: formats,
       showFlipCameraButton:true,
     };

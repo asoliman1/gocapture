@@ -11,7 +11,7 @@ export class ConvertFileSrcPipe implements PipeTransform {
   }
 
   transform(value: string) {
-    if(this.platform.is('mobile')) {
+    if(this.platform.is('mobile') && value.startsWith('file://')) {
       return this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.win.Ionic.WebView.convertFileSrc(value)
       );

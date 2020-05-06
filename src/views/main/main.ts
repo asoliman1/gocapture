@@ -1,4 +1,5 @@
 import { Platform } from 'ionic-angular/platform/platform';
+import { ActivationsPage } from './../../views/activations/activations';
 import { SupportPage } from './../../pages/support/support';
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { Forms } from "../forms";
@@ -29,8 +30,8 @@ export class Main {
 		private rapidCaptureService: RapidCaptureService,
 		private formsProvider: FormsProvider,
 		private ngZone : NgZone,
-    private dbClient : DBClient,
-    private platform: Platform
+		private dbClient : DBClient,
+		private platform: Platform
 	) {
     this.isWindows = !this.platform.is("mobile");
 	}
@@ -42,9 +43,24 @@ export class Main {
 
 	setPages() {
 		this.pages = [
-			{ title: 'sideMenu.events', component: Forms, icon: "document" },
-			{ title: 'sideMenu.settings', component: Settings, icon: "cog" },
+			{ title: 'sideMenu.events', component: Forms, icon: "document" }
 		];
+		
+		if (this.user.activations)
+			this.pages.push({
+				title: 'sideMenu.activations',
+				component: ActivationsPage,
+				icon: "game-controller-b" 
+			})
+
+			else {
+				this.pages = this.pages.filter((e) => e.title != 'Activations');
+			}
+
+			this.pages.push({
+				title: 'sideMenu.settings', component: Settings, icon: "cog"
+			})
+
 		if (this.user.in_app_support)
 			this.pages.push({
 				title: 'sideMenu.support',
@@ -76,9 +92,9 @@ export class Main {
 		}, 2000);
 	}
 
-	setUser(user : User){
-		this.ngZone.run(()=>{
-      this.user = user;
+	setUser(user : User) {
+		this.ngZone.run(() => {
+			this.user = user;
 			this.setPages();
 			this.setTheme();
 		});

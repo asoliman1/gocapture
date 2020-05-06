@@ -1,9 +1,11 @@
 import { ElementRef, ViewChild } from '@angular/core';
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormGroup} from "@angular/forms";
-import {FormElement} from "../../../model";
-import {Form} from "../../../model";
-import {FormSubmission} from "../../../model";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormGroup } from "@angular/forms";
+import { FormElement } from "../../../model";
+import { Form } from "../../../model";
+import { FormSubmission } from "../../../model";
+import { RESTClient } from '../../../services/rest-client';
+import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
   selector: 'dynamic-form-element',
@@ -18,14 +20,17 @@ export class DynamicFormElementComponent {
   @Input() isEditing: boolean = false;
   @Input() form: Form;
   @Input() submission: FormSubmission;
-
+  @Input() activation: boolean;
   @Output() onProcessingEvent = new EventEmitter();
-  @ViewChild('dynamicForm') el:ElementRef;
+  @Output() doSubmit = new EventEmitter();
+  @ViewChild('dynamicForm') el: ElementRef;
 
   minYear = "0";
   maxYear = "0";
+  public input: string = '';
+  public companies: string[] = [];
 
-  constructor() {
+  constructor(public rest: RESTClient) {
     this.setYearsRange();
   }
 
@@ -33,20 +38,25 @@ export class DynamicFormElementComponent {
     this.onProcessingEvent.emit(event);
   }
 
-  ngOnInit(){
+  canSubmitForm(event) {
+    this.doSubmit.emit(event);
+  }
+
+  ngOnInit() {
     this.setElementsStyle()
   }
 
-    // A.S GOC-326
-  setElementsStyle(){
+  // A.S GOC-326
+  setElementsStyle() {
     document.documentElement.style.setProperty(`--elements_label_color`, this.form.event_style.elements_label_color);
-    document.documentElement.style.setProperty(`--elements_bg_color`,this.hexToRgb(this.form.event_style.element_background_color));
-    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity+'');
+    document.documentElement.style.setProperty(`--elements_bg_color`, this.hexToRgb(this.form.event_style.element_background_color));
+    document.documentElement.style.setProperty(`--elements_bg_opacity`, this.form.event_style.element_background_opacity + '');
   }
 
   isControlInvalid() {
     return this.theForm.controls[this.element.identifier] && !this.theForm.controls[this.element.identifier].valid && this.submitAttempt;
   }
+
 
   setHour(event) {
 
@@ -62,7 +72,7 @@ export class DynamicFormElementComponent {
     } : null;
 
     return rgb ? `${rgb.r},${rgb.g},${rgb.b}` : '0,0,0';
-}
+  }
 
   setDate(event) {
     //console.log(event);
@@ -71,7 +81,19 @@ export class DynamicFormElementComponent {
   setYearsRange() {
     var d = new Date();
     var year = d.getFullYear();
-    this.minYear = (year - 10) + '';
-    this.maxYear = (year + 10) + '';
+    this.minYear = (year - 100) + '';
+    this.maxYear = (year + 100) + '';
+  }
+
+  isLabelVisible(element: FormElement) {
+    if (element.is_label_visible) return true;
+    else return false;
+  }
+
+  getCompanies(event) {
+    return this.rest.getCompanies(this.input).subscribe((resp: any) => {
+      let comps = JSON.parse(resp['_body']);
+      return comps.filter((c) => c['name'] )
+    })
   }
 }

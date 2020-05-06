@@ -31,7 +31,10 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
+import { ThemeProvider } from '../providers/theme/theme';
+import { Keychain } from '@ionic-native/keychain';
 
+declare var cordova;
 @Injectable()
 /**
  * The client to rule them all. The BussinessClient connects all the separate cients and creates
@@ -51,7 +54,7 @@ export class BussinessClient {
   private networkOn: Subscription;
   private networkOff: Subscription;
 
-  private online: boolean = true;
+  online: boolean = true;
 
   registration: User;
 
@@ -82,8 +85,10 @@ export class BussinessClient {
     private geolocation: Geolocation,
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
-    private popup: Popup,
-    private platform: Platform
+    private platform: Platform,
+    private themeProvider : ThemeProvider,
+    private popup: Popup, 	
+    private keychain: Keychain
   ) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
@@ -96,7 +101,7 @@ export class BussinessClient {
     return this.online;
   }
 
-  private setOnline(val: boolean) {
+  private async setOnline(val: boolean) {
     this.online = val;
     this.networkSource.next(val ? "ON" : "OFF");
     this.rest.setOnline(val);
@@ -184,8 +189,8 @@ export class BussinessClient {
           this.registration = user;
           this.userUpdates.next(user);
           this.db.setupWorkDb(user.db);
-          this.formsProvider.setForms();
           this.rest.token = user.access_token;
+          this.formsProvider.initForms();
         }
         obs.next(user);
         obs.complete();
@@ -279,6 +284,7 @@ export class BussinessClient {
     reply.pushRegistered = 1;
     reply.is_production = Config.isProd ? 1 : 0;
     this.registration = reply;
+    this.themeProvider.setDefaultTheme(reply.theme);
     this.translateConfigService.setLanguage(this.registration.localization);
     this.db.makeAllAccountsInactive().subscribe((done) => {
       this.db.saveRegistration(reply).subscribe((done) => {
@@ -302,11 +308,11 @@ export class BussinessClient {
     });
   }
 
-
   async registerIntercom() {
     if (this.platform.is('mobile')) {
+      if(this.registration.email)
       this.intercom.registerIdentifiedUser({
-        user_id: this.registration.id,
+        ll_user_id: this.registration.id,
         email: this.registration.email,
       }).then((data)=>{
         console.log('Intercome register : ' + JSON.stringify(data));
@@ -319,11 +325,11 @@ export class BussinessClient {
   async updateIntercom() {
     if (this.platform.is('mobile')) {
       this.intercom.updateUser({
-        user_id: this.registration.id,
         email: this.registration.email,
         name: `${this.registration.first_name} ${this.registration.last_name}`,
-        customer_id: this.registration.customerID,
         custom_attributes: {
+          ll_user_id: this.registration.id,
+          customer_id: this.registration.customerID,
           mobile_app_name: this.registration.app_name,
         },
         instance: this.registration.customer_name,
@@ -337,8 +343,11 @@ export class BussinessClient {
     }
   }
 
-  public unregister(user: User): Observable<User> {
+  public unregister(user: User,isValidToken = true): Observable<User> {
     return new Observable<User>((obs: Observer<User>) => {
+      if(!isValidToken)
+        this.onUnAuthSuccess(obs);
+      else
       this.rest.unauthenticate(user.access_token).subscribe((done) => {
         if (done) {
           this.onUnAuthSuccess(obs)
@@ -358,9 +367,11 @@ export class BussinessClient {
     this.pushSubs.forEach(sub => {
       sub.unsubscribe();
     });
+    cordova.plugins.intercom.logout();
+
     try {
       await this.appPreferences.clearAll();
-      await this.intercom.reset();
+      // await this.intercom.logout();
     } catch (error) {
       console.log(error);
     }
@@ -537,7 +548,7 @@ export class BussinessClient {
 
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
     let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
-
+   
     return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 
