@@ -68,10 +68,10 @@ export class ActivationViewPage {
       if (this.activation.instructions_mobile_mode == 1) {
         instructions = this.localStorage.get("activationInstructions");
         getInstructions = instructions ? JSON.parse(instructions) : [];
-        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1;
+        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1 && this.activation.instructions_content.length > 0;
       }
       else if (this.activation.instructions_mobile_mode == 2) {
-        shouldShowInstruction = true;
+        shouldShowInstruction = this.activation.instructions_content.length > 0;
       }
     }
 

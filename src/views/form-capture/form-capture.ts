@@ -24,7 +24,8 @@ import {
   NavParams,
   Platform,
   Popover,
-  Modal
+  Modal,
+  Thumbnail
 } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import {
@@ -327,7 +328,7 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
-    console.log("the form", this.form);
+   // console.log("the form", this.form);
     this.setupSearchListTheme();
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;

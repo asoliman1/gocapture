@@ -1,4 +1,5 @@
 import { IDocumentSet } from "./documentSet";
+import { Activation } from "./activation";
 
 export class FormElement {
 	id : number;
@@ -41,6 +42,7 @@ export class FormElement {
 	available_in_event_form: boolean;
 	is_label_visible: boolean;
 	is_allow_retry_playing_activation: boolean;
+	activation : Activation
 }
 
 class ElementStyle{
@@ -89,5 +91,6 @@ export const FormElementType = {
 	business_card: "business_card",
 	signature: "signature",
 	barcode: "barcode",
-	separator : "column_separator"
+	separator : "column_separator",
+	activation : "activation"
 };
