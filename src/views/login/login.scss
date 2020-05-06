@@ -58,3 +58,7 @@ ion-item input{
   border : 0;
   width: 100% ;
 }
+
+::-ms-reveal {
+  display: none;
+}

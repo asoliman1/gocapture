@@ -12,19 +12,19 @@ export class SupportPage {
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    private intercom : Intercom) {
-  }
+    private intercom : Intercom
+  ) {}
 
-  ionViewDidEnter(){
+  ionViewDidEnter() {
     this.intercom.setLauncherVisibility('VISIBLE');
   }
 
-  startConversation(){
+  startConversation() {
     this.intercom.displayConversationsList().then()
-    
   }
-  ionViewDidLeave(){
-   this.intercom.setLauncherVisibility('GONE');
+  
+  ionViewDidLeave() {
+    this.intercom.setLauncherVisibility('GONE');
   }
 
 }

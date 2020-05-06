@@ -1,3 +1,4 @@
+import { Platform } from 'ionic-angular/platform/platform';
 import { Popup } from './../../providers/popup/popup';
 import { FormsProvider } from './../../providers/forms/forms';
 import { Keyboard } from '@ionic-native/keyboard';
@@ -38,7 +39,9 @@ export class Forms {
     private documentsService: DocumentsService,
     public formsProvider: FormsProvider,
     private zone: NgZone,
-    private Keyboard: Keyboard) {
+    private Keyboard: Keyboard,
+    private platform: Platform
+  ) {
     this.getForms();
   }
 
@@ -171,13 +174,18 @@ export class Forms {
 
   ionViewDidEnter() {
     // A.S
-    this.Keyboard.setResizeMode("ionic");
+    if (!this.platform.is("mobile")) {
+      this.Keyboard.setResizeMode("ionic");
+    }
+    
     this.forms = this.formsProvider.forms;
   }
 
   ionViewDidLeave() {
     // A.S
-    this.Keyboard.setResizeMode("native");
+    if (!this.platform.is("mobile")) {
+      this.Keyboard.setResizeMode("native");
+    }
   }
 
   // A.S GOC-315
