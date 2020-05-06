@@ -24,6 +24,7 @@ export class ActivationElementPage {
   private backUnregister;
   isLoading: boolean = null;
   onGameEndSubs: Subscription;
+  actvationResultFromSubmit: any;
   reload: boolean;
   private networkSubs: Subscription;
   online: boolean = true;
@@ -62,10 +63,11 @@ export class ActivationElementPage {
     let result: GameResult = data.data;
     switch (result.action) {
       case ACTIVATIONS_ACTIONS.NEXT:
-        this.submitResult(result.activation_result);
+        this.submitResult(this.actvationResultFromSubmit);
         break;
 
       case ACTIVATIONS_ACTIONS.SUBMIT:
+        this.actvationResultFromSubmit = result.activation_result;
         break;
 
       case ACTIVATIONS_ACTIONS.SUBMIT_NEXT:
@@ -91,6 +93,7 @@ export class ActivationElementPage {
   }
 
   submitResult(activationResult: any){
+    console.log("game result", activationResult);
     this.viewCtrl.dismiss({result: activationResult});
   }
 

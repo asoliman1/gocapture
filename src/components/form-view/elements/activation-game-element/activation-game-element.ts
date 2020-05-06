@@ -49,8 +49,8 @@ export class ActivationGameElementComponent extends BaseElement {
     gameModal.present()
     gameModal.onDidDismiss((data) => {
       if(data){
-      this.currentVal = data;
-      this.formGroup.controls[`${this.element.identifier}`].setValue(data);
+      this.currentVal = data.result;
+      this.formGroup.controls[`${this.element.identifier}`].setValue(data.result);
       this.formGroup.controls[`${this.element.identifier}`].markAsDirty();
       if(this.element.is_allow_retry_playing_activation == false) this.retryNotAllowed = true;
       }
