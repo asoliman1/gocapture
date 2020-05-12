@@ -353,7 +353,9 @@ export class ActivationViewPage {
   private async setOnline(val: boolean) {
     if(this.online == val) return;
     this.online = val;
-    if(!val) this.retryToRefreshActivation()
+    if(!val) {
+      if(this.platform.is("ios")) this.retryToRefreshActivation();
+    }
   }
 
   private initNetwork() {
