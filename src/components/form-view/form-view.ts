@@ -428,7 +428,7 @@ export class FormView {
 
     element.isMatchingRules = isMatchingRules;
 
-    if (!element.isMatchingRules && !element.is_filled_from_barcode && !element.is_filled_from_list) {
+    if (!element.isMatchingRules && !element.is_filled_from_barcode && !element.is_filled_from_list && element.type != FormElementType.activation) {
       this.resetField(element);
     }
 

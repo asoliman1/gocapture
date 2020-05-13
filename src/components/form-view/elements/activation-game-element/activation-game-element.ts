@@ -33,34 +33,35 @@ export class ActivationGameElementComponent extends BaseElement {
   }
 
   ngOnInit(): void {
-    if(this.submission){
+    if (this.submission) {
       let gameResult = this.submission.fields[`${this.element.identifier}`] as string;
-      if(gameResult){
-        if(typeof gameResult == 'string') this.formGroup.controls[`${this.element.identifier}`].setValue(JSON.parse(gameResult));
-       this.retryNotAllowed = true;
+      if (gameResult) {
+        if (typeof gameResult == 'string') this.formGroup.controls[`${this.element.identifier}`].setValue(JSON.parse(gameResult));
+        this.retryNotAllowed = true;
       }
-    } 
+    }
+     if (this.formGroup.value[`${this.element.identifier}`] && !this.isEditing) {
+       if(this.element.is_allow_retry_playing_activation == false) this.retryNotAllowed = true;
+    }
   }
 
   openGame() {
     this.getActivationUrl();
-    console.log("this.actUrl", this.actUrl);
     let gameModal = this.modal.create(ActivationElementPage, { actUrl: this.actUrl }, { cssClass: "modal-fullscreen" });
     gameModal.present()
     gameModal.onDidDismiss((data) => {
-      if(data){
-      this.currentVal = data.result;
-      this.formGroup.controls[`${this.element.identifier}`].setValue(data.result);
-      this.formGroup.controls[`${this.element.identifier}`].markAsDirty();
-      if(this.element.is_allow_retry_playing_activation == false) this.retryNotAllowed = true;
+      if (data) {
+        this.currentVal = data.result;
+        this.formGroup.controls[`${this.element.identifier}`].setValue(data.result);
+        this.formGroup.controls[`${this.element.identifier}`].markAsDirty();
+        if (this.element.is_allow_retry_playing_activation == false) this.retryNotAllowed = true;
       }
     })
   }
 
   getActivationUrl() {
-    this.actUrl =`${this.element.activation.url}&use_prospect_info=1`;
+    this.actUrl = `${this.element.activation.url}&use_prospect_info=1`;
     let formValues = Object.entries(this.formGroup.value);
-    console.log("formValues", formValues);
     for (let i = 0; i < formValues.length; i++) {
       let value = formValues[i];
       let id;
