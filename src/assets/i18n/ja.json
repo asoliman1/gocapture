@@ -58,8 +58,8 @@
       "auto-crop": "自動クロップ"
     },
     "dropdown": {
-      "header": "ドロップダウン",
-      "label": "シングルタップ選択"
+      "header": "入力方法",
+      "single-tap-label": "シングルタップ選択"
     },
     "kiosk-mode": {
       "header": "キヲスクモード",

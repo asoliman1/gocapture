@@ -58,8 +58,8 @@
       "auto-crop": "Auto-Crop"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Single tap selection"
+      "header": "Input methods",
+      "single-tap-label": "Single tap selection"
     },
     "kiosk-mode": {
       "header": "Kiosk mode",

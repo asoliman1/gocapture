@@ -58,8 +58,8 @@
       "auto-crop": "Corte Automático"
     },
     "dropdown": {
-      "header": "Lista suspensa",
-      "label": "Seleção com um toque"
+      "header": "Métodos de entrada",
+      "single-tap-label": "Seleção com um toque"
     },
     "kiosk-mode": {
       "header": "Modo quiosque ",

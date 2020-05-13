@@ -58,8 +58,8 @@
       "auto-crop": "Ritaglio automatico"
     },
     "dropdown": {
-      "header": "A comparsa",
-      "label": "Selezione con tocco singolo"
+      "header": "Metodi di input",
+      "single-tap-label": "Selezione con tocco singolo"
     },
     "kiosk-mode": {
       "header": "Modalità Chiosco",

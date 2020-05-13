@@ -58,8 +58,8 @@
       "auto-crop": "自动裁剪"
     },
     "dropdown": {
-      "header": "下拉列表",
-      "label": "单选"
+      "header": "输入法",
+      "single-tap-label": "单选"
     },
     "kiosk-mode": {
       "header": "全屏浏览模式",

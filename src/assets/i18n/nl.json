@@ -58,8 +58,8 @@
       "auto-crop": "Automatisch Bijsnijden"
     },
     "dropdown": {
-      "header": "Dropdown",
-      "label": "Selecteer met één tik"
+      "header": "Invoermethoden",
+      "single-tap-label": "Selecteer met één tik"
     },
     "kiosk-mode": {
       "header": "Kiosk modus",

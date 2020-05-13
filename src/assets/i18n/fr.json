@@ -58,8 +58,8 @@
       "auto-crop": "Recadrage automatique"
     },
     "dropdown": {
-      "header": "Menu déroulant",
-      "label": "Sélection en une touche"
+      "header": "Méthodes de saisie",
+      "single-tap-label": "Sélection en une touche"
     },
     "kiosk-mode": {
       "header": "Mode kiosque",
