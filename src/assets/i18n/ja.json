@@ -59,7 +59,14 @@
     },
     "dropdown": {
       "header": "入力方法",
-      "single-tap-label": "シングルタップ選択"
+      "single-tap-label": "シングルタップ選択",
+      "heyboard-label": "数字キーボード",
+      "standard": "標準",
+      "numeric": "数値",
+      "date-picker-label": "日付ピッカー",
+      "time-picker-label": "時間ピッカー",
+      "datetime-picker-label": "日時ピッカー",
+      "calendar":"カレンダー"
     },
     "kiosk-mode": {
       "header": "キヲスクモード",

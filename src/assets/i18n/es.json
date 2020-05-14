@@ -55,7 +55,14 @@
     },
     "dropdown": {
       "header": "Métodos de entrada",
-      "single-tap-label": "Seleccion de un solo toque"
+      "single-tap-label": "Seleccion de un solo toque",
+      "heyboard-label": "Teclado de números",
+      "standard": "Estándar",
+      "numeric": "Numérico",
+      "date-picker-label": "Selector de fechas",
+      "time-picker-label": "Selector de tiempo",
+      "datetime-picker-label": "Selector de fecha y hora",
+      "calendar":"Calendario"
     },
     "kiosk-mode": {
       "header": "Modo estación",

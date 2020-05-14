@@ -59,7 +59,14 @@
     },
     "dropdown": {
       "header": "Metodi di input",
-      "single-tap-label": "Selezione con tocco singolo"
+      "single-tap-label": "Selezione con tocco singolo",
+      "heyboard-label": "Tastiera numerica",
+      "standard": "Standard",
+      "numeric": "Numerico",
+      "date-picker-label": "Date picker",
+      "time-picker-label": "Selettore del tempo",
+      "datetime-picker-label": "Selettore datetime",
+      "calendar":"Calendario"
     },
     "kiosk-mode": {
       "header": "Modalità Chiosco",

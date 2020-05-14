@@ -59,7 +59,14 @@
     },
     "dropdown": {
       "header": "Eingabemethoden",
-      "single-tap-label": "Single-touch Auswahl"
+      "single-tap-label": "Single-touch Auswahl",
+      "heyboard-label": "Zahlen Tastatur",
+      "standard": "Standard",
+      "numeric": "Numerisch",
+      "date-picker-label": "Datumsauswahl",
+      "time-picker-label": "Zeitwählers",
+      "datetime-picker-label": "Datetime Picker",
+      "calendar":"Kalender"
     },
     "kiosk-mode": {
       "header": "Kiosk Modus",

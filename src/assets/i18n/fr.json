@@ -59,7 +59,14 @@
     },
     "dropdown": {
       "header": "Méthodes de saisie",
-      "single-tap-label": "Sélection en une touche"
+      "single-tap-label": "Sélection en une touche",
+      "heyboard-label": "Clavier numérique",
+      "standard": "la norme",
+      "numeric": "Numérique",
+      "date-picker-label": "Sélecteur de date",
+      "time-picker-label": "Sélecteur de temps",
+      "datetime-picker-label": "Sélecteur Datetime",
+      "calendar":"Calendrier"
     },
     "kiosk-mode": {
       "header": "Mode kiosque",

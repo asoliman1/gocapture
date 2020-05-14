@@ -59,7 +59,14 @@
     },
     "dropdown": {
       "header": "Invoermethoden",
-      "single-tap-label": "Selecteer met één tik"
+      "single-tap-label": "Selecteer met één tik",
+      "heyboard-label": "Cijfers toetsenbord",
+      "standard": "Standaard",
+      "numeric": "Numeriek",
+      "date-picker-label": "Datumkiezer",
+      "time-picker-label": "Tijdkiezer",
+      "datetime-picker-label": "Datetime-kiezer",
+      "calendar":"Kalender"
     },
     "kiosk-mode": {
       "header": "Kiosk modus",
