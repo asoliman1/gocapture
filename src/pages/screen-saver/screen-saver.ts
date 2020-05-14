@@ -25,11 +25,10 @@ export class ScreenSaverPage {
     private viewCtrl: ViewController,
     private StatusBar: StatusBar) {
     this.eventStyle = this.navParams.data.event_style;
-    this.eventStyle.screensaver_media_items.push({ url: 'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4', path: 'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4' })
   }
 
   ngOnInit() {
-    // this.handleSingleVideoReply();
+    this.handleSingleVideoReply();
   }
 
   handleSingleVideoReply() {
@@ -55,14 +54,12 @@ export class ScreenSaverPage {
   isVideoUrl(index: number) {
     let url: string = this.eventStyle.screensaver_media_items[index - 1].path;
     let ext = url.split('.').pop().toLowerCase();
-    console.log(ext);
     if (ext == VIDEO_FORMATS[0]) {
       this.slides.stopAutoplay();
       this.isVideo = true;
     }else{
       this.isVideo = false;
     }
-    console.log(this.isVideo)
   }
 
   videoEnd() {
