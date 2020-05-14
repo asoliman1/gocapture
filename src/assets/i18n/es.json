@@ -56,7 +56,7 @@
     "dropdown": {
       "header": "Métodos de entrada",
       "single-tap-label": "Seleccion de un solo toque",
-      "heyboard-label": "Teclado de números",
+      "keyboard-label": "Teclado de números",
       "standard": "Estándar",
       "numeric": "Numérico",
       "date-picker-label": "Selector de fechas",

@@ -21,6 +21,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { Localization } from '../../model/localization';
 import { TranslateConfigService } from '../../services/translate/translateConfigService';
 import { LocalizationsPage } from '../localizations/localizations';
+import { DateTimeOptions } from '../../model/date-time-options';
 
 @Component({
   selector: 'settings',
@@ -35,6 +36,13 @@ export class Settings {
   version: string;
   private selectedTheme;
   localization: Localization;
+  keyboard = "numeric";
+  dateValue = "standard";
+  timeValue = "standard";
+  dateTimeValue = "standard";
+  dates = DateTimeOptions.datePicker; 
+  times = DateTimeOptions.timePicker;
+  datesTimes = DateTimeOptions.dateTimePicker;
 
   constructor(
     private db: DBClient,
@@ -64,6 +72,15 @@ export class Settings {
     this.setConfig();
   }
 
+  onChangevalue(){
+    console.log("keyboard", this.settings.numbersKeyboard);
+    console.log("date", this.dateValue);
+    console.log("time", this.timeValue);
+    console.log("date time", this.dateTimeValue);
+  }
+
+  
+
   setConfig() {
     this.db.getAllConfig().subscribe(settings => {
 
@@ -86,6 +103,19 @@ export class Settings {
 
       if (typeof settings[settingsKeys.SINGLE_TAP_SELECTION] == "undefined") {
         this.settings.singleTapSelection = true;
+      }
+
+      if (typeof settings[settingsKeys.NUMBERS_KEYBOARD] == "undefined") {
+        this.settings.numbersKeyboard = "numeric";
+      }
+      if (typeof settings[settingsKeys.DATE_PICKER] == "undefined") {
+        this.settings.datePicker = "standard";
+      }
+      if (typeof settings[settingsKeys.TIME_PICKER] == "undefined") {
+        this.settings.timePicker = "standard";
+      }
+      if (typeof settings[settingsKeys.DATE_TIME_PICKER] == "undefined") {
+        this.settings.dateTimePicker = "standard";
       }
 
       this.db.getRegistration().subscribe(user => {
@@ -239,6 +269,10 @@ export class Settings {
       let remindAboutUnsubmittedLeads = this.db.saveConfig(settingsKeys.REMIND_ABOUT_UNSUBMITTED_LEADS, JSON.stringify(this.settings.remindAboutUnsubmittedLeads));
       let singleTapSelection = this.db.saveConfig(settingsKeys.SINGLE_TAP_SELECTION, this.settings.singleTapSelection);
       let autoCrop = this.db.saveConfig(settingsKeys.AUTO_CROP, this.settings.autoCrop);
+      let numbersKeyboard = this.db.saveConfig(settingsKeys.NUMBERS_KEYBOARD, this.settings.numbersKeyboard);
+      let datePicker = this.db.saveConfig(settingsKeys.DATE_PICKER, this.settings.datePicker);
+      let timePicker = this.db.saveConfig(settingsKeys.TIME_PICKER, this.settings.timePicker);
+      let dateTimePicker = this.db.saveConfig(settingsKeys.DATE_TIME_PICKER, this.settings.dateTimePicker);
 
       Observable.zip(autoUpload,
         enableLogging,
@@ -246,7 +280,11 @@ export class Settings {
         autosaveBCCaptures,
         remindAboutUnsubmittedLeads,
         singleTapSelection,
-        autoCrop).subscribe(() => {
+        autoCrop,
+        numbersKeyboard,
+        datePicker,
+        timePicker,
+        dateTimePicker).subscribe(() => {
         this.shouldSave = false;
         resolve(true);
       }, error => {
@@ -300,5 +338,39 @@ export class Settings {
     ];
     this.popup.showAlert("alerts.settings.unauthenticate.title", {text:"alerts.settings.unauthenticate.message"}, buttons, this.selectedTheme);
   }
+
+
+  showOptions(pickerType: string) {
+    let search = this.modalCtrl.create('SearchPage', {items: this.getOptions(pickerType)});
+    search.onDidDismiss(data => {
+      if(data){
+      if(pickerType== "date") this.settings.datePicker = data;
+      if (pickerType== "time") this.settings.timeValue = data;
+      if(pickerType == "dateTime") this.settings.dateTimeValue = data;
+      }
+    });
+    search.present();
+}
+
+  getOptions(pickerType: string){
+    let items = [];
+    let pickerData: any ;
+    if(pickerType== "date") pickerData = DateTimeOptions.datePicker;
+    else if (pickerType== "time") pickerData = DateTimeOptions.timePicker;
+    else pickerData = DateTimeOptions.dateTimePicker;
+    pickerData.forEach((item) => {
+      let optionItem = new OptionItem({
+        id: item.id.toString(),
+        title: item.label,
+        subtitle: null,
+        search: item.label,
+        value: item.value});
+        if(pickerType== "date") optionItem.isSelected = this.settings.datePicker == item.label;
+        else if(pickerType== "time") optionItem.isSelected = this.settings.timePicker == item.label;
+        else  optionItem.isSelected = this.settings.dateTimePicker == item.label;
+      items.push(optionItem);
+    });
+    return items;
+}
 
 }

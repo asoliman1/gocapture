@@ -6,6 +6,17 @@
 	border-bottom: none !important;
 }
 
+.select-disabled {
+    opacity: 1 !important;
+  }
+
+  .gc-select {
+    max-width: 100%;
+    .select-text {
+      white-space: normal;
+    }
+  }
+
 .align-right{
 	text-align: right;
 	input{

@@ -1,8 +1,8 @@
 <ion-header>
 	<ion-navbar color="primary">
 		<button ion-button menuToggle>
-      		<ion-icon name="menu"></ion-icon>
-    	</button>
+			<ion-icon name="menu"></ion-icon>
+		</button>
 		<ion-title>{{'settings.title' | translate}}</ion-title>
 		<ion-buttons end class="hide">
 			<button ion-button [disabled]="!shouldSave" (click)="saveSettings()">
@@ -15,7 +15,7 @@
 <ion-content class="settings">
 	<ion-list>
 		<ion-list-header>
-      {{'settings.organization.header' | translate}}
+			{{'settings.organization.header' | translate}}
 		</ion-list-header>
 		<ion-item text-wrap>
 			<ion-label>{{'settings.organization.name' | translate}}</ion-label>
@@ -29,54 +29,113 @@
 			<ion-label>{{'settings.organization.operator' | translate}}</ion-label>
 			<ion-label class="align-right">{{getName(user)}}</ion-label>
 		</ion-item>
-    <ion-item class="last" *ngIf="user.device_id" text-wrap>
-      <ion-label>{{'settings.organization.deviceId' | translate}}</ion-label>
-      <ion-label class="align-right">{{user.device_id}}</ion-label>
-    </ion-item>
-    <ion-list-header>
-      {{'settings.application.header' | translate}}
-    </ion-list-header>
-    <ion-item (click)="onLocalization()" detail-push text-wrap>
-      <ion-label>{{'settings.application.label' | translate}}</ion-label>
-      <ion-label class="align-right">{{localization?.name}}</ion-label>
-    </ion-item>
+		<ion-item class="last" *ngIf="user.device_id" text-wrap>
+			<ion-label>{{'settings.organization.deviceId' | translate}}</ion-label>
+			<ion-label class="align-right">{{user.device_id}}</ion-label>
+		</ion-item>
 		<ion-list-header>
-      {{'settings.operations.header' | translate}}
+			{{'settings.application.header' | translate}}
+		</ion-list-header>
+		<ion-item (click)="onLocalization()" detail-push text-wrap>
+			<ion-label>{{'settings.application.label' | translate}}</ion-label>
+			<ion-label class="align-right">{{localization?.name}}</ion-label>
+		</ion-item>
+		<ion-list-header>
+			{{'settings.operations.header' | translate}}
 		</ion-list-header>
 		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.operations.automatic-upload' | translate}}</ion-label>
-			<ion-toggle  [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
+			<ion-toggle [(ngModel)]="settings.autoUpload" (ionChange)="onChange()" checked="false"></ion-toggle>
 		</ion-item>
-    <ion-item class="last" text-wrap>
-      <ion-label>{{'settings.operations.save-business-cards' | translate}}</ion-label>
-      <ion-toggle  [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()" checked="settings.autosaveBCCaptures"></ion-toggle>
-    </ion-item>
-    <ion-item class="last" text-wrap>
-      <ion-label>{{'settings.operations.reminder-for-unsubmitted-leads' | translate}}<br>
-        <span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In {{settings.remindAboutUnsubmittedLeads.interval}} h</span>
-      </ion-label>
-      <ion-toggle  [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind" (ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind"></ion-toggle>
-    </ion-item>
-    <ion-item class="last" text-wrap>
-      <ion-label>{{'settings.operations.auto-crop' | translate}}</ion-label>
-      <ion-toggle  [(ngModel)]="settings.autoCrop" (ionChange)="onChange()" checked="settings.autoCrop"></ion-toggle>
-    </ion-item>
-    <ion-list-header>
-      {{'settings.dropdown.header' | translate}}
-    </ion-list-header>
-    <ion-item class="last" text-wrap>
-      <ion-label> {{'settings.dropdown.label' | translate}}</ion-label>
-      <ion-toggle  [(ngModel)]="settings.singleTapSelection" (ionChange)="onChange()" checked="settings.singleTapSelection"></ion-toggle>
-    </ion-item>
+		<ion-item class="last" text-wrap>
+			<ion-label>{{'settings.operations.save-business-cards' | translate}}</ion-label>
+			<ion-toggle [(ngModel)]="settings.autosaveBCCaptures" (ionChange)="onChange()"
+				checked="settings.autosaveBCCaptures"></ion-toggle>
+		</ion-item>
+		<ion-item class="last" text-wrap>
+			<ion-label>{{'settings.operations.reminder-for-unsubmitted-leads' | translate}}<br>
+				<span *ngIf="settings.remindAboutUnsubmittedLeads.remind">In
+					{{settings.remindAboutUnsubmittedLeads.interval}} h</span>
+			</ion-label>
+			<ion-toggle [(ngModel)]="settings.remindAboutUnsubmittedLeads.remind"
+				(ionChange)="onUnsubmittedLeadsReminderChange()" checked="settings.remindAboutUnsubmittedLeads.remind">
+			</ion-toggle>
+		</ion-item>
+		<ion-item class="last" text-wrap>
+			<ion-label>{{'settings.operations.auto-crop' | translate}}</ion-label>
+			<ion-toggle [(ngModel)]="settings.autoCrop" (ionChange)="onChange()" checked="settings.autoCrop">
+			</ion-toggle>
+		</ion-item>
 		<ion-list-header>
-      {{'settings.kiosk-mode.header' | translate}}
+			{{'settings.dropdown.header' | translate}}
+		</ion-list-header>
+		<ion-item class="last" text-wrap>
+			<ion-label> {{'settings.dropdown.single-tap-label' | translate}}</ion-label>
+			<ion-toggle [(ngModel)]="settings.singleTapSelection" (ionChange)="onChange()"
+				checked="settings.singleTapSelection"></ion-toggle>
+		</ion-item>
+
+		<ion-item class="last" text-wrap>
+			<ion-label> {{'settings.dropdown.keyboard-label' | translate}}</ion-label>
+		</ion-item>
+		<ion-grid radio-group [(ngModel)]="settings.numbersKeyboard" (ionChange)="onChangevalue()">
+			<ion-row>
+				<ion-col>
+					<ion-item class="last" text-wrap>
+						<ion-label>{{'settings.dropdown.standard' | translate}}</ion-label>
+						<ion-radio value="standard"></ion-radio>
+					</ion-item>
+				</ion-col>
+				<ion-col>
+					<ion-item class="last" text-wrap>
+						<ion-label>{{'settings.dropdown.numeric' | translate}}</ion-label>
+						<ion-radio value="numeric" [checked]="settings.numbersKeyboard == 'numeric'"></ion-radio>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+
+		<ion-item class="last" text-wrap (click)="showOptions(date)">
+			<ion-label> {{'settings.dropdown.date-picker-label' | translate}}</ion-label>
+		</ion-item>
+		<ion-item (click)="showOptions('date')">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.datePicker"
+				(ionChange)="onChangevalue()">
+				<ion-option *ngFor="let item of dates" [value]="item.value">{{item.label}}</ion-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-item class="last" text-wrap>
+			<ion-label> {{'settings.dropdown.time-picker-label' | translate}}</ion-label>
+		</ion-item>
+		<ion-item (click)="showOptions('time')">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.timePicker"
+				(ionChange)="onChangevalue()">
+				<ion-option *ngFor="let item of times" [value]="item.value">{{item.label}}</ion-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-item class="last" text-wrap>
+			<ion-label> {{'settings.dropdown.datetime-picker-label' | translate}}</ion-label>
+		</ion-item>
+
+		<ion-item (click)="showOptions('dateTime')">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.dateTimePicker"
+				(ionChange)="onChangevalue()">
+				<ion-option *ngFor="let item of datesTimes" [value]="item.value">{{item.label}}</ion-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-list-header>
+			{{'settings.kiosk-mode.header' | translate}}
 		</ion-list-header>
 		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.kiosk-mode.label' | translate}}</ion-label>
-			<ion-input type="password" class="align-right" [(ngModel)]="settings.kioskModePassword" (ionChange)="onChange()"></ion-input>
+			<ion-input type="password" class="align-right" [(ngModel)]="settings.kioskModePassword"
+				(ionChange)="onChange()"></ion-input>
 		</ion-item>
 		<ion-list-header>
-      {{'settings.diagnostics.header' | translate}}
+			{{'settings.diagnostics.header' | translate}}
 		</ion-list-header>
 		<ion-item text-wrap>
 			<ion-label>{{'settings.diagnostics.app-version' | translate}}</ion-label>
@@ -84,10 +143,12 @@
 		</ion-item>
 		<ion-item class="last" text-wrap>
 			<ion-label>{{'settings.diagnostics.enable-logging' | translate}}</ion-label>
-			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChangeEnableLogging()" checked="settings.enableLogging"></ion-toggle>
+			<ion-toggle [(ngModel)]="settings.enableLogging" (ionChange)="onChangeEnableLogging()"
+				checked="settings.enableLogging"></ion-toggle>
 		</ion-item>
 		<ion-item>
-			<button ion-button full large color="light" (click)="showLogs()">{{'settings.diagnostics.view-log-button' | translate}}</button>
+			<button ion-button full large color="light"
+				(click)="showLogs()">{{'settings.diagnostics.view-log-button' | translate}}</button>
 		</ion-item>
 
 		<!-- <ion-item>
@@ -95,10 +156,12 @@
 		</ion-item> -->
 		<!-- A.S GOC-317 -->
 		<ion-item>
-			<button ion-button full large color="light" (click)="testBadgeScanner()">{{'settings.diagnostics.test-badge-scan' | translate}}</button>
+			<button ion-button full large color="light"
+				(click)="testBadgeScanner()">{{'settings.diagnostics.test-badge-scan' | translate}}</button>
 		</ion-item>
 		<ion-item>
-			<button ion-button full large color="danger" (click)="unauthenticate()">{{'settings.unauth-device-btn' | translate}}</button>
+			<button ion-button full large color="danger"
+				(click)="unauthenticate()">{{'settings.unauth-device-btn' | translate}}</button>
 		</ion-item>
 
 	</ion-list>

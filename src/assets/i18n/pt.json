@@ -60,7 +60,7 @@
     "dropdown": {
       "header": "Métodos de entrada",
       "single-tap-label": "Seleção com um toque",
-      "heyboard-label": "Teclado numérico",
+      "keyboard-label": "Teclado numérico",
       "standard": "Padrão",
       "numeric": "Numérico",
       "date-picker-label": "Selecionador de data",

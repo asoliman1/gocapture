@@ -60,7 +60,7 @@
     "dropdown": {
       "header": "Input methods",
       "single-tap-label": "Single tap selection",
-      "heyboard-label": "Numbers Keyboard",
+      "keyboard-label": "Numbers Keyboard",
       "standard": "Standard",
       "numeric": "Numeric",
       "date-picker-label": "Date picker",

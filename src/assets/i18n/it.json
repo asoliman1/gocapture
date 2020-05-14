@@ -60,7 +60,7 @@
     "dropdown": {
       "header": "Metodi di input",
       "single-tap-label": "Selezione con tocco singolo",
-      "heyboard-label": "Tastiera numerica",
+      "keyboard-label": "Tastiera numerica",
       "standard": "Standard",
       "numeric": "Numerico",
       "date-picker-label": "Date picker",

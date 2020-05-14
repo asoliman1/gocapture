@@ -60,7 +60,7 @@
     "dropdown": {
       "header": "Invoermethoden",
       "single-tap-label": "Selecteer met één tik",
-      "heyboard-label": "Cijfers toetsenbord",
+      "keyboard-label": "Cijfers toetsenbord",
       "standard": "Standaard",
       "numeric": "Numeriek",
       "date-picker-label": "Datumkiezer",

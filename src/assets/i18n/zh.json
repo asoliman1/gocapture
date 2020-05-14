@@ -60,7 +60,7 @@
     "dropdown": {
       "header": "输入法",
       "single-tap-label": "单选",
-      "heyboard-label": "数字键盘",
+      "keyboard-label": "数字键盘",
       "standard": "标准",
       "numeric": "数字",
       "date-picker-label": "日期选择器",

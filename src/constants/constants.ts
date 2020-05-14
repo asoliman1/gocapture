@@ -203,5 +203,9 @@ export const settingsKeys = {
   REMIND_ABOUT_UNSUBMITTED_LEADS: "remindAboutUnsubmittedLeads",
   SINGLE_TAP_SELECTION: "singleTapSelection",
   LOCATION : "location",
-  AUTO_CROP: 'autoCrop'
+  AUTO_CROP: 'autoCrop',
+  NUMBERS_KEYBOARD: "numbersKeyboard",
+  DATE_PICKER: "datePicker",
+  TIME_PICKER: "timePicker",
+  DATE_TIME_PICKER: "dateTimePicker"
 };
