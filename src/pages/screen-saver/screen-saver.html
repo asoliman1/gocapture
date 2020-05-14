@@ -1,8 +1,13 @@
 
 <ion-content (click)="dismiss()" (pan)="dismiss()" >
-    <ion-slides  (ionSlideDidChange)="slideChanged()" [autoplay]="eventStyle?.switch_frequency * 1000"  [effect]="eventStyle?.transition_effect || 'slide'" loop="true" speed="1000" >
+    <ion-slides  (ionSlideWillChange)="slideChanged()" [autoplay]="eventStyle?.switch_frequency * 1000"  [effect]="eventStyle?.transition_effect || 'slide'" loop="true" speed="1000" >
       <ion-slide *ngFor="let slide of eventStyle?.screensaver_media_items" >
-        <img height="100%" width="100%" class="image" [src]="slide.path | convertFileSrc" onerror="this.src = 'assets/images/image-placeholder.jpg'" />
+        <img *ngIf="!isVideo" height="100%" width="100%" class="image" [src]="slide.path | convertFileSrc" onerror="this.src = 'assets/images/image-placeholder.jpg'" />
+        <div *ngIf="isVideo" class="video-bg" >
+          <video [loop]="videoReplay" autoplay playsinline (ended)="videoEnd()" id="video-player">
+            <source [src]="slide.path" type="video/mp4">
+          </video>
+          </div>
       </ion-slide>
     </ion-slides>
 </ion-content>

@@ -30,6 +30,7 @@
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
     <preference name="deployment-target" value="11.0.0" />
     <preference name="WKWebViewOnly" value="true" />
+    <preference name="AllowInlineMediaPlayback" value="true" />
     <platform name="android">
         <resource-file src="google-services.json" target="app/google-services.json" />
         <allow-intent href="market:*" />
