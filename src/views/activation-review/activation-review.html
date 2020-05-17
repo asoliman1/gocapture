@@ -11,7 +11,22 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-searchbar *ngIf="filteredSubmissions.length && !loading" (ionInput)="getItems($event)" [placeholder]="'general.search' | translate"></ion-searchbar>
+  
+  <ion-searchbar *ngIf="submissions.length && !loading" (ionInput)="getItems($event)" [placeholder]="'general.search' | translate"></ion-searchbar>
+
+  <div *ngIf="loading">
+    <div class="grid-container grid-container--fit">
+      <div class="grid-item" *ngFor="let x of [0,1]">
+        <ion-item>
+        <h2> <skeleton-loading [width]="'100%'" ></skeleton-loading> </h2>
+      </ion-item>
+      </div>
+    </div>
+	</div>
+  <div class="no-data" *ngIf="!filteredSubmissions.length && !loading">
+		<img src="./assets/images/no-Submissions.png" />
+  </div>
+    
   <ion-list *ngIf="filteredSubmissions.length && !loading">
     <ion-item *ngFor="let sub of filteredSubmissions">
       <ng-container>
@@ -24,19 +39,6 @@
     </ion-item>
   </ion-list>
 
-  <div class="no-data" *ngIf="!filteredSubmissions.length && !loading">
-		<img src="./assets/images/no-Submissions.png" />
-	</div>
-
-  <div *ngIf="loading">
-    <div class="grid-container grid-container--fit">
-      <div class="grid-item" *ngFor="let x of [0,1]">
-        <ion-item>
-        <h2> <skeleton-loading [width]="'100%'" ></skeleton-loading> </h2>
-      </ion-item>
-      </div>
-    </div>
-	</div>
 
   <ion-infinite-scroll (ionInfinite)="loadMore($event)" loadingSpinner="bubbles" loadingText="Loading Users...">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>

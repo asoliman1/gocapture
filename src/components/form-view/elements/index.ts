@@ -9,3 +9,4 @@ export * from "./dropdown";
 export * from "./checkboxes";
 export * from "./badge";
 export * from "./document";
+export * from "./activation-game-element";

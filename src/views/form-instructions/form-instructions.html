@@ -7,12 +7,12 @@
       </button>
     </ion-buttons>
 
-    <ion-title>{{form ? form.name : ''}}</ion-title>
+    <ion-title>{{instructionName ? instructionName : ''}}</ion-title>
 
 	</ion-navbar>
 
 </ion-header>
 
 <ion-content>
-  <div class="html-block" [innerHtml]="form.instructions_content | safeHtml"></div>
+  <div class="html-block" [innerHtml]="instructionsContent | safeHtml"></div>
 </ion-content>

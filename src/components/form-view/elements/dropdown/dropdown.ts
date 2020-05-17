@@ -1,6 +1,6 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { BaseElement } from "../base-element";
-import { FormElement } from "../../../../model";
+import { FormElement, Form } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 import {ModalController} from "ionic-angular";
@@ -20,6 +20,7 @@ export class Dropdown extends BaseElement implements ISearch {
 	@Input() element: FormElement = <any>{};
 	@Input() formGroup: FormGroup;
 	@Input() readonly: boolean = false;
+	@Input() form: Form;
 
 	constructor(private modal: ModalController) {
 		super();
@@ -71,5 +72,10 @@ export class Dropdown extends BaseElement implements ISearch {
 
   itemValue(item) {
 	  return item.option_label || item.option;
+  }
+
+  isLabelVisible(element: FormElement){
+    if (element.is_label_visible) return true;
+    else return false;
   }
 }

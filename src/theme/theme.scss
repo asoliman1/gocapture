@@ -1,17 +1,28 @@
-@mixin theme ($theme-color,$theme-text-color) { // A.S to set a text color for each theme
+@function set-checkbox-color($theme-color) {
+  @if (var(--label-color)) {
+    @return var(--label-color);
+  } @else {
+    @return $theme-color;
+  }
+}
+@mixin theme ($theme-color,$theme-text-color) { 
+
+  // A.S to set a text color for each theme
   $alert-ios-button-text-color: $theme-color;
   $action-sheet-ios-button-text-color: $theme-color;
   $button-ios-background-color: $theme-color;
   $button-md-background-color: $theme-color;
   $toggle-ios-background-color-on: $theme-color;
-
+  $checkbox-color : set-checkbox-color($theme-color);
+  
   .header .toolbar-background,
   .footer .toolbar-background,
   .toolbar .toolbar-background,
   .toggle-ios.toggle-checked .toggle-icon,
   .toggle-md.toggle-checked .toggle-icon,
   .fab-md-in-list , .fab-md-in-list , .fab ,
-  .fab.activated , .s-header .title::after , .document button[full],.form-header{
+  .fab.activated , .s-header .title::after , .document button[full],.form-header, 
+  .activation-game-element button[full]{
     background-color: $theme-color;
   }
 

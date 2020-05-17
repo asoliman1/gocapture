@@ -18,6 +18,7 @@ import { DuplicateLeadsService } from "../../../../services/duplicate-leads-serv
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { Popup } from '../../../../providers/popup/popup';
 import { FormCapture } from '../../../../views/form-capture/form-capture';
+import { ThemeProvider } from '../../../../providers/theme/theme';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class Badge extends BaseElement implements OnInit {
   public isScanning: boolean = false;
   ButtonBar : Subscription;
   scanCounter = 0;
+  private selectedTheme;
   
   constructor(
   public client: RESTClient,
@@ -51,8 +53,10 @@ export class Badge extends BaseElement implements OnInit {
   public duplicateLeadsService: DuplicateLeadsService,
   public appPreferences: AppPreferences,
   public formViewService:formViewService,
+  private themeProvider: ThemeProvider,
     ) {
     super();
+    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
   }
 
   ionViewDidLeave(){
@@ -79,7 +83,7 @@ export class Badge extends BaseElement implements OnInit {
     if(this.scanCounter > 0 ){
       const buttons = [
         {
-          text: 'Submit Lead',
+          text: 'form-capture.submit-lead',
           handler: () => {
             this.doSubmit.emit('true');
           }
@@ -99,7 +103,7 @@ export class Badge extends BaseElement implements OnInit {
       ];
 
 
-      this.popup.showAlert('Warning',{ text: 'You have not submitted the current scan. If you scan again you will lose all submitted data. Are you sure you want to continue?' },buttons);
+      this.popup.showAlert('Warning',{ text: 'form-capture.scan-prompt-message' },buttons, this.selectedTheme+ ' custom-alert');
     }
 
     else{
@@ -118,7 +122,6 @@ export class Badge extends BaseElement implements OnInit {
     this.utils.setPluginPrefs()
     
     this.scanner.scan(false).then((response) => {
-      this.scanCounter +=1;
       console.log("Badge scan finished: " + response.scannedId);
       this.isScanning = false;
       this.onProcessingEvent.emit('false');
@@ -129,6 +132,7 @@ export class Badge extends BaseElement implements OnInit {
       this.onChange(response.scannedId);
 
       if (this.element.post_show_reconciliation) {
+        this.scanCounter = 1;
         this.scanner.restart();
         this.submission.hold_submission = 1;
         this.submission.hold_submission_reason = "Post-Show Reconciliation";
@@ -170,19 +174,22 @@ export class Badge extends BaseElement implements OnInit {
       }
 
       //manage duplicate submissions
-      if (data["action"] && data["action"] == "edit_submission") {
+      if (data["action"] && data["action"] == "edit_submission" && !this.activation) {
         data["form_id"] = this.form.form_id;
         this.duplicateLeadsService.handleDuplicateLeads(this.form, data, null);
       } else {
+        this.scanCounter = 1;
+        this.submission.barcodeID = scannedId;
         this.submission && (this.submission.barcode_processed = BarcodeStatus.None);
         this.form["barcode_processed"] = BarcodeStatus.Processed;
         this.fillElementsWithFetchedData(barcodeData);
       }
     }, (err) => {
+      this.scanCounter = 0;
       this.onProcessingEvent.emit('false');
       this.scanner.restart();
       this.popup.dismiss('loading');
-
+      this.submission.barcodeID = scannedId;
       console.error("Could not fetch badge data: " + (typeof err == "string" ? err : JSON.stringify(err)));
 
       this.fillInElementsWithPlaceholderValue("Scanned");

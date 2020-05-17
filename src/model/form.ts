@@ -36,8 +36,12 @@ export class Form extends BaseForm {
 	}
 	search_list_background_color : string;
 	search_list_text_color : string;
-	show_reject_prompt:boolean;
-	duplicate_action:string;
+	show_reject_prompt: boolean;
+	duplicate_action: string;
+	unique_identifier_barcode: boolean;
+	unique_identifier_name: boolean;
+	unique_identifier_email: boolean;
+	ignore_submissions_from_activations: boolean;
 
 	public static getIdByUniqueFieldName(name: string, form: any): string {
 		let element: FormElement = null;
@@ -116,7 +120,7 @@ export class Form extends BaseForm {
 				ctrl.updateValueAndValidity();
 			}
 		});
-		// formGroup.setValue(vals);
+		 //formGroup.setValue(vals);
 	}
 
 	public getUrlFields(): string[] {
@@ -191,7 +195,19 @@ export class Form extends BaseForm {
 
 	public getHiddenElementsPerVisibilityRulesForActivation(): string[]{
 		let hiddenElements = this.elements.filter(element => {
-			return !element["available_in_activations"];
+			return !element.available_in_activations;
+		});
+
+		let elementsIds = [];
+		for (let element of hiddenElements) {
+			elementsIds = elementsIds.concat(`element_${element["id"]}`);
+		}
+		return elementsIds;
+	}
+
+	public getHiddenElementsPerVisibilityRulesForForm(): string[]{
+		let hiddenElements = this.elements.filter(element => {
+			return !element.available_in_event_form;
 		});
 
 		let elementsIds = [];

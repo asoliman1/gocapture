@@ -314,7 +314,7 @@ export class FormView {
     for (let key in this.theForm.controls) {
       if (this.theForm.controls[key].invalid) {
         let controlId = key.split('_')[1];
-        invalidControls.push(this.getNameForElementWithId(controlId));
+        if (this.getNameForElementWithId(controlId)) invalidControls.push(this.getNameForElementWithId(controlId));
       }
     }
     return invalidControls.length > 0 ? {text:'form-capture.check-fields-msg',param : invalidControls.join(', ')} : {text:'',param:''};
@@ -323,8 +323,9 @@ export class FormView {
   private getNameForElementWithId(id) {
     for (let i = 0; i < this.displayForm.elements.length; i++) {
       let element = this.displayForm.elements[i];
-      if (element.id == id) {
-        return element.title;
+      if (element.id == id ) {
+        if(this.activation && element.available_in_activations) return element.title;
+        if(!this.activation && element.available_in_event_form) return element.title;
       }
     }
   }
@@ -428,7 +429,7 @@ export class FormView {
 
     element.isMatchingRules = isMatchingRules;
 
-    if (!element.isMatchingRules && !element.is_filled_from_barcode && !element.is_filled_from_list) {
+    if (!element.isMatchingRules && !element.is_filled_from_barcode && !element.is_filled_from_list && element.type != FormElementType.activation) {
       this.resetField(element);
     }
 
@@ -439,7 +440,7 @@ export class FormView {
       return element.isMatchingRules && !element.parent_element_id && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules && !element.parent_element_id;
+    return element.isMatchingRules && !element.parent_element_id && element.available_in_event_form;
   }
   }
 
@@ -448,7 +449,7 @@ export class FormView {
       return element.isMatchingRules && element.available_in_activations;
     }
     else{
-    return element.isMatchingRules;
+    return element.isMatchingRules && element.available_in_event_form;
     }
   }
 
@@ -498,7 +499,6 @@ export class FormView {
   
   canSubmitForm(event){
     this.doSubmit.emit(event);
-    console.log("Form view",JSON.parse(event))
   }
 
   onButtonEvent(event){

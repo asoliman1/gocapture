@@ -85,7 +85,9 @@
     "business-card" : "La carte de visite",
     "badge-scan" : "Scan du badge",
     "error-msg" : "Nom ou e-mail requis",
-    "check-fields-msg" : "veuillez vérifier les champs suivants: {{fields}}"
+    "check-fields-msg" : "veuillez vérifier les champs suivants: {{fields}}" , 
+    "scan-prompt-message":"Vous n'avez pas soumis le prospect actuel. Si vous numérisez à nouveau, vous perdrez toutes les données soumises. Es-tu sur de vouloir continuer?",
+    "submit-lead": "Soumettre le lead actuel"
    },
   "logs": {
     "title": "Registres OU Données enregistrées",

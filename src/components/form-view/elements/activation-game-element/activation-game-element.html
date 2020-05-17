@@ -1,0 +1,7 @@
+<div class="activation-game-element">
+  <button ion-button full large  (click)="openGame()" 
+  [disabled]="retryNotAllowed || readonly"
+  [ngStyle]="{'background-color':element?.style?.background_color,'color':element?.style?.text_color}">
+    {{element.activation.name}}
+  </button>
+</div>

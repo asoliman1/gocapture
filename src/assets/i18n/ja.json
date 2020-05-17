@@ -85,7 +85,9 @@
     "business-card": "名刺",
     "badge-scan": "バッジスキャン",
     "error-msg": "メールアドレスまたは名前が必要です",
-    "check-fields-msg": "次のフィールドを確認してください。 {{fields}}"
+    "check-fields-msg": "次のフィールドを確認してください。 {{fields}}" , 
+    "scan-prompt-message":"現在の見込み客を提出していません。 もう一度スキャンすると、送信されたすべてのデータが失われます。 続行してもよろしいですか？",
+    "submit-lead": "現在のリードを送信"
   },
   "logs": {
     "title": "ログ",

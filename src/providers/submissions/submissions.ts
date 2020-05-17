@@ -46,7 +46,7 @@ export class SubmissionsProvider {
     private file: File,
     private util: Util,
     private popup: Popup
-    ) {
+  ) {
     this.duplicateLeadSource = new BehaviorSubject<any>(null);
     this.duplicateLead = this.duplicateLeadSource.asObservable();
 
@@ -293,7 +293,7 @@ export class SubmissionsProvider {
   }
 
 
-  doSubmitAll(data: FormMapEntry,isActivation = false): Observable<FormSubmission[]> {
+  doSubmitAll(data: FormMapEntry, isActivation = false): Observable<FormSubmission[]> {
     return new Observable<FormSubmission[]>((obs: Observer<FormSubmission[]>) => {
       let result = [];
       var index = 0;
@@ -307,8 +307,7 @@ export class SubmissionsProvider {
         }
 
         this.setSubmissionsUploading(data.submissions);
-        this.doSubmit(data, index,isActivation).subscribe((submission) => {
-          console.log(submission)
+        this.doSubmit(data, index, isActivation).subscribe((submission) => {
           this.downloadSubmissionsData(data.form, [submission]).then();
           // A.S
           this.rmSubmissionFrom(submission.id, 'uploading')
@@ -330,7 +329,7 @@ export class SubmissionsProvider {
   }
 
 
-  private doSubmit(data: FormMapEntry, index: number , isActivation = false): Observable<FormSubmission> {
+  private doSubmit(data: FormMapEntry, index: number, isActivation = false): Observable<FormSubmission> {
 
     return new Observable<FormSubmission>((obs: Observer<FormSubmission>) => {
       let submission = data.submissions[index];
@@ -366,11 +365,11 @@ export class SubmissionsProvider {
           console.log("Updated submission fields :");
           console.log(submission)
           if (submission.barcode_processed == BarcodeStatus.Queued && !submission.hold_submission) {
-            this.processBarcode(data, submission, obs,isActivation);
+            this.processBarcode(data, submission, obs, isActivation);
           } else if ((submission.barcode_processed == BarcodeStatus.Processed) && !submission.hold_submission && !this.isSubmissionValid(submission)) {
-            this.processBarcode(data, submission, obs,isActivation);
+            this.processBarcode(data, submission, obs, isActivation);
           } else {
-            this.actuallySubmitForm(data.form, submission, obs,isActivation);
+            this.actuallySubmitForm(data.form, submission, obs, isActivation);
           }
         }, (err) => {
           console.log(err);
@@ -445,10 +444,10 @@ export class SubmissionsProvider {
         });
 
         this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-          if(isActivation){
-          this.actuallySubmitForm(data.form, submission, obs, true, JSON.stringify(barcodeData));
+          if (isActivation) {
+            this.actuallySubmitForm(data.form, submission, obs, true, JSON.stringify(barcodeData));
           }
-          else{
+          else {
             this.actuallySubmitForm(data.form, submission, obs, false, JSON.stringify(barcodeData));
           }
         }, (err) => {
@@ -465,12 +464,12 @@ export class SubmissionsProvider {
           submission.hold_submission_reason = err.message ? err.message : "";
           submission.barcode_processed = BarcodeStatus.Processed;
           this.dbClient.updateSubmissionFields(data.form, submission).subscribe((done) => {
-            if(isActivation){
+            if (isActivation) {
               this.actuallySubmitForm(data.form, submission, obs, true);
-              }
-              else{
-                this.actuallySubmitForm(data.form, submission, obs);
-              }
+            }
+            else {
+              this.actuallySubmitForm(data.form, submission, obs);
+            }
           });
         } else {
           console.log(err);
@@ -479,22 +478,28 @@ export class SubmissionsProvider {
       });
   }
 
-  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false,barcodeData?: string) {
+  private actuallySubmitForm(form: Form, submission: FormSubmission, obs: Observer<any>, isActivation: boolean = false, barcodeData?: string) {
 
     console.log("Submit form to api: " + JSON.stringify(submission));
     if (barcodeData) {
       console.log("With Barcode data: " + barcodeData);
     }
-
     this.rest.submitForm(submission).subscribe((d) => {
-      //console.log("response from submissions", d);
-      if(isActivation){
-        submission.prospect_id = d.submission.prospect_id;
+      console.log("response from submissions", d);
+      if (isActivation) {
+        if (!d.submission) {
+          this.popup.showToast({ text: d.message }, "top");
+          obs.error(d.message);
+          return;
+        }
+        else {
+          submission.prospect_id = d.submission.prospect_id;
+        }
       }
       this.settingsService.getSetting(settingsKeys.AUTO_UPLOAD).subscribe((setting) => {
-        const autoUpload = String(setting) == "true";
-
-        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit") {
+        if(String(setting)=="") setting= "true";
+        const autoUpload = String(setting) == "true" ;
+        if (autoUpload && d.response_status != "200" && d.duplicate_action == "edit" && !isActivation) {
           d.id = submission.id;
           d.form_id = submission.form_id;
 
@@ -508,7 +513,7 @@ export class SubmissionsProvider {
           submission.hold_request_id = 0;
           submission.status = SubmissionStatus.InvalidFields;
           this.dbClient.updateSubmissionId(submission).subscribe((ok) => {
-            if(isActivation){
+            if (isActivation) {
               this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
               obs.error("invalid submission");
             }
@@ -524,7 +529,6 @@ export class SubmissionsProvider {
           obs.complete();
           return;
         }
-
         if (d.id > 0) {
           submission.activity_id = d.id;
           submission.status = SubmissionStatus.Submitted;
@@ -553,8 +557,8 @@ export class SubmissionsProvider {
     }, err => {
       console.log(err);
       obs.error("Could not process submission for form " + form.name);
-      if(isActivation){
-      this.popup.showToast({text:'toast.no-internet-connection'}, "top");
+      if (isActivation) {
+        this.popup.showToast({ text: 'toast.no-internet-connection' }, "top");
       }
     });
 

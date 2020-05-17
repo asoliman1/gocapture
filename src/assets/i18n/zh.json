@@ -85,7 +85,9 @@
     "business-card": "名片",
     "badge-scan": "徽章扫描",
     "error-msg": "电子邮件或姓名为必填项",
-    "check-fields-msg": "请检查以下字段： {{fields}}"
+    "check-fields-msg": "请检查以下字段： {{fields}}" , 
+    "scan-prompt-message":"您尚未提交当前线索。 如果再次扫描，将会丢失所有提交的数据。 你确定你要继续吗？",
+    "submit-lead": "提交当前线索"
   },
   "logs": {
     "title": "载入",

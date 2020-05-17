@@ -31,6 +31,7 @@ import { SubmissionsProvider } from '../providers/submissions/submissions';
 import { Intercom } from '@ionic-native/intercom';
 import { Subject } from 'rxjs';
 import { ThemeProvider } from '../providers/theme/theme';
+import { Keychain } from '@ionic-native/keychain';
 
 declare var cordova;
 @Injectable()
@@ -84,7 +85,8 @@ export class BussinessClient {
     private intercom: Intercom,
     private translateConfigService: TranslateConfigService,
     private themeProvider : ThemeProvider,
-    private popup: Popup) {
+    private popup: Popup, 	
+    private keychain: Keychain) {
     this.networkSource = new BehaviorSubject<"ON" | "OFF">(null);
     this.network = this.networkSource.asObservable();
     this.errorSource = new BehaviorSubject<any>(null);
@@ -305,8 +307,9 @@ export class BussinessClient {
 
 
  async registerIntercom(){
+   if(this.registration.email)
     this.intercom.registerIdentifiedUser({
-      user_id: this.registration.id,
+      ll_user_id: this.registration.id,
       email: this.registration.email,
     }).then((data)=>{
       console.log('Intercome register : ' + JSON.stringify(data));
@@ -317,11 +320,11 @@ export class BussinessClient {
 
  async updateIntercom(){
     this.intercom.updateUser({
-      user_id: this.registration.id,
       email: this.registration.email,
       name: `${this.registration.first_name} ${this.registration.last_name}`,
-      customer_id: this.registration.customerID,
       custom_attributes: {
+        ll_user_id: this.registration.id,
+        customer_id: this.registration.customerID,
         mobile_app_name: this.registration.app_name,
       },
       instance: this.registration.customer_name,
@@ -538,7 +541,7 @@ export class BussinessClient {
 
     let diff = Math.abs(new Date().getTime() - submissionTime) / 3600000;
     let isValidToBeSubmitted = (submission.status == SubmissionStatus.Submitting) && diff > 0.04;
-
+   
     return (submission.status == SubmissionStatus.ToSubmit) || isValidToBeSubmitted;
   }
 

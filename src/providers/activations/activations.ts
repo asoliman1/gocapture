@@ -71,9 +71,14 @@ export class ActivationsProvider {
 
   private downloadActivationsData(activations: Activation[]) {
     activations.forEach(async (act: Activation) => {
-      if (act.activation_style.is_event_screensaver) act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
-      else if (! await this.checkSSfiles(act)) {
-        this.downloadActivationData(act);
+      if (act.activation_style.is_event_screensaver) {act.activation_style.screensaver_media_items = act.event.event_style.screensaver_media_items;
+        act.activation_style.screensaver_rotation_period = act.event.event_style.screensaver_rotation_period;
+        act.activation_style.switch_frequency = act.event.event_style.switch_frequency;
+        act.activation_style.is_randomize = act.event.event_style.is_randomize;
+        act.activation_style.transition_effect = act.event.event_style.transition_effect;
+      }
+      else  {
+       act.activation_style.screensaver_media_items.forEach((e) => e.path = e.url);
       }
     })
   }

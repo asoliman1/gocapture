@@ -126,7 +126,7 @@ export class Settings {
   }
 
   setLocalization() {
-    console.log(this.user.localization,this.translateConfigService.defaultLanguage())
+    //console.log(this.user.localization,this.translateConfigService.defaultLanguage())
     if (this.user.localization && this.user.localizations) {
       this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
     } else {

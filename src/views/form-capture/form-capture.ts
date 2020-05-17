@@ -24,7 +24,8 @@ import {
   NavParams,
   Platform,
   Popover,
-  Modal
+  Modal,
+  Thumbnail
 } from 'ionic-angular';
 import { BussinessClient } from "../../services/business-service";
 import {
@@ -47,7 +48,7 @@ import { LocalStorageProvider } from "../../providers/local-storage/local-storag
 import { Vibration } from "@ionic-native/vibration";
 import { RapidCaptureService } from "../../services/rapid-capture-service";
 import { ScannerType } from "../../components/form-view/elements/badge/Scanners/Scanner";
-import { Observable, Subscription } from "rxjs";
+import { Observable, Subscription, VirtualTimeScheduler } from "rxjs";
 import { AppPreferences } from "@ionic-native/app-preferences";
 import { StationsPage } from "../stations/stations";
 import { Idle } from 'idlejs/dist';
@@ -62,6 +63,7 @@ import { Badge } from '../../components/form-view/elements/badge';
 import { TRANSCRIPTION_FIELDS_IDS } from '../../constants/transcription-fields';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { EventStyle } from '../../model/event-style';
+import { Colors } from '../../constants/colors';
 
 @Component({
   selector: 'form-capture',
@@ -79,7 +81,6 @@ export class FormCapture implements AfterViewInit {
   @ViewChild(FormView) formView: FormView;
   @ViewChild("navbar") navbar: Navbar;
   @ViewChild(Content) content: Content;
-  @ViewChild(Badge) badge: Badge;
   @ViewChild("formTitle") formTitle: ElementRef;
 
 
@@ -126,6 +127,7 @@ export class FormCapture implements AfterViewInit {
   activation: Activation = this.navParams.get("activation");
   openBadgeScan = false;
   noTranscriptable: boolean;
+  selectedThemeColor: string;
 
   constructor(private navCtrl: NavController,
     private navParams: NavParams,
@@ -150,7 +152,10 @@ export class FormCapture implements AfterViewInit {
     private submissionsProvider: SubmissionsProvider,
     private statusBar: StatusBar
   ) {
-    this.themeProvider.getActiveTheme().subscribe(val => this.selectedTheme = val);
+    this.themeProvider.getActiveTheme().subscribe(val => {
+      this.selectedThemeColor = Colors[val.split('-')[0]];
+      this.selectedTheme = val
+    });
     // A.S
     this.idle = new Idle();
     this.getSavedLocation()
@@ -159,7 +164,6 @@ export class FormCapture implements AfterViewInit {
     if (this.activation) {
       this.statusBar.hide();
     }
-    console.log(this.activation);
 
   }
 
@@ -181,26 +185,49 @@ export class FormCapture implements AfterViewInit {
   }
 
   private checkInstructions() {
-    let instructions = this.localStorage.get("FormInstructions");
-    let formsInstructions = instructions ? JSON.parse(instructions) : [];
-    let shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && formsInstructions.indexOf(this.form.id) == -1;
+    let instructions;
+    let getInstructions;
+    let shouldShowInstruction;
+    if (this.activation && !this.activation.activation_capture_form_after) {
+      if (this.activation.instructions_mobile_mode == 1) {
+        instructions = this.localStorage.get("activationInstructions");
+        getInstructions = instructions ? JSON.parse(instructions) : [];
+        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1;
+      }
+      else if (this.activation.instructions_mobile_mode == 2) {
+        shouldShowInstruction = true;
+      }
+    }
 
+    else {
+      instructions = this.localStorage.get("FormInstructions");
+      getInstructions = instructions ? JSON.parse(instructions) : [];
+      shouldShowInstruction = !this.submission.id && this.form && this.form.is_enforce_instructions_initially && getInstructions.indexOf(this.form.id) == -1;
+    }
     if (shouldShowInstruction) {
-      this.openInstructions(formsInstructions);
+      this.openInstructions(getInstructions);
     } else {
       if (!this.submission.id) {
         this.openStations();
       }
     }
+
   }
 
   private openInstructions(formsInstructions) {
-
-    let instructionsModal = this.modal.create(FormInstructions, { form: this.form, isModal: true });
+    let instructionsModal;
+    if (this.activation) instructionsModal = this.modal.create(FormInstructions, { activation: this.activation, isModal: true });
+    else instructionsModal = this.modal.create(FormInstructions, { form: this.form, isModal: true });
 
     instructionsModal.present().then((result) => {
-      formsInstructions.push(this.form.id);
-      this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+      if (this.activation && formsInstructions) {
+        formsInstructions.push(this.activation.id);
+        this.localStorage.set("activationInstructions", JSON.stringify(formsInstructions));
+      }
+      else if(!this.activation){
+        formsInstructions.push(this.form.id);
+        this.localStorage.set("FormInstructions", JSON.stringify(formsInstructions));
+      }
     });
 
     instructionsModal.onDidDismiss(() => {
@@ -227,29 +254,28 @@ export class FormCapture implements AfterViewInit {
   }
 
   private handleIdleMode() {
-    let screensaverData : any = this.activation ? this.activation.activation_style : this.form.event_style;
-    if(this.activation && this.activation.activation_style.is_event_screensaver) 
-    screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
-    
-    if (screensaverData.is_enable_screensaver && !this.isRapidScanMode && screensaverData.screensaver_media_items.length){
+    let screensaverData: any = this.activation ? this.activation.activation_style : this.form.event_style;
+
+    if (this.activation && this.activation.activation_style.is_event_screensaver)
+      screensaverData.screensaver_media_items = this.activation.event.event_style.screensaver_media_items;
+
+    if (screensaverData.is_enable_screensaver && !this.isRapidScanMode && screensaverData.screensaver_media_items.length) {
       this.idle
-      .whenNotInteractive()
-      .within(screensaverData.screensaver_rotation_period, 1000)
-      .do(() => {
-        this.showScreenSaver(screensaverData)
-        console.log('idle mode started')
-      })
-      .start();
+        .whenNotInteractive()
+        .within(screensaverData.screensaver_rotation_period, 1000)
+        .do(() => {
+          this.showScreenSaver(screensaverData)
+          console.log('idle mode started')
+        })
+        .start();
     }
-   
   }
 
   // A.S
-  private async showScreenSaver(data : any) {
+  private async showScreenSaver(data: any) {
     // get updated data of form
     this.form.event_style = this.getFormStyle();
-    let active = this.navCtrl.last().instance instanceof FormCapture ;
-
+    let active = this.navCtrl.last().instance instanceof FormCapture;
     if (this.imagesDownloaded(data)) {
       if (!this._modal && active) {
         this.handleScreenSaverRandomize(data)
@@ -266,14 +292,14 @@ export class FormCapture implements AfterViewInit {
   }
 
   // A.S
-  private handleScreenSaverRandomize(data : any) {
+  private handleScreenSaverRandomize(data: any) {
     if (data.is_randomize) data.screensaver_media_items = this.utils.shuffle(data.screensaver_media_items);
   }
 
-  // A.S
-  private imagesDownloaded(data : any) {
-      data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
-      return data.screensaver_media_items.length;
+  private imagesDownloaded(data: any) {
+    if (this.activation) return true;
+    data.screensaver_media_items = data.screensaver_media_items.filter((e) => !e.path.startsWith('https://'))
+    return data.screensaver_media_items.length;
   }
 
   // A.S
@@ -303,6 +329,8 @@ export class FormCapture implements AfterViewInit {
   private async setupForm() {
     // return new object data of form (not updated)
     this.form = Object.assign(new Form(), this.navParams.get("form"));
+   // console.log("the form", this.form);
+    this.setupSearchListTheme();
     this.isRapidScanMode = this.navParams.get("isRapidScanMode");
     this.submission = this.navParams.get("submission") || this.submission;
     this.setStation(this.submission);
@@ -323,8 +351,9 @@ export class FormCapture implements AfterViewInit {
     if (this.navParams.get("openEdit") && !this.isEditing) {
       this.isEditing = true;
     }
-    if (this.openBadgeScan) {
+    if (this.openBadgeScan && !this.activation) {
       // here timeout because initialization of badge element may take time to subscribe to the observable
+      this.openBadgeScan = false;
       setTimeout(() => {
         this.formViewService.pushEvent(`rescan_barcode`);
       }, 1000);
@@ -332,6 +361,13 @@ export class FormCapture implements AfterViewInit {
 
     // this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
 
+  }
+
+  setupSearchListTheme() {
+    if (!this.form.event_style.search_list_background_color) {
+      this.form.event_style.search_list_background_color = this.selectedThemeColor;
+      this.form.event_style.search_list_text_color = this.form.event_style.event_text_color;
+    }
   }
 
   private convertCaptureImageSrc() {
@@ -496,6 +532,7 @@ export class FormCapture implements AfterViewInit {
   isAllowedToEdit(submission: FormSubmission): boolean {
     return submission &&
       (submission.status == SubmissionStatus.Submitted ||
+        submission.status == SubmissionStatus.OnHold ||
         submission.status == SubmissionStatus.Submitting)
   }
 
@@ -715,18 +752,29 @@ export class FormCapture implements AfterViewInit {
     });
   }
 
-  private handleValidations(){
-    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None ;
+  private handleValidations() {
+    /*
+    When transcription is enabled, the app is still requiring name and email.
+    If there is a business card attached and transcription is turned on, we should not require either of these fields.
+    */
+    let isNotScanned = this.submission.barcode_processed == BarcodeStatus.None;
     this.noTranscriptable = !this.isTranscriptionEnabled() || (this.isTranscriptionEnabled() && !this.isBusinessCardAdded());
+
     if (isNotScanned && this.noTranscriptable) {
       this.formView.setElementsValidation();
       this.formView.theForm.updateValueAndValidity();
       this.isActivationProcessing = false;
       if (!this.isEmailOrNameInputted()) {
-        this.setErrormsg({text:"form-capture.error-msg",param:{}});
+        this.errorMessage.text = "form-capture.error-msg";
+        if (this.activation) this.popup.showToast({ text: this.errorMessage.text }, "middle");
+        this.content.resize();
         return false;
       } else if (!this.valid && !this.shouldIgnoreFormInvalidStatus()) {
-        this.setErrormsg(this.formView.getError());
+        this.errorMessage = this.formView.getError();
+        if (this.activation) {
+          this.popup.showToast({ text: this.errorMessage.text, params: { fields: (this.errorMessage.param) } }, "middle");
+        }
+        this.content.resize();
         return false;
       }
       return true;
@@ -747,15 +795,17 @@ export class FormCapture implements AfterViewInit {
     }, 200);
   }
 
-  private handleSubmitParams(){
+  private handleSubmitParams() {
     this.submission.fields = { ...this.formView.getValues(), ...this.getDocumentsForSubmission() };
 
     if (!this.submission.id) {
       this.submission.id = new Date().getTime();
     }
 
-    if (this.submission.status != SubmissionStatus.Blocked) {
-      this.submission.status = SubmissionStatus.ToSubmit;
+    if (this.submission.status == SubmissionStatus.Submitted &&
+      this.submission.hold_request_id &&
+      this.submission.hold_request_id > 0) {
+      this.submission.hold_request_id = null;
     }
 
     this.submission.hidden_elements = this.getHiddenElements();
@@ -770,25 +820,64 @@ export class FormCapture implements AfterViewInit {
   }
 
   public doSave(shouldSyncData = true) {
-   if( !this.handleValidations() ) return;
+    if( !this.handleValidations() ) return;
     this.submitAttempt = true;
     this.isActivationProcessing = true;
     this.handleSubmitParams();
-    if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt) {
-      this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
-        this.submission.updateFields(this.form);
-        let submitEmail = data.filter((d) => d.email == this.submission.email);
-        if (submitEmail.length && submitEmail[0].email && submitEmail[0].id != this.submission.id) {
-          if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
-          else this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
-          this.isActivationProcessing = false;
-        } else {
-          this.goToSubmit(shouldSyncData);
-        }
-      })
+    this.handleDuplicateSubmissions(shouldSyncData);
+  }
+
+  handleDuplicateSubmissions(shouldSyncData) {
+    if (this.form.duplicate_action == "reject" && this.form.show_reject_prompt && !this.isEditing) {
+      if (this.activation && this.form.ignore_submissions_from_activations) this.submitActivation();
+      else {
+        this.submissionsProvider.getSubmissions(this.form.form_id).subscribe((data) => {
+          this.submission.updateFields(this.form);
+          let filteredSubmission = this.filterSubmissionsByUniqueIdentifier(data);
+          if (filteredSubmission && filteredSubmission.id !== this.submission.id) {
+            if (!this.activation && this.form.ignore_submissions_from_activations &&
+              filteredSubmission.submission_type == FormSubmissionType.activation) this.goToSubmit(shouldSyncData);
+            else {
+              this.isActivationProcessing = false;
+              if (this.activation) this.popup.showToast({ text: 'toast.duplicate-submission' }, "top");
+              else {
+                this.popup.showToast({ text: 'toast.duplicate-submission' }, "bottom");
+              }
+            }
+          } else {
+            this.goToSubmit(shouldSyncData);
+          }
+        })
+      }
     } else {
       this.goToSubmit(shouldSyncData);
     }
+  }
+
+  filterSubmissionsByUniqueIdentifier(data: any): FormSubmission {
+    let result: FormSubmission[];
+    if (this.form.unique_identifier_barcode && this.submission.barcodeID != null) {
+      result = data.filter((d) => d.barcodeID == this.submission.barcodeID);
+      return this.testFilteredsubmissionsByUniqueId(result);
+    }
+    if (this.form.unique_identifier_email && this.submission.email) {
+      result = data.filter((d) => d.email == this.submission.email);
+      return this.testFilteredsubmissionsByUniqueId(result);
+    }
+
+    if (this.form.unique_identifier_name && this.submission.first_name) {
+      result = data.filter((d) => d.full_name == this.submission.full_name);
+      return this.testFilteredsubmissionsByUniqueId(result);
+    }
+    return null;
+  }
+
+  testFilteredsubmissionsByUniqueId(subs: FormSubmission[]): FormSubmission {
+    let result: FormSubmission[];
+    result = subs.filter((d) => d.submission_type != FormSubmissionType.activation);
+    if (result.length) return result[0];
+    else if (subs.length) return subs[0];
+
   }
 
   getTranscriptionControls(name : string,control : AbstractControl) {
@@ -801,11 +890,12 @@ export class FormCapture implements AfterViewInit {
       else this.clearControlValidators(control);
      }
     })
+  }
     // if(TRANSCRIPTION_FIELDS_IDS.find(e=> e == id )) 
     //   this.clearControlValidators(control)
-  }
+  
 
-  clearControlValidators(control : AbstractControl){
+  clearControlValidators(control: AbstractControl) {
     control.clearValidators();
     control.updateValueAndValidity();
   }
@@ -813,13 +903,16 @@ export class FormCapture implements AfterViewInit {
   ignoreTranscriptionFields() {
     const controls = this.formView.theForm.controls;
     for (const name in controls) {
-      this.getTranscriptionControls(name,controls[name])
+      this.getTranscriptionControls(name, controls[name])
     }
   }
 
   goToSubmit(shouldSyncData) {
     if (this.activation) this.submitActivation();
     else {
+      if (this.submission.status != SubmissionStatus.Blocked) {
+        this.submission.status = SubmissionStatus.ToSubmit;
+      }
       this.client.saveSubmission(this.submission, this.form, shouldSyncData).subscribe(sub => {
         this.tryClearDocumentsSelection();
         if (this.isEditing) {
@@ -844,6 +937,7 @@ export class FormCapture implements AfterViewInit {
     this.openBadgeScan = false;
     this.isActivationProcessing = true;
     this.submission.updateFields(this.form);
+    this.submission.activation_id = this.activation.id;
     let map: { [key: number]: FormMapEntry } = {};
     map[this.form.form_id + ""] = {
       form: this.form,
@@ -868,6 +962,8 @@ export class FormCapture implements AfterViewInit {
 
     }, (err) => {
       this.submission.prospect_id = null;
+      this.submission.hold_submission = 0;
+      this.submission.hold_submission_reason = "";
       this.isActivationProcessing = false;
       console.log(err);
     })
@@ -905,7 +1001,9 @@ export class FormCapture implements AfterViewInit {
       return hiddenElements;
     }
     else {
-      let hiddenElements = this.form.getHiddenElementsPerVisibilityRules();
+      let hidden = this.form.getHiddenElementsPerVisibilityRules().concat(this.form.getHiddenElementsPerVisibilityRulesForForm());
+      let hiddenSet = new Set(hidden);
+      let hiddenElements = Array.from(hiddenSet);
       return hiddenElements;
     }
 
@@ -992,7 +1090,7 @@ export class FormCapture implements AfterViewInit {
   }
 
   onValidationChange(valid: boolean) {
-    console.log('validation event value :'+valid);
+    console.log('validation event value :' + valid);
     this.valid = valid;
     setTimeout(() => {
       this.errorMessage.text = '';
@@ -1166,7 +1264,7 @@ export class FormCapture implements AfterViewInit {
         selectedStation: this.selectedStation,
         visitedStations: this.submission.stations,
         disableStationSelection: this.isAllowedToEdit(this.submission) && !this.isEditing
-      }, false, null ,this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
+      }, false, null, this.selectedTheme + ' gc-popover').onDidDismiss((data) => this.onStationDismiss(data))
     } else {
       this.initiateRapidScanMode();
     }

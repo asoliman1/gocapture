@@ -1,6 +1,6 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { BaseElement } from "../base-element";
-import { FormElement } from "../../../../model";
+import { FormElement, Form } from "../../../../model";
 import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
@@ -13,11 +13,14 @@ import { FormGroup, NG_VALUE_ACCESSOR } from "@angular/forms";
 export class Radios extends BaseElement {
 	@Input() element: FormElement;
 	@Input() formGroup: FormGroup;
+	@Input() form: Form;
 	@Input() readonly: boolean = false;
 
 	constructor() {
 		super();
 	}
+
+	ngOnInit() {}
 
 	writeValue(obj: any): void{
 		if(isNaN(parseInt(obj))) {
@@ -36,4 +39,14 @@ export class Radios extends BaseElement {
 		}
 		super.writeValue(obj);
 	}
+
+
+	isElementItalicize() : boolean{
+		return this.element.style.italicize;
+	}
+
+	isLabelFullWidth() : boolean{
+		return this.element.style.full_width_text;
+	}
+
 }

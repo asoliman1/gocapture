@@ -6,7 +6,7 @@ import { FormCapture } from './../../views/form-capture/form-capture';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Activation } from './../../model/activation';
 import { Component } from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
+import { NavController, NavParams, Platform, ModalController } from 'ionic-angular';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { Popup } from "../../providers/popup/popup";
 import { ActivationsPage } from '../../views/activations/activations';
@@ -14,6 +14,8 @@ import { BussinessClient } from '../../services/business-service';
 import { concatStatic } from 'rxjs/operator/concat';
 import { Network } from '@ionic-native/network';
 import { IfObservable } from 'rxjs/observable/IfObservable';
+import { LocalStorageProvider } from '../../providers/local-storage/local-storage';
+import { FormInstructions } from '../../views/form-instructions';
 
 
 @Component({
@@ -33,6 +35,7 @@ export class ActivationViewPage {
   private backUnregister;
   private networkSubs : Subscription;
   online: boolean = true;
+  
 
   constructor(
     public navCtrl: NavController,
@@ -42,13 +45,54 @@ export class ActivationViewPage {
     private popup: Popup,
     private platform: Platform,
     private client: BussinessClient,
-    private net: Network
+    private net: Network,
+    private localStorage: LocalStorageProvider,
+    private modal: ModalController,
   ) {
   }
 
   loaded(ev) {
     if (this.isLoading == null) this.isLoading = true;
     else this.isLoading = false;
+  }
+
+  ngAfterViewInit(){
+    this.checkInstructions()
+  }
+
+  private checkInstructions() {
+    let instructions;
+    let getInstructions;
+    let shouldShowInstruction;
+    if (this.activation.activation_capture_form_after) {
+      if (this.activation.instructions_mobile_mode == 1) {
+        instructions = this.localStorage.get("activationInstructions");
+        getInstructions = instructions ? JSON.parse(instructions) : [];
+        shouldShowInstruction = getInstructions.indexOf(this.activation.id) == -1 && this.activation.instructions_content.length > 0;
+      }
+      else if (this.activation.instructions_mobile_mode == 2) {
+        shouldShowInstruction = this.activation.instructions_content.length > 0;
+      }
+    }
+
+    if (shouldShowInstruction) {
+      this.openInstructions(getInstructions);
+    }
+
+  }
+
+  private openInstructions(formsInstructions) {
+    let instructionsModal;
+    instructionsModal = this.modal.create(FormInstructions, { activation: this.activation, isModal: true });
+
+    instructionsModal.present().then((result) => {
+      if (formsInstructions) {
+        formsInstructions.push(this.activation.id);
+        this.localStorage.set("activationInstructions", JSON.stringify(formsInstructions));
+      }
+    });
+
+    instructionsModal.onDidDismiss(() => {})
   }
 
   ionViewWillEnter() {
@@ -58,7 +102,6 @@ export class ActivationViewPage {
     this.prepareActivationUrl();
   }
   ionViewDidEnter() {
-    console.log(this.activation)
     this.reloadGame();
     this.listenToGameEvents();
     this.initNetwork();
@@ -104,6 +147,7 @@ export class ActivationViewPage {
     let prospectId = this.navParams.get('prospectId');
     if (prospectId) {
       this.activationUrl = this.activation.url + "&prospect_id=" + prospectId;
+      console.log("activationURL", this.activationUrl)
     }
     else {
       this.activationUrl = this.activation.url + "&prospect_id=" + 0;
@@ -111,7 +155,6 @@ export class ActivationViewPage {
   }
 
   ionViewWillLeave() {
-    console.log("activationurl", this.activationUrl)
     if (this.backUnregister) {
       this.backUnregister();
     }
@@ -222,13 +265,10 @@ export class ActivationViewPage {
   }
   goBack(activationResult: any) {
     if (this.activation.activation_capture_form_after) {
-      console.log("activationFirst")
       this.goBackIfActivationFirst();
     }
 
     else {
-      console.log(this.navParams.get('prospectId'))
-      console.log("activationSecond")
       const buttons = [
         {
           text: 'general.cancel',
@@ -249,7 +289,6 @@ export class ActivationViewPage {
   }
 
   goToForm(activationResult: any, isNext: boolean = false) {
-      console.log("Go to Form")
       let currentIndex = this.navCtrl.getActive().index;
       if(!this.activation.activation_capture_form_after){
       this.navCtrl.push(FormCapture,
@@ -258,7 +297,6 @@ export class ActivationViewPage {
           form: this.activation.event,
           isNext
         }).then(() => {
-          console.log("removing game")
           this.navCtrl.remove(currentIndex);
         });
       }
@@ -270,7 +308,6 @@ export class ActivationViewPage {
           activationResult,
           isNext
         }).then(() => {
-          console.log("removing game")
           this.navCtrl.remove(currentIndex);
         });
       }
@@ -283,8 +320,6 @@ export class ActivationViewPage {
       prospectId = this.navParams.get('prospectId');
 
     if (activityId && prospectId) {
-      console.log("we have data from the capture")
-      console.log(this.navParams.get('activityId'), this.navParams.get('prospectId'))
       this.restClient.submitActivation({
         activation_id: this.activation.id,
         activation_result: activationResult,
@@ -292,9 +327,6 @@ export class ActivationViewPage {
         prospect_id: prospectId,
       }).subscribe((data) => {
         if (data) {
-          console.log(data);
-          console.log(isNext)
-          console.log(activationResult)
           if (isNext) this.goToForm(activationResult, true);
         }
       }, (err) => {
@@ -304,14 +336,10 @@ export class ActivationViewPage {
     }
 
     else {
-      console.log("we do not have data from the capture");
-      console.log(resultAction);
       if(resultAction == ACTIVATIONS_ACTIONS.SUBMIT_NEXT){
-        console.log(resultAction);
         this.goToForm(activationResult, true)
       }
       else{
-        console.log(resultAction);
       this.actvationResultFromSubmit = activationResult;
       }
     }
@@ -325,7 +353,9 @@ export class ActivationViewPage {
   private async setOnline(val: boolean) {
     if(this.online == val) return;
     this.online = val;
-    if(!val) this.retryToRefreshActivation()
+    if(!val) {
+      if(this.platform.is("ios")) this.retryToRefreshActivation();
+    }
   }
 
   private initNetwork() {
@@ -376,11 +406,9 @@ export class ActivationViewPage {
         text: 'alerts.activation.retry',
         handler: () => {
         if (this.isOnline()){
-          console.log("if online")
           this.reloadGame()
         }
         else{
-          console.log("if not online")
           this.retryToRefreshActivation()
         }
         }

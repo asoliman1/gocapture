@@ -11,9 +11,30 @@ form-capture {
     }
   }
 
+  .split-panel-style {
+    padding-top: 42px;
+    margin-top: constant(safe-area-inset-top);
+    margin-top: env(safe-area-inset-top);
+  }
+  .margin-for-titlebar{
+    padding-top: 85px;
+  }
+  .scroll_frame {
+    overflow: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling:touch;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e0e0e0;
 }
 
+}
+
+
 ion-content {
+  ::-webkit-scrollbar {
+    display: none;
+  }
   div{
   padding-bottom: 0px !important;
 }
@@ -57,8 +78,7 @@ ion-content {
   }
 
   .popover-viewport {
-    height: auto;
-
+    height: 70vh;
     .scroll-content {
       height: calc(100% - 80px);
     }

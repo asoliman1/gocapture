@@ -89,8 +89,8 @@ export class Popup {
 
   // A.S
   showPopover(page: any, data: any, enableBackdropDismiss = false, ev = null, cssClass = this.theme) {
-    cssClass += ' gc-popover';
-    this.popover = this.popoverCtrl.create(page, data, { cssClass , enableBackdropDismiss, });
+    //cssClass += ' gc-popover';
+    this.popover = this.popoverCtrl.create(page, data, { cssClass , enableBackdropDismiss});
     this.popover.present({ev});
      return this.popover;
   }
