@@ -25,6 +25,7 @@ export class ScreenSaverPage {
     private viewCtrl: ViewController,
     private StatusBar: StatusBar) {
     this.eventStyle = this.navParams.data.event_style;
+    this.eventStyle.screensaver_media_items.push({ url: 'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4', path: 'http://clips.vorwaerts-gmbh.de/VfE_html5.mp4' });
   }
 
   ngOnInit() {
