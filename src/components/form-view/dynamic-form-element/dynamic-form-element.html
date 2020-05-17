@@ -124,7 +124,7 @@
         class="element-name" stacked [class.required]="element.is_required">
         {{element.title}}
       </ion-label>
-      <ion-datetime (click)="setDate($event)" displayFormat="DDD, MMMM DD YYYY" pickerFormat="DD MMMM YYYY"
+      <ion-datetime (click)="setDate($event)" displayFormat="MMMM DD, YYYY" pickerFormat="DD MMMM YYYY"
         [attr.name]="element.id" [formControlName]="element.identifier" min="{{minYear}}" max="{{maxYear}}">
       </ion-datetime>
     </ion-item>

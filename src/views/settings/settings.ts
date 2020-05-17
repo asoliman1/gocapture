@@ -36,11 +36,7 @@ export class Settings {
   version: string;
   private selectedTheme;
   localization: Localization;
-  keyboard = "numeric";
-  dateValue = "standard";
-  timeValue = "standard";
-  dateTimeValue = "standard";
-  dates = DateTimeOptions.datePicker; 
+  dates = DateTimeOptions.datePicker;
   times = DateTimeOptions.timePicker;
   datesTimes = DateTimeOptions.dateTimePicker;
 
@@ -55,11 +51,11 @@ export class Settings {
     private themeProvider: ThemeProvider,
     private numberPicker: NumberPicker,
     private badgeScanner: BadgeRapidCapture,
-    public geolocation : Geolocation,
-    private businessService : BussinessClient,
+    public geolocation: Geolocation,
+    private businessService: BussinessClient,
     private syncClient: SyncClient,
     private translateConfigService: TranslateConfigService,
-    private platform : Platform) {
+    private platform: Platform) {
 
     this.appVersion.getVersionNumber().then((version) => {
       this.version = version;
@@ -72,14 +68,8 @@ export class Settings {
     this.setConfig();
   }
 
-  onChangevalue(){
-    console.log("keyboard", this.settings.numbersKeyboard);
-    console.log("date", this.dateValue);
-    console.log("time", this.timeValue);
-    console.log("date time", this.dateTimeValue);
-  }
 
-  
+
 
   setConfig() {
     this.db.getAllConfig().subscribe(settings => {
@@ -123,26 +113,26 @@ export class Settings {
         this.shouldSave = false;
         this.setLocalization();
       });
-      
+
     });
 
   }
 
-  updateUser(result : any) {
+  updateUser(result: any) {
     this.user.localizations = result.localizations;
     this.user.localization = result.localization;
     this.db.saveRegistration(this.user).subscribe();
   }
-  
+
   onLocalization() {
     let localizationPage = this.modalCtrl.create(LocalizationsPage, { items: this.localizations(), shouldShowSearch: false });
     localizationPage.onDidDismiss((localization: Localization) => {
       if (localization) {
-        this.popup.showLoading({text:'alerts.loading.processing'});
-        this.client.updateAccountSettings({'localization': localization.id})
+        this.popup.showLoading({ text: 'alerts.loading.processing' });
+        this.client.updateAccountSettings({ 'localization': localization.id })
           .subscribe((result) => {
             this.updateUser(result);
-            this.platform.setDir(localization.id == 'ar' ? 'rtl' : 'ltr',true);
+            this.platform.setDir(localization.id == 'ar' ? 'rtl' : 'ltr', true);
             this.translateConfigService.setLanguage(localization.id);
             this.syncClient.download(null).subscribe();
             this.localization = localization;
@@ -158,7 +148,7 @@ export class Settings {
   setLocalization() {
     //console.log(this.user.localization,this.translateConfigService.defaultLanguage())
     if (this.user.localization && this.user.localizations) {
-      this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization );
+      this.localization = this.user.localizations.find((localization) => localization.id == this.user.localization);
     } else {
       this.localization = this.user.localizations.find((localization) => this.translateConfigService.defaultLanguage() == localization.id);
     }
@@ -187,7 +177,7 @@ export class Settings {
       id: index.toString(),
       title: localization.name,
       subtitle: null,
-      search:localization.name,
+      search: localization.name,
       value: localization
     });
   }
@@ -217,7 +207,7 @@ export class Settings {
   onChange() {
     this.shouldSave = true;
     setTimeout(async () => {
-     await this.saveSettings();
+      await this.saveSettings();
     }, 1)
   }
 
@@ -285,11 +275,11 @@ export class Settings {
         datePicker,
         timePicker,
         dateTimePicker).subscribe(() => {
-        this.shouldSave = false;
-        resolve(true);
-      }, error => {
-        reject(error);
-      });
+          this.shouldSave = false;
+          resolve(true);
+        }, error => {
+          reject(error);
+        });
     });
   }
 
@@ -318,45 +308,46 @@ export class Settings {
       {
         text: 'general.unauthenticate',
         handler: () => {
-          if(this.businessService.isOnline() ){
+          if (this.businessService.isOnline()) {
             // A.S
-            this.popup.showLoading({text:'alerts.loading.unauthenticating'})
+            this.popup.showLoading({ text: 'alerts.loading.unauthenticating' })
             this.client.unregister(this.user).subscribe(() => {
               this.popup.dismiss('loading');
               this.themeProvider.rmTheme();
               setTimeout(() => {
                 this.app.getRootNav().setRoot(Login, { unauthenticated: true });
               }, 300);
-            },(error)=>{
+            }, (error) => {
               console.log(error);
               this.popup.dismiss('loading');
             })
           }
-          else this.popup.showToast({text:'toast.no-internet-connection'},"top","warning") // A.S GOC-324
+          else this.popup.showToast({ text: 'toast.no-internet-connection' }, "top", "warning") // A.S GOC-324
         }
       }
     ];
-    this.popup.showAlert("alerts.settings.unauthenticate.title", {text:"alerts.settings.unauthenticate.message"}, buttons, this.selectedTheme);
+    this.popup.showAlert("alerts.settings.unauthenticate.title", { text: "alerts.settings.unauthenticate.message" }, buttons, this.selectedTheme);
   }
 
 
   showOptions(pickerType: string) {
-    let search = this.modalCtrl.create('SearchPage', {items: this.getOptions(pickerType)});
+    let search = this.modalCtrl.create('SearchPage', { items: this.getOptions(pickerType) });
     search.onDidDismiss(data => {
-      if(data){
-      if(pickerType== "date") this.settings.datePicker = data;
-      if (pickerType== "time") this.settings.timeValue = data;
-      if(pickerType == "dateTime") this.settings.dateTimeValue = data;
+      if (data) {
+        if (pickerType == "date") this.settings.datePicker = data;
+        if (pickerType == "time") this.settings.timePicker = data;
+        if (pickerType == "dateTime") this.settings.dateTimePicker = data;
+        this.onChange()
       }
     });
     search.present();
-}
+  }
 
-  getOptions(pickerType: string){
+  getOptions(pickerType: string) {
     let items = [];
-    let pickerData: any ;
-    if(pickerType== "date") pickerData = DateTimeOptions.datePicker;
-    else if (pickerType== "time") pickerData = DateTimeOptions.timePicker;
+    let pickerData: any;
+    if (pickerType == "date") pickerData = DateTimeOptions.datePicker;
+    else if (pickerType == "time") pickerData = DateTimeOptions.timePicker;
     else pickerData = DateTimeOptions.dateTimePicker;
     pickerData.forEach((item) => {
       let optionItem = new OptionItem({
@@ -364,13 +355,14 @@ export class Settings {
         title: item.label,
         subtitle: null,
         search: item.label,
-        value: item.value});
-        if(pickerType== "date") optionItem.isSelected = this.settings.datePicker == item.label;
-        else if(pickerType== "time") optionItem.isSelected = this.settings.timePicker == item.label;
-        else  optionItem.isSelected = this.settings.dateTimePicker == item.label;
+        value: item.value
+      });
+      if (pickerType == "date") optionItem.isSelected = this.settings.datePicker == item.label;
+      else if (pickerType == "time") optionItem.isSelected = this.settings.timePicker == item.label;
+      else optionItem.isSelected = this.settings.dateTimePicker == item.label;
       items.push(optionItem);
     });
     return items;
-}
+  }
 
 }

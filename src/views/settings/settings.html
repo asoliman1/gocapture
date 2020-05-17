@@ -78,7 +78,7 @@
 		<ion-item class="last" text-wrap>
 			<ion-label> {{'settings.dropdown.keyboard-label' | translate}}</ion-label>
 		</ion-item>
-		<ion-grid radio-group [(ngModel)]="settings.numbersKeyboard" (ionChange)="onChangevalue()">
+		<ion-grid radio-group [(ngModel)]="settings.numbersKeyboard" (ionChange)="onChange()">
 			<ion-row>
 				<ion-col>
 					<ion-item class="last" text-wrap>
@@ -99,8 +99,7 @@
 			<ion-label> {{'settings.dropdown.date-picker-label' | translate}}</ion-label>
 		</ion-item>
 		<ion-item (click)="showOptions('date')">
-			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.datePicker"
-				(ionChange)="onChangevalue()">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.datePicker">
 				<ion-option *ngFor="let item of dates" [value]="item.value">{{item.label}}</ion-option>
 			</ion-select>
 		</ion-item>
@@ -109,8 +108,7 @@
 			<ion-label> {{'settings.dropdown.time-picker-label' | translate}}</ion-label>
 		</ion-item>
 		<ion-item (click)="showOptions('time')">
-			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.timePicker"
-				(ionChange)="onChangevalue()">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.timePicker">
 				<ion-option *ngFor="let item of times" [value]="item.value">{{item.label}}</ion-option>
 			</ion-select>
 		</ion-item>
@@ -120,8 +118,7 @@
 		</ion-item>
 
 		<ion-item (click)="showOptions('dateTime')">
-			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.dateTimePicker"
-				(ionChange)="onChangevalue()">
+			<ion-select class="gc-select" color="primary" [disabled]="true" [(ngModel)]="settings.dateTimePicker">
 				<ion-option *ngFor="let item of datesTimes" [value]="item.value">{{item.label}}</ion-option>
 			</ion-select>
 		</ion-item>
